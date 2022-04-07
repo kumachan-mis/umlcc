@@ -3,7 +3,6 @@ CC      = gcc-11
 CFLAGS  = -Wall -O3
 
 SRC_DIR = src
-INC_DIR = include
 BLD_DIR = build
 OBJ_DIR = $(BLD_DIR)/object
 DEP_DIR = $(BLD_DIR)/depend
@@ -25,7 +24,7 @@ $(UMLCC): $(OBJS)
 
 $(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
 	$(MKDIR) $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(addprefix -I,$(INC_DIR)) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
 	$(MKDIR) $(DEP_DIR)
