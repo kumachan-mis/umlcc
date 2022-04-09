@@ -66,19 +66,22 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
 
-    append_code(codes, "    popl %%edx");
-    append_code(codes, "    popl %%eax");
+    append_code(codes, "    popl %%edx\n");
+    append_code(codes, "    popl %%eax\n");
 
     switch (ast->type) {
         case AST_ADD:
-            append_code(codes, "    addl %%edx, %%eax");
+            append_code(codes, "    addl %%edx, %%eax\n");
             break;
         case AST_SUB:
-            append_code(codes, "    subl %%edx, %%eax");
+            append_code(codes, "    subl %%edx, %%eax\n");
             break;
+        default:
+            fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
+            exit(1);
     }
 
-    append_code(codes, "    pushl %%eax");
+    append_code(codes, "    pushl %%eax\n");
 
     codegen->ast = ast;
     return codes;
@@ -99,25 +102,28 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
 
-    append_code(codes, "    popl %%edx");
-    append_code(codes, "    popl %%eax");
+    append_code(codes, "    popl %%edx\n");
+    append_code(codes, "    popl %%eax\n");
 
     switch (ast->type) {
         case AST_MUL:
-            append_code(codes, "    imull %%edx, %%eax");
+            append_code(codes, "    imull %%edx, %%eax\n");
             break;
         case AST_DIV:
-            append_code(codes, "    cltd");
-            append_code(codes, "    idivl %%edx");
+            append_code(codes, "    cltd\n");
+            append_code(codes, "    idivl %%edx\n");
             break;
         case AST_MOD:
-            append_code(codes, "    cltd");
-            append_code(codes, "    idivl %%edx");
-            append_code(codes, "    movel %%edx, %%eax");
+            append_code(codes, "    cltd\n");
+            append_code(codes, "    idivl %%edx\n");
+            append_code(codes, "    movel %%edx, %%eax\n");
             break;
+        default:
+            fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
+            exit(1);
     }
 
-    append_code(codes, "    pushl %%eax");
+    append_code(codes, "    pushl %%eax\n");
 
     codegen->ast = ast;
     return codes;
@@ -132,7 +138,7 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
             append_code(codes, "    pushl $%d", ast->value_int);
             break;
         default:
-            fprintf("Error: unexpected ast type %d", ast->type);
+            fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
             exit(1);
     }
 
@@ -148,5 +154,4 @@ void append_code(Vector* codes, char* format, ...) {
     code = realloc(code, (strlen(code) + 1) * sizeof(char));
 
     va_end(arg_ptr);
-    return code;
 }

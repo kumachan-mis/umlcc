@@ -86,7 +86,7 @@ Ast* parse_primary_expr(Parser* parser) {
             ast = new_integer_ast(token->value_int);
             break;
         default:
-            fprintf("Error: unexpected token type %d", token->type);
+            fprintf(stderr, "Error: unexpected token type %d\n", token->type);
             exit(1);
     }
 

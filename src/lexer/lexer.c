@@ -34,7 +34,7 @@ Vector* lexer_read_tokens(Lexer* lexer) {
     
         if (token == NULL) {
             int c = fgetc(lexer->file_ptr);
-            fprintf("Error: unexpected character %c", c);
+            fprintf(stderr, "Error: unexpected character %c\n", c);
             exit(1);
         } else if (token->type == TOKEN_EOF) {
             break;
