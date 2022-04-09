@@ -19,7 +19,7 @@ typedef struct _Ast {
     Vector* children;
 } Ast;
 
-Ast* new_ast(AstType type, ...);
+Ast* new_ast(AstType type, int num_children, ...);
 Ast* new_integer_ast(int value);
 Ast* copy_ast(Ast* ast);
 void delete_ast(Ast* ast);
