@@ -28,7 +28,7 @@ void delete_vector(Vector* vector, void delete_item(void* item)) {
 }
 
 void vector_push(Vector* vector, void* item) {
-    if (vector->size == vector->capacity) {
+    if (vector->size >= vector->capacity) {
         vector->container = realloc(
             vector->container,
             2 * vector->capacity * sizeof(void*)

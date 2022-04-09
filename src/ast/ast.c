@@ -34,7 +34,8 @@ Ast* copy_ast(Ast* ast) {
     copied_ast->value_int = ast->value_int;
     copied_ast->children = new_vector();
 
-    for (int i = 0; i < vector_size(copied_ast->children); i++) {
+    int num_children = vector_size(copied_ast->children);
+    for (int i = 0; i < num_children; i++) {
         Ast* copied_child = copy_ast(vector_at(ast->children, i));
         vector_push(copied_ast->children, copied_child);
     }

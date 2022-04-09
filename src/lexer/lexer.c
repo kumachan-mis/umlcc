@@ -23,15 +23,27 @@ void delete_lexer(Lexer* lexer) {
     free(lexer);
 }
 
-Token* lexer_read_next_token(Lexer* lexer) {
-    Token* next_token = NULL;
+Vector* lexer_read_tokens(Lexer* lexer) {
+    Vector* tokens = new_vector();
     skip_white_spaces(lexer);
 
-    if (next_token != NULL) next_token = read_integer_constant(lexer);
-    if (next_token != NULL) next_token = read_punctuator(lexer);
-       
-    skip_white_spaces(lexer);
-    return next_token;
+    while (1) {
+        Token* token = NULL;
+        if (token == NULL) token = read_integer_constant(lexer);
+        if (token == NULL) token = read_punctuator(lexer);
+    
+        if (token == NULL) {
+            int c = fgetc(lexer->file_ptr);
+            fprintf("Error: unexpected character %c", c);
+            exit(1);
+        } else if (token->type == TOKEN_EOF) {
+            break;
+        }
+    
+        vector_push(tokens, token);
+        skip_white_spaces(lexer);
+    }
+    return tokens;
 }
 
 Token* read_integer_constant(Lexer* lexer) {
@@ -43,7 +55,7 @@ Token* read_integer_constant(Lexer* lexer) {
         integer_str[length] = c;
         length++;
 
-        if (length == capacity) {
+        if (length >= capacity) {
             integer_str = realloc(integer_str, 2 * capacity * sizeof(char));
             capacity *= 2;
         }
@@ -59,31 +71,35 @@ Token* read_integer_constant(Lexer* lexer) {
 }
 
 Token* read_punctuator(Lexer* lexer) {
-    Token* next_token = NULL;
+    Token* token = NULL;
 
     int c = fgetc(lexer->file_ptr);
     switch (c) {
         case '+': {
-            next_token = new_token(TOKEN_PLUS);
+            token = new_token(TOKEN_PLUS);
         }
         case '-': {
-            next_token = new_token(TOKEN_MINUS);
+            token = new_token(TOKEN_MINUS);
         }
         case '*': {
-            next_token = new_token(TOKEN_ASTERISK);
+            token = new_token(TOKEN_ASTERISK);
         }
         case '/': {
-            next_token = new_token(TOKEN_SLASH);
+            token = new_token(TOKEN_SLASH);
         }
         case '%': {
-            next_token = new_token(TOKEN_PERCENT);
+            token = new_token(TOKEN_PERCENT);
         }
         case EOF: {
-            next_token = new_token(TOKEN_EOF);
+            token = new_token(TOKEN_EOF);
+        }
+        default: {
+            token = NULL;
+            ungetc(c, lexer->file_ptr);
         }
     }
 
-    return next_token;
+    return token;
 }
 
 void skip_white_spaces(Lexer* lexer) {
