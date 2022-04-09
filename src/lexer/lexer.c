@@ -75,28 +75,28 @@ Token* read_punctuator(Lexer* lexer) {
 
     int c = fgetc(lexer->file_ptr);
     switch (c) {
-        case '+': {
+        case '+': 
             token = new_token(TOKEN_PLUS);
-        }
-        case '-': {
+            break;
+        case '-': 
             token = new_token(TOKEN_MINUS);
-        }
-        case '*': {
+            break;
+        case '*': 
             token = new_token(TOKEN_ASTERISK);
-        }
-        case '/': {
+            break;
+        case '/':
             token = new_token(TOKEN_SLASH);
-        }
-        case '%': {
+            break;
+        case '%':
             token = new_token(TOKEN_PERCENT);
-        }
-        case EOF: {
+            break;
+        case EOF: 
             token = new_token(TOKEN_EOF);
-        }
-        default: {
+            break;
+        default: 
             token = NULL;
             ungetc(c, lexer->file_ptr);
-        }
+            break;
     }
 
     return token;
