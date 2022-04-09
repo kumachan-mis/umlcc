@@ -63,12 +63,15 @@ Token* read_integer_constant(Lexer* lexer) {
 
         c = fgetc(lexer->file_ptr);
     }
-
-    integer_str[length] = '\0';
     ungetc(c, lexer->file_ptr);
+    integer_str[length] = '\0';
+    integer_str = realloc(integer_str, (length + 1) * sizeof(char));
 
-    if (length == 0) return NULL;
-    return new_integer_token(atoi(integer_str));
+    Token* token = NULL;
+    if (length > 0) token = new_integer_token(atoi(integer_str));
+
+    free(integer_str);
+    return token;
 }
 
 Token* read_punctuator(Lexer* lexer) {
@@ -95,8 +98,8 @@ Token* read_punctuator(Lexer* lexer) {
             token = new_token(TOKEN_EOF);
             break;
         default: 
-            token = NULL;
             ungetc(c, lexer->file_ptr);
+            token = NULL;
             break;
     }
 
