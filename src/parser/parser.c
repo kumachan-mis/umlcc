@@ -27,16 +27,9 @@ void delete_parser(Parser* parser) {
     free(parser);
 }
 
-Vector* parser_create_asts(Parser* parser) {
-    Vector* asts = new_vector();
-
-    int num_tokens = vector_size(parser->tokens);
-    while (parser->index < num_tokens) {
-        Ast* ast = parse_additive_expr(parser);
-        vector_push(asts, ast);
-    }
-
-    return asts;
+Ast* parser_create_ast(Parser* parser) {
+    Ast* ast = parse_additive_expr(parser);
+    return ast;
 }
 
 Ast* parse_additive_expr(Parser* parser) {
@@ -45,14 +38,14 @@ Ast* parse_additive_expr(Parser* parser) {
 
     while (1) {
         switch (token->type) {
-            case TOKEN_PLUS: {
+            case TOKEN_PLUS:
                 parser->index++;
                 ast = new_ast(AST_ADD, 2, ast, parse_multiplicative_expr(parser));
-            }
-            case TOKEN_MINUS: {
+                break;
+            case TOKEN_MINUS:
                 parser->index++;
                 ast = new_ast(AST_SUB, 2, ast, parse_multiplicative_expr(parser));
-            }
+                break;
             default:
                 return ast;
         }
@@ -65,18 +58,18 @@ Ast* parse_multiplicative_expr(Parser* parser) {
 
     while (1) {
         switch (token->type) {
-            case TOKEN_ASTERISK: {
+            case TOKEN_ASTERISK:
                 parser->index++;
                 ast = new_ast(AST_MUL, 2, ast, parse_primary_expr(parser));
-            }
-            case TOKEN_SLASH: {
+                break;
+            case TOKEN_SLASH:
                 parser->index++;
                 ast = new_ast(AST_DIV, 2, ast, parse_primary_expr(parser));
-            }
-            case TOKEN_PERCENT: {
+                break;
+            case TOKEN_PERCENT:
                 parser->index++;
                 ast = new_ast(AST_MOD, 2, ast, parse_primary_expr(parser));
-            }
+                break;
             default:
                 return ast;
         }
@@ -91,6 +84,7 @@ Ast* parse_primary_expr(Parser* parser) {
         case TOKEN_INT:
             parser->index++;
             ast = new_integer_ast(token->value_int);
+            break;
         default:
             fprintf("Error: unexpected token type %d", token->type);
             exit(1);

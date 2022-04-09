@@ -60,3 +60,14 @@ void* vector_at(Vector* vector, int index) {
 int vector_size(Vector* vector) {
     return vector->size;
 }
+
+void vector_extend(Vector* vector, Vector* other) {
+    for (int i = 0; i < other->size; i++) {
+        vector_push(vector, other->container[i]);
+    }
+
+    int size = 0, capacity = 1;
+    other->container = realloc(other->container, capacity * sizeof(void*));
+    other->size = size;
+    other->capacity = capacity;
+}
