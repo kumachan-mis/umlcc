@@ -34,9 +34,9 @@ Ast* parser_create_ast(Parser* parser) {
 
 Ast* parse_additive_expr(Parser* parser) {
     Ast* ast = parse_multiplicative_expr(parser);
-    Token* token = vector_at(parser->tokens, parser->index);
 
     while (1) {
+        Token* token = vector_at(parser->tokens, parser->index);
         switch (token->type) {
             case TOKEN_PLUS:
                 parser->index++;
@@ -54,9 +54,9 @@ Ast* parse_additive_expr(Parser* parser) {
 
 Ast* parse_multiplicative_expr(Parser* parser) {
     Ast* ast = parse_primary_expr(parser);
-    Token* token = vector_at(parser->tokens, parser->index);
 
     while (1) {
+        Token* token = vector_at(parser->tokens, parser->index);
         switch (token->type) {
             case TOKEN_ASTERISK:
                 parser->index++;
@@ -78,8 +78,8 @@ Ast* parse_multiplicative_expr(Parser* parser) {
 
 Ast* parse_primary_expr(Parser* parser) {
     Ast* ast = NULL;
-    Token* token = vector_at(parser->tokens, parser->index);
 
+    Token* token = vector_at(parser->tokens, parser->index);
     switch (token->type) {
         case TOKEN_INT:
             parser->index++;

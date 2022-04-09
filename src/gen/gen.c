@@ -66,8 +66,8 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
 
-    append_code(codes, "    popl %%edx\n");
-    append_code(codes, "    popl %%eax\n");
+    append_code(codes, "    popq %%rdx\n");
+    append_code(codes, "    popq %%rax\n");
 
     switch (ast->type) {
         case AST_ADD:
@@ -81,7 +81,7 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
             exit(1);
     }
 
-    append_code(codes, "    pushl %%eax\n");
+    append_code(codes, "    pushq %%rax\n");
 
     codegen->ast = ast;
     return codes;
@@ -102,8 +102,8 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
 
-    append_code(codes, "    popl %%edx\n");
-    append_code(codes, "    popl %%eax\n");
+    append_code(codes, "    popq %%rdx\n");
+    append_code(codes, "    popq %%rax\n");
 
     switch (ast->type) {
         case AST_MUL:
@@ -116,14 +116,14 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
         case AST_MOD:
             append_code(codes, "    cltd\n");
             append_code(codes, "    idivl %%edx\n");
-            append_code(codes, "    movel %%edx, %%eax\n");
+            append_code(codes, "    movl %%edx, %%eax\n");
             break;
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
             exit(1);
     }
 
-    append_code(codes, "    pushl %%eax\n");
+    append_code(codes, "    pushq %%rax\n");
 
     codegen->ast = ast;
     return codes;
@@ -135,7 +135,7 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
 
     switch (ast->type) {
         case AST_INT:
-            append_code(codes, "    pushl $%d", ast->value_int);
+            append_code(codes, "    pushq $%d\n", ast->value_int);
             break;
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
@@ -152,6 +152,7 @@ void append_code(Vector* codes, char* format, ...) {
     char* code = malloc((50 + 1) * sizeof(char));
     vsprintf(code, format, arg_ptr);
     code = realloc(code, (strlen(code) + 1) * sizeof(char));
+    vector_push(codes, code);
 
     va_end(arg_ptr);
 }

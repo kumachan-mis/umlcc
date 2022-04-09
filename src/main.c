@@ -33,9 +33,10 @@ int main(int argc, char *argv[]) {
 
     int codes_len = vector_size(codes);
     for (int i = 0; i < codes_len; i++) {
-        fprintf(dest, vector_at(codes, i));
+        fprintf(dest, "%s", vector_at(codes, i));
     }
 
+    fprintf(dest, "    popq  %%rax\n");
     fprintf(dest, "    popq  %%rbp\n");
     fprintf(dest, "    ret\n");
 

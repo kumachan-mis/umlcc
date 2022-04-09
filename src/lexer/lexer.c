@@ -37,6 +37,7 @@ Vector* lexer_read_tokens(Lexer* lexer) {
             fprintf(stderr, "Error: unexpected character %c\n", c);
             exit(1);
         } else if (token->type == TOKEN_EOF) {
+            vector_push(tokens, token);
             break;
         }
     
