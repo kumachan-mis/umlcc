@@ -4,6 +4,15 @@
 #include <string.h>
 #include <ctype.h>
 
+
+struct _Lexer {
+    FILE* _file_ptr;
+};
+
+Token* read_integer_constant(Lexer* lexer);
+Token* read_punctuator(Lexer* lexer);
+void   skip_white_spaces(Lexer* lexer);
+
 Lexer* new_lexer(FILE* file_ptr) {
     Lexer* lexer = malloc(sizeof(Lexer));
     lexer->_file_ptr = file_ptr;
@@ -14,50 +23,18 @@ void delete_lexer(Lexer* lexer) {
     free(lexer);
 }
 
-Token* read_next_token(Lexer* lexer) {
+Token* lexer_read_next_token(Lexer* lexer) {
+    Token* next_token = NULL;
     skip_white_spaces(lexer);
 
-    int c = fgetc(lexer->_file_ptr);
-    if (c == EOF) {
-        Token* next_token = new_reverved_token(TOKEN_EOF);
-        skip_white_spaces(lexer);
-        return next_token;
-    }
-
-    if (isdigit(c)) {
-        ungetc(c, lexer->_file_ptr);
-        Token* next_token = read_next_integer_token(lexer);
-        skip_white_spaces(lexer);
-        return next_token;
-    }
-
-    Token* next_token = NULL;
-    switch (c) {
-        case '+': {
-            next_token = new_reverved_token(TOKEN_PLUS);
-        }
-        case '-': {
-            next_token = new_reverved_token(TOKEN_MINUS);
-        }
-        case '*': {
-            next_token = new_reverved_token(TOKEN_ASTERISK);
-        }
-        case '/': {
-            next_token = new_reverved_token(TOKEN_SLASH);
-        }
-        case '%': {
-            next_token = new_reverved_token(TOKEN_PERCENT);
-        }
-        default: {
-            fprintf(stderr, "Error: unknown character %c", c);
-            exit(1);            
-        }
-    }
+    if (next_token != NULL) next_token = read_integer_constant(lexer);
+    if (next_token != NULL) next_token = read_punctuator(lexer);
+       
     skip_white_spaces(lexer);
     return next_token;
 }
 
-Token* read_next_integer_token(Lexer* lexer) {
+Token* read_integer_constant(Lexer* lexer) {
     int capacity = 1, length = 0;
     char* integer_str = malloc(sizeof(char) * capacity);
 
@@ -67,10 +44,7 @@ Token* read_next_integer_token(Lexer* lexer) {
         length++;
 
         if (length == capacity) {
-            char* new_integer_str = malloc(sizeof(char) * (2 * capacity));
-            memcpy(new_integer_str, integer_str, length);
-            free(integer_str);
-            integer_str = new_integer_str;
+            integer_str = realloc(integer_str, 2 * capacity * sizeof(char));
             capacity *= 2;
         }
 
@@ -79,7 +53,37 @@ Token* read_next_integer_token(Lexer* lexer) {
 
     integer_str[length] = '\0';
     ungetc(c, lexer->_file_ptr);
+
+    if (length == 0) return NULL;
     return new_integer_token(atoi(integer_str));
+}
+
+Token* read_punctuator(Lexer* lexer) {
+    Token* next_token = NULL;
+
+    int c = fgetc(lexer->_file_ptr);
+    switch (c) {
+        case '+': {
+            next_token = new_token(TOKEN_PLUS);
+        }
+        case '-': {
+            next_token = new_token(TOKEN_MINUS);
+        }
+        case '*': {
+            next_token = new_token(TOKEN_ASTERISK);
+        }
+        case '/': {
+            next_token = new_token(TOKEN_SLASH);
+        }
+        case '%': {
+            next_token = new_token(TOKEN_PERCENT);
+        }
+        case EOF: {
+            next_token = new_token(TOKEN_EOF);
+        }
+    }
+
+    return next_token;
 }
 
 void skip_white_spaces(Lexer* lexer) {

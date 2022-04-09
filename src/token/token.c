@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-Token* new_reverved_token(TokenType type) {
+Token* new_token(TokenType type) {
     Token* token = malloc(sizeof(Token));
     token->type = type;
     token->value_int = -1;
@@ -13,7 +13,7 @@ Token* new_reverved_token(TokenType type) {
 
 Token* new_integer_token(int value) {
     Token* token = malloc(sizeof(Token));
-    token->type = TOKEN_INTEGER;
+    token->type = TOKEN_INT;
     token->value_int = value;
     return token;
 }
