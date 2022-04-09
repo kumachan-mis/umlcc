@@ -6,7 +6,7 @@
 
 
 struct _Lexer {
-    FILE* _file_ptr;
+    FILE* file_ptr;
 };
 
 Token* read_integer_constant(Lexer* lexer);
@@ -15,7 +15,7 @@ void   skip_white_spaces(Lexer* lexer);
 
 Lexer* new_lexer(FILE* file_ptr) {
     Lexer* lexer = malloc(sizeof(Lexer));
-    lexer->_file_ptr = file_ptr;
+    lexer->file_ptr = file_ptr;
     return lexer;
 }
 
@@ -38,7 +38,7 @@ Token* read_integer_constant(Lexer* lexer) {
     int capacity = 1, length = 0;
     char* integer_str = malloc(sizeof(char) * capacity);
 
-    int c = fgetc(lexer->_file_ptr);
+    int c = fgetc(lexer->file_ptr);
     while (isdigit(c)) {
         integer_str[length] = c;
         length++;
@@ -48,11 +48,11 @@ Token* read_integer_constant(Lexer* lexer) {
             capacity *= 2;
         }
 
-        c = fgetc(lexer->_file_ptr);
+        c = fgetc(lexer->file_ptr);
     }
 
     integer_str[length] = '\0';
-    ungetc(c, lexer->_file_ptr);
+    ungetc(c, lexer->file_ptr);
 
     if (length == 0) return NULL;
     return new_integer_token(atoi(integer_str));
@@ -61,7 +61,7 @@ Token* read_integer_constant(Lexer* lexer) {
 Token* read_punctuator(Lexer* lexer) {
     Token* next_token = NULL;
 
-    int c = fgetc(lexer->_file_ptr);
+    int c = fgetc(lexer->file_ptr);
     switch (c) {
         case '+': {
             next_token = new_token(TOKEN_PLUS);
@@ -87,9 +87,9 @@ Token* read_punctuator(Lexer* lexer) {
 }
 
 void skip_white_spaces(Lexer* lexer) {
-    int c = fgetc(lexer->_file_ptr);
+    int c = fgetc(lexer->file_ptr);
     while (isspace(c)) {
-        c = fgetc(lexer->_file_ptr);
+        c = fgetc(lexer->file_ptr);
     }
-    ungetc(c, lexer->_file_ptr);
+    ungetc(c, lexer->file_ptr);
 }
