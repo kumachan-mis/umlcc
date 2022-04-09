@@ -30,7 +30,9 @@ void list_push(List* list, void* data) {
     }
     
     ListItem* tail = list->_head;
-    while (tail->_next != NULL) tail = tail->_next;
+    while (tail->_next != NULL) {
+        tail = tail->_next;
+    }
     tail->_next = item;
 }
 
@@ -45,7 +47,9 @@ void* list_pop(List* list) {
     }
 
     ListItem* before_tail = list->_head;
-    while (before_tail->_next->_next != NULL) before_tail = before_tail->_next;
+    while (before_tail->_next->_next != NULL) {
+        before_tail = before_tail->_next;
+    }
     void* data = before_tail->_next->_data;
     free(before_tail->_next);
     before_tail->_next = NULL;
