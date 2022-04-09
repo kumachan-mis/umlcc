@@ -24,6 +24,7 @@ int main(int argc, char *argv[]) {
     delete_parser(parser);
 
     Vector* codes = codegen_generate_code(codegen);
+    delete_codegen(codegen);
 
     fprintf(dest, "    .text\n");
     fprintf(dest, "    .global _main\n");
