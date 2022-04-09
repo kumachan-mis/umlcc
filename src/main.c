@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-int main() {
+int main(void) {
     FILE* asfile = fopen("umlcc.s", "w");
     fprintf(asfile, "    .text\n");
     fprintf(asfile, "    .global _main\n");

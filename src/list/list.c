@@ -2,6 +2,11 @@
 
 #include <stdlib.h>
 
+struct _ListItem {
+    void* _data;
+    struct _ListItem* _next;
+};
+
 List* new_list() {
     List* list = malloc(sizeof(List));
     list->_head = NULL;
@@ -68,7 +73,7 @@ void* list_at(List* list, int index) {
 int list_length(List* list) {
     int length = 0;
     ListItem* item = list->_head;
-    if (item != NULL) {
+    while (item != NULL) {
         item = item->_next;
         length++;
     }
