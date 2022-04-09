@@ -20,6 +20,6 @@ typedef struct _Token {
 Token* new_reverved_token(TokenType type);
 Token* new_integer_token(int value);
 Token* copy_token(Token* token);
-void delete_token(Token* token);
+void   delete_token(Token* token);
 
 #endif
