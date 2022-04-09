@@ -23,7 +23,7 @@ Parser* new_parser(Vector* tokens) {
 }
 
 void delete_parser(Parser* parser) {
-    delete_vector(parser->tokens, delete_token);
+    delete_vector(parser->tokens, (void (*)(void* item))delete_token);
     free(parser);
 }
 

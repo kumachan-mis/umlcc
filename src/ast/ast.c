@@ -44,6 +44,6 @@ Ast* copy_ast(Ast* ast) {
 }
 
 void delete_ast(Ast* ast) {
-    delete_vector(ast->children, delete_ast);
+    delete_vector(ast->children, (void (*)(void* item))delete_ast);
     free(ast);
 }
