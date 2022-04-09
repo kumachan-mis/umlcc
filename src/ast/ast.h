@@ -2,7 +2,7 @@
 #define _UMLCC_AST_H_
 
 
-#include "../vector/vector.h";
+#include "../vector/vector.h"
 
 typedef enum _AstType {
     AST_INT,
