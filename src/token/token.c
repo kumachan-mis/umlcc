@@ -4,20 +4,27 @@
 #include <string.h>
 
 
-Token* new_token(TokenType type, char* value) {
+Token* new_reverved_token(TokenType type) {
     Token* token = malloc(sizeof(Token));
     token->type = type;
-    token->value = value;
+    token->value_int = -1;
+    return token;
+}
+
+Token* new_integer_token(int value) {
+    Token* token = malloc(sizeof(Token));
+    token->type = TOKEN_INTEGER;
+    token->value_int = value;
     return token;
 }
 
 Token* copy_token(Token* token) {
-    char* value = malloc(sizeof(char) * (strlen(token->value) + 1));
-    strcpy(token->value, value);
-    return new_token(token->type, value);
+    Token* copied_token = malloc(sizeof(Token));
+    copied_token->type = token->type;
+    copied_token->value_int = token->value_int;
+    return copied_token;
 }
 
 void delete_token(Token* token) {
-    free(token->value);
     free(token);
 }

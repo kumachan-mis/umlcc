@@ -14,10 +14,11 @@ typedef enum _TokenType {
 
 typedef struct _Token {
     TokenType type;
-    char* value;
+    int value_int;
 } Token;
 
-Token* new_token(TokenType type, char* value);
+Token* new_reverved_token(TokenType type);
+Token* new_integer_token(int value);
 Token* copy_token(Token* token);
 void delete_token(Token* token);
 

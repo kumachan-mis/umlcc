@@ -6,11 +6,10 @@
 
 typedef struct _Lexer {
     FILE* _file_ptr;
-    int _position;
 } Lexer;
 
 Lexer* new_lexer(FILE* file_ptr);
-Token* read_next_token(Lexer* lexer);
 void delete_lexer(Lexer* lexer);
+Token* read_next_token(Lexer* lexer);
 
 #endif
