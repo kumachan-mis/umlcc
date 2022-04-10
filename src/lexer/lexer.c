@@ -4,18 +4,13 @@
 #include <string.h>
 #include <ctype.h>
 
-
-struct _Lexer {
-    FILE* file_ptr;
-};
-
 Token* read_integer_constant(Lexer* lexer);
 Token* read_punctuator(Lexer* lexer);
 void   skip_white_spaces(Lexer* lexer);
 
 Lexer* new_lexer(FILE* file_ptr) {
     Lexer* lexer = malloc(sizeof(Lexer));
-    lexer->file_ptr = file_ptr;
+    lexer->_file_ptr = file_ptr;
     return lexer;
 }
 
@@ -33,7 +28,7 @@ Vector* lexer_read_tokens(Lexer* lexer) {
         if (token == NULL) token = read_punctuator(lexer);
     
         if (token == NULL) {
-            int c = fgetc(lexer->file_ptr);
+            int c = fgetc(lexer->_file_ptr);
             fprintf(stderr, "Error: unexpected character %c\n", c);
             exit(1);
         } else if (token->type == TOKEN_EOF) {
@@ -52,10 +47,10 @@ Token* read_integer_constant(Lexer* lexer) {
     char* integer_str = malloc(sizeof(char) * capacity);
 
     while (1) {
-        int c = fgetc(lexer->file_ptr);
+        int c = fgetc(lexer->_file_ptr);
         if (!isdigit(c)) {
             integer_str[length] = '\0';
-            ungetc(c, lexer->file_ptr);
+            ungetc(c, lexer->_file_ptr);
             break;
         }
 
@@ -77,7 +72,7 @@ Token* read_integer_constant(Lexer* lexer) {
 Token* read_punctuator(Lexer* lexer) {
     Token* token = NULL;
 
-    int c = fgetc(lexer->file_ptr);
+    int c = fgetc(lexer->_file_ptr);
     switch (c) {
         case '(':
             token = new_token(TOKEN_LPALEN);
@@ -100,11 +95,14 @@ Token* read_punctuator(Lexer* lexer) {
         case '%':
             token = new_token(TOKEN_PERCENT);
             break;
+         case ';':
+            token = new_token(TOKEN_SEMICOLON);
+            break;
         case EOF: 
             token = new_token(TOKEN_EOF);
             break;
         default: 
-            ungetc(c, lexer->file_ptr);
+            ungetc(c, lexer->_file_ptr);
             token = NULL;
             break;
     }
@@ -113,9 +111,9 @@ Token* read_punctuator(Lexer* lexer) {
 }
 
 void skip_white_spaces(Lexer* lexer) {
-    int c = fgetc(lexer->file_ptr);
+    int c = fgetc(lexer->_file_ptr);
     while (isspace(c)) {
-        c = fgetc(lexer->file_ptr);
+        c = fgetc(lexer->_file_ptr);
     }
-    ungetc(c, lexer->file_ptr);
+    ungetc(c, lexer->_file_ptr);
 }

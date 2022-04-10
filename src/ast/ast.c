@@ -22,7 +22,7 @@ Ast* new_ast(AstType type, int num_children, ...) {
 
 Ast* new_integer_ast(int value) {
     Ast* ast = malloc(sizeof(Ast));
-    ast->type = AST_INT;
+    ast->type = AST_INT_EXPR;
     ast->value_int = value;
     ast->children = new_vector();
     return ast;

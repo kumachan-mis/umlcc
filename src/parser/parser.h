@@ -5,7 +5,10 @@
 #include "../vector/vector.h"
 
 
-typedef struct _Parser Parser;
+typedef struct _Parser {
+    Vector* _tokens;
+    int _index;
+} Parser;
 
 Parser* new_parser(Vector* tokens);
 void    delete_parser(Parser* parser);

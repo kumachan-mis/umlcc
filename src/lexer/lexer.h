@@ -7,7 +7,9 @@
 #include <stdio.h>
 
 
-typedef struct _Lexer Lexer;
+typedef struct _Lexer {
+    FILE* _file_ptr;
+} Lexer;
 
 Lexer* new_lexer(FILE* file_ptr);
 void   delete_lexer(Lexer* lexer);
