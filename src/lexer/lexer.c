@@ -4,6 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 
+Token* read_identifier(Lexer* lexer);
 Token* read_integer_constant(Lexer* lexer);
 Token* read_punctuator(Lexer* lexer);
 void   skip_white_spaces(Lexer* lexer);
@@ -24,6 +25,7 @@ Vector* lexer_read_tokens(Lexer* lexer) {
 
     while (1) {
         Token* token = NULL;
+        if (token == NULL) token = read_identifier(lexer);
         if (token == NULL) token = read_integer_constant(lexer);
         if (token == NULL) token = read_punctuator(lexer);
     
@@ -42,7 +44,43 @@ Vector* lexer_read_tokens(Lexer* lexer) {
     return tokens;
 }
 
+Token* read_identifier(Lexer* lexer) {
+    int initial_char = fgetc(lexer->_file_ptr);
+    if (!isalpha(initial_char) && initial_char != '_') {
+        ungetc(initial_char, lexer->_file_ptr);
+        return NULL;
+    }
+
+    int capacity = 1, length = 0;
+    char* identifier_str = malloc(sizeof(char) * capacity);
+
+    while (1) {
+        int c = fgetc(lexer->_file_ptr);
+        if (!isalpha(initial_char) && initial_char != '_' && !isdigit(c)) {
+            identifier_str[length] = '\0';
+            ungetc(c, lexer->_file_ptr);
+            break;
+        }
+
+        identifier_str[length] = c;
+        length++;
+        if (length >= capacity) {
+            identifier_str = realloc(identifier_str, 2 * capacity * sizeof(char));
+            capacity *= 2;
+        }
+    }
+
+    identifier_str = realloc(identifier_str, (length + 1) * sizeof(char));
+    return new_identifier_token(identifier_str);
+}
+
 Token* read_integer_constant(Lexer* lexer) {
+    int initial_char = fgetc(lexer->_file_ptr);
+    if (!isdigit(initial_char)) {
+        ungetc(initial_char, lexer->_file_ptr);
+        return NULL;
+    }
+
     int capacity = 1, length = 0;
     char* integer_str = malloc(sizeof(char) * capacity);
 
@@ -62,9 +100,7 @@ Token* read_integer_constant(Lexer* lexer) {
         }
     }
 
-    Token* token = NULL;
-    if (length > 0) token = new_integer_token(atoi(integer_str));
-
+    Token* token = new_integer_token(atoi(integer_str));
     free(integer_str);
     return token;
 }
