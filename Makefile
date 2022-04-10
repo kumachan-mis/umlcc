@@ -3,7 +3,6 @@ CC      = gcc-11
 CFLAGS  = -Wall -O3
 
 SRC_DIR = src
-INC_DIR = include
 BLD_DIR = build
 OBJ_DIR = $(BLD_DIR)/object
 DEP_DIR = $(BLD_DIR)/depend
@@ -16,7 +15,7 @@ DEP_EXT = .d
 MKDIR   = mkdir -p
 RM      = rm -rf
 
-SRCS    = $(wildcard $(SRC_DIR)/*$(SRC_EXT))
+SRCS    = $(wildcard $(SRC_DIR)/*$(SRC_EXT)) $(wildcard $(SRC_DIR)/**/*$(SRC_EXT))
 OBJS    = $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$(SRCS))
 DEPS    = $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(DEP_DIR)/%$(DEP_EXT),$(SRCS))
 
@@ -24,11 +23,11 @@ $(UMLCC): $(OBJS)
 	$(CC) $(CFLAGS) -o $(UMLCC) $(OBJS)
 
 $(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
-	$(MKDIR) $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(addprefix -I,$(INC_DIR)) -c $< -o $@
+	$(MKDIR) $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
-	$(MKDIR) $(DEP_DIR)
+	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -MP -MM $^ | sed 's|^\(.*\)\.o:|$(OBJ_DIR)/\1.o:|g' > $@
 
 -include $(DEPS)
