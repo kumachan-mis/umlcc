@@ -5,12 +5,12 @@
 #include "../vector/vector.h"
 
 typedef enum _AstType {
-    AST_INT,
-    AST_ADD,
-    AST_SUB,
-    AST_MUL,
-    AST_DIV,
-    AST_MOD,
+    AST_INT_EXPR,
+    AST_ADD_EXPR,
+    AST_SUB_EXPR,
+    AST_MUL_EXPR,
+    AST_DIV_EXPR,
+    AST_MOD_EXPR,
 } AstType;
 
 typedef struct _Ast {

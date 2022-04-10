@@ -47,11 +47,11 @@ Ast* parse_additive_expr(Parser* parser) {
         switch (token->type) {
             case TOKEN_PLUS:
                 parser->index++;
-                ast = new_ast(AST_ADD, 2, ast, parse_multiplicative_expr(parser));
+                ast = new_ast(AST_ADD_EXPR, 2, ast, parse_multiplicative_expr(parser));
                 break;
             case TOKEN_MINUS:
                 parser->index++;
-                ast = new_ast(AST_SUB, 2, ast, parse_multiplicative_expr(parser));
+                ast = new_ast(AST_SUB_EXPR, 2, ast, parse_multiplicative_expr(parser));
                 break;
             default:
                 return ast;
@@ -67,15 +67,15 @@ Ast* parse_multiplicative_expr(Parser* parser) {
         switch (token->type) {
             case TOKEN_ASTERISK:
                 parser->index++;
-                ast = new_ast(AST_MUL, 2, ast, parse_primary_expr(parser));
+                ast = new_ast(AST_MUL_EXPR, 2, ast, parse_primary_expr(parser));
                 break;
             case TOKEN_SLASH:
                 parser->index++;
-                ast = new_ast(AST_DIV, 2, ast, parse_primary_expr(parser));
+                ast = new_ast(AST_DIV_EXPR, 2, ast, parse_primary_expr(parser));
                 break;
             case TOKEN_PERCENT:
                 parser->index++;
-                ast = new_ast(AST_MOD, 2, ast, parse_primary_expr(parser));
+                ast = new_ast(AST_MOD_EXPR, 2, ast, parse_primary_expr(parser));
                 break;
             default:
                 return ast;
