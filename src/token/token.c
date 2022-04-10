@@ -18,6 +18,7 @@ Token* new_identifier_token(char* name) {
     token->type = TOKEN_IDENT;
     token->ident_name = name;
     token->value_int = -1;
+    return token;
 }
 
 Token* new_integer_token(int value) {
