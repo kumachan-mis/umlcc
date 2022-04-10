@@ -10,6 +10,7 @@ typedef enum _TokenType {
     TOKEN_ASTERISK,
     TOKEN_SLASH,
     TOKEN_PERCENT,
+    TOKEN_SEMICOLON,
     TOKEN_EOF,
 } TokenType;
 
