@@ -51,21 +51,21 @@ Token* read_integer_constant(Lexer* lexer) {
     int capacity = 1, length = 0;
     char* integer_str = malloc(sizeof(char) * capacity);
 
-    int c = fgetc(lexer->file_ptr);
-    while (isdigit(c)) {
+    while (1) {
+        int c = fgetc(lexer->file_ptr);
+        if (!isdigit(c)) {
+            integer_str[length] = '\0';
+            ungetc(c, lexer->file_ptr);
+            break;
+        }
+
         integer_str[length] = c;
         length++;
-
         if (length >= capacity) {
             integer_str = realloc(integer_str, 2 * capacity * sizeof(char));
             capacity *= 2;
         }
-
-        c = fgetc(lexer->file_ptr);
     }
-    ungetc(c, lexer->file_ptr);
-    integer_str[length] = '\0';
-    integer_str = realloc(integer_str, (length + 1) * sizeof(char));
 
     Token* token = NULL;
     if (length > 0) token = new_integer_token(atoi(integer_str));
