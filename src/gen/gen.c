@@ -7,10 +7,6 @@
 #include <string.h>
 
 
-struct _Codegen {
-    Ast* ast;
-};
-
 Vector* gen_additive_expr_code(Codegen* codegen);
 Vector* gen_multiplicative_expr_code(Codegen* codegen);
 Vector* gen_primary_expr_code(Codegen* codegen);
@@ -18,18 +14,18 @@ void append_code(Vector* codes, char* format, ...);
 
 Codegen* new_codegen(Ast* ast) {
     Codegen* codegen = malloc(sizeof(Codegen));
-    codegen->ast = ast;
+    codegen->_ast = ast;
     return codegen;
 }
 
 void delete_codegen(Codegen* codegen) {
-    delete_ast(codegen->ast);
+    delete_ast(codegen->_ast);
     free(codegen);
 }
 
 Vector* codegen_generate_code(Codegen* codegen) {
     Vector* codes = NULL;
-    Ast* ast = codegen->ast;
+    Ast* ast = codegen->_ast;
 
     switch (ast->type) {
         case AST_ADD_EXPR:
@@ -54,14 +50,14 @@ Vector* codegen_generate_code(Codegen* codegen) {
 Vector* gen_additive_expr_code(Codegen* codegen) {
     Vector* codes = new_vector();
     Vector* sub_codes = NULL;
-    Ast* ast = codegen->ast;
+    Ast* ast = codegen->_ast;
 
-    codegen->ast = vector_at(ast->children, 0);
+    codegen->_ast = vector_at(ast->children, 0);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
 
-    codegen->ast = vector_at(ast->children, 1);
+    codegen->_ast = vector_at(ast->children, 1);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
@@ -83,21 +79,21 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
 
     append_code(codes, "    pushq %%rax\n");
 
-    codegen->ast = ast;
+    codegen->_ast = ast;
     return codes;
 }
 
 Vector* gen_multiplicative_expr_code(Codegen* codegen) {
     Vector* codes = new_vector();
     Vector* sub_codes = NULL;
-    Ast* ast = codegen->ast;
+    Ast* ast = codegen->_ast;
 
-    codegen->ast = vector_at(ast->children, 0);
+    codegen->_ast = vector_at(ast->children, 0);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
 
-    codegen->ast = vector_at(ast->children, 1);
+    codegen->_ast = vector_at(ast->children, 1);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
@@ -125,13 +121,13 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
 
     append_code(codes, "    pushq %%rax\n");
 
-    codegen->ast = ast;
+    codegen->_ast = ast;
     return codes;
 }
 
 Vector* gen_primary_expr_code(Codegen* codegen) {
     Vector* codes = new_vector();
-    Ast* ast = codegen->ast;
+    Ast* ast = codegen->_ast;
 
     switch (ast->type) {
         case AST_INT_EXPR:

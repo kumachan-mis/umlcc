@@ -5,6 +5,7 @@
 #include "../vector/vector.h"
 
 typedef enum _AstType {
+    AST_EXPR_STMT,
     AST_INT_EXPR,
     AST_ADD_EXPR,
     AST_SUB_EXPR,

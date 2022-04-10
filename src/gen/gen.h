@@ -5,7 +5,9 @@
 #include "../ast/ast.h"
 
 
-typedef struct _Codegen Codegen;
+typedef struct _Codegen {
+    Ast* _ast;
+} Codegen;
 
 Codegen* new_codegen(Ast* ast);
 void     delete_codegen(Codegen* codegen);

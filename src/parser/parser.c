@@ -6,11 +6,6 @@
 #include <stdlib.h>
 
 
-struct _Parser {
-    Vector* tokens;
-    int index;
-};
-
 Ast* parse_expr(Parser* parser);
 Ast* parse_additive_expr(Parser* parser);
 Ast* parse_multiplicative_expr(Parser* parser);
@@ -19,13 +14,13 @@ void consume_token(Parser* parser, TokenType token_type);
 
 Parser* new_parser(Vector* tokens) {
     Parser* parser = malloc(sizeof(Parser));
-    parser->tokens = tokens;
-    parser->index = 0;
+    parser->_tokens = tokens;
+    parser->_index = 0;
     return parser;
 }
 
 void delete_parser(Parser* parser) {
-    delete_vector(parser->tokens, (void (*)(void* item))delete_token);
+    delete_vector(parser->_tokens, (void (*)(void* item))delete_token);
     free(parser);
 }
 
@@ -43,14 +38,14 @@ Ast* parse_additive_expr(Parser* parser) {
     Ast* ast = parse_multiplicative_expr(parser);
 
     while (1) {
-        Token* token = vector_at(parser->tokens, parser->index);
+        Token* token = vector_at(parser->_tokens, parser->_index);
         switch (token->type) {
             case TOKEN_PLUS:
-                parser->index++;
+                parser->_index++;
                 ast = new_ast(AST_ADD_EXPR, 2, ast, parse_multiplicative_expr(parser));
                 break;
             case TOKEN_MINUS:
-                parser->index++;
+                parser->_index++;
                 ast = new_ast(AST_SUB_EXPR, 2, ast, parse_multiplicative_expr(parser));
                 break;
             default:
@@ -63,18 +58,18 @@ Ast* parse_multiplicative_expr(Parser* parser) {
     Ast* ast = parse_primary_expr(parser);
 
     while (1) {
-        Token* token = vector_at(parser->tokens, parser->index);
+        Token* token = vector_at(parser->_tokens, parser->_index);
         switch (token->type) {
             case TOKEN_ASTERISK:
-                parser->index++;
+                parser->_index++;
                 ast = new_ast(AST_MUL_EXPR, 2, ast, parse_primary_expr(parser));
                 break;
             case TOKEN_SLASH:
-                parser->index++;
+                parser->_index++;
                 ast = new_ast(AST_DIV_EXPR, 2, ast, parse_primary_expr(parser));
                 break;
             case TOKEN_PERCENT:
-                parser->index++;
+                parser->_index++;
                 ast = new_ast(AST_MOD_EXPR, 2, ast, parse_primary_expr(parser));
                 break;
             default:
@@ -86,14 +81,14 @@ Ast* parse_multiplicative_expr(Parser* parser) {
 Ast* parse_primary_expr(Parser* parser) {
     Ast* ast = NULL;
 
-    Token* token = vector_at(parser->tokens, parser->index);
+    Token* token = vector_at(parser->_tokens, parser->_index);
     switch (token->type) {
         case TOKEN_INT:
-            parser->index++;
+            parser->_index++;
             ast = new_integer_ast(token->value_int);
             break;
         case TOKEN_LPALEN:
-            parser->index++;
+            parser->_index++;
             ast = parse_expr(parser);
             consume_token(parser, TOKEN_RPALEN);
             break;
@@ -106,9 +101,9 @@ Ast* parse_primary_expr(Parser* parser) {
 }
 
 void consume_token(Parser* parser, TokenType token_type) {
-    Token* token = vector_at(parser->tokens, parser->index);
+    Token* token = vector_at(parser->_tokens, parser->_index);
     if (token->type == token_type) {
-        parser->index++;
+        parser->_index++;
         return;
     }
     fprintf(stderr, "Error: unexpected token type %d\n", token->type);
