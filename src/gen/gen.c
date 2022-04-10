@@ -21,6 +21,9 @@ Vector* codegen_generate_code(Codegen* codegen) {
     Ast* ast = codegen->_ast;
 
     switch (ast->type) {
+        case AST_CMPD_STMT:
+            codes = gen_compound_stmt_code(codegen);
+            break;
         case AST_EXPR_STMT:
             codes = gen_expression_stmt_code(codegen);
             break;
