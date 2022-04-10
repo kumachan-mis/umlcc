@@ -2,6 +2,7 @@
 #define _UMLCC_TOKEN_H_
 
 typedef enum _TokenType {
+    TOKEN_KEYWORD_INT,
     TOKEN_IDENT,
     TOKEN_INT,
     TOKEN_LPALEN,

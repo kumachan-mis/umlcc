@@ -4,7 +4,7 @@
 #include "../lexer/lexer.h"
 
 
-Token* read_identifier(Lexer* lexer);
+Token* read_keyword_or_identifier(Lexer* lexer);
 Token* read_integer_constant(Lexer* lexer);
 Token* read_punctuator(Lexer* lexer);
 

@@ -2,17 +2,26 @@
 #include "./util.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 
 
-int identifier_startswith(char c);
-int identifier_consistsof(char c);
+int keyword_or_identifier_startswith(char c);
+int keyword_or_identifier_consistsof(char c);
 int integer_constant_startswith(char c);
 int integer_constant_consistsof(char c);
 
-Token* read_identifier(Lexer* lexer) {
-    char* identifier_str = read_token_str(lexer, identifier_startswith, identifier_consistsof);
-    return new_identifier_token(identifier_str);
+Token* read_keyword_or_identifier(Lexer* lexer) {
+    char* keyword_or_identifier_str = read_token_str(
+        lexer, keyword_or_identifier_startswith, keyword_or_identifier_consistsof
+    );
+
+    if (strcmp(keyword_or_identifier_str, "int") == 0) {
+        free(keyword_or_identifier_str);
+        return new_token(TOKEN_KEYWORD_INT);
+    }
+
+    return new_identifier_token(keyword_or_identifier_str);
 }
 
 int identifier_startswith(char c) {
@@ -24,7 +33,9 @@ int identifier_consistsof(char c) {
 }
 
 Token* read_integer_constant(Lexer* lexer) {
-    char* integer_str = read_token_str(lexer, integer_constant_startswith, integer_constant_consistsof);
+    char* integer_str = read_token_str(
+        lexer, integer_constant_startswith, integer_constant_consistsof
+    );
     Token* token = new_integer_token(atoi(integer_str));
     free(integer_str);
     return token;

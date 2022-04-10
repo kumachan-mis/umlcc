@@ -21,7 +21,7 @@ Vector* lexer_read_tokens(Lexer* lexer) {
 
     while (1) {
         Token* token = NULL;
-        if (token == NULL) token = read_identifier(lexer);
+        if (token == NULL) token = read_keyword_or_identifier(lexer);
         if (token == NULL) token = read_integer_constant(lexer);
         if (token == NULL) token = read_punctuator(lexer);
     
