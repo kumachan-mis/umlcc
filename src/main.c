@@ -37,7 +37,6 @@ int main(int argc, char *argv[]) {
         fprintf(dest, "%s", (char*)vector_at(codes, i));
     }
 
-    fprintf(dest, "    popq  %%rax\n");
     fprintf(dest, "    popq  %%rbp\n");
     fprintf(dest, "    ret\n");
 

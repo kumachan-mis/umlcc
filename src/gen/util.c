@@ -1,5 +1,8 @@
 #include "../vector/vector.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdarg.h>
 
 void append_code(Vector* codes, char* format, ...) {

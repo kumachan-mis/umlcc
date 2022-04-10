@@ -22,7 +22,7 @@ Vector* codegen_generate_code(Codegen* codegen) {
 
     switch (ast->type) {
         case AST_EXPR_STMT:
-            codes = gen_additive_expr_code(codegen);
+            codes = gen_expression_stmt_code(codegen);
             break;
         case AST_ADD_EXPR:
         case AST_SUB_EXPR:

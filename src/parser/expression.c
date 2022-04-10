@@ -3,6 +3,7 @@
 #include "../token/token.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 
 Ast* parse_additive_expr(Parser* parser);
