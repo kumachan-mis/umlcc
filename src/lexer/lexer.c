@@ -137,8 +137,11 @@ Token* read_punctuator(Lexer* lexer) {
         case '%':
             token = new_token(TOKEN_PERCENT);
             break;
-         case ';':
+        case ';':
             token = new_token(TOKEN_SEMICOLON);
+            break;
+        case '=':
+            token = new_token(TOKEN_EQUAL);
             break;
         case EOF: 
             token = new_token(TOKEN_EOF);

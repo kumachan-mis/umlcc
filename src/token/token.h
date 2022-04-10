@@ -14,6 +14,7 @@ typedef enum _TokenType {
     TOKEN_SLASH,
     TOKEN_PERCENT,
     TOKEN_SEMICOLON,
+    TOKEN_EQUAL,
     TOKEN_EOF,
 } TokenType;
 
