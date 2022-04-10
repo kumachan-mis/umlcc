@@ -79,6 +79,12 @@ Token* read_punctuator(Lexer* lexer) {
 
     int c = fgetc(lexer->file_ptr);
     switch (c) {
+        case '(':
+            token = new_token(TOKEN_LPALEN);
+            break;
+        case ')':
+            token = new_token(TOKEN_RPALEN);
+            break;
         case '+': 
             token = new_token(TOKEN_PLUS);
             break;
