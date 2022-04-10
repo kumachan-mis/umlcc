@@ -1,3 +1,4 @@
+#include "./declaration.h"
 #include "./statement.h"
 #include "./expression.h"
 #include "./util.h"
@@ -21,7 +22,11 @@ Ast* parse_compound_stmt(Parser* parser) {
             parser->_index++;
             return ast;
         }
-        vector_push(ast->children, parse_expression_stmt(parser));
+        if (should_decl(parser)) {
+            vector_push(ast->children, parse_decl(parser));
+        } else {
+            vector_push(ast->children, parse_stmt(parser));
+        }
     }
 }
 

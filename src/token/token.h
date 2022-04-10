@@ -2,9 +2,16 @@
 #define _UMLCC_TOKEN_H_
 
 typedef enum _TokenType {
+    // keyword
     TOKEN_KEYWORD_INT,
+
+    // identifier
     TOKEN_IDENT,
+
+    // constant
     TOKEN_INT,
+
+    // punctuator
     TOKEN_LPALEN,
     TOKEN_RPALEN,
     TOKEN_LBRACE,
@@ -16,6 +23,7 @@ typedef enum _TokenType {
     TOKEN_PERCENT,
     TOKEN_SEMICOLON,
     TOKEN_EQUAL,
+    TOKEN_COMMA,
     TOKEN_EOF,
 } TokenType;
 

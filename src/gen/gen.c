@@ -36,7 +36,7 @@ Vector* codegen_generate_code(Codegen* codegen) {
         case AST_MOD_EXPR:
             codes = gen_multiplicative_expr_code(codegen);
             break;
-        case AST_INT_EXPR:
+        case AST_INT:
             codes = gen_primary_expr_code(codegen);
             break;
         default:

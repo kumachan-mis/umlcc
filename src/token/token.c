@@ -38,7 +38,7 @@ Token* copy_token(Token* token) {
 }
 
 void delete_token(Token* token) {
-    free(token->ident_name);
+    if (token->ident_name != NULL) free(token->ident_name);
     free(token);
 }
 

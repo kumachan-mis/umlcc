@@ -88,7 +88,7 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
     Ast* ast = codegen->_ast;
 
     switch (ast->type) {
-        case AST_INT_EXPR:
+        case AST_INT:
             append_code(codes, "    pushq $%d\n", ast->value_int);
             break;
         default:
