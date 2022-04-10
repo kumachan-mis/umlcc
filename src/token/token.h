@@ -5,6 +5,8 @@ typedef enum _TokenType {
     TOKEN_INT,
     TOKEN_LPALEN,
     TOKEN_RPALEN,
+    TOKEN_LBRACE,
+    TOKEN_RBRACE,
     TOKEN_PLUS,
     TOKEN_MINUS,
     TOKEN_ASTERISK,
