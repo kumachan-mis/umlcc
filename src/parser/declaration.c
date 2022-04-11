@@ -18,13 +18,19 @@ int should_decl(Parser* parser) {
 Ast* parse_decl(Parser* parser) {
     Ast* ast = new_ast(AST_DECL, 1, parse_declaration_specifiers(parser));
 
+    Token* token = vector_at(parser->_tokens, parser->_index);
+    if (token->type == TOKEN_SEMICOLON) {
+        parser->_index++;
+        return ast;
+    }
+
     while (1) {
-        Token* token = vector_at(parser->_tokens, parser->_index);
+        vector_push(ast->children, parse_init_declarator(parser));
+        token = vector_at(parser->_tokens, parser->_index);
         if (token->type == TOKEN_SEMICOLON) {
             parser->_index++;
             return ast;
         }
-        vector_push(ast->children, parse_init_declarator(parser));
         consume_token(parser, TOKEN_COMMA);
     }
 }
