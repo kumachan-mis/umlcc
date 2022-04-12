@@ -21,12 +21,16 @@ Vector* codegen_generate_code(Codegen* codegen) {
     Ast* ast = codegen->_ast;
 
     switch (ast->type) {
+        case AST_DECL:
+            break;
         case AST_CMPD_STMT:
             codes = gen_compound_stmt_code(codegen);
             break;
         case AST_EXPR_STMT:
             codes = gen_expression_stmt_code(codegen);
             break;
+        case AST_ASSIGN_EXPR:
+            codes = gen_assignment_expr_code(codegen);
         case AST_ADD_EXPR:
         case AST_SUB_EXPR:
             codes = gen_additive_expr_code(codegen);
