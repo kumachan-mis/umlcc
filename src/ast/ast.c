@@ -1,10 +1,11 @@
 #include "./ast.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include <stdarg.h>
 
 
-char* copy_ident_name(char* ident_name);
+char* copy_ast_ident_name(char* ident_name);
 
 Ast* new_ast(AstType type, int num_children, ...) {
     Ast* ast = malloc(sizeof(Ast));
@@ -44,7 +45,7 @@ Ast* new_integer_ast(int value) {
 Ast* copy_ast(Ast* ast) {
     Ast* copied_ast = malloc(sizeof(Ast));
     copied_ast->type = ast->type;
-    copied_ast->ident_name = copy_ident_name(ast->ident_name);
+    copied_ast->ident_name = copy_ast_ident_name(ast->ident_name);
     copied_ast->value_int = ast->value_int;
     copied_ast->children = new_vector();
 
@@ -63,7 +64,7 @@ void delete_ast(Ast* ast) {
     free(ast);
 }
 
-char* copy_ident_name(char* ident_name) {
+char* copy_ast_ident_name(char* ident_name) {
     if (ident_name == NULL) return NULL;
     char* copied_ident_name = malloc((strlen(ident_name) + 1) * sizeof(char));
     strcpy(copied_ident_name, ident_name);

@@ -5,6 +5,10 @@
 #include <stdlib.h>
 
 
+Vector* gen_assignment_expr_code(Codegen* codegen) {
+
+}
+
 Vector* gen_additive_expr_code(Codegen* codegen) {
     Vector* codes = new_vector();
     Vector* sub_codes = NULL;

@@ -24,11 +24,11 @@ Token* read_keyword_or_identifier(Lexer* lexer) {
     return new_identifier_token(keyword_or_identifier_str);
 }
 
-int identifier_startswith(char c) {
+int keyword_or_identifier_startswith(char c) {
     return isalpha(c) || c == '_';
 }
 
-int identifier_consistsof(char c) {
+int keyword_or_identifier_consistsof(char c) {
     return isdigit(c) || isalpha(c) || c == '_';
 }
 
