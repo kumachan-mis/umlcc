@@ -6,14 +6,48 @@
 #include <stdlib.h>
 
 
+Ast* parse_assignment_expr(Parser* parser);
 Ast* parse_additive_expr(Parser* parser);
 Ast* parse_multiplicative_expr(Parser* parser);
 Ast* parse_primary_expr(Parser* parser);
 
 
 Ast* parse_expr(Parser* parser) {
-    Ast* ast = parse_additive_expr(parser);
+    Ast* ast = parse_assignment_expr(parser);
     return ast;
+}
+
+Ast* parse_assignment_expr(Parser* parser) {
+   Vector* stack = new_vector();
+   int terminated = 0;
+
+    while (!terminated) {
+        int index = parser->_index;
+        Ast* ast = parse_primary_expr(parser);
+
+        Token* token = vector_at(parser->_tokens, parser->_index);
+        switch (token->type) {
+            case TOKEN_EQUAL:
+                parser->_index++;
+                vector_push(stack, new_ast(AST_ASSIGN_EXPR, 0, ast));
+                break;
+            default:
+                delete_ast(ast);
+                parser->_index = index;
+                vector_push(stack, parse_additive_expr(parser));
+                terminated = 1;
+                break;
+        }
+   }
+
+   Ast* ast = vector_pop(stack);
+   while (vector_size(stack) > 0) {
+       Ast* sub_ast = vector_pop(stack);
+       vector_push(sub_ast->children, ast);
+       ast = sub_ast;
+   }
+
+   return ast;
 }
 
 Ast* parse_additive_expr(Parser* parser) {

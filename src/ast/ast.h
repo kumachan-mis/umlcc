@@ -24,6 +24,7 @@ typedef enum _AstType {
     AST_EXPR_STMT,
 
     // expression
+    AST_ASSIGN_EXPR,
     AST_ADD_EXPR,
     AST_SUB_EXPR,
     AST_MUL_EXPR,
