@@ -9,7 +9,7 @@ void test_vector_pop();
 
 int main(void) {
     test_vector_push();
-     test_vector_pop();
+    test_vector_pop();
 }
 
 void test_vector_push() {
