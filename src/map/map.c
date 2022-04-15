@@ -90,6 +90,7 @@ void map_erase(Map* map, char* key, void delete_value(void* value)) {
     while (cell != NULL){
         if (!cell->deleted && strcmp(cell->key, key) == 0) {
             mapcell_markas_deleted(cell, delete_value);
+            return;
         }
         hash = map_calculate_next_hash(map, key, hash);
         cell = map->container[hash];
