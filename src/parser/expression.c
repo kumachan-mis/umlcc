@@ -43,9 +43,9 @@ Ast* parse_assignment_expr(Parser* parser) {
 
    Ast* ast = vector_pop(stack);
    while (vector_size(stack) > 0) {
-       Ast* sub_ast = vector_pop(stack);
-       vector_push(sub_ast->children, ast);
-       ast = sub_ast;
+       Ast* next_ast = vector_pop(stack);
+       vector_push(next_ast->children, ast);
+       ast = next_ast;
    }
 
    return ast;
