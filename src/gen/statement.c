@@ -7,6 +7,7 @@
 Vector* gen_compound_stmt_code(Codegen* codegen) {
     Vector* codes = new_vector();
     Ast* ast = codegen->_ast;
+    codegen->_table = symboltable_enter_scope(codegen->_table);
 
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
@@ -16,6 +17,7 @@ Vector* gen_compound_stmt_code(Codegen* codegen) {
         delete_vector(sub_codes, free);
     }
 
+    codegen->_table = symboltable_exit_scope(codegen->_table);
     codegen->_ast = ast;
     return codes;
 }

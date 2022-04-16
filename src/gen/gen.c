@@ -8,6 +8,7 @@
 Codegen* new_codegen(Ast* ast) {
     Codegen* codegen = malloc(sizeof(Codegen));
     codegen->_ast = ast;
+    codegen->_table = new_symboltable();
     return codegen;
 }
 
