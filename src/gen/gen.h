@@ -3,10 +3,12 @@
 
 #include "../vector/vector.h"
 #include "../ast/ast.h"
+#include "../symtab/symtab.h"
 
 
 typedef struct _Codegen {
-    Ast* _ast;
+    Ast*         _ast;
+    SymbolTable* _table;
 } Codegen;
 
 Codegen* new_codegen(Ast* ast);
