@@ -4,12 +4,14 @@
 #include "./util.h"
 
 
-Ast* parse_compound_stmt(Parser* parser);
-Ast* parse_expression_stmt(Parser* parser);
-
 Ast* parse_stmt(Parser* parser) {
-    Ast* ast = parse_compound_stmt(parser);
-    return ast;
+    Token* token = vector_at(parser->_tokens, parser->_index);
+    switch (token->type) {
+        case TOKEN_LBRACE:
+            return parse_compound_stmt(parser);
+        default:
+            return parse_expression_stmt(parser);
+    }
 }
 
 Ast* parse_compound_stmt(Parser* parser) {
@@ -25,7 +27,7 @@ Ast* parse_compound_stmt(Parser* parser) {
         if (should_decl(parser)) {
             vector_push(ast->children, parse_decl(parser));
         } else {
-            vector_push(ast->children, parse_expression_stmt(parser));
+            vector_push(ast->children, parse_stmt(parser));
         }
     }
 }

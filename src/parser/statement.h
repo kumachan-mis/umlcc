@@ -5,5 +5,7 @@
 
 
 Ast* parse_stmt(Parser* parser);
+Ast* parse_compound_stmt(Parser* parser);
+Ast* parse_expression_stmt(Parser* parser);
 
 #endif

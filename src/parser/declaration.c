@@ -6,14 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-Ast* parse_declaration_specifiers(Parser* parser);
-Ast* parse_init_declarator(Parser* parser);
-Ast* parse_declarator(Parser* parser);
-
-int should_decl(Parser* parser) {
-    Token* token = vector_at(parser->_tokens, parser->_index);
-    return token->type == TOKEN_KEYWORD_INT;
-}
 
 Ast* parse_decl(Parser* parser) {
     Ast* ast = new_ast(AST_DECL, 1, parse_declaration_specifiers(parser));
@@ -67,4 +59,9 @@ Ast* parse_declarator(Parser* parser) {
             fprintf(stderr, "Error: unexpected token type %d\n", token->type);
             exit(1);
     }
+}
+
+int should_decl(Parser* parser) {
+    Token* token = vector_at(parser->_tokens, parser->_index);
+    return token->type == TOKEN_KEYWORD_INT;
 }

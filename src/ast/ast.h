@@ -5,11 +5,11 @@
 #include "../vector/vector.h"
 
 typedef enum _AstType {
-    // identifier
-    AST_IDENT,
+    // translation unit
+    AST_TRAS_UNIT,
 
-    // constant
-    AST_INT,
+    // function definition
+    AST_FUNC_DEF,
 
     // declaration
     AST_DECL,
@@ -30,6 +30,12 @@ typedef enum _AstType {
     AST_MUL_EXPR,
     AST_DIV_EXPR,
     AST_MOD_EXPR,
+
+    // identifier
+    AST_IDENT,
+
+    // constant
+    AST_INT,
 } AstType;
 
 typedef struct _Ast {

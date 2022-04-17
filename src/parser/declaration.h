@@ -4,7 +4,10 @@
 #include "./parser.h"
 
 
-int  should_decl(Parser* parser);
 Ast* parse_decl(Parser* parser);
+Ast* parse_declaration_specifiers(Parser* parser);
+Ast* parse_init_declarator(Parser* parser);
+Ast* parse_declarator(Parser* parser);
+int  should_decl(Parser* parser);
 
 #endif
