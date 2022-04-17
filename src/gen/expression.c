@@ -91,20 +91,20 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
 
-    append_code(codes, "    popq %%rdx\n");
+    append_code(codes, "    popq %%rcx\n");
     append_code(codes, "    popq %%rax\n");
 
     switch (ast->type) {
         case AST_MUL_EXPR:
-            append_code(codes, "    imull %%edx, %%eax\n");
+            append_code(codes, "    imull %%ecx, %%eax\n");
             break;
         case AST_DIV_EXPR:
             append_code(codes, "    cltd\n");
-            append_code(codes, "    idivl %%edx\n");
+            append_code(codes, "    idivl %%ecx\n");
             break;
         case AST_MOD_EXPR:
             append_code(codes, "    cltd\n");
-            append_code(codes, "    idivl %%edx\n");
+            append_code(codes, "    idivl %%ecx\n");
             append_code(codes, "    movl %%edx, %%eax\n");
             break;
         default:
