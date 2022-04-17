@@ -90,6 +90,9 @@ Token* read_punctuator(Lexer* lexer) {
         case '=':
             token = new_token(TOKEN_EQUAL);
             break;
+        case ',':
+            token = new_token(TOKEN_COMMA);
+            break;
         case EOF: 
             token = new_token(TOKEN_EOF);
             break;

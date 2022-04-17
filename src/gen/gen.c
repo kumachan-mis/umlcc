@@ -16,6 +16,7 @@ Codegen* new_codegen(Ast* ast) {
 
 void delete_codegen(Codegen* codegen) {
     delete_ast(codegen->_ast);
+    delete_symboltable(codegen->_table);
     free(codegen);
 }
 

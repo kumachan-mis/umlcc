@@ -25,13 +25,9 @@ void delete_symboltable(SymbolTable* table) {
 
 void symboltable_define_symbol(SymbolTable* table, char* name) {
     if (map_get(table->_symbol_map, name) != NULL) return;
-
     table->_memory_offset += 4; // sizeof(int)
-    char* key_name = malloc((strlen(name) + 1) * sizeof(char));
-    strcpy(key_name, name);
-
     Symbol* symbol = new_symbol(name, table->_memory_offset);
-    map_set(table->_symbol_map, key_name, symbol, (void (*)(void* value))delete_symbol);
+    map_set(table->_symbol_map, name, symbol, (void (*)(void* value))delete_symbol);
 }
 
 Symbol* symboltable_search_symbol(SymbolTable* table, char* name) {
