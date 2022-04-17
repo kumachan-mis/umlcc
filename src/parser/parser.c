@@ -2,7 +2,6 @@
 #include "./statement.h"
 #include "../token/token.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 
 Parser* new_parser(Vector* tokens) {

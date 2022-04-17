@@ -4,8 +4,10 @@
 #include "./gen.h"
 
 
+Vector* gen_assignment_expr_code(Codegen* codegen);
 Vector* gen_additive_expr_code(Codegen* codegen);
 Vector* gen_multiplicative_expr_code(Codegen* codegen);
 Vector* gen_primary_expr_code(Codegen* codegen);
+Vector* gen_assignee_primary_expr_code(Codegen* codegen);
 
 #endif

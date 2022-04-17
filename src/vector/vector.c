@@ -29,10 +29,7 @@ void delete_vector(Vector* vector, void delete_item(void* item)) {
 
 void vector_push(Vector* vector, void* item) {
     if (vector->size >= vector->capacity) {
-        vector->container = realloc(
-            vector->container,
-            2 * vector->capacity * sizeof(void*)
-        );
+        vector->container = realloc(vector->container, 2 * vector->capacity * sizeof(void*));
         vector->capacity *= 2;
     }
     vector->container[vector->size] = item;
@@ -43,10 +40,7 @@ void* vector_pop(Vector* vector) {
     void* item = vector->container[vector->size - 1];
     vector->size--;
     if (vector->capacity > 1 && 2 * vector->size < vector->capacity) {
-        vector->container = realloc(
-            vector->container,
-            vector->capacity / 2 * sizeof(void*)
-        );
+        vector->container = realloc(vector->container, vector->capacity / 2 * sizeof(void*));
         vector->capacity /= 2;
     }
     return item;

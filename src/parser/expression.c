@@ -4,15 +4,52 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
+Ast* parse_assignment_expr(Parser* parser);
 Ast* parse_additive_expr(Parser* parser);
 Ast* parse_multiplicative_expr(Parser* parser);
 Ast* parse_primary_expr(Parser* parser);
 
 
 Ast* parse_expr(Parser* parser) {
-    Ast* ast = parse_additive_expr(parser);
+    Ast* ast = parse_assignment_expr(parser);
+    return ast;
+}
+
+Ast* parse_assignment_expr(Parser* parser) {
+   Vector* stack = new_vector();
+   int terminated = 0;
+
+    while (!terminated) {
+        int index = parser->_index;
+        Ast* ast = parse_primary_expr(parser);
+
+        Token* token = vector_at(parser->_tokens, parser->_index);
+        switch (token->type) {
+            case TOKEN_EQUAL:
+                parser->_index++;
+                vector_push(stack, new_ast(AST_ASSIGN_EXPR, 1, ast));
+                break;
+            default:
+                delete_ast(ast);
+                parser->_index = index;
+                vector_push(stack, parse_additive_expr(parser));
+                terminated = 1;
+                break;
+        }
+    }
+
+    Ast* ast = vector_pop(stack);
+    while (vector_size(stack) > 0) {
+        Ast* next_ast = vector_pop(stack);
+        vector_push(next_ast->children, ast);
+        ast = next_ast;
+    }
+
+    delete_vector(stack, (void(*)(void* item))delete_ast);
+
     return ast;
 }
 
@@ -65,6 +102,13 @@ Ast* parse_primary_expr(Parser* parser) {
 
     Token* token = vector_at(parser->_tokens, parser->_index);
     switch (token->type) {
+        case TOKEN_IDENT: {
+            parser->_index++;
+            char* ident_name = malloc((strlen(token->ident_name) + 1) * sizeof(char));
+            strcpy(ident_name, token->ident_name);
+            ast = new_identifier_ast(ident_name);
+            break;
+        }
         case TOKEN_INT:
             parser->_index++;
             ast = new_integer_ast(token->value_int);
