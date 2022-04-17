@@ -8,7 +8,7 @@
 
 
 Ast* parse_decl(Parser* parser) {
-    Ast* ast = new_ast(AST_DECL, 1, parse_declaration_specifiers(parser));
+    Ast* ast = new_ast(AST_DECL, 1, parse_decl_specifiers(parser));
 
     Token* token = vector_at(parser->_tokens, parser->_index);
     if (token->type == TOKEN_SEMICOLON) {
@@ -27,7 +27,7 @@ Ast* parse_decl(Parser* parser) {
     }
 }
 
-Ast* parse_declaration_specifiers(Parser* parser) {
+Ast* parse_decl_specifiers(Parser* parser) {
     Ast* ast = NULL;
     Token* token = vector_at(parser->_tokens, parser->_index);
     switch (token->type) {
@@ -47,18 +47,23 @@ Ast* parse_init_declarator(Parser* parser) {
 }
 
 Ast* parse_declarator(Parser* parser) {
+    Ast* ast = new_ast(AST_DECLOR, 0);
+
     Token* token = vector_at(parser->_tokens, parser->_index);
     switch (token->type) {
         case TOKEN_IDENT: {
             parser->_index++;
             char* ident_name = malloc((strlen(token->ident_name) + 1) * sizeof(char));
             strcpy(ident_name, token->ident_name);
-            return new_identifier_ast(ident_name);
+            vector_push(ast->children, new_identifier_ast(ident_name));
+            break;
         }
         default:
             fprintf(stderr, "Error: unexpected token type %d\n", token->type);
             exit(1);
     }
+
+    return ast;
 }
 
 int should_decl(Parser* parser) {

@@ -1,4 +1,6 @@
 #include "./external.h"
+#include "./declaration.h"
+#include "./statement.h"
 #include "../token/token.h"
 
 
@@ -13,5 +15,9 @@ Ast* parse_translation_unit(Parser* parser) {
 }
 
 Ast* parse_function_definition(Parser* parser) {
-
+    Ast* ast = new_ast(AST_FUNC_DEF, 0);
+    vector_push(ast->children, parse_decl_specifiers(parser));
+    vector_push(ast->children, parse_declarator(parser));
+    vector_push(ast->children, parse_compound_stmt(parser));
+    return ast;
 }
