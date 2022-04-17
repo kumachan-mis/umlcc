@@ -44,7 +44,9 @@ int main(int argc, char *argv[]) {
 
     delete_codegen(codegen);
     delete_vector(codes, free);
+
     fclose(dest);
     fclose(src);
+
     return 0;
 }
