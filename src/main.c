@@ -16,30 +16,33 @@ int main(int argc, char *argv[]) {
     FILE* dest = fopen(argv[2], "w");
 
     Lexer* lexer = new_lexer(src);
-
-    Parser* parser = new_parser(lexer_read_tokens(lexer));
+    Vector* tokens = lexer_read_tokens(lexer);
     delete_lexer(lexer);
 
-    Codegen* codegen = new_codegen(parser_create_ast(parser));
+    Parser* parser = new_parser(tokens);
+    Ast* ast = parser_create_ast(parser);
     delete_parser(parser);
 
+    Codegen* codegen = new_codegen(ast);
     Vector* codes = codegen_generate_code(codegen);
-    delete_codegen(codegen);
 
     fprintf(dest, "    .text\n");
     fprintf(dest, "    .global _main\n");
     fprintf(dest, "_main:\n");
     fprintf(dest, "    pushq  %%rbp\n");
     fprintf(dest, "    movq  %%rsp, %%rbp\n");
+    fprintf(dest, "    subq  $%d, %%rsp\n", codegen->_table->_memory_offset);
 
     int codes_len = vector_size(codes);
     for (int i = 0; i < codes_len; i++) {
         fprintf(dest, "%s", (char*)vector_at(codes, i));
     }
 
+    fprintf(dest, "    addq  $%d, %%rsp\n", codegen->_table->_memory_offset);
     fprintf(dest, "    popq  %%rbp\n");
     fprintf(dest, "    ret\n");
 
+    delete_codegen(codegen);
     delete_vector(codes, free);
     fclose(dest);
     fclose(src);

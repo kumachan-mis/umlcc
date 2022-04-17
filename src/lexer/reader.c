@@ -15,6 +15,7 @@ Token* read_keyword_or_identifier(Lexer* lexer) {
     char* keyword_or_identifier_str = read_token_str(
         lexer, keyword_or_identifier_startswith, keyword_or_identifier_consistsof
     );
+    if (keyword_or_identifier_str == NULL) return NULL;
 
     if (strcmp(keyword_or_identifier_str, "int") == 0) {
         free(keyword_or_identifier_str);
@@ -36,6 +37,8 @@ Token* read_integer_constant(Lexer* lexer) {
     char* integer_str = read_token_str(
         lexer, integer_constant_startswith, integer_constant_consistsof
     );
+    if (integer_str == NULL) return NULL;
+
     Token* token = new_integer_token(atoi(integer_str));
     free(integer_str);
     return token;

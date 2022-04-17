@@ -26,7 +26,7 @@ Ast* new_ast(AstType type, int num_children, ...) {
 
 Ast* new_identifier_ast(char* name) {
     Ast* ast = malloc(sizeof(Ast));
-    ast->type = AST_INT;
+    ast->type = AST_IDENT;
     ast->ident_name = name;
     ast->value_int = -1;
     ast->children = new_vector();

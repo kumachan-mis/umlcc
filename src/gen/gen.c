@@ -1,4 +1,5 @@
 #include "./gen.h"
+#include "./declaration.h"
 #include "./statement.h"
 #include "./expression.h"
 
@@ -9,6 +10,7 @@ Codegen* new_codegen(Ast* ast) {
     Codegen* codegen = malloc(sizeof(Codegen));
     codegen->_ast = ast;
     codegen->_table = new_symboltable();
+    codegen->_assignee_mode = 0;
     return codegen;
 }
 
@@ -23,6 +25,7 @@ Vector* codegen_generate_code(Codegen* codegen) {
 
     switch (ast->type) {
         case AST_DECL:
+            codes = gen_decl_code(codegen);
             break;
         case AST_CMPD_STMT:
             codes = gen_compound_stmt_code(codegen);
@@ -32,6 +35,7 @@ Vector* codegen_generate_code(Codegen* codegen) {
             break;
         case AST_ASSIGN_EXPR:
             codes = gen_assignment_expr_code(codegen);
+            break;
         case AST_ADD_EXPR:
         case AST_SUB_EXPR:
             codes = gen_additive_expr_code(codegen);
@@ -41,8 +45,10 @@ Vector* codegen_generate_code(Codegen* codegen) {
         case AST_MOD_EXPR:
             codes = gen_multiplicative_expr_code(codegen);
             break;
+        case AST_IDENT:
         case AST_INT:
-            codes = gen_primary_expr_code(codegen);
+            if (!codegen->_assignee_mode) codes = gen_primary_expr_code(codegen);
+            else codes = gen_assignee_primary_expr_code(codegen);
             break;
         default:
             break;

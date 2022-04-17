@@ -6,10 +6,9 @@
 
 char* read_token_str(Lexer* lexer, int startswith(char c), int consistsof(char c)) {
     int initial_char = fgetc(lexer->_file_ptr);
-    if (!startswith(initial_char)) {
-        ungetc(initial_char, lexer->_file_ptr);
-        return NULL;
-    }
+    ungetc(initial_char, lexer->_file_ptr);
+
+    if (!startswith(initial_char)) return NULL;
 
     int capacity = 1, length = 0;
     char* token_str = malloc(sizeof(char) * capacity);

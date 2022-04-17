@@ -30,7 +30,7 @@ Ast* parse_assignment_expr(Parser* parser) {
         switch (token->type) {
             case TOKEN_EQUAL:
                 parser->_index++;
-                vector_push(stack, new_ast(AST_ASSIGN_EXPR, 0, ast));
+                vector_push(stack, new_ast(AST_ASSIGN_EXPR, 1, ast));
                 break;
             default:
                 delete_ast(ast);
@@ -39,16 +39,18 @@ Ast* parse_assignment_expr(Parser* parser) {
                 terminated = 1;
                 break;
         }
-   }
+    }
 
-   Ast* ast = vector_pop(stack);
-   while (vector_size(stack) > 0) {
-       Ast* next_ast = vector_pop(stack);
-       vector_push(next_ast->children, ast);
-       ast = next_ast;
-   }
+    Ast* ast = vector_pop(stack);
+    while (vector_size(stack) > 0) {
+        Ast* next_ast = vector_pop(stack);
+        vector_push(next_ast->children, ast);
+        ast = next_ast;
+    }
 
-   return ast;
+    delete_vector(stack, (void(*)(void* item))delete_ast);
+
+    return ast;
 }
 
 Ast* parse_additive_expr(Parser* parser) {
@@ -101,6 +103,7 @@ Ast* parse_primary_expr(Parser* parser) {
     Token* token = vector_at(parser->_tokens, parser->_index);
     switch (token->type) {
         case TOKEN_IDENT: {
+            parser->_index++;
             char* ident_name = malloc((strlen(token->ident_name) + 1) * sizeof(char));
             strcpy(ident_name, token->ident_name);
             ast = new_identifier_ast(ident_name);

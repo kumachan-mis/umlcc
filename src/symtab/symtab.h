@@ -1,7 +1,7 @@
 #ifndef _UMLCC_SYMTAB_H_
 #define _UMLCC_SYMTAB_H_
 
-#include "./map/map.h"
+#include "../map/map.h"
 
 
 typedef struct _SymbolTable {

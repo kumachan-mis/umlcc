@@ -9,6 +9,7 @@ char* copy_token_ident_name(char* ident_name);
 Token* new_token(TokenType type) {
     Token* token = malloc(sizeof(Token));
     token->type = type;
+    token->ident_name = NULL;
     token->value_int = -1;
     return token;
 }

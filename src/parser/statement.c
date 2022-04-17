@@ -25,7 +25,7 @@ Ast* parse_compound_stmt(Parser* parser) {
         if (should_decl(parser)) {
             vector_push(ast->children, parse_decl(parser));
         } else {
-            vector_push(ast->children, parse_stmt(parser));
+            vector_push(ast->children, parse_expression_stmt(parser));
         }
     }
 }

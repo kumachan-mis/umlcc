@@ -58,6 +58,7 @@ Ast* parse_declarator(Parser* parser) {
     Token* token = vector_at(parser->_tokens, parser->_index);
     switch (token->type) {
         case TOKEN_IDENT: {
+            parser->_index++;
             char* ident_name = malloc((strlen(token->ident_name) + 1) * sizeof(char));
             strcpy(ident_name, token->ident_name);
             return new_identifier_ast(ident_name);

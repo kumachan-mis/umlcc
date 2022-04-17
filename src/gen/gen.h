@@ -9,6 +9,7 @@
 typedef struct _Codegen {
     Ast*         _ast;
     SymbolTable* _table;
+    int          _assignee_mode;
 } Codegen;
 
 Codegen* new_codegen(Ast* ast);
