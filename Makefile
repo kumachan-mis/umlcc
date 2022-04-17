@@ -6,6 +6,7 @@ SRC_DIR = src
 BLD_DIR = build
 OBJ_DIR = $(BLD_DIR)/object
 DEP_DIR = $(BLD_DIR)/depend
+BIN_DIR = bin
 
 SRC_EXT = .c
 INC_EXT = .h
@@ -19,8 +20,9 @@ SRCS    = $(wildcard $(SRC_DIR)/*$(SRC_EXT)) $(wildcard $(SRC_DIR)/**/*$(SRC_EXT
 OBJS    = $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$(SRCS))
 DEPS    = $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(DEP_DIR)/%$(DEP_EXT),$(SRCS))
 
-$(UMLCC): $(OBJS)
-	$(CC) $(CFLAGS) -o $(UMLCC) $(OBJS)
+$(BIN_DIR)/$(UMLCC): $(OBJS)
+	$(MKDIR) $(dir $@)
+	$(CC) $(CFLAGS) $^ -o $@
 
 $(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
 	$(MKDIR) $(dir $@)
@@ -34,4 +36,4 @@ $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
 
 .PHONY: clean
 clean:
-	$(RM) $(UMLCC) $(BLD_DIR)
+	$(RM) $(BIN_DIR) $(BLD_DIR)
