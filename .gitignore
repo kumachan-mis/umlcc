@@ -3,9 +3,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=c
 
 ### Project Specific Settings ###
-umlcc
 build/
-out/
+bin/
 
 ### C ###
 # Prerequisites
