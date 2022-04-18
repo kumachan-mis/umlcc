@@ -21,4 +21,3 @@ CType* new_function_ctype(Vector* func_args, CType* func_return);
 void   delete_ctype(CType* ctype);
 
 #endif
-
