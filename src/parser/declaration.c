@@ -47,6 +47,11 @@ Ast* parse_init_declarator(Parser* parser) {
 }
 
 Ast* parse_declarator(Parser* parser) {
+    Ast* direct = parse_direct_declarator(parser);
+    return new_ast(AST_DECLOR, 1, direct);
+}
+
+Ast* parse_direct_declarator(Parser* parser) {
     Ast* ast = NULL;
 
     Token* token = vector_at(parser->_tokens, parser->_index);
@@ -61,6 +66,17 @@ Ast* parse_declarator(Parser* parser) {
         default:
             fprintf(stderr, "Error: unexpected token type %d\n", token->type);
             exit(1);
+    }
+
+    token = vector_at(parser->_tokens, parser->_index);
+    switch (token->type) {
+        case TOKEN_LPALEN:
+            parser->_index++;
+            consume_token(parser, TOKEN_RPALEN);
+            ast = new_ast(AST_FUNC_DECLOR, 1, ast);
+            break;
+        default:
+            break;
     }
 
     return ast;
