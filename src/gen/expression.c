@@ -123,7 +123,7 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
     Ast* ast = codegen->_ast;
 
     switch (ast->type) {
-        case AST_IDENT: {
+        case AST_IDENT_EXPR: {
             Symbol* symbol = symboltable_search_symbol(codegen->_table, ast->ident_name);
             if (symbol == NULL) {
                 fprintf(stderr, "Error: identifier '%s' is used before declared\n", ast->ident_name);
@@ -133,7 +133,7 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
             append_code(codes, "    pushq %%rax\n");
             break;
         }
-        case AST_INT:
+        case AST_INT_EXPR:
             append_code(codes, "    pushq $%d\n", ast->value_int);
             break;
         default:
@@ -149,7 +149,7 @@ Vector* gen_assignee_primary_expr_code(Codegen* codegen) {
     Ast* ast = codegen->_ast;
 
     switch (ast->type) {
-        case AST_IDENT: {
+        case AST_IDENT_EXPR: {
             Symbol* symbol = symboltable_search_symbol(codegen->_table, ast->ident_name);
             if (symbol == NULL) {
                 fprintf(stderr, "Error: identifier '%s' is used before declared\n", ast->ident_name);

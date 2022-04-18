@@ -47,7 +47,7 @@ Ast* parse_init_declarator(Parser* parser) {
 }
 
 Ast* parse_declarator(Parser* parser) {
-    Ast* ast = new_ast(AST_DECLOR, 0);
+    Ast* ast = NULL;
 
     Token* token = vector_at(parser->_tokens, parser->_index);
     switch (token->type) {
@@ -55,7 +55,7 @@ Ast* parse_declarator(Parser* parser) {
             parser->_index++;
             char* ident_name = malloc((strlen(token->ident_name) + 1) * sizeof(char));
             strcpy(ident_name, token->ident_name);
-            vector_push(ast->children, new_identifier_ast(ident_name));
+            ast = new_identifier_declarator_ast(ident_name);
             break;
         }
         default:

@@ -100,7 +100,7 @@ Ast* parse_primary_expr(Parser* parser) {
             parser->_index++;
             char* ident_name = malloc((strlen(token->ident_name) + 1) * sizeof(char));
             strcpy(ident_name, token->ident_name);
-            ast = new_identifier_ast(ident_name);
+            ast = new_identifier_expr_ast(ident_name);
             break;
         }
         case TOKEN_INT:

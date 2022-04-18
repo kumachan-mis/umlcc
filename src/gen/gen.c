@@ -46,8 +46,8 @@ Vector* codegen_generate_code(Codegen* codegen) {
         case AST_MOD_EXPR:
             codes = gen_multiplicative_expr_code(codegen);
             break;
-        case AST_IDENT:
-        case AST_INT:
+        case AST_IDENT_EXPR:
+        case AST_INT_EXPR:
             if (!codegen->_assignee_mode) codes = gen_primary_expr_code(codegen);
             else codes = gen_assignee_primary_expr_code(codegen);
             break;

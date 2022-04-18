@@ -15,9 +15,11 @@ typedef enum _AstType {
     AST_DECL,
     AST_DECL_SPECS,
     AST_INIT_DECLOR,
-    AST_DECLOR,
-    //   type-specification 
+    //   type-specifiers 
     AST_TYPE_INT,
+    //   declarators
+    AST_IDENT_DECLOR,
+    AST_FUNC_DECLOR,
 
     // statement
     AST_CMPD_STMT,
@@ -30,12 +32,8 @@ typedef enum _AstType {
     AST_MUL_EXPR,
     AST_DIV_EXPR,
     AST_MOD_EXPR,
-
-    // identifier
-    AST_IDENT,
-
-    // constant
-    AST_INT,
+    AST_IDENT_EXPR,
+    AST_INT_EXPR,
 } AstType;
 
 typedef struct _Ast {
@@ -46,7 +44,8 @@ typedef struct _Ast {
 } Ast;
 
 Ast* new_ast(AstType type, int num_children, ...);
-Ast* new_identifier_ast(char* name);
+Ast* new_identifier_expr_ast(char* name);
+Ast* new_identifier_declarator_ast(char* name);
 Ast* new_integer_ast(int value);
 Ast* copy_ast(Ast* ast);
 void delete_ast(Ast* ast);
