@@ -30,14 +30,6 @@ Token* new_integer_token(int value) {
     return token;
 }
 
-Token* copy_token(Token* token) {
-    Token* copied_token = malloc(sizeof(Token));
-    copied_token->type = token->type;
-    copied_token->ident_name = copy_token_ident_name(token->ident_name);
-    copied_token->value_int = token->value_int;
-    return copied_token;
-}
-
 void delete_token(Token* token) {
     if (token->ident_name != NULL) free(token->ident_name);
     free(token);

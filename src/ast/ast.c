@@ -51,22 +51,6 @@ Ast* new_integer_ast(int value) {
     return ast;
 }
 
-Ast* copy_ast(Ast* ast) {
-    Ast* copied_ast = malloc(sizeof(Ast));
-    copied_ast->type = ast->type;
-    copied_ast->ident_name = copy_ast_ident_name(ast->ident_name);
-    copied_ast->value_int = ast->value_int;
-    copied_ast->children = new_vector();
-
-    int num_children = vector_size(copied_ast->children);
-    for (int i = 0; i < num_children; i++) {
-        Ast* copied_child = copy_ast(vector_at(ast->children, i));
-        vector_push(copied_ast->children, copied_child);
-    }
-
-    return copied_ast;
-}
-
 void delete_ast(Ast* ast) {
     if (ast->ident_name != NULL) free(ast->ident_name);
     delete_vector(ast->children, (void (*)(void* item))delete_ast);

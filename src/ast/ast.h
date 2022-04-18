@@ -48,7 +48,6 @@ Ast* new_ast(AstType type, int num_children, ...);
 Ast* new_identifier_expr_ast(char* name);
 Ast* new_identifier_declarator_ast(char* name);
 Ast* new_integer_ast(int value);
-Ast* copy_ast(Ast* ast);
 void delete_ast(Ast* ast);
 void ast_append_child(Ast* ast, Ast* child);
 
