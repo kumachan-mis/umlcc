@@ -45,10 +45,8 @@ typedef struct _Ast {
 } Ast;
 
 Ast* new_ast(AstType type, int num_children, ...);
-Ast* new_identifier_expr_ast(char* name);
-Ast* new_identifier_declarator_ast(char* name);
-Ast* new_integer_ast(int value);
+Ast* new_identifier_ast(AstType type, char* name);
+Ast* new_integer_ast(AstType type, int value);
 void delete_ast(Ast* ast);
-void ast_append_child(Ast* ast, Ast* child);
 
 #endif

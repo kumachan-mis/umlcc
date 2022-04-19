@@ -60,7 +60,7 @@ Ast* parse_direct_declarator(Parser* parser) {
             parser->_index++;
             char* ident_name = malloc((strlen(token->ident_name) + 1) * sizeof(char));
             strcpy(ident_name, token->ident_name);
-            ast = new_identifier_declarator_ast(ident_name);
+            ast = new_identifier_ast(AST_IDENT_DECLOR, ident_name);
             break;
         }
         default:

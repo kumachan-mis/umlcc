@@ -24,27 +24,18 @@ Ast* new_ast(AstType type, int num_children, ...) {
     return ast;
 }
 
-Ast* new_identifier_expr_ast(char* name) {
+Ast* new_identifier_ast(AstType type, char* name) {
     Ast* ast = malloc(sizeof(Ast));
-    ast->type = AST_IDENT_EXPR;
+    ast->type = type;
     ast->ident_name = name;
     ast->value_int = -1;
     ast->children = new_vector();
     return ast;
 }
 
-Ast* new_identifier_declarator_ast(char* name) {
+Ast* new_integer_ast(AstType type, int value) {
     Ast* ast = malloc(sizeof(Ast));
-    ast->type = AST_IDENT_DECLOR;
-    ast->ident_name = name;
-    ast->value_int = -1;
-    ast->children = new_vector();
-    return ast;
-}
-
-Ast* new_integer_ast(int value) {
-    Ast* ast = malloc(sizeof(Ast));
-    ast->type = AST_INT_EXPR;
+    ast->type = type;
     ast->ident_name = NULL;
     ast->value_int = value;
     ast->children = new_vector();
