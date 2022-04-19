@@ -5,8 +5,6 @@
 #include <stdarg.h>
 
 
-char* copy_ast_ident_name(char* ident_name);
-
 Ast* new_ast(AstType type, int num_children, ...) {
     Ast* ast = malloc(sizeof(Ast));
     ast->type = type;
@@ -47,11 +45,3 @@ void delete_ast(Ast* ast) {
     delete_vector(ast->children, (void (*)(void* item))delete_ast);
     free(ast);
 }
-
-char* copy_ast_ident_name(char* ident_name) {
-    if (ident_name == NULL) return NULL;
-    char* copied_ident_name = malloc((strlen(ident_name) + 1) * sizeof(char));
-    strcpy(copied_ident_name, ident_name);
-    return copied_ident_name;
-}
-
