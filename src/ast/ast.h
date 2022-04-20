@@ -19,8 +19,8 @@ typedef enum _AstType {
     AST_TYPE_INT,
     //   declarators
     AST_DECLOR,
-    AST_IDENT_DECLOR,
-    AST_FUNC_DECLOR,
+    AST_IDENT_DIRECT_DECLOR,
+    AST_FUNC_DIRECT_DECLOR,
 
     // statement
     AST_CMPD_STMT,
