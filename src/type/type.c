@@ -19,7 +19,11 @@ CType* new_function_ctype(Vector* func_args, CType* func_return) {
     return ctype;
 }
 
-CType* copy_ctype(CType* ctype) {
+CType* new_function_socket_ctype(Vector* func_args) {
+    return new_function_ctype(func_args, NULL);
+}
+
+CType* ctype_copy(CType* ctype) {
     CType* copied_ctype = malloc(sizeof(CType));
     copied_ctype->type = ctype->type;
 
@@ -27,16 +31,34 @@ CType* copy_ctype(CType* ctype) {
         Vector* copied_func_args = new_vector();
         int num_args = vector_size(ctype->func_args);
         for (int i = 0; i < num_args; i++) {
-            vector_push(copied_func_args, copy_ctype(vector_at(ctype->func_args, i)));
+            CType* copied_func_arg = ctype_copy(vector_at(ctype->func_args, i));
+            vector_push(copied_func_args, copied_func_arg);
         }
         copied_ctype->func_args = copied_func_args;
     }
 
     if (ctype->func_return != NULL) {
-        copied_ctype->func_return = copy_ctype(ctype->func_return);
+        copied_ctype->func_return = ctype_copy(ctype->func_return);
     }
 
     return copied_ctype;
+}
+
+int ctype_connect(CType* socket, CType* plug) {
+    CType* ctype = socket;
+    while (1) {
+        switch (ctype->type) {
+            case CTYPE_FUNC:
+                if (ctype->func_return == NULL){
+                    ctype->func_return = plug;
+                    return 1;
+                }
+                ctype = ctype->func_return;
+                break;
+            case CTYPE_INT:
+                return 0;
+        }
+    }
 }
 
 void delete_ctype(CType* ctype) {
