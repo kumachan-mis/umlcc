@@ -17,7 +17,7 @@ Vector* resolve_decl(Resolver* resolver) {
     
         Srt* decl_srt = vector_at(init_declor_srts, 0);
         if (decl_srt->ctype == NULL) decl_srt->ctype = ctype_copy(specifiers_ctype);
-        else ctype_connect(decl_srt->ctype, specifiers_ctype);
+        else ctype_connect(decl_srt->ctype, ctype_copy(specifiers_ctype));
 
         vector_extend(srts, init_declor_srts);
         delete_vector(init_declor_srts, (void (*)(void* item))delete_srt);
