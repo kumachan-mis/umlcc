@@ -1,4 +1,5 @@
 #include "./gen.h"
+#include "./external.h"
 #include "./declaration.h"
 #include "./statement.h"
 #include "./expression.h"
@@ -9,13 +10,15 @@
 Codegen* new_codegen(Srt* srt) {
     Codegen* codegen = malloc(sizeof(Codegen));
     codegen->_srt = srt;
-    codegen->_table = new_symboltable();
+    codegen->_table = NULL;
     return codegen;
 }
 
 void delete_codegen(Codegen* codegen) {
     delete_srt(codegen->_srt);
-    delete_symboltable(codegen->_table);
+    if (codegen->_table != NULL) {
+        delete_symboltable(codegen->_table);
+    }
     free(codegen);
 }
 
@@ -24,6 +27,12 @@ Vector* codegen_generate_code(Codegen* codegen) {
     Srt* srt = codegen->_srt;
 
     switch (srt->type) {
+        case SRT_TRAS_UNIT:
+            codes = gen_translation_unit(codegen);
+            break;
+        case SRT_FUNC_DEF:
+            codes = gen_function_definition(codegen);
+            break;
         case SRT_DECL:
             codes = gen_decl_code(codegen);
             break;
