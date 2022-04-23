@@ -1,5 +1,6 @@
 #include "./external.h"
 #include "./declaration.h"
+#include "./statement.h"
 
 #include <stdlib.h>
 
@@ -29,6 +30,9 @@ Srt* resolve_function_definition(Resolver* resolver) {
     Srt* decl_srt = resolve_declarator(resolver);
     decl_srt->ctype = ctype_connect(decl_srt->ctype, specifiers_ctype);
     vector_push(srt->children, decl_srt);
+
+    resolver->_ast = vector_at(ast->children, 2);
+    vector_push(srt->children, resolve_compound_stmt(resolver));
 
     resolver->_ast = ast;
     return srt;
