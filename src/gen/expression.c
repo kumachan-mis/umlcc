@@ -125,10 +125,6 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
     switch (ast->type) {
         case AST_IDENT_EXPR: {
             Symbol* symbol = symboltable_search_symbol(codegen->_table, ast->ident_name);
-            if (symbol == NULL) {
-                fprintf(stderr, "Error: identifier '%s' is used before declared\n", ast->ident_name);
-                exit(1);
-            }
             append_code(codes, "    movl -%d(%%rbp), %%eax\n", symbol->memory_offset);
             append_code(codes, "    pushq %%rax\n");
             break;

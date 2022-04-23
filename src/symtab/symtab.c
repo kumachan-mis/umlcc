@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-Symbol* new_symbol(char* name, int memory_offset);
+Symbol* new_symbol(char* name, CType* ctype, int memory_offset);
 void    delete_symbol(Symbol* symbol);
 
 SymbolTable* new_symboltable() {
@@ -23,10 +23,10 @@ void delete_symboltable(SymbolTable* table) {
     free(table);
 }
 
-void symboltable_define_symbol(SymbolTable* table, char* name) {
+void symboltable_define_symbol(SymbolTable* table, char* name, CType* ctype) {
     if (map_get(table->_symbol_map, name) != NULL) return;
-    table->_memory_offset += 4; // sizeof(int)
-    Symbol* symbol = new_symbol(name, table->_memory_offset);
+    table->_memory_offset += ctype_size(ctype);
+    Symbol* symbol = new_symbol(name, ctype, table->_memory_offset);
     map_set(table->_symbol_map, name, symbol, (void (*)(void* value))delete_symbol);
 }
 
@@ -55,14 +55,16 @@ SymbolTable* symboltable_exit_scope(SymbolTable* table) {
     return outer_table;
 }
 
-Symbol* new_symbol(char* name, int memory_offset) {
+Symbol* new_symbol(char* name, CType* ctype, int memory_offset) {
     Symbol* symbol = malloc(sizeof(Symbol));
     symbol->name = name;
+    symbol->ctype = ctype;
     symbol->memory_offset = memory_offset;
     return symbol;
 }
 
 void delete_symbol(Symbol* symbol) {
     free(symbol->name);
+    delete_ctype(symbol->ctype);
     free(symbol);
 }

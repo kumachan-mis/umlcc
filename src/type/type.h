@@ -21,6 +21,7 @@ CType* new_function_ctype(Vector* func_args, CType* func_return);
 CType* new_function_socket_ctype(Vector* func_args);
 CType* ctype_copy(CType* ctype);
 CType* ctype_connect(CType* socket, CType* plug);
+int    ctype_size(CType* ctype);
 void   delete_ctype(CType* ctype);
 
 #endif

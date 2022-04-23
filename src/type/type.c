@@ -63,6 +63,15 @@ CType* ctype_connect(CType* socket, CType* plug) {
     }
 }
 
+int ctype_size(CType* ctype) {
+    switch (ctype->type) {
+        case CTYPE_INT:
+            return 4;
+        case CTYPE_FUNC:
+            return 0;
+    }
+}
+
 void delete_ctype(CType* ctype) {
     if (ctype->func_args != NULL) {
         delete_vector(ctype->func_args, (void (*)(void* item))delete_ctype);
