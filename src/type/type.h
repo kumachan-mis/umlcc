@@ -18,6 +18,7 @@ typedef struct _CType {
 
 CType* new_integer_ctype();
 CType* new_function_ctype(Vector* func_args, CType* func_return);
+CType*   copy_ctype(CType* ctype);
 void   delete_ctype(CType* ctype);
 
 #endif
