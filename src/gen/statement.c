@@ -6,33 +6,33 @@
 
 Vector* gen_compound_stmt_code(Codegen* codegen) {
     Vector* codes = new_vector();
-    Ast* ast = codegen->_ast;
+    Srt* srt = codegen->_srt;
     codegen->_table = symboltable_enter_scope(codegen->_table);
 
-    int num_children = vector_size(ast->children);
+    int num_children = vector_size(srt->children);
     for (int i = 0; i < num_children; i++) {
-        codegen->_ast = vector_at(ast->children, i);
+        codegen->_srt = vector_at(srt->children, i);
         Vector* sub_codes = codegen_generate_code(codegen);
         vector_extend(codes, sub_codes);
         delete_vector(sub_codes, free);
     }
 
     codegen->_table = symboltable_exit_scope(codegen->_table);
-    codegen->_ast = ast;
+    codegen->_srt = srt;
     return codes;
 }
 Vector* gen_expression_stmt_code(Codegen* codegen) {
     Vector* codes = new_vector();
     Vector* sub_codes = NULL;
-    Ast* ast = codegen->_ast;
+    Srt* srt = codegen->_srt;
 
-    codegen->_ast = vector_at(ast->children, 0);
+    codegen->_srt = vector_at(srt->children, 0);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
 
     append_code(codes, "    popq %%rax\n");
 
-    codegen->_ast = ast;
+    codegen->_srt = srt;
     return codes;
 }
