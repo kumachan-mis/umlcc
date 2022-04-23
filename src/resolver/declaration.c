@@ -71,23 +71,19 @@ Srt* resolve_direct_declarator(Resolver* resolver) {
     CType* ctype = NULL;
     char* ident_name = NULL;
 
-    int terminated = 0;
-    while (!terminated) {
+    while (1) {
         switch (ast->type) {
             case AST_FUNC_DIRECT_DECLOR: {
                 CType* socket_ctype = new_function_socket_ctype(new_vector());
-                if (ctype == NULL)  ctype = socket_ctype;
-                else ctype_connect(ctype, socket_ctype);
+                ctype_connect(socket_ctype, ctype);
+                ctype = socket_ctype;
                 ast = vector_at(ast->children, 0);
                 break;
             }
             case AST_IDENT_DIRECT_DECLOR:
                 ident_name = malloc((strlen(ast->ident_name) + 1) * sizeof(char));
                 strcpy(ident_name, ast->ident_name);
-                terminated = 1;
-                break;
+                return new_identifier_srt(SRT_DECL, ctype, ident_name);
         } 
     }
-
-    return new_identifier_srt(SRT_DECL, ctype, ident_name);
 }
