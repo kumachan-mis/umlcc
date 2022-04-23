@@ -68,15 +68,19 @@ Ast* parse_direct_declarator(Parser* parser) {
             exit(1);
     }
 
-    token = vector_at(parser->_tokens, parser->_index);
-    switch (token->type) {
-        case TOKEN_LPALEN:
-            parser->_index++;
-            consume_token(parser, TOKEN_RPALEN);
-            ast = new_ast(AST_FUNC_DIRECT_DECLOR, 1, ast);
-            break;
-        default:
-            break;
+    int terminated = 0;
+    while (!terminated) {
+        token = vector_at(parser->_tokens, parser->_index);
+        switch (token->type) {
+            case TOKEN_LPALEN:
+                parser->_index++;
+                consume_token(parser, TOKEN_RPALEN);
+                ast = new_ast(AST_FUNC_DIRECT_DECLOR, 1, ast);
+                break;
+            default:
+                terminated = 1;
+                break;
+        }
     }
 
     return ast;
