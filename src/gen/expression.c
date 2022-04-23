@@ -167,10 +167,6 @@ Vector* gen_assignee_primary_expr_code(Codegen* codegen) {
     switch (srt->type) {
         case SRT_IDENT_EXPR: {
             Symbol* symbol = symboltable_search_symbol(codegen->_table, srt->ident_name);
-            if (symbol == NULL) {
-                fprintf(stderr, "Error: identifier '%s' is used before declared\n", srt->ident_name);
-                exit(1);
-            }
             append_code(codes, "    leaq -%d(%%rbp), %%rax\n", symbol->memory_offset);
             append_code(codes, "    pushq %%rax\n");
             break;
