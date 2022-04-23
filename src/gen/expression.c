@@ -5,9 +5,6 @@
 #include <stdlib.h>
 
 
-Vector* gen_assignee_primary_expr_code(Codegen* codegen);
-
-
 Vector* gen_assignment_expr_code(Codegen* codegen) {
     Vector* codes = new_vector();
     Vector* sub_codes = NULL;
@@ -42,17 +39,19 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
 }
 
 Vector* gen_assignee_expr_code(Codegen* codegen) {
-    Vector* codes = NULL;
+    Vector* codes = new_vector();
     Srt* srt = codegen->_srt;
-    codegen->_srt = vector_at(srt->children, 0);
+    Srt* child = vector_at(srt->children, 0);
 
-    switch (srt->type) {
-        case SRT_IDENT_EXPR:
-        case SRT_INT_EXPR:
-            codes = gen_assignee_primary_expr_code(codegen);
+    switch (child->type) {
+        case SRT_IDENT_EXPR: {
+            Symbol* symbol = symboltable_search_symbol(codegen->_table, child->ident_name);
+            append_code(codes, "    leaq -%d(%%rbp), %%rax\n", symbol->memory_offset);
+            append_code(codes, "    pushq %%rax\n");
             break;
+        }
         default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            fprintf(stderr, "Error: unexpected srt type %d\n", child->type);
             exit(1);
     }
 
@@ -152,25 +151,6 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
         case SRT_INT_EXPR:
             append_code(codes, "    pushq $%d\n", srt->value_int);
             break;
-        default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
-            exit(1);
-    }
-
-    return codes;
-}
-
-Vector* gen_assignee_primary_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector();
-    Srt* srt = codegen->_srt;
-
-    switch (srt->type) {
-        case SRT_IDENT_EXPR: {
-            Symbol* symbol = symboltable_search_symbol(codegen->_table, srt->ident_name);
-            append_code(codes, "    leaq -%d(%%rbp), %%rax\n", symbol->memory_offset);
-            append_code(codes, "    pushq %%rax\n");
-            break;
-        }
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);

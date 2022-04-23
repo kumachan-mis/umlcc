@@ -4,6 +4,7 @@
 #include "./statement.h"
 #include "./expression.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 
@@ -62,7 +63,8 @@ Vector* codegen_generate_code(Codegen* codegen) {
             codes = gen_primary_expr_code(codegen);
             break;
         default:
-            break;
+            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            exit(1);;
     }
 
     return codes;

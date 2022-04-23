@@ -25,7 +25,9 @@ Vector* resolve_decl(Resolver* resolver) {
             fprintf(stderr, "Error: identifier '%s' is already defined\n", ast->ident_name);
             exit(1);
         }
-        symboltable_define_symbol(resolver->_table, decl_srt->ident_name, ctype_copy(decl_srt->ctype));
+        char* ident_name = malloc((strlen(decl_srt->ident_name) + 1) * sizeof(char));
+        strcpy(ident_name, decl_srt->ident_name);
+        symboltable_define_symbol(resolver->_table, ident_name, ctype_copy(decl_srt->ctype));
 
         vector_extend(srts, init_declor_srts);
         delete_vector(init_declor_srts, (void (*)(void* item))delete_srt);

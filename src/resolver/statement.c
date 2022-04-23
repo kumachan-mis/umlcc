@@ -27,9 +27,12 @@ Srt* resolve_compound_stmt(Resolver* resolver) {
         Ast* child = vector_at(ast->children, i);
         resolver->_ast = child;
         if (child->type == AST_DECL) {
-            vector_push(srt->children, resolve_decl(resolver));
+            Vector* children = resolve_decl(resolver);
+            vector_extend(srt->children, children);
+            delete_vector(children, (void (*)(void*))delete_srt);
         } else {
-            vector_push(srt->children, resolve_stmt(resolver));
+            Srt* child = resolve_stmt(resolver);
+            vector_push(srt->children, child);
         }
     }
 

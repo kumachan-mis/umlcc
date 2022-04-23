@@ -20,7 +20,7 @@ Srt* resolve_transration_unit(Resolver* resolver) {
 }
 
 Srt* resolve_function_definition(Resolver* resolver) {
-    Srt* srt = new_srt(AST_FUNC_DEF, 0);
+    Srt* srt = new_srt(SRT_FUNC_DEF, 0);
     Ast* ast = resolver->_ast;
 
     resolver->_ast = vector_at(ast->children, 0);
