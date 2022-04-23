@@ -39,13 +39,14 @@ Vector* resolve_decl(Resolver* resolver) {
 CType* resolve_decl_specifiers(Resolver* resolver) {
     CType* ctype = NULL;
     Ast* ast = resolver->_ast;
-
-    switch (ast->type) {
+    
+    Ast* child = vector_at(ast->children, 0);
+    switch (child->type) {
         case AST_TYPE_INT:
             ctype = new_integer_ctype();
             break;
         default:
-            fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
+            fprintf(stderr, "Error: unexpected ast type %d\n", child->type);
             exit(1);
 
     }
