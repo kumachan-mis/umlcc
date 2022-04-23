@@ -1,5 +1,5 @@
 #include "./parser.h"
-#include "./statement.h"
+#include "./external.h"
 #include "../token/token.h"
 
 #include <stdlib.h>
@@ -17,6 +17,5 @@ void delete_parser(Parser* parser) {
 }
 
 Ast* parser_create_ast(Parser* parser) {
-    Ast* ast = parse_stmt(parser);
-    return ast;
+    return parse_translation_unit(parser);
 }

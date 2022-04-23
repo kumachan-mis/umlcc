@@ -2,17 +2,16 @@
 #define _UMLCC_GEN_H_
 
 #include "../vector/vector.h"
-#include "../ast/ast.h"
+#include "../srt/srt.h"
 #include "../symtab/symtab.h"
 
 
 typedef struct _Codegen {
-    Ast*         _ast;
+    Srt*         _srt;
     SymbolTable* _table;
-    int          _assignee_mode;
 } Codegen;
 
-Codegen* new_codegen(Ast* ast);
+Codegen* new_codegen(Srt* srt);
 void     delete_codegen(Codegen* codegen);
 Vector*  codegen_generate_code(Codegen* codegen);
 

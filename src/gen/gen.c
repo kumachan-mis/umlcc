@@ -1,58 +1,70 @@
 #include "./gen.h"
+#include "./external.h"
 #include "./declaration.h"
 #include "./statement.h"
 #include "./expression.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 
-Codegen* new_codegen(Ast* ast) {
+Codegen* new_codegen(Srt* srt) {
     Codegen* codegen = malloc(sizeof(Codegen));
-    codegen->_ast = ast;
-    codegen->_table = new_symboltable();
-    codegen->_assignee_mode = 0;
+    codegen->_srt = srt;
+    codegen->_table = NULL;
     return codegen;
 }
 
 void delete_codegen(Codegen* codegen) {
-    delete_ast(codegen->_ast);
-    delete_symboltable(codegen->_table);
+    delete_srt(codegen->_srt);
+    if (codegen->_table != NULL) {
+        delete_symboltable(codegen->_table);
+    }
     free(codegen);
 }
 
 Vector* codegen_generate_code(Codegen* codegen) {
     Vector* codes = NULL;
-    Ast* ast = codegen->_ast;
+    Srt* srt = codegen->_srt;
 
-    switch (ast->type) {
-        case AST_DECL:
+    switch (srt->type) {
+        case SRT_TRAS_UNIT:
+            codes = gen_translation_unit(codegen);
+            break;
+        case SRT_FUNC_DEF:
+            codes = gen_function_definition(codegen);
+            break;
+        case SRT_DECL:
             codes = gen_decl_code(codegen);
             break;
-        case AST_CMPD_STMT:
+        case SRT_CMPD_STMT:
             codes = gen_compound_stmt_code(codegen);
             break;
-        case AST_EXPR_STMT:
+        case SRT_EXPR_STMT:
             codes = gen_expression_stmt_code(codegen);
             break;
-        case AST_ASSIGN_EXPR:
+        case SRT_ASSIGN_EXPR:
             codes = gen_assignment_expr_code(codegen);
             break;
-        case AST_ADD_EXPR:
-        case AST_SUB_EXPR:
+        case SRT_ASSIGNEE_EXPR:
+            codes = gen_assignee_expr_code(codegen);
+            break;
+        case SRT_ADD_EXPR:
+        case SRT_SUB_EXPR:
             codes = gen_additive_expr_code(codegen);
             break;
-        case AST_MUL_EXPR:
-        case AST_DIV_EXPR:
-        case AST_MOD_EXPR:
+        case SRT_MUL_EXPR:
+        case SRT_DIV_EXPR:
+        case SRT_MOD_EXPR:
             codes = gen_multiplicative_expr_code(codegen);
             break;
-        case AST_IDENT:
-        case AST_INT:
-            if (!codegen->_assignee_mode) codes = gen_primary_expr_code(codegen);
-            else codes = gen_assignee_primary_expr_code(codegen);
+        case SRT_IDENT_EXPR:
+        case SRT_INT_EXPR:
+            codes = gen_primary_expr_code(codegen);
             break;
         default:
-            break;
+            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            exit(1);;
     }
 
     return codes;

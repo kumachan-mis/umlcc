@@ -7,12 +7,6 @@
 #include <string.h>
 
 
-Ast* parse_assignment_expr(Parser* parser);
-Ast* parse_additive_expr(Parser* parser);
-Ast* parse_multiplicative_expr(Parser* parser);
-Ast* parse_primary_expr(Parser* parser);
-
-
 Ast* parse_expr(Parser* parser) {
     Ast* ast = parse_assignment_expr(parser);
     return ast;
@@ -106,12 +100,12 @@ Ast* parse_primary_expr(Parser* parser) {
             parser->_index++;
             char* ident_name = malloc((strlen(token->ident_name) + 1) * sizeof(char));
             strcpy(ident_name, token->ident_name);
-            ast = new_identifier_ast(ident_name);
+            ast = new_identifier_ast(AST_IDENT_EXPR, ident_name);
             break;
         }
         case TOKEN_INT:
             parser->_index++;
-            ast = new_integer_ast(token->value_int);
+            ast = new_integer_ast(AST_INT_EXPR, token->value_int);
             break;
         case TOKEN_LPALEN:
             parser->_index++;
