@@ -4,9 +4,9 @@
 #include <stdlib.h>
 
 
-Resolver* new_resolver(Ast* _ast) {
+Resolver* new_resolver(Ast* ast) {
     Resolver* resolver = malloc(sizeof(Resolver));
-    resolver->_ast = _ast;
+    resolver->_ast = ast;
     resolver->_table = new_symboltable();
     return resolver;
 }

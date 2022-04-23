@@ -1,5 +1,6 @@
 #include "./lexer/lexer.h"
 #include "./parser/parser.h"
+#include "./resolver/resolver.h"
 #include "./gen/gen.h"
 
 #include <stdio.h>
@@ -23,7 +24,11 @@ int main(int argc, char *argv[]) {
     Ast* ast = parser_create_ast(parser);
     delete_parser(parser);
 
-    Codegen* codegen = new_codegen(ast);
+    Resolver* resolver = new_resolver(ast);
+    Srt* srt = resolver_resolve_semantics(resolver);
+    delete_resolver(resolver);
+
+    Codegen* codegen = new_codegen(srt);
     Vector* codes = codegen_generate_code(codegen);
 
     fprintf(dest, "    .text\n");
