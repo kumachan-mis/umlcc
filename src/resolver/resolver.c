@@ -7,13 +7,15 @@
 Resolver* new_resolver(Ast* ast) {
     Resolver* resolver = malloc(sizeof(Resolver));
     resolver->_ast = ast;
-    resolver->_table = new_symboltable();
+    resolver->_table = NULL;
     return resolver;
 }
 
 void delete_resolver(Resolver* resolver) {
     delete_ast(resolver->_ast);
-    delete_symboltable(resolver->_table);
+    if (resolver->_table != NULL) {
+        delete_symboltable(resolver->_table);
+    }
     free(resolver);
 }
 

@@ -42,14 +42,16 @@ Symbol* symboltable_search_symbol(SymbolTable* table, char* name) {
 
 SymbolTable* symboltable_enter_scope(SymbolTable* table) {
     SymbolTable* inner_table = new_symboltable();
-    inner_table->_memory_offset = table->_memory_offset;
-    inner_table->_outer_scope = table;
+    if (table != NULL) {
+        inner_table->_memory_offset = table->_memory_offset;
+        inner_table->_outer_scope = table;
+    }
     return inner_table;
 }
 
 SymbolTable* symboltable_exit_scope(SymbolTable* table) {
     SymbolTable* outer_table = table->_outer_scope;
-    outer_table->_memory_offset = table->_memory_offset;
+    if (outer_table != NULL) outer_table->_memory_offset = table->_memory_offset;
     delete_map(table->_symbol_map, (void (*)(void* value))delete_symbol);
     free(table);
     return outer_table;

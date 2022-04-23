@@ -20,8 +20,9 @@ Srt* resolve_stmt(Resolver* resolver) {
 
 Srt* resolve_compound_stmt(Resolver* resolver) {
     Srt* srt = new_srt(SRT_CMPD_STMT, 0);
-
     Ast* ast = resolver->_ast;
+    resolver->_table = symboltable_enter_scope(resolver->_table);
+
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
         Ast* child = vector_at(ast->children, i);
@@ -36,6 +37,7 @@ Srt* resolve_compound_stmt(Resolver* resolver) {
         }
     }
 
+    resolver->_table = symboltable_exit_scope(resolver->_table);
     resolver->_ast = ast;
     return srt;
 }

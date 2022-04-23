@@ -52,8 +52,8 @@ Vector* gen_function_definition(Codegen* codegen) {
     append_code(codes, "    popq  %%rbp\n");
     append_code(codes, "    ret\n");
 
-    codegen->_srt = srt;
     delete_symboltable(codegen->_table);
     codegen->_table = NULL;
+    codegen->_srt = srt;
     return codes;
 }

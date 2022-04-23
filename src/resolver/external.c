@@ -22,6 +22,7 @@ Srt* resolve_transration_unit(Resolver* resolver) {
 Srt* resolve_function_definition(Resolver* resolver) {
     Srt* srt = new_srt(SRT_FUNC_DEF, 0);
     Ast* ast = resolver->_ast;
+    resolver->_table = new_symboltable();
 
     resolver->_ast = vector_at(ast->children, 0);
     CType* specifiers_ctype = resolve_decl_specifiers(resolver);
@@ -34,6 +35,8 @@ Srt* resolve_function_definition(Resolver* resolver) {
     resolver->_ast = vector_at(ast->children, 2);
     vector_push(srt->children, resolve_compound_stmt(resolver));
 
+    delete_symboltable(resolver->_table);
+    resolver->_table = NULL;
     resolver->_ast = ast;
     return srt;
 }
