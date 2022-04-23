@@ -9,6 +9,7 @@
 typedef struct _Resolver {
     Ast*         _ast;
     SymbolTable* _table;
+    CType*       _decl_ctype;
 } Resolver;
 
 Resolver* new_resolver(Ast* _ast);
