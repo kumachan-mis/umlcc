@@ -13,11 +13,11 @@ Vector* resolve_decl(Resolver* resolver) {
 
     int num_children = vector_size(ast->children);
     for (int i = 1; i < num_children; i++) {
+        resolver->_ast = vector_at(ast->children, i);
         Vector* init_declor_srts = resolve_init_declarator(resolver);
     
         Srt* decl_srt = vector_at(init_declor_srts, 0);
-        if (decl_srt->ctype == NULL) decl_srt->ctype = ctype_copy(specifiers_ctype);
-        else ctype_connect(decl_srt->ctype, ctype_copy(specifiers_ctype));
+        decl_srt->ctype = ctype_connect(decl_srt->ctype, ctype_copy(specifiers_ctype));
 
         vector_extend(srts, init_declor_srts);
         delete_vector(init_declor_srts, (void (*)(void* item))delete_srt);

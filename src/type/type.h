@@ -20,7 +20,7 @@ CType* new_integer_ctype();
 CType* new_function_ctype(Vector* func_args, CType* func_return);
 CType* new_function_socket_ctype(Vector* func_args);
 CType* ctype_copy(CType* ctype);
-int    ctype_connect(CType* socket, CType* plug);
+CType* ctype_connect(CType* socket, CType* plug);
 void   delete_ctype(CType* ctype);
 
 #endif

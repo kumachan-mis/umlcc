@@ -44,19 +44,21 @@ CType* ctype_copy(CType* ctype) {
     return copied_ctype;
 }
 
-int ctype_connect(CType* socket, CType* plug) {
+CType* ctype_connect(CType* socket, CType* plug) {
+    if (socket == NULL) return plug;
+
     CType* ctype = socket;
     while (1) {
         switch (ctype->type) {
             case CTYPE_FUNC:
                 if (ctype->func_return == NULL){
                     ctype->func_return = plug;
-                    return 1;
+                    return socket;
                 }
                 ctype = ctype->func_return;
                 break;
             case CTYPE_INT:
-                return 0;
+                return socket;
         }
     }
 }
