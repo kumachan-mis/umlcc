@@ -31,7 +31,7 @@ Srt* resolve_assignment_expr(Resolver* resolver) {
     Ast* ast = resolver->_ast;
 
     resolver->_ast = vector_at(ast->children, 0);
-    Srt* lhs = new_ast(SRT_ASSIGNEE_EXPR, resolve_expr(resolver));
+    Srt* lhs = new_srt(SRT_ASSIGNEE_EXPR, 1, resolve_expr(resolver));
 
     resolver->_ast = vector_at(ast->children, 1);
     Srt* rhs = resolve_expr(resolver);

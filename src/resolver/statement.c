@@ -44,5 +44,5 @@ Srt* resolve_expression_stmt(Resolver* resolver) {
     Srt* srt = new_srt(SRT_EXPR_STMT, 1, resolve_expr(resolver));
 
     resolver->_ast = ast;
-    return resolver;
+    return srt;
 }

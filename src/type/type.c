@@ -69,6 +69,8 @@ int ctype_size(CType* ctype) {
             return 4;
         case CTYPE_FUNC:
             return 0;
+        default:
+            return -1;
     }
 }
 

@@ -25,11 +25,11 @@ Vector* gen_function_definition(Codegen* codegen) {
     Srt* srt = codegen->_srt;
     SymbolTable* table = codegen->_table;
 
-    Srt* func_decl = vector_at(srt, 0);
+    Srt* func_decl = vector_at(srt->children, 0);
     codegen->_srt = func_decl;
     symboltable_define_symbol(table, func_decl->ident_name, ctype_copy(func_decl->ctype));
 
-    Srt* func_body = vector_at(srt, 1);
+    Srt* func_body = vector_at(srt->children, 1);
     codegen->_table = new_symboltable();
 
     Vector* func_codes = new_vector();

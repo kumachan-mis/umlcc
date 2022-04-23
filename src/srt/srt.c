@@ -69,6 +69,6 @@ void delete_srt(Srt* srt) {
     if (srt->ident_name != NULL) {
         free(srt->ident_name);
     }
-    delete_vector(srt->children, (void* (*)(void* item))delete_srt);
+    delete_vector(srt->children, (void (*)(void* item))delete_srt);
     free(srt);
 }

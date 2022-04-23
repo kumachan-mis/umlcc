@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 Vector* resolve_decl(Resolver* resolver) {
@@ -90,6 +91,9 @@ Srt* resolve_direct_declarator(Resolver* resolver) {
                 char* ident_name = malloc((strlen(ast->ident_name) + 1) * sizeof(char));
                 strcpy(ident_name, ast->ident_name);
                 return new_identifier_srt(SRT_DECL, ctype, ident_name);
+            default:
+                fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
+                exit(1);
         } 
     }
 }

@@ -59,7 +59,7 @@ Vector* codegen_generate_code(Codegen* codegen) {
             break;
         case SRT_IDENT_EXPR:
         case SRT_INT_EXPR:
-            codes = gen_assignee_primary_expr_code(codegen);
+            codes = gen_primary_expr_code(codegen);
             break;
         default:
             break;
