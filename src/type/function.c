@@ -30,7 +30,7 @@ CFunction* cfunction_copy(CFunction* cfunction) {
     copied_cfunction->arg_types = copied_arg_types;
 
     copied_cfunction->return_type = NULL;
-    if (copied_cfunction->return_type != NULL) {
+    if (cfunction->return_type != NULL) {
         copied_cfunction->return_type = ctype_copy(cfunction->return_type);
     }
 

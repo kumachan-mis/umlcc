@@ -103,8 +103,7 @@ Ast* parse_postfix_expr(Parser* parser) {
                 ast = new_ast(AST_CALL_EXPR, 2, ast, parse_primary_expr(parser));
                 break;
             default:
-                fprintf(stderr, "Error: unexpected token type %d\n", token->type);
-                exit(1);
+                return ast;
         }
     }
 

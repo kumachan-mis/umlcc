@@ -5,6 +5,9 @@
 #include <stdlib.h>
 
 
+Vector* gen_address_expr_code(Codegen* codegen);
+
+
 Vector* gen_assignment_expr_code(Codegen* codegen) {
     Vector* codes = new_vector();
     Vector* sub_codes = NULL;
@@ -33,27 +36,6 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
     }
 
     append_code(codes, "    pushq %%rax\n");
-
-    codegen->_srt = srt;
-    return codes;
-}
-
-Vector* gen_assignee_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector();
-    Srt* srt = codegen->_srt;
-    Srt* child = vector_at(srt->children, 0);
-
-    switch (child->type) {
-        case SRT_IDENT_EXPR: {
-            Symbol* symbol = symboltable_search(codegen->_table, child->ident_name);
-            append_code(codes, "    leaq -%d(%%rbp), %%rax\n", symbol->memory_offset);
-            append_code(codes, "    pushq %%rax\n");
-            break;
-        }
-        default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", child->type);
-            exit(1);
-    }
 
     codegen->_srt = srt;
     return codes;
@@ -132,6 +114,46 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
     }
 
     append_code(codes, "    pushq %%rax\n");
+
+    codegen->_srt = srt;
+    return codes;
+}
+
+
+Vector* gen_unary_expr_code(Codegen* codegen) {
+    Vector* codes = NULL;
+    Srt* srt = codegen->_srt;
+
+    codegen->_srt = vector_at(srt->children, 0);
+
+    switch (srt->type) {
+        case SRT_ADDR_EXPR:
+            codes = gen_address_expr_code(codegen);
+            break;
+        default:
+            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            exit(1);
+    }
+
+    codegen->_srt = srt;
+    return codes;
+}
+
+Vector* gen_address_expr_code(Codegen* codegen) {
+    Vector* codes = new_vector();
+    Srt* srt = codegen->_srt;
+
+    switch (srt->type) {
+        case SRT_IDENT_EXPR: {
+            Symbol* symbol = symboltable_search(codegen->_table, srt->ident_name);
+            append_code(codes, "    leaq -%d(%%rbp), %%rax\n", symbol->memory_offset);
+            append_code(codes, "    pushq %%rax\n");
+            break;
+        }
+        default:
+            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            exit(1);
+    }
 
     codegen->_srt = srt;
     return codes;

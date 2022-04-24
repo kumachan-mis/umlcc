@@ -46,9 +46,6 @@ Vector* codegen_generate_code(Codegen* codegen) {
         case SRT_ASSIGN_EXPR:
             codes = gen_assignment_expr_code(codegen);
             break;
-        case SRT_ASSIGNEE_EXPR:
-            codes = gen_assignee_expr_code(codegen);
-            break;
         case SRT_ADD_EXPR:
         case SRT_SUB_EXPR:
             codes = gen_additive_expr_code(codegen);
@@ -57,6 +54,9 @@ Vector* codegen_generate_code(Codegen* codegen) {
         case SRT_DIV_EXPR:
         case SRT_MOD_EXPR:
             codes = gen_multiplicative_expr_code(codegen);
+            break;
+        case SRT_ADDR_EXPR:
+            codes = gen_unary_expr_code(codegen);
             break;
         case SRT_IDENT_EXPR:
         case SRT_INT_EXPR:

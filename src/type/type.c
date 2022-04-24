@@ -46,9 +46,12 @@ CType* new_socket_function_ctype(Vector* arg_types) {
 CType* ctype_copy(CType* ctype) {
     CType* copied_ctype = malloc(sizeof(CType));
     copied_ctype->type = ctype->type;
+
+    copied_ctype->pointer = NULL;
     if (ctype->pointer != NULL) {
         copied_ctype->pointer = cpointer_copy(ctype->pointer);
     }
+    copied_ctype->function = NULL;
     if (ctype->function != NULL) {
         copied_ctype->function = cfunction_copy(ctype->function);
     }

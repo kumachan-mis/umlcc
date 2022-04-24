@@ -21,12 +21,12 @@ typedef enum _SrtType {
 
     // expression
     SRT_ASSIGN_EXPR,
-    SRT_ASSIGNEE_EXPR,
     SRT_ADD_EXPR,
     SRT_SUB_EXPR,
     SRT_MUL_EXPR,
     SRT_DIV_EXPR,
     SRT_MOD_EXPR,
+    SRT_ADDR_EXPR,
     SRT_IDENT_EXPR,
     SRT_INT_EXPR,
 } SrtType;
