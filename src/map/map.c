@@ -1,4 +1,5 @@
 #include "./map.h"
+#include "../common/common.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -164,8 +165,7 @@ int map_calculate_next_hash(int hash, char* key, int capacity) {
 
 MapCell* new_mapcell(char* key, void* value) {
     MapCell* cell = malloc(sizeof(MapCell));
-    cell->key =  malloc((strlen(key) + 1) * sizeof(char));
-    strcpy(cell->key, key);
+    cell->key =  string_copy(key);
     cell->value = value;
     cell->deleted = 0;
     return cell;

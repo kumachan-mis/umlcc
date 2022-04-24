@@ -1,8 +1,8 @@
 #include "./declaration.h"
+#include "../common/common.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 
 Vector* resolve_decl(Resolver* resolver) {
@@ -25,9 +25,7 @@ Vector* resolve_decl(Resolver* resolver) {
             fprintf(stderr, "Error: identifier '%s' is already defined\n", ast->ident_name);
             exit(1);
         }
-        char* ident_name = malloc((strlen(decl_srt->ident_name) + 1) * sizeof(char));
-        strcpy(ident_name, decl_srt->ident_name);
-        symboltable_define_symbol(resolver->_table, ident_name, ctype_copy(decl_srt->ctype));
+        symboltable_define_symbol(resolver->_table, string_copy(decl_srt->ident_name), ctype_copy(decl_srt->ctype));
 
         vector_extend(srts, init_declor_srts);
         delete_vector(init_declor_srts, (void (*)(void* item))delete_srt);
@@ -91,9 +89,7 @@ Srt* resolve_direct_declarator(Resolver* resolver) {
                 break;
             }
             case AST_IDENT_DIRECT_DECLOR:
-                char* ident_name = malloc((strlen(ast->ident_name) + 1) * sizeof(char));
-                strcpy(ident_name, ast->ident_name);
-                return new_identifier_srt(SRT_DECL, ctype, ident_name);
+                return new_identifier_srt(SRT_DECL, ctype, string_copy(ast->ident_name));
             default:
                 fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
                 exit(1);

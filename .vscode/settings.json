@@ -1,3 +1,6 @@
 {
+    "files.associations": {
+        "*.d": "makefile"
+    },
     "githubPullRequests.defaultMergeMethod": "squash"
 }

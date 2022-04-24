@@ -1,10 +1,10 @@
 #include "./expression.h"
 #include "./util.h"
 #include "../token/token.h"
+#include "../common/common.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 
 Ast* parse_expr(Parser* parser) {
@@ -96,13 +96,10 @@ Ast* parse_primary_expr(Parser* parser) {
 
     Token* token = vector_at(parser->_tokens, parser->_index);
     switch (token->type) {
-        case TOKEN_IDENT: {
+        case TOKEN_IDENT:
             parser->_index++;
-            char* ident_name = malloc((strlen(token->ident_name) + 1) * sizeof(char));
-            strcpy(ident_name, token->ident_name);
-            ast = new_identifier_ast(AST_IDENT_EXPR, ident_name);
+            ast = new_identifier_ast(AST_IDENT_EXPR, string_copy(token->ident_name));
             break;
-        }
         case TOKEN_INT:
             parser->_index++;
             ast = new_integer_ast(AST_INT_EXPR, token->value_int);

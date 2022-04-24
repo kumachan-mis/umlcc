@@ -1,10 +1,10 @@
 #include "./declaration.h"
 #include "./util.h"
 #include "../token/token.h"
+#include "../common/common.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 
 Ast* parse_decl(Parser* parser) {
@@ -56,13 +56,10 @@ Ast* parse_direct_declarator(Parser* parser) {
 
     Token* token = vector_at(parser->_tokens, parser->_index);
     switch (token->type) {
-        case TOKEN_IDENT: {
+        case TOKEN_IDENT:
             parser->_index++;
-            char* ident_name = malloc((strlen(token->ident_name) + 1) * sizeof(char));
-            strcpy(ident_name, token->ident_name);
-            ast = new_identifier_ast(AST_IDENT_DIRECT_DECLOR, ident_name);
+            ast = new_identifier_ast(AST_IDENT_DIRECT_DECLOR, string_copy(token->ident_name));
             break;
-        }
         default:
             fprintf(stderr, "Error: unexpected token type %d\n", token->type);
             exit(1);
