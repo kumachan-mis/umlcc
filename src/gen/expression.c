@@ -45,7 +45,7 @@ Vector* gen_assignee_expr_code(Codegen* codegen) {
 
     switch (child->type) {
         case SRT_IDENT_EXPR: {
-            Symbol* symbol = symboltable_search_symbol(codegen->_table, child->ident_name);
+            Symbol* symbol = symboltable_search(codegen->_table, child->ident_name);
             append_code(codes, "    leaq -%d(%%rbp), %%rax\n", symbol->memory_offset);
             append_code(codes, "    pushq %%rax\n");
             break;
@@ -143,7 +143,7 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
 
     switch (srt->type) {
         case SRT_IDENT_EXPR: {
-            Symbol* symbol = symboltable_search_symbol(codegen->_table, srt->ident_name);
+            Symbol* symbol = symboltable_search(codegen->_table, srt->ident_name);
             append_code(codes, "    movl -%d(%%rbp), %%eax\n", symbol->memory_offset);
             append_code(codes, "    pushq %%rax\n");
             break;
