@@ -25,9 +25,7 @@ void delete_symboltable(SymbolTable* table) {
 
 void symboltable_define(SymbolTable* table, char* name, CType* ctype) {
     if (map_get(table->_symbol_map, name) != NULL) return;
-    if (!symboltable_is_global_scope(table)) {
-        table->_memory_offset += ctype_size(ctype);
-    }
+    table->_memory_offset += ctype_size(ctype);
     Symbol* symbol = new_symbol(name, ctype, table->_memory_offset);
     map_set(table->_symbol_map, name, symbol, (void (*)(void* value))delete_symbol);
 }
@@ -49,10 +47,6 @@ SymbolTable* symboltable_enter_scope(SymbolTable* table) {
         inner_table->_outer_scope = table;
     }
     return inner_table;
-}
-
-int symboltable_is_global_scope(SymbolTable* table) {
-    return table->_outer_scope == NULL;
 }
 
 SymbolTable* symboltable_exit_scope(SymbolTable* table) {

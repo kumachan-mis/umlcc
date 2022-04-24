@@ -8,7 +8,8 @@
 
 typedef struct _Resolver {
     Ast*         _ast;
-    SymbolTable* _table;
+    SymbolTable* _global_table;
+    SymbolTable* _local_table;
 } Resolver;
 
 Resolver* new_resolver(Ast* _ast);

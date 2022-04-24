@@ -11,14 +11,16 @@
 Codegen* new_codegen(Srt* srt) {
     Codegen* codegen = malloc(sizeof(Codegen));
     codegen->_srt = srt;
-    codegen->_table = NULL;
+    codegen->_global_table = new_symboltable();
+    codegen->_local_table = NULL;
     return codegen;
 }
 
 void delete_codegen(Codegen* codegen) {
     delete_srt(codegen->_srt);
-    if (codegen->_table != NULL) {
-        delete_symboltable(codegen->_table);
+    delete_symboltable(codegen->_global_table);
+    if (codegen->_local_table != NULL) {
+        delete_symboltable(codegen->_local_table);
     }
     free(codegen);
 }

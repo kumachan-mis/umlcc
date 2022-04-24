@@ -91,7 +91,7 @@ Srt* resolve_primary_expr(Resolver* resolver) {
 
     switch (ast->type) {
         case AST_IDENT_EXPR: {
-            Symbol* symbol = symboltable_search(resolver->_table, ast->ident_name);
+            Symbol* symbol = symboltable_search(resolver->_local_table, ast->ident_name);
             if (symbol == NULL) {
                 fprintf(stderr, "Error: identifier '%s' is used before declared\n", ast->ident_name);
                 exit(1);

@@ -8,7 +8,7 @@
 
 Vector* gen_decl_code(Codegen* codegen) {
     Srt* srt = codegen->_srt;
-    SymbolTable* table = codegen->_table;
+    SymbolTable* table = codegen->_local_table;
     symboltable_define(table, string_copy(srt->ident_name), ctype_copy(srt->ctype));
     return new_vector();
 }

@@ -20,12 +20,12 @@ Vector* resolve_decl(Resolver* resolver) {
         Srt* decl_srt = vector_at(init_declor_srts, 0);
         decl_srt->ctype = ctype_connect(decl_srt->ctype, ctype_copy(specifiers_ctype));
 
-        Symbol* symbol = symboltable_search(resolver->_table, decl_srt->ident_name);
+        Symbol* symbol = symboltable_search(resolver->_local_table, decl_srt->ident_name);
         if (symbol != NULL) {
             fprintf(stderr, "Error: identifier '%s' is already defined\n", ast->ident_name);
             exit(1);
         }
-        symboltable_define(resolver->_table, string_copy(decl_srt->ident_name), ctype_copy(decl_srt->ctype));
+        symboltable_define(resolver->_local_table, string_copy(decl_srt->ident_name), ctype_copy(decl_srt->ctype));
 
         vector_extend(srts, init_declor_srts);
         delete_vector(init_declor_srts, (void (*)(void* item))delete_srt);
