@@ -24,5 +24,6 @@ void         symboltable_define(SymbolTable* table, char* name, CType* ctype);
 Symbol*      symboltable_search(SymbolTable* table, char* name);
 SymbolTable* symboltable_enter_scope(SymbolTable* table);
 SymbolTable* symboltable_exit_scope(SymbolTable* table);
+int          symboltable_is_global_scope(SymbolTable* table);
 
 #endif
