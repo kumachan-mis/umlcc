@@ -20,6 +20,7 @@ typedef struct _Symbol {
 
 SymbolTable* new_symboltable();
 void         delete_symboltable(SymbolTable* table);
+int          symboltable_can_define(SymbolTable* table, char* name);
 void         symboltable_define(SymbolTable* table, char* name, CType* ctype);
 Symbol*      symboltable_search(SymbolTable* table, char* name);
 SymbolTable* symboltable_enter_scope(SymbolTable* table);

@@ -23,8 +23,12 @@ void delete_symboltable(SymbolTable* table) {
     free(table);
 }
 
+int symboltable_can_define(SymbolTable* table, char* name) {
+    return map_get(table->_symbol_map, name) == NULL;
+}
+
 void symboltable_define(SymbolTable* table, char* name, CType* ctype) {
-    if (map_get(table->_symbol_map, name) != NULL) return;
+    if (!symboltable_can_define(table, name)) return;
     table->_memory_offset += ctype_size(ctype);
     Symbol* symbol = new_symbol(name, ctype, table->_memory_offset);
     map_set(table->_symbol_map, name, symbol, (void (*)(void* value))delete_symbol);
