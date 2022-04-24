@@ -27,6 +27,7 @@ typedef enum _SrtType {
     SRT_DIV_EXPR,
     SRT_MOD_EXPR,
     SRT_ADDR_EXPR,
+    SRT_CALL_EXPR,
     SRT_IDENT_EXPR,
     SRT_INT_EXPR,
 } SrtType;

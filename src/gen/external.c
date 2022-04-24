@@ -1,5 +1,6 @@
 #include "./external.h"
 #include "./util.h"
+#include "../common/common.h"
 
 #include <stdlib.h>
 
@@ -26,6 +27,7 @@ Vector* gen_function_definition(Codegen* codegen) {
 
     Srt* func_decl = vector_at(srt->children, 0);
     codegen->_srt = func_decl;
+    symboltable_define(codegen->_global_table, string_copy(func_decl->ident_name), ctype_copy(func_decl->ctype));
 
     Srt* func_body = vector_at(srt->children, 1);
     codegen->_local_table = new_symboltable();

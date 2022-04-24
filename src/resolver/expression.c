@@ -17,6 +17,8 @@ Srt* resolve_expr(Resolver* resolver) {
         case AST_DIV_EXPR:
         case AST_MOD_EXPR:
             return resolve_multiplicative_expr(resolver);
+        case AST_CALL_EXPR:
+            return resolve_postfix_expr(resolver);
         case AST_IDENT_EXPR:
         case AST_INT_EXPR:
             return resolve_primary_expr(resolver);
@@ -71,7 +73,7 @@ Srt* resolve_multiplicative_expr(Resolver* resolver) {
     resolver->_ast = vector_at(ast->children, 1);
     Srt* rhs = resolve_expr(resolver);
 
-    CType* ctype =  new_integer_ctype();
+    CType* ctype = new_integer_ctype();
 
     switch (ast->type) {
         case AST_MUL_EXPR:
@@ -86,12 +88,37 @@ Srt* resolve_multiplicative_expr(Resolver* resolver) {
     }
 }
 
+Srt* resolve_postfix_expr(Resolver* resolver) {
+    Ast* ast = resolver->_ast;
+
+    resolver->_ast = vector_at(ast->children, 0);
+    Srt* child = resolve_expr(resolver);
+
+    CType* ctype = ctype_copy(child->ctype);
+
+    switch (ast->type) {
+        case AST_CALL_EXPR:
+            child = new_ctyped_srt(SRT_ADDR_EXPR, new_pointer_ctype(ctype), 1, child);
+            // function -> pointer to function. TODO: implicit conversion as a module.
+            return new_ctyped_srt(SRT_CALL_EXPR, ctype_copy(ctype->function->return_type), 1, child);
+        default:
+            fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
+            exit(1);
+    }
+}
+
 Srt* resolve_primary_expr(Resolver* resolver) {
     Ast* ast = resolver->_ast;
 
     switch (ast->type) {
         case AST_IDENT_EXPR: {
-            Symbol* symbol = symboltable_search(resolver->_local_table, ast->ident_name);
+            Symbol* symbol = NULL;
+            if (symbol == NULL) {
+                symbol = symboltable_search(resolver->_local_table, ast->ident_name);
+            }
+            if (symbol == NULL) {
+                symbol = symboltable_search(resolver->_global_table, ast->ident_name);
+            }
             if (symbol == NULL) {
                 fprintf(stderr, "Error: identifier '%s' is used before declared\n", ast->ident_name);
                 exit(1);

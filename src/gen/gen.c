@@ -60,6 +60,9 @@ Vector* codegen_generate_code(Codegen* codegen) {
         case SRT_ADDR_EXPR:
             codes = gen_unary_expr_code(codegen);
             break;
+        case SRT_CALL_EXPR:
+            codes = gen_postfix_expr_code(codegen);
+            break;
         case SRT_IDENT_EXPR:
         case SRT_INT_EXPR:
             codes = gen_primary_expr_code(codegen);
