@@ -13,14 +13,14 @@ typedef enum _AstType {
 
     // declaration
     AST_DECL,
-    AST_DECL_SPECS,
+    AST_DECL_SPECIFIERS,
     AST_INIT_DECLOR,
     //   type-specifiers 
     AST_TYPE_INT,
     //   declarators
     AST_DECLOR,
-    AST_IDENT_DIRECT_DECLOR,
-    AST_FUNC_DIRECT_DECLOR,
+    AST_IDENT_DECLOR,
+    AST_FUNC_DECLOR,
 
     // statement
     AST_CMPD_STMT,

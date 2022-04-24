@@ -80,14 +80,14 @@ Srt* resolve_direct_declarator(Resolver* resolver) {
 
     while (1) {
         switch (ast->type) {
-            case AST_FUNC_DIRECT_DECLOR: {
+            case AST_FUNC_DECLOR: {
                 CType* socket_ctype = new_socket_function_ctype(new_vector());
                 ctype_connect(socket_ctype, ctype);
                 ctype = socket_ctype;
                 ast = vector_at(ast->children, 0);
                 break;
             }
-            case AST_IDENT_DIRECT_DECLOR:
+            case AST_IDENT_DECLOR:
                 return new_identifier_srt(SRT_DECL, ctype, string_copy(ast->ident_name));
             default:
                 fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);

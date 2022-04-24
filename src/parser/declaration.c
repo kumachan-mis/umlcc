@@ -33,7 +33,7 @@ Ast* parse_decl_specifiers(Parser* parser) {
     switch (token->type) {
         case TOKEN_KEYWORD_INT:
             parser->_index++;
-            ast = new_ast(AST_DECL_SPECS, 1, new_ast(AST_TYPE_INT, 0));
+            ast = new_ast(AST_DECL_SPECIFIERS, 1, new_ast(AST_TYPE_INT, 0));
             return ast;
         default:
             fprintf(stderr, "Error: unexpected token type %d\n", token->type);
@@ -58,7 +58,7 @@ Ast* parse_direct_declarator(Parser* parser) {
     switch (token->type) {
         case TOKEN_IDENT:
             parser->_index++;
-            ast = new_identifier_ast(AST_IDENT_DIRECT_DECLOR, string_copy(token->ident_name));
+            ast = new_identifier_ast(AST_IDENT_DECLOR, string_copy(token->ident_name));
             break;
         default:
             fprintf(stderr, "Error: unexpected token type %d\n", token->type);
@@ -72,7 +72,7 @@ Ast* parse_direct_declarator(Parser* parser) {
             case TOKEN_LPALEN:
                 parser->_index++;
                 consume_token(parser, TOKEN_RPALEN);
-                ast = new_ast(AST_FUNC_DIRECT_DECLOR, 1, ast);
+                ast = new_ast(AST_FUNC_DECLOR, 1, ast);
                 break;
             default:
                 terminated = 1;
