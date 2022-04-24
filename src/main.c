@@ -30,13 +30,12 @@ int main(int argc, char *argv[]) {
 
     Codegen* codegen = new_codegen(srt);
     Vector* codes = codegen_generate_code(codegen);
+    delete_codegen(codegen);
 
     int codes_len = vector_size(codes);
     for (int i = 0; i < codes_len; i++) {
         fprintf(dest, "%s", (char*)vector_at(codes, i));
     }
-
-    delete_codegen(codegen);
     delete_vector(codes, free);
 
     fclose(dest);
