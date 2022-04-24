@@ -32,8 +32,10 @@ $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
 	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -MP -MM $^ | sed 's|^\(.*\)\.o:|$(OBJ_DIR)/\1.o:|g' > $@
 
--include $(DEPS)
-
 .PHONY: clean
 clean:
 	$(RM) $(BIN_DIR) $(BLD_DIR)
+
+ifneq ($(MAKECMDGOALS), clean)
+-include $(DEPS)
+endif
