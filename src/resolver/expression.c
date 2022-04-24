@@ -1,8 +1,8 @@
 #include "./expression.h"
+#include "../common/common.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 
 Srt* resolve_expr(Resolver* resolver) {
@@ -96,9 +96,7 @@ Srt* resolve_primary_expr(Resolver* resolver) {
                 fprintf(stderr, "Error: identifier '%s' is used before declared\n", ast->ident_name);
                 exit(1);
             }
-            char* ident_name = malloc((strlen(ast->ident_name) + 1) * sizeof(char));
-            strcpy(ident_name, ast->ident_name);
-            return new_identifier_srt(SRT_IDENT_EXPR, ctype_copy(symbol->ctype), ident_name);
+            return new_identifier_srt(SRT_IDENT_EXPR, ctype_copy(symbol->ctype), string_copy(ast->ident_name));
         }
         case AST_INT_EXPR:
             return new_integer_srt(SRT_INT_EXPR, ast->value_int);
