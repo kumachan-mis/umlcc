@@ -82,7 +82,7 @@ Srt* resolve_direct_declarator(Resolver* resolver) {
     while (1) {
         switch (ast->type) {
             case AST_FUNC_DIRECT_DECLOR: {
-                CType* socket_ctype = new_function_socket_ctype(new_vector());
+                CType* socket_ctype = new_socket_function_ctype(new_vector());
                 ctype_connect(socket_ctype, ctype);
                 ctype = socket_ctype;
                 ast = vector_at(ast->children, 0);
