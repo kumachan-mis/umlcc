@@ -24,7 +24,7 @@ CFunction* cfunction_copy(CFunction* cfunction) {
     Vector* copied_arg_types = new_vector();
     int num_args = vector_size(cfunction->arg_types);
     for (int i = 0; i < num_args; i++) {
-        CType* copied_arg_type = cfunction_copy(vector_at(cfunction->arg_types, i));
+        CType* copied_arg_type = ctype_copy(vector_at(cfunction->arg_types, i));
         vector_push(copied_arg_types, copied_arg_type);
     }
     copied_cfunction->arg_types = copied_arg_types;

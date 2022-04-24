@@ -12,7 +12,7 @@ typedef enum _CTypeType {
 } CTypeType;
 
 
-typedef struct _CType {
+struct _CType {
     CTypeType  type;
     CPointer*  pointer;
     CFunction* function;
