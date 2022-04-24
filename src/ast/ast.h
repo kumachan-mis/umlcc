@@ -33,6 +33,7 @@ typedef enum _AstType {
     AST_MUL_EXPR,
     AST_DIV_EXPR,
     AST_MOD_EXPR,
+    AST_CALL_EXPR,
     AST_IDENT_EXPR,
     AST_INT_EXPR,
 } AstType;
