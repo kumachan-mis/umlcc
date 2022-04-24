@@ -100,7 +100,7 @@ Ast* parse_postfix_expr(Parser* parser) {
             case TOKEN_LPALEN:
                 parser->_index++;
                 consume_token(parser, TOKEN_RPALEN);
-                ast = new_ast(AST_CALL_EXPR, 2, ast, parse_primary_expr(parser));
+                ast = new_ast(AST_CALL_EXPR, 1, ast);
                 break;
             default:
                 return ast;
