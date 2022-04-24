@@ -20,12 +20,11 @@ Vector* resolve_decl(Resolver* resolver) {
         Srt* decl_srt = vector_at(init_declor_srts, 0);
         decl_srt->ctype = ctype_connect(decl_srt->ctype, ctype_copy(specifiers_ctype));
 
-        Symbol* symbol = symboltable_search_symbol(resolver->_table, decl_srt->ident_name);
-        if (symbol != NULL) {
-            fprintf(stderr, "Error: identifier '%s' is already defined\n", ast->ident_name);
+        if (!symboltable_can_define(resolver->_local_table, decl_srt->ident_name)) {
+            fprintf(stderr, "Error: identifier '%s' is already defined\n", decl_srt->ident_name);
             exit(1);
         }
-        symboltable_define_symbol(resolver->_table, string_copy(decl_srt->ident_name), ctype_copy(decl_srt->ctype));
+        symboltable_define(resolver->_local_table, string_copy(decl_srt->ident_name), ctype_copy(decl_srt->ctype));
 
         vector_extend(srts, init_declor_srts);
         delete_vector(init_declor_srts, (void (*)(void* item))delete_srt);
@@ -82,7 +81,7 @@ Srt* resolve_direct_declarator(Resolver* resolver) {
     while (1) {
         switch (ast->type) {
             case AST_FUNC_DIRECT_DECLOR: {
-                CType* socket_ctype = new_function_socket_ctype(new_vector());
+                CType* socket_ctype = new_socket_function_ctype(new_vector());
                 ctype_connect(socket_ctype, ctype);
                 ctype = socket_ctype;
                 ast = vector_at(ast->children, 0);

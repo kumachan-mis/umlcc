@@ -8,7 +8,8 @@
 
 typedef struct _Codegen {
     Srt*         _srt;
-    SymbolTable* _table;
+    SymbolTable* _global_table;
+    SymbolTable* _local_table;
 } Codegen;
 
 Codegen* new_codegen(Srt* srt);

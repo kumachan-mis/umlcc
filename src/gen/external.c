@@ -1,5 +1,6 @@
 #include "./external.h"
 #include "./util.h"
+#include "../common/common.h"
 
 #include <stdlib.h>
 
@@ -26,9 +27,10 @@ Vector* gen_function_definition(Codegen* codegen) {
 
     Srt* func_decl = vector_at(srt->children, 0);
     codegen->_srt = func_decl;
+    symboltable_define(codegen->_global_table, string_copy(func_decl->ident_name), ctype_copy(func_decl->ctype));
 
     Srt* func_body = vector_at(srt->children, 1);
-    codegen->_table = new_symboltable();
+    codegen->_local_table = new_symboltable();
 
     Vector* func_codes = new_vector();
     int num_children = vector_size(func_body->children);
@@ -43,17 +45,17 @@ Vector* gen_function_definition(Codegen* codegen) {
     append_code(codes, "_%s:\n", func_decl->ident_name);
     append_code(codes, "    pushq  %%rbp\n");
     append_code(codes, "    movq  %%rsp, %%rbp\n");
-    append_code(codes, "    subq  $%d, %%rsp\n", codegen->_table->_memory_offset);
+    append_code(codes, "    subq  $%d, %%rsp\n", codegen->_local_table->_memory_offset);
 
     vector_extend(codes, func_codes);
     delete_vector(func_codes, free);
 
-    append_code(codes, "    addq  $%d, %%rsp\n", codegen->_table->_memory_offset);
+    append_code(codes, "    addq  $%d, %%rsp\n", codegen->_local_table->_memory_offset);
     append_code(codes, "    popq  %%rbp\n");
     append_code(codes, "    ret\n");
 
-    delete_symboltable(codegen->_table);
-    codegen->_table = NULL;
+    delete_symboltable(codegen->_local_table);
+    codegen->_local_table = NULL;
     codegen->_srt = srt;
     return codes;
 }

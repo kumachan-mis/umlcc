@@ -18,7 +18,7 @@ Ast* parse_assignment_expr(Parser* parser) {
 
     while (!terminated) {
         int index = parser->_index;
-        Ast* ast = parse_primary_expr(parser);
+        Ast* ast = parse_postfix_expr(parser);
 
         Token* token = vector_at(parser->_tokens, parser->_index);
         switch (token->type) {
@@ -68,27 +68,46 @@ Ast* parse_additive_expr(Parser* parser) {
 }
 
 Ast* parse_multiplicative_expr(Parser* parser) {
-    Ast* ast = parse_primary_expr(parser);
+    Ast* ast = parse_postfix_expr(parser);
 
     while (1) {
         Token* token = vector_at(parser->_tokens, parser->_index);
         switch (token->type) {
             case TOKEN_ASTERISK:
                 parser->_index++;
-                ast = new_ast(AST_MUL_EXPR, 2, ast, parse_primary_expr(parser));
+                ast = new_ast(AST_MUL_EXPR, 2, ast, parse_postfix_expr(parser));
                 break;
             case TOKEN_SLASH:
                 parser->_index++;
-                ast = new_ast(AST_DIV_EXPR, 2, ast, parse_primary_expr(parser));
+                ast = new_ast(AST_DIV_EXPR, 2, ast, parse_postfix_expr(parser));
                 break;
             case TOKEN_PERCENT:
                 parser->_index++;
-                ast = new_ast(AST_MOD_EXPR, 2, ast, parse_primary_expr(parser));
+                ast = new_ast(AST_MOD_EXPR, 2, ast, parse_postfix_expr(parser));
                 break;
             default:
                 return ast;
         }
     }
+}
+
+Ast* parse_postfix_expr(Parser* parser) {
+    Ast* ast = parse_primary_expr(parser);
+
+    while (1) {
+        Token* token = vector_at(parser->_tokens, parser->_index);
+        switch (token->type) {
+            case TOKEN_LPALEN:
+                parser->_index++;
+                consume_token(parser, TOKEN_RPALEN);
+                ast = new_ast(AST_CALL_EXPR, 1, ast);
+                break;
+            default:
+                return ast;
+        }
+    }
+
+    return ast;
 }
 
 Ast* parse_primary_expr(Parser* parser) {
