@@ -13,21 +13,30 @@ typedef enum _SrtType {
     SRT_FUNC_DEF,
 
     // declaration
-    SRT_DECL,
+    SRT_OBJ_DECL,
+    SRT_FUNC_DECL,
+    SRT_PARAM_LIST,
 
     // statement
     SRT_CMPD_STMT,
     SRT_EXPR_STMT,
 
     // expression
+    //   assignment-expression
     SRT_ASSIGN_EXPR,
+    //   additive-expression
     SRT_ADD_EXPR,
     SRT_SUB_EXPR,
+    //   multiplicative-expression
     SRT_MUL_EXPR,
     SRT_DIV_EXPR,
     SRT_MOD_EXPR,
+    //   unary-expression
     SRT_ADDR_EXPR,
+    //   postfix-expression
     SRT_CALL_EXPR,
+    SRT_ARG_LIST,
+    //   primary-expression
     SRT_IDENT_EXPR,
     SRT_INT_EXPR,
 } SrtType;

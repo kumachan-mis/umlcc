@@ -88,7 +88,7 @@ Srt* resolve_direct_declarator(Resolver* resolver) {
                 break;
             }
             case AST_IDENT_DECLOR:
-                return new_identifier_srt(SRT_DECL, ctype, string_copy(ast->ident_name));
+                return new_identifier_srt(SRT_OBJ_DECL, ctype, string_copy(ast->ident_name));
             default:
                 fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
                 exit(1);

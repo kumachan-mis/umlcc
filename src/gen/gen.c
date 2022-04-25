@@ -36,7 +36,7 @@ Vector* codegen_generate_code(Codegen* codegen) {
         case SRT_FUNC_DEF:
             codes = gen_function_definition(codegen);
             break;
-        case SRT_DECL:
+        case SRT_OBJ_DECL:
             codes = gen_decl_code(codegen);
             break;
         case SRT_CMPD_STMT:
