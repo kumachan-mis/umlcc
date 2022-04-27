@@ -10,13 +10,13 @@ Vector* resolve_decl(Resolver* resolver) {
     Ast* ast = resolver->_ast;
 
     resolver->_ast = vector_at(ast->children, 0);
-    resolver->_decl_specifiers_ctype = resolve_decl_specifiers(resolver);
+    resolver->_shared_ctype = resolve_decl_specifiers(resolver);
 
     resolver->_ast = vector_at(ast->children, 1);
     srts = resolve_init_declarator_list(resolver);
 
-    delete_ctype(resolver->_decl_specifiers_ctype);
-    resolver->_decl_specifiers_ctype = NULL;
+    delete_ctype(resolver->_shared_ctype);
+    resolver->_shared_ctype = NULL;
     resolver->_ast = ast;
     return srts;
 }
@@ -69,7 +69,7 @@ Srt* resolve_declarator(Resolver* resolver) {
 
     resolver->_ast = vector_at(ast->children, 0);
     srt = resolve_direct_declarator(resolver);
-    srt->ctype = ctype_connect(srt->ctype, ctype_copy(resolver->_decl_specifiers_ctype));
+    srt->ctype = ctype_connect(srt->ctype, ctype_copy(resolver->_shared_ctype));
     resolver->_ast = ast;
 
     if (!symboltable_can_define(resolver->_local_table, srt->ident_name)) {
