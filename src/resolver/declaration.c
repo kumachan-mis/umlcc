@@ -108,4 +108,6 @@ Srt* resolve_direct_declarator(Resolver* resolver) {
                 exit(1);
         } 
     }
+
+    return srt;
 }
