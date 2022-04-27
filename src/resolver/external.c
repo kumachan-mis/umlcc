@@ -29,15 +29,17 @@ Srt* resolve_function_definition(Resolver* resolver) {
     CType* specifiers_ctype = resolve_decl_specifiers(resolver);
 
     resolver->_ast = vector_at(ast->children, 1);
-    Srt* decl_srt = resolve_declarator(resolver);
-    decl_srt->ctype = ctype_connect(decl_srt->ctype, specifiers_ctype);
-    vector_push(srt->children, decl_srt);
+    Srt* declarator_srt = resolve_declarator(resolver);
+    declarator_srt->ctype = ctype_connect(declarator_srt->ctype, specifiers_ctype);
+    vector_push(srt->children, declarator_srt);
 
-    if (!symboltable_can_define(resolver->_global_table, decl_srt->ident_name)) {
-        fprintf(stderr, "Error: identifier '%s' is already defined\n", decl_srt->ident_name);
+    if (!symboltable_can_define(resolver->_global_table, declarator_srt->ident_name)) {
+        fprintf(stderr, "Error: identifier '%s' is already defined\n", declarator_srt->ident_name);
         exit(1);
     }
-    symboltable_define(resolver->_global_table, string_copy(decl_srt->ident_name), ctype_copy(decl_srt->ctype));
+    char* table_ident_name = string_copy(declarator_srt->ident_name);
+    CType* table_ctype = ctype_copy(declarator_srt->ctype);
+    symboltable_define(resolver->_global_table, table_ident_name, table_ctype);
 
     resolver->_local_table = new_symboltable();
     resolver->_ast = vector_at(ast->children, 2);

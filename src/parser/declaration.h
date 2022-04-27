@@ -6,6 +6,7 @@
 
 Ast* parse_decl(Parser* parser);
 Ast* parse_decl_specifiers(Parser* parser);
+Ast* parse_init_declarator_list(Parser* parser);
 Ast* parse_init_declarator(Parser* parser);
 Ast* parse_declarator(Parser* parser);
 Ast* parse_direct_declarator(Parser* parser);

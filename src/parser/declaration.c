@@ -8,7 +8,28 @@
 
 
 Ast* parse_decl(Parser* parser) {
-    Ast* ast = new_ast(AST_DECL, 1, parse_decl_specifiers(parser));
+    Ast* specifiers_ast = parse_decl_specifiers(parser);
+    Ast* init_list_ast = parse_init_declarator_list(parser);
+    return new_ast(AST_DECL, 2,specifiers_ast, init_list_ast);
+}
+
+Ast* parse_decl_specifiers(Parser* parser) {
+    Ast* ast = NULL;
+
+    Token* token = vector_at(parser->_tokens, parser->_index);
+    switch (token->type) {
+        case TOKEN_KEYWORD_INT:
+            parser->_index++;
+            ast = new_ast(AST_DECL_SPECIFIERS, 1, new_ast(AST_TYPE_INT, 0));
+            return ast;
+        default:
+            fprintf(stderr, "Error: unexpected token type %d\n", token->type);
+            exit(1);
+    }
+}
+
+Ast* parse_init_declarator_list(Parser* parser) {
+    Ast* ast = new_ast(AST_INIT_DECLOR_LIST, 0);
 
     Token* token = vector_at(parser->_tokens, parser->_index);
     if (token->type == TOKEN_SEMICOLON) {
@@ -27,28 +48,14 @@ Ast* parse_decl(Parser* parser) {
     }
 }
 
-Ast* parse_decl_specifiers(Parser* parser) {
-    Ast* ast = NULL;
-    Token* token = vector_at(parser->_tokens, parser->_index);
-    switch (token->type) {
-        case TOKEN_KEYWORD_INT:
-            parser->_index++;
-            ast = new_ast(AST_DECL_SPECIFIERS, 1, new_ast(AST_TYPE_INT, 0));
-            return ast;
-        default:
-            fprintf(stderr, "Error: unexpected token type %d\n", token->type);
-            exit(1);
-    }
-}
-
 Ast* parse_init_declarator(Parser* parser) {
-    Ast* ast = new_ast(AST_INIT_DECLOR, 1, parse_declarator(parser));
-    return ast;
+    Ast* declarator_ast = parse_declarator(parser);
+    return new_ast(AST_INIT_DECLOR, 1, declarator_ast);
 }
 
 Ast* parse_declarator(Parser* parser) {
-    Ast* direct = parse_direct_declarator(parser);
-    return new_ast(AST_DECLOR, 1, direct);
+    Ast* direct_declarator_ast = parse_direct_declarator(parser);
+    return new_ast(AST_DECLOR, 1, direct_declarator_ast);
 }
 
 Ast* parse_direct_declarator(Parser* parser) {
