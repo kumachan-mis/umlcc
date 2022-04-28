@@ -99,12 +99,28 @@ Ast* parse_postfix_expr(Parser* parser) {
         switch (token->type) {
             case TOKEN_LPALEN:
                 parser->_index++;
+                ast = new_ast(AST_CALL_EXPR, 2, ast, argument_expr_list(parser));
                 consume_token(parser, TOKEN_RPALEN);
-                ast = new_ast(AST_CALL_EXPR, 1, ast);
                 break;
             default:
                 return ast;
         }
+    }
+
+    return ast;
+}
+
+Ast* argument_expr_list(Parser* parser) {
+    Ast* ast = new_ast(AST_ARG_LIST, 0);
+
+    Token* token = vector_at(parser->_tokens, parser->_index);
+    if (token->type == TOKEN_RPALEN) return ast;
+
+    while (1) {
+        vector_push(ast->children, parse_assignment_expr(parser));
+        token = vector_at(parser->_tokens, parser->_index);
+        if (token->type == TOKEN_RPALEN) break;
+        consume_token(parser, TOKEN_COMMA);
     }
 
     return ast;
