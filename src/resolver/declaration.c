@@ -58,17 +58,6 @@ Srt* resolve_init_declarator(Resolver* resolver) {
 
     resolver->_ast = vector_at(ast->children, 0);
     srt = resolve_declarator(resolver);
-    resolver->_ast = ast;
-
-    return srt;
-}
-
-Srt* resolve_declarator(Resolver* resolver) {
-    Srt* srt = NULL;
-    Ast* ast = resolver->_ast;
-
-    resolver->_ast = vector_at(ast->children, 0);
-    srt = resolve_direct_declarator(resolver);
     srt->ctype = ctype_connect(srt->ctype, ctype_copy(resolver->_shared_ctype));
     resolver->_ast = ast;
 
@@ -80,6 +69,17 @@ Srt* resolve_declarator(Resolver* resolver) {
     CType* table_ctype = ctype_copy(srt->ctype);
     symboltable_define(resolver->_local_table, table_ident_name, table_ctype);
 
+    return srt;
+}
+
+Srt* resolve_declarator(Resolver* resolver) {
+    Srt* srt = NULL;
+    Ast* ast = resolver->_ast;
+
+    resolver->_ast = vector_at(ast->children, 0);
+    srt = resolve_direct_declarator(resolver);
+
+    resolver->_ast = ast;
     return srt;
 }
 
