@@ -99,7 +99,7 @@ Ast* parse_postfix_expr(Parser* parser) {
         switch (token->type) {
             case TOKEN_LPALEN:
                 parser->_index++;
-                ast = new_ast(AST_CALL_EXPR, 2, ast, argument_expr_list(parser));
+                ast = new_ast(AST_CALL_EXPR, 2, ast, parse_argument_expr_list(parser));
                 consume_token(parser, TOKEN_RPALEN);
                 break;
             default:
@@ -110,7 +110,7 @@ Ast* parse_postfix_expr(Parser* parser) {
     return ast;
 }
 
-Ast* argument_expr_list(Parser* parser) {
+Ast* parse_argument_expr_list(Parser* parser) {
     Ast* ast = new_ast(AST_ARG_LIST, 0);
 
     Token* token = vector_at(parser->_tokens, parser->_index);
