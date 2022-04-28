@@ -26,11 +26,11 @@ Srt* resolve_function_definition(Resolver* resolver) {
     Ast* ast = resolver->_ast;
 
     resolver->_ast = vector_at(ast->children, 0);
-    CType* specifiers_ctype = resolve_decl_specifiers(resolver);
+    resolver->_shared_ctype = resolve_decl_specifiers(resolver);
 
     resolver->_ast = vector_at(ast->children, 1);
     Srt* declarator_srt = resolve_declarator(resolver);
-    declarator_srt->ctype = ctype_connect(declarator_srt->ctype, specifiers_ctype);
+    declarator_srt->ctype = ctype_connect(declarator_srt->ctype, resolver->_shared_ctype);
     vector_push(srt->children, declarator_srt);
 
     if (!symboltable_can_define(resolver->_global_table, declarator_srt->ident_name)) {
@@ -47,6 +47,7 @@ Srt* resolve_function_definition(Resolver* resolver) {
     delete_symboltable(resolver->_local_table);
     resolver->_local_table = NULL;
 
+    resolver->_shared_ctype = NULL;
     resolver->_ast = ast;
     return srt;
 }
