@@ -1,0 +1,10 @@
+BasedOnStyle: LLVM
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: WithoutElse
+ColumnLimit: 100
+IndentCaseLabels: true
+IndentWidth: 4
+PointerAlignment: Left
+UseTab: Never

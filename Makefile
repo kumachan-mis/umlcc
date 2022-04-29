@@ -1,5 +1,5 @@
 UMLCC   = umlcc
-CC      = gcc-11
+CC      = gcc
 CFLAGS  = -O3 -std=c99 -pedantic -Wall -Werror
 SRC_DIR = src
 BLD_DIR = build
@@ -31,10 +31,16 @@ $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
 	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -MP -MM $^ | sed 's|^\(.*\)\.o:|$(OBJ_DIR)/\1.o:|g' > $@
 
-.PHONY: clean
+.PHONY: clean format
+
 clean:
 	$(RM) $(BIN_DIR) $(BLD_DIR)
 
+format:
+	find . -name *.h -o -name *.c | xargs clang-format -i
+
 ifneq ($(MAKECMDGOALS), clean)
+ifneq ($(MAKECMDGOALS), format)
 -include $(DEPS)
+endif
 endif
