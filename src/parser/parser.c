@@ -1,6 +1,6 @@
 #include "./parser.h"
-#include "./external.h"
 #include "../token/token.h"
+#include "./external.h"
 
 #include <stdlib.h>
 

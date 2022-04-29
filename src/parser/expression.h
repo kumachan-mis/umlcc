@@ -3,7 +3,6 @@
 
 #include "./parser.h"
 
-
 Ast* parse_expr(Parser* parser);
 Ast* parse_assignment_expr(Parser* parser);
 Ast* parse_additive_expr(Parser* parser);

@@ -1,11 +1,10 @@
 #include "./expression.h"
-#include "./util.h"
-#include "../token/token.h"
 #include "../common/common.h"
+#include "../token/token.h"
+#include "./util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
 
 Ast* parse_expr(Parser* parser) {
     Ast* ast = parse_assignment_expr(parser);
@@ -13,8 +12,8 @@ Ast* parse_expr(Parser* parser) {
 }
 
 Ast* parse_assignment_expr(Parser* parser) {
-   Vector* stack = new_vector();
-   int terminated = 0;
+    Vector* stack = new_vector();
+    int terminated = 0;
 
     while (!terminated) {
         int index = parser->_index;
@@ -42,7 +41,7 @@ Ast* parse_assignment_expr(Parser* parser) {
         ast = next_ast;
     }
 
-    delete_vector(stack, (void(*)(void* item))delete_ast);
+    delete_vector(stack, (void (*)(void* item))delete_ast);
 
     return ast;
 }

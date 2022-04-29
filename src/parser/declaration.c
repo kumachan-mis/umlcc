@@ -1,17 +1,16 @@
 #include "./declaration.h"
-#include "./util.h"
-#include "../token/token.h"
 #include "../common/common.h"
+#include "../token/token.h"
+#include "./util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
 
 Ast* parse_decl(Parser* parser) {
     Ast* specifiers_ast = parse_decl_specifiers(parser);
     Ast* init_list_ast = parse_init_declarator_list(parser);
     consume_token(parser, TOKEN_SEMICOLON);
-    return new_ast(AST_DECL, 2,specifiers_ast, init_list_ast);
+    return new_ast(AST_DECL, 2, specifiers_ast, init_list_ast);
 }
 
 Ast* parse_decl_specifiers(Parser* parser) {
@@ -88,7 +87,7 @@ Ast* parse_direct_declarator(Parser* parser) {
 }
 
 Ast* parse_parameter_list(Parser* parser) {
-     Ast* ast = new_ast(AST_PARAM_LIST, 0);
+    Ast* ast = new_ast(AST_PARAM_LIST, 0);
 
     Token* token = vector_at(parser->_tokens, parser->_index);
     if (token->type == TOKEN_RPALEN) return ast;

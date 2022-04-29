@@ -1,7 +1,6 @@
 #ifndef _UMLCC_AST_H_
 #define _UMLCC_AST_H_
 
-
 #include "../vector/vector.h"
 
 typedef enum _AstType {
@@ -16,7 +15,7 @@ typedef enum _AstType {
     AST_DECL_SPECIFIERS,
     AST_INIT_DECLOR_LIST,
     AST_INIT_DECLOR,
-    //   type-specifiers 
+    //   type-specifiers
     AST_TYPE_INT,
     //   declarators
     AST_IDENT_DECLOR,

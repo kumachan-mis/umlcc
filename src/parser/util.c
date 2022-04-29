@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 void consume_token(Parser* parser, TokenType token_type) {
     Token* token = vector_at(parser->_tokens, parser->_index);
     if (token->type == token_type) {

@@ -3,7 +3,6 @@
 
 #include <stdlib.h>
 
-
 Vector* gen_compound_stmt_code(Codegen* codegen) {
     return gen_children_code(codegen);
 }

@@ -1,11 +1,10 @@
 #include "./external.h"
+#include "../common/common.h"
 #include "./declaration.h"
 #include "./statement.h"
-#include "../common/common.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
 
 Srt* resolve_transration_unit(Resolver* resolver) {
     Srt* srt = new_srt(SRT_TRAS_UNIT, 0);
@@ -48,7 +47,8 @@ Srt* resolve_function_definition(Resolver* resolver) {
     for (int i = 0; i < num_params; i++) {
         CParam* cparam = vector_at(params, i);
         if (!symboltable_can_define(resolver->_local_table, cparam->ident_name)) {
-            fprintf(stderr, "Error: identifier '%s' is already defined\n", declarator_srt->ident_name);
+            fprintf(stderr, "Error: identifier '%s' is already defined\n",
+                    declarator_srt->ident_name);
             exit(1);
         }
         table_ident_name = string_copy(cparam->ident_name);

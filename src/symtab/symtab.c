@@ -3,9 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 Symbol* new_symbol(char* name, CType* ctype, int memory_offset);
-void    delete_symbol(Symbol* symbol);
+void delete_symbol(Symbol* symbol);
 
 SymbolTable* new_symboltable() {
     SymbolTable* table = malloc(sizeof(SymbolTable));
@@ -16,9 +15,7 @@ SymbolTable* new_symboltable() {
 }
 
 void delete_symboltable(SymbolTable* table) {
-    if (table->_outer_scope != NULL) {
-        delete_symboltable(table->_outer_scope);
-    }
+    if (table->_outer_scope != NULL) { delete_symboltable(table->_outer_scope); }
     delete_map(table->_symbol_map, (void (*)(void* value))delete_symbol);
     free(table);
 }

@@ -1,11 +1,10 @@
 #include "./declaration.h"
-#include "./util.h"
-#include "../type/type.h"
 #include "../common/common.h"
+#include "../type/type.h"
+#include "./util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
 
 Vector* gen_decl_list_code(Codegen* codegen) {
     return gen_children_code(codegen);

@@ -1,12 +1,11 @@
 #ifndef _UMLCC_SRT_H_
 #define _UMLCC_SRT_H_
 
-
-#include "../vector/vector.h"
 #include "../type/type.h"
+#include "../vector/vector.h"
 
 typedef enum _SrtType {
-     // translation unit
+    // translation unit
     SRT_TRAS_UNIT,
 
     // function definition
@@ -48,7 +47,6 @@ typedef struct _Srt {
     int value_int;
     Vector* children;
 } Srt;
-
 
 Srt* new_srt(SrtType type, int num_children, ...);
 Srt* new_ctyped_srt(SrtType type, CType* ctype, int num_children, ...);

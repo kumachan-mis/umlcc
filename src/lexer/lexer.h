@@ -6,13 +6,12 @@
 
 #include <stdio.h>
 
-
 typedef struct _Lexer {
     FILE* _file_ptr;
 } Lexer;
 
-Lexer*  new_lexer(FILE* file_ptr);
-void    delete_lexer(Lexer* lexer);
+Lexer* new_lexer(FILE* file_ptr);
+void delete_lexer(Lexer* lexer);
 Vector* lexer_read_tokens(Lexer* lexer);
 
 #endif

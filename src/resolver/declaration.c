@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 Srt* resolve_decl(Resolver* resolver) {
     Srt* srt = NULL;
     Ast* ast = resolver->_ast;
@@ -58,7 +57,8 @@ Srt* resolve_init_declarator(Resolver* resolver) {
 
     resolver->_ast = vector_at(ast->children, 0);
     Srt* declarator_srt = resolve_declarator(resolver);
-    declarator_srt->ctype = ctype_connect(declarator_srt->ctype, ctype_copy(resolver->_shared_ctype));
+    declarator_srt->ctype =
+        ctype_connect(declarator_srt->ctype, ctype_copy(resolver->_shared_ctype));
 
     if (!symboltable_can_define(resolver->_local_table, declarator_srt->ident_name)) {
         fprintf(stderr, "Error: identifier '%s' is already defined\n", declarator_srt->ident_name);
@@ -99,7 +99,7 @@ Srt* resolve_declarator(Resolver* resolver) {
             default:
                 fprintf(stderr, "Error: unexpected ast type %d\n", lookedup_ast->type);
                 exit(1);
-        } 
+        }
     }
 
     resolver->_ast = ast;

@@ -1,8 +1,7 @@
 #include "../src/vector/vector.h"
 
-#include <stdlib.h>
 #include <assert.h>
-
+#include <stdlib.h>
 
 void test_vector_push();
 void test_vector_pop();

@@ -1,12 +1,12 @@
 #include "./vector.h"
 
-#include <stdlib.h>
 #include <memory.h>
+#include <stdlib.h>
 
 struct _Vector {
     void** container;
-    int   size;
-    int   capacity;
+    int size;
+    int capacity;
 };
 
 Vector* new_vector() {

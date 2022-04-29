@@ -3,7 +3,6 @@
 
 #include "../srt/srt.h"
 
-
 Srt* convert_function_to_ptr(Srt* srt);
 
 #endif

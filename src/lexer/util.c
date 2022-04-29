@@ -1,8 +1,7 @@
 #include "./util.h"
 
-#include <stdlib.h>
 #include <ctype.h>
-
+#include <stdlib.h>
 
 char* read_token_str(Lexer* lexer, int startswith(char c), int consistsof(char c)) {
     int initial_char = fgetc(lexer->_file_ptr);

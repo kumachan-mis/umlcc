@@ -2,7 +2,6 @@
 
 #include <stdlib.h>
 
-
 Token* new_token(TokenType type) {
     Token* token = malloc(sizeof(Token));
     token->type = type;
