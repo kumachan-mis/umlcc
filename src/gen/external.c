@@ -16,19 +16,17 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     Vector* codes = new_vector();
     Srt* srt = codegen->_srt;
 
-    codegen->_srt = vector_at(srt->children, 0);
-    char* table_ident_name = string_copy(codegen->_srt->ident_name);
-    CType* table_ctype = ctype_copy(codegen->_srt->ctype);
+    Srt* declarator_srt = vector_at(srt->children, 0);
+    char* table_ident_name = string_copy(declarator_srt->ident_name);
+    CType* table_ctype = ctype_copy(declarator_srt->ctype);
     symboltable_define(codegen->_global_table, table_ident_name, table_ctype);
 
     codegen->_local_table = new_symboltable();
+    codegen->_srt = declarator_srt;
     Vector* param_codes = gen_function_params_code(codegen);
 
     codegen->_srt = vector_at(srt->children, 1);
     Vector* body_codes = gen_children_code(codegen);
-
-    delete_symboltable(codegen->_local_table);
-    codegen->_local_table = NULL;
 
     append_code(codes, "    .global _%s\n", table_ident_name);
     append_code(codes, "_%s:\n", table_ident_name);
@@ -46,6 +44,8 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     append_code(codes, "    popq  %%rbp\n");
     append_code(codes, "    ret\n");
 
+    delete_symboltable(codegen->_local_table);
+    codegen->_local_table = NULL;
     codegen->_srt = srt;
     return codes;
 }
