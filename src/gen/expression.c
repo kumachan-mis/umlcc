@@ -5,6 +5,8 @@
 #include <stdlib.h>
 
 
+char arg_regs[][6] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
+
 Vector* gen_address_expr_code(Codegen* codegen);
 
 
@@ -134,7 +136,6 @@ Vector* gen_postfix_expr_code(Codegen* codegen) {
     switch (srt->type) {
         case SRT_CALL_EXPR: {
             Srt* params_srt = vector_at(srt->children, 1);
-            char arg_regs[][6] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
             int num_args = vector_size(params_srt->children);
             for (int i = 0; i < num_args; i++) {
                 codegen->_srt = vector_at(params_srt->children, i);

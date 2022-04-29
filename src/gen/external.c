@@ -5,6 +5,9 @@
 #include <stdlib.h>
 
 
+char param_regs[][6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
+
+
 Vector* gen_translation_unit_code(Codegen* codegen) {
     return gen_children_code(codegen);
 }
@@ -12,7 +15,6 @@ Vector* gen_translation_unit_code(Codegen* codegen) {
 Vector* gen_function_definition_code(Codegen* codegen) {
     Vector* codes = new_vector();
     Srt* srt = codegen->_srt;
-    char* param_regs[6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
 
     Srt* declarator_srt = vector_at(srt->children, 0);
     char* table_ident_name = string_copy(declarator_srt->ident_name);
@@ -42,7 +44,7 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     codegen->_srt = vector_at(srt->children, 1);
     Vector* body_codes = gen_children_code(codegen);
 
-    append_code(codes, "    .global _%s\n", table_ident_name);
+    append_code(codes, "    .globl _%s\n", table_ident_name);
     append_code(codes, "_%s:\n", table_ident_name);
     append_code(codes, "    pushq  %%rbp\n");
     append_code(codes, "    movq  %%rsp, %%rbp\n");
