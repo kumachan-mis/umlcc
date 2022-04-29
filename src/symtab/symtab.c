@@ -27,11 +27,12 @@ int symboltable_can_define(SymbolTable* table, char* name) {
     return map_get(table->_symbol_map, name) == NULL;
 }
 
-void symboltable_define(SymbolTable* table, char* name, CType* ctype) {
-    if (!symboltable_can_define(table, name)) return;
+Symbol* symboltable_define(SymbolTable* table, char* name, CType* ctype) {
+    if (!symboltable_can_define(table, name)) return NULL;
     table->_memory_offset += ctype_size(ctype);
     Symbol* symbol = new_symbol(name, ctype, table->_memory_offset);
     map_set(table->_symbol_map, name, symbol, (void (*)(void* value))delete_symbol);
+    return symbol;
 }
 
 Symbol* symboltable_search(SymbolTable* table, char* name) {

@@ -1,4 +1,5 @@
 #include "./expression.h"
+#include "./conversion.h"
 #include "../common/common.h"
 
 #include <stdio.h>
@@ -7,6 +8,7 @@
 
 Srt* resolve_expr(Resolver* resolver) {
     Ast* ast = resolver->_ast;
+
     switch (ast->type) {
         case AST_ASSIGN_EXPR:
             return resolve_assignment_expr(resolver);
@@ -33,31 +35,35 @@ Srt* resolve_assignment_expr(Resolver* resolver) {
     Ast* ast = resolver->_ast;
 
     resolver->_ast = vector_at(ast->children, 0);
-    Srt* lhs = new_srt(SRT_ADDR_EXPR, 1, resolve_expr(resolver));
+    Srt* lhs_srt = new_srt(SRT_ADDR_EXPR, 1, resolve_expr(resolver));
 
     resolver->_ast = vector_at(ast->children, 1);
-    Srt* rhs = resolve_expr(resolver);
+    Srt* rhs_srt = resolve_expr(resolver);
 
     CType* ctype = new_integer_ctype();
-    return new_ctyped_srt(SRT_ASSIGN_EXPR, ctype, 2, lhs, rhs);
+    resolver->_ast = ast;
+
+    return new_ctyped_srt(SRT_ASSIGN_EXPR, ctype, 2, lhs_srt, rhs_srt);
 }
 
 Srt* resolve_additive_expr(Resolver* resolver) {
     Ast* ast = resolver->_ast;
 
     resolver->_ast = vector_at(ast->children, 0);
-    Srt* lhs = resolve_expr(resolver);
+    Srt* lhs_srt = resolve_expr(resolver);
 
     resolver->_ast = vector_at(ast->children, 1);
-    Srt* rhs = resolve_expr(resolver);
+    Srt* rhs_srt = resolve_expr(resolver);
 
     CType* ctype =  new_integer_ctype();
+    resolver->_ast = ast;
 
     switch (ast->type) {
         case AST_ADD_EXPR:
-            return new_ctyped_srt(SRT_ADD_EXPR, ctype, 2, lhs, rhs);
+            resolver->_ast = ast;
+            return new_ctyped_srt(SRT_ADD_EXPR, ctype, 2, lhs_srt, rhs_srt);
         case AST_SUB_EXPR:
-            return new_ctyped_srt(SRT_SUB_EXPR, ctype, 2, lhs, rhs);
+            return new_ctyped_srt(SRT_SUB_EXPR, ctype, 2, lhs_srt, rhs_srt);
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
             exit(1);
@@ -68,20 +74,21 @@ Srt* resolve_multiplicative_expr(Resolver* resolver) {
     Ast* ast = resolver->_ast;
 
     resolver->_ast = vector_at(ast->children, 0);
-    Srt* lhs = resolve_expr(resolver);
+    Srt* lhs_srt = resolve_expr(resolver);
 
     resolver->_ast = vector_at(ast->children, 1);
-    Srt* rhs = resolve_expr(resolver);
+    Srt* rhs_srt = resolve_expr(resolver);
 
     CType* ctype = new_integer_ctype();
+    resolver->_ast = ast;
 
     switch (ast->type) {
         case AST_MUL_EXPR:
-            return new_ctyped_srt(SRT_MUL_EXPR, ctype, 2, lhs, rhs);
+            return new_ctyped_srt(SRT_MUL_EXPR, ctype, 2, lhs_srt, rhs_srt);
         case AST_DIV_EXPR:
-            return new_ctyped_srt(SRT_DIV_EXPR, ctype, 2, lhs, rhs);
+            return new_ctyped_srt(SRT_DIV_EXPR, ctype, 2, lhs_srt, rhs_srt);
         case AST_MOD_EXPR:
-            return new_ctyped_srt(SRT_MOD_EXPR, ctype, 2, lhs, rhs);
+            return new_ctyped_srt(SRT_MOD_EXPR, ctype, 2, lhs_srt, rhs_srt);
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
             exit(1);
@@ -91,28 +98,46 @@ Srt* resolve_multiplicative_expr(Resolver* resolver) {
 Srt* resolve_postfix_expr(Resolver* resolver) {
     Ast* ast = resolver->_ast;
 
-    resolver->_ast = vector_at(ast->children, 0);
-    Srt* child = resolve_expr(resolver);
-
-    CType* ctype = ctype_copy(child->ctype);
-
     switch (ast->type) {
-        case AST_CALL_EXPR:
-            child = new_ctyped_srt(SRT_ADDR_EXPR, new_pointer_ctype(ctype), 1, child);
-            // function -> pointer to function. TODO: implicit conversion as a module.
-            return new_ctyped_srt(SRT_CALL_EXPR, ctype_copy(ctype->function->return_type), 1, child);
+        case AST_CALL_EXPR: {
+            resolver->_ast = vector_at(ast->children, 0);
+            Srt* raw_lhs_srt = resolve_expr(resolver);
+            Srt* lhs_srt = convert_function_to_ptr(raw_lhs_srt);
+            // TODO: type conversion is always performed, not only in function calls
+        
+            resolver->_ast = vector_at(ast->children, 1);
+            Srt* rhs_srt = resolve_argument_expr_list(resolver);
+            
+            CType* ctype = ctype_copy(raw_lhs_srt->ctype->function->return_ctype);
+            resolver->_ast = ast;
+            return new_ctyped_srt(SRT_CALL_EXPR, ctype, 2, lhs_srt, rhs_srt);
+        }
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
             exit(1);
     }
 }
 
-Srt* resolve_primary_expr(Resolver* resolver) {
+Srt* resolve_argument_expr_list(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_ARG_LIST, 0);
     Ast* ast = resolver->_ast;
 
+    int num_children = vector_size(ast->children);
+    for (int i = 0; i < num_children; i++) {
+        resolver->_ast = vector_at(ast->children, i);
+        vector_push(srt->children, resolve_expr(resolver));
+    }
+
+    resolver->_ast = ast;
+    return srt;
+}
+
+Srt* resolve_primary_expr(Resolver* resolver) {
+    Ast* ast = resolver->_ast;
+    Symbol* symbol = NULL;
+
     switch (ast->type) {
-        case AST_IDENT_EXPR: {
-            Symbol* symbol = NULL;
+        case AST_IDENT_EXPR:
             if (symbol == NULL) {
                 symbol = symboltable_search(resolver->_local_table, ast->ident_name);
             }
@@ -124,7 +149,6 @@ Srt* resolve_primary_expr(Resolver* resolver) {
                 exit(1);
             }
             return new_identifier_srt(SRT_IDENT_EXPR, ctype_copy(symbol->ctype), string_copy(ast->ident_name));
-        }
         case AST_INT_EXPR:
             return new_integer_srt(SRT_INT_EXPR, ast->value_int);
         default:

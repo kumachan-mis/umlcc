@@ -31,16 +31,24 @@ Vector* codegen_generate_code(Codegen* codegen) {
 
     switch (srt->type) {
         case SRT_TRAS_UNIT:
-            codes = gen_translation_unit(codegen);
+            codes = gen_translation_unit_code(codegen);
             break;
         case SRT_FUNC_DEF:
-            codes = gen_function_definition(codegen);
+            codes = gen_function_definition_code(codegen);
+            break;
+         case SRT_DECL_LIST:
+            codes = gen_decl_list_code(codegen);
+            break;
+        case SRT_INIT_DECL:
+            codes = gen_init_decl_code(codegen);
             break;
         case SRT_DECL:
             codes = gen_decl_code(codegen);
             break;
         case SRT_CMPD_STMT:
+            codegen->_local_table = symboltable_enter_scope(codegen->_local_table);
             codes = gen_compound_stmt_code(codegen);
+            codegen->_local_table = symboltable_exit_scope(codegen->_local_table);
             break;
         case SRT_EXPR_STMT:
             codes = gen_expression_stmt_code(codegen);

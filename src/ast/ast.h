@@ -13,27 +13,35 @@ typedef enum _AstType {
 
     // declaration
     AST_DECL,
-    AST_DECL_SPECS,
+    AST_DECL_SPECIFIERS,
+    AST_INIT_DECLOR_LIST,
     AST_INIT_DECLOR,
     //   type-specifiers 
     AST_TYPE_INT,
     //   declarators
-    AST_DECLOR,
-    AST_IDENT_DIRECT_DECLOR,
-    AST_FUNC_DIRECT_DECLOR,
+    AST_IDENT_DECLOR,
+    AST_FUNC_DECLOR,
+    AST_PARAM_LIST,
+    AST_PARAM_DECL,
 
     // statement
     AST_CMPD_STMT,
     AST_EXPR_STMT,
 
     // expression
+    //   assignment-expression
     AST_ASSIGN_EXPR,
+    //   additive-expression
     AST_ADD_EXPR,
     AST_SUB_EXPR,
+    //   multiplicative-expression
     AST_MUL_EXPR,
     AST_DIV_EXPR,
     AST_MOD_EXPR,
+    //   postfix-expression
     AST_CALL_EXPR,
+    AST_ARG_LIST,
+    //   primary-expression
     AST_IDENT_EXPR,
     AST_INT_EXPR,
 } AstType;

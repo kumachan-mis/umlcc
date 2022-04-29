@@ -5,93 +5,135 @@
 #include <stdlib.h>
 
 
-Vector* resolve_decl(Resolver* resolver) {
-    Vector* srts = new_vector();
+Srt* resolve_decl(Resolver* resolver) {
+    Srt* srt = NULL;
     Ast* ast = resolver->_ast;
 
     resolver->_ast = vector_at(ast->children, 0);
-    CType* specifiers_ctype = resolve_decl_specifiers(resolver);
+    resolver->_shared_ctype = resolve_decl_specifiers(resolver);
 
-    int num_children = vector_size(ast->children);
-    for (int i = 1; i < num_children; i++) {
-        resolver->_ast = vector_at(ast->children, i);
-        Vector* init_declor_srts = resolve_init_declarator(resolver);
-    
-        Srt* decl_srt = vector_at(init_declor_srts, 0);
-        decl_srt->ctype = ctype_connect(decl_srt->ctype, ctype_copy(specifiers_ctype));
+    resolver->_ast = vector_at(ast->children, 1);
+    srt = resolve_init_declarator_list(resolver);
 
-        if (!symboltable_can_define(resolver->_local_table, decl_srt->ident_name)) {
-            fprintf(stderr, "Error: identifier '%s' is already defined\n", decl_srt->ident_name);
-            exit(1);
-        }
-        symboltable_define(resolver->_local_table, string_copy(decl_srt->ident_name), ctype_copy(decl_srt->ctype));
-
-        vector_extend(srts, init_declor_srts);
-        delete_vector(init_declor_srts, (void (*)(void* item))delete_srt);
-    }
-
-    delete_ctype(specifiers_ctype);
+    delete_ctype(resolver->_shared_ctype);
+    resolver->_shared_ctype = NULL;
     resolver->_ast = ast;
-    return srts;
+    return srt;
 }
 
 CType* resolve_decl_specifiers(Resolver* resolver) {
     CType* ctype = NULL;
     Ast* ast = resolver->_ast;
-    
-    Ast* child = vector_at(ast->children, 0);
-    switch (child->type) {
+
+    Ast* lookedup_ast = vector_at(ast->children, 0);
+    switch (lookedup_ast->type) {
         case AST_TYPE_INT:
             ctype = new_integer_ctype();
             break;
         default:
-            fprintf(stderr, "Error: unexpected ast type %d\n", child->type);
+            fprintf(stderr, "Error: unexpected ast type %d\n", lookedup_ast->type);
             exit(1);
-
     }
 
     return ctype;
 }
 
-Vector* resolve_init_declarator(Resolver* resolver) {
-    Vector* srts = new_vector();
+Srt* resolve_init_declarator_list(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_DECL_LIST, 0);
     Ast* ast = resolver->_ast;
 
-    resolver->_ast = vector_at(ast->children, 0);
-    vector_push(srts, resolve_declarator(resolver));
-
-    resolver->_ast = ast;
-    return srts;
-}
-
-Srt* resolve_declarator(Resolver* resolver) {
-    Ast* ast = resolver->_ast;
-
-    resolver->_ast = vector_at(ast->children, 0);
-    Srt* srt = resolve_direct_declarator(resolver);
+    int num_children = vector_size(ast->children);
+    for (int i = 0; i < num_children; i++) {
+        resolver->_ast = vector_at(ast->children, i);
+        vector_push(srt->children, resolve_init_declarator(resolver));
+    }
 
     resolver->_ast = ast;
     return srt;
 }
 
-Srt* resolve_direct_declarator(Resolver* resolver) {
+Srt* resolve_init_declarator(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_INIT_DECL, 0);
     Ast* ast = resolver->_ast;
-    CType* ctype = NULL;
 
-    while (1) {
-        switch (ast->type) {
-            case AST_FUNC_DIRECT_DECLOR: {
-                CType* socket_ctype = new_socket_function_ctype(new_vector());
+    resolver->_ast = vector_at(ast->children, 0);
+    Srt* declarator_srt = resolve_declarator(resolver);
+    declarator_srt->ctype = ctype_connect(declarator_srt->ctype, ctype_copy(resolver->_shared_ctype));
+
+    if (!symboltable_can_define(resolver->_local_table, declarator_srt->ident_name)) {
+        fprintf(stderr, "Error: identifier '%s' is already defined\n", declarator_srt->ident_name);
+        exit(1);
+    }
+    char* table_ident_name = string_copy(declarator_srt->ident_name);
+    CType* table_ctype = ctype_copy(declarator_srt->ctype);
+    symboltable_define(resolver->_local_table, table_ident_name, table_ctype);
+
+    vector_push(srt->children, declarator_srt);
+
+    resolver->_ast = ast;
+    return srt;
+}
+
+Srt* resolve_declarator(Resolver* resolver) {
+    Srt* srt = NULL;
+    CType* ctype = NULL;
+    Ast* ast = resolver->_ast;
+
+    Ast* lookedup_ast = ast;
+    CType* socket_ctype = NULL;
+    int terminated = 0;
+
+    while (!terminated) {
+        switch (lookedup_ast->type) {
+            case AST_FUNC_DECLOR:
+                resolver->_ast = vector_at(lookedup_ast->children, 1);
+                socket_ctype = new_socket_function_ctype(resolve_parameter_list(resolver));
                 ctype_connect(socket_ctype, ctype);
                 ctype = socket_ctype;
-                ast = vector_at(ast->children, 0);
+                lookedup_ast = vector_at(lookedup_ast->children, 0);
                 break;
-            }
-            case AST_IDENT_DIRECT_DECLOR:
-                return new_identifier_srt(SRT_DECL, ctype, string_copy(ast->ident_name));
+            case AST_IDENT_DECLOR:
+                srt = new_identifier_srt(SRT_DECL, ctype, string_copy(lookedup_ast->ident_name));
+                terminated = 1;
+                break;
             default:
-                fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
+                fprintf(stderr, "Error: unexpected ast type %d\n", lookedup_ast->type);
                 exit(1);
         } 
     }
+
+    resolver->_ast = ast;
+    return srt;
+}
+
+Vector* resolve_parameter_list(Resolver* resolver) {
+    Vector* params = new_vector();
+    Ast* ast = resolver->_ast;
+
+    int num_children = vector_size(ast->children);
+    for (int i = 0; i < num_children; i++) {
+        resolver->_ast = vector_at(ast->children, i);
+        vector_push(params, resolve_parameter_decl(resolver));
+    }
+
+    resolver->_ast = ast;
+    return params;
+}
+
+CParam* resolve_parameter_decl(Resolver* resolver) {
+    CParam* cparam = NULL;
+    Ast* ast = resolver->_ast;
+
+    resolver->_ast = vector_at(ast->children, 0);
+    CType* specifiers_ctype = resolve_decl_specifiers(resolver);
+
+    resolver->_ast = vector_at(ast->children, 1);
+    Srt* srt = resolve_declarator(resolver);
+    srt->ctype = ctype_connect(srt->ctype, specifiers_ctype);
+
+    cparam = new_cparam(string_copy(srt->ident_name), ctype_copy(srt->ctype));
+    delete_srt(srt);
+
+    resolver->_ast = ast;
+    return cparam;
 }

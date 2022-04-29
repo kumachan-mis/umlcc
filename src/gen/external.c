@@ -5,50 +5,56 @@
 #include <stdlib.h>
 
 
-Vector* gen_translation_unit(Codegen* codegen) {
-    Vector* codes = new_vector();
-    Srt* srt = codegen->_srt;
+char param_regs[][6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
 
-    int num_children = vector_size(srt->children);
-    for (int i = 0; i < num_children; i++) {
-        codegen->_srt = vector_at(srt->children, i);
-        Vector* sub_codes = codegen_generate_code(codegen);
-        vector_extend(codes, sub_codes);
-        delete_vector(sub_codes, free);
-    }
 
-    codegen->_srt = srt;
-    return codes;
+Vector* gen_translation_unit_code(Codegen* codegen) {
+    return gen_children_code(codegen);
 }
 
-Vector* gen_function_definition(Codegen* codegen) {
+Vector* gen_function_definition_code(Codegen* codegen) {
     Vector* codes = new_vector();
     Srt* srt = codegen->_srt;
 
-    Srt* func_decl = vector_at(srt->children, 0);
-    codegen->_srt = func_decl;
-    symboltable_define(codegen->_global_table, string_copy(func_decl->ident_name), ctype_copy(func_decl->ctype));
+    Srt* declarator_srt = vector_at(srt->children, 0);
+    char* table_ident_name = string_copy(declarator_srt->ident_name);
+    CType* table_ctype = ctype_copy(declarator_srt->ctype);
+    symboltable_define(codegen->_global_table, table_ident_name, table_ctype);
 
-    Srt* func_body = vector_at(srt->children, 1);
     codegen->_local_table = new_symboltable();
 
-    Vector* func_codes = new_vector();
-    int num_children = vector_size(func_body->children);
-    for (int i = 0; i < num_children; i++) {
-        codegen->_srt = vector_at(func_body->children, i);
-        Vector* sub_codes = codegen_generate_code(codegen);
-        vector_extend(func_codes, sub_codes);
-        delete_vector(sub_codes, free);
+    Vector* param_codes = new_vector();
+    Vector* params = declarator_srt->ctype->function->params;
+    int num_params = vector_size(params);
+    for (int i = 0; i < num_params; i++) {
+        CParam* cparam = vector_at(params, i);
+        char* table_ident_name = string_copy(cparam->ident_name);
+        CType* table_ctype = ctype_copy(cparam->ctype);
+        Symbol* symbol = symboltable_define(codegen->_local_table, table_ident_name, table_ctype);
+
+        if (i < 6) {
+            append_code(param_codes, "    movl  %s, -%d(%%rbp)\n", param_regs[i], symbol->memory_offset);
+        } else {
+            int param_offset = (num_params - i) * 8 + 8; // 8 is size of address. + 8 is for "pushq %rbp"
+            append_code(param_codes, "    movl  %d(%%rbp), %%eax\n", param_offset);
+            append_code(param_codes, "    movl  %%eax, -%d(%%rbp)\n", symbol->memory_offset);
+        }
     }
 
-    append_code(codes, "    .global _%s\n", func_decl->ident_name);
-    append_code(codes, "_%s:\n", func_decl->ident_name);
+    codegen->_srt = vector_at(srt->children, 1);
+    Vector* body_codes = gen_children_code(codegen);
+
+    append_code(codes, "    .globl _%s\n", table_ident_name);
+    append_code(codes, "_%s:\n", table_ident_name);
     append_code(codes, "    pushq  %%rbp\n");
     append_code(codes, "    movq  %%rsp, %%rbp\n");
     append_code(codes, "    subq  $%d, %%rsp\n", codegen->_local_table->_memory_offset);
 
-    vector_extend(codes, func_codes);
-    delete_vector(func_codes, free);
+    vector_extend(codes, param_codes);
+    delete_vector(param_codes, free);
+
+    vector_extend(codes, body_codes);
+    delete_vector(body_codes, free);
 
     append_code(codes, "    addq  $%d, %%rsp\n", codegen->_local_table->_memory_offset);
     append_code(codes, "    popq  %%rbp\n");
@@ -57,5 +63,6 @@ Vector* gen_function_definition(Codegen* codegen) {
     delete_symboltable(codegen->_local_table);
     codegen->_local_table = NULL;
     codegen->_srt = srt;
+
     return codes;
 }
