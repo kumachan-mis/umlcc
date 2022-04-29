@@ -4,11 +4,11 @@
 #include <stdlib.h>
 
 
-CType* ctype_copy(CType* ctype);
-void   delete_ctype(CType* ctype);
+struct _CType* ctype_copy(struct _CType* ctype);
+void           delete_ctype(struct _CType* ctype);
 
 
-CFunction* new_cfunction(Vector* params, CType* return_ctype) {
+CFunction* new_cfunction(Vector* params, struct _CType* return_ctype) {
     CFunction* cfunction = malloc(sizeof(CFunction));
     cfunction->params = params;
     cfunction->return_ctype = return_ctype;
@@ -38,11 +38,11 @@ CFunction* cfunction_copy(CFunction* cfunction) {
     return copied_cfunction;
 }
 
-CType* cfunction_next(CFunction* cfunction) {
+struct _CType* cfunction_next(CFunction* cfunction) {
     return cfunction->return_ctype;
 }
 
-CFunction* cfunction_connect(CFunction* socket, CType* plug) {
+CFunction* cfunction_connect(CFunction* socket, struct _CType* plug) {
     socket->return_ctype = plug;
     return socket;
 }
@@ -55,7 +55,7 @@ void delete_cfunction(CFunction* cfunction) {
     free(cfunction);
 }
 
-CParam* new_cparam(char* ident_name, CType* ctype) {
+CParam* new_cparam(char* ident_name, struct _CType* ctype) {
     CParam* cparam = malloc(sizeof(CParam));
     cparam->ident_name = ident_name;
     cparam->ctype = ctype;

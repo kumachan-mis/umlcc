@@ -12,11 +12,11 @@ typedef enum _CTypeType {
 } CTypeType;
 
 
-struct _CType {
+typedef struct _CType {
     CTypeType  type;
     CPointer*  pointer;
     CFunction* function;
-};
+} CType;
 
 
 CType* new_integer_ctype();
