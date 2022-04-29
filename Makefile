@@ -1,5 +1,5 @@
 UMLCC   = umlcc
-CC      = gcc-11
+CC      = gcc
 CFLAGS  = -O3 -std=c99 -pedantic -Wall -Werror
 SRC_DIR = src
 BLD_DIR = build
