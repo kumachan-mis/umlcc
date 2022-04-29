@@ -133,6 +133,10 @@ Vector* gen_postfix_expr_code(Codegen* codegen) {
 
     switch (srt->type) {
         case SRT_CALL_EXPR:
+            codegen->_srt = vector_at(srt->children, 1);
+            sub_codes = codegen_generate_code(codegen);
+            vector_extend(codes, sub_codes);
+            delete_vector(sub_codes, free);
             append_code(codes, "    call *%%rax\n");
             break;
         default:
@@ -141,6 +145,27 @@ Vector* gen_postfix_expr_code(Codegen* codegen) {
     }
 
     append_code(codes, "    pushq %%rax\n");
+
+    codegen->_srt = srt;
+    return codes;
+}
+
+Vector* gen_argument_expr_list_code(Codegen* codegen) {
+    Vector* codes = new_vector();
+    Vector* sub_codes = NULL;
+    Srt* srt = codegen->_srt;
+
+    char param_regs[][6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
+    Vector* params = srt->ctype->function->params;
+
+    int num_params = vector_size(params);
+    for (int i = 0; i < num_params; i++) {
+        codegen->_srt = vector_at(srt->children, i);
+        sub_codes = codegen_generate_code(codegen);
+        vector_extend(codes, sub_codes);
+        delete_vector(sub_codes, free);
+        if (i < 6) append_code(codes, "    popq %d\n", param_regs[i]);
+    }
 
     codegen->_srt = srt;
     return codes;

@@ -6,38 +6,38 @@
 #include <stdlib.h>
 
 Srt* resolve_stmt(Resolver* resolver) {
+    Srt* srt = NULL;
     Ast* ast = resolver->_ast;
     switch (ast->type) {
         case AST_CMPD_STMT:
-            return resolve_compound_stmt(resolver);
+            resolver->_local_table = symboltable_enter_scope(resolver->_local_table);
+            srt = resolve_compound_stmt(resolver);
+            resolver->_local_table = symboltable_exit_scope(resolver->_local_table);
+            break;
         case AST_EXPR_STMT:
-            return resolve_expression_stmt(resolver);
+            srt = resolve_expression_stmt(resolver);
+            break;
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
             exit(1);
     }
+    return srt;
 }
 
 Srt* resolve_compound_stmt(Resolver* resolver) {
     Srt* srt = new_srt(SRT_CMPD_STMT, 0);
     Ast* ast = resolver->_ast;
-    resolver->_local_table = symboltable_enter_scope(resolver->_local_table);
 
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
-        Ast* child = vector_at(ast->children, i);
-        resolver->_ast = child;
-        if (child->type == AST_DECL) {
-            Vector* children = resolve_decl(resolver);
-            vector_extend(srt->children, children);
-            delete_vector(children, (void (*)(void*))delete_srt);
+        resolver->_ast = vector_at(ast->children, i);
+        if (resolver->_ast->type == AST_DECL) {
+            vector_push(srt->children, resolve_decl(resolver));
         } else {
-            Srt* child = resolve_stmt(resolver);
-            vector_push(srt->children, child);
+            vector_push(srt->children, resolve_stmt(resolver));
         }
     }
 
-    resolver->_local_table = symboltable_exit_scope(resolver->_local_table);
     resolver->_ast = ast;
     return srt;
 }

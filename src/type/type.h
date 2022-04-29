@@ -20,10 +20,10 @@ struct _CType {
 
 
 CType* new_integer_ctype();
-CType* new_pointer_ctype(CType* to_type);
+CType* new_pointer_ctype(CType* to_ctype);
 CType* new_socket_pointer_ctype();
-CType* new_function_ctype(Vector* arg_types, CType* return_type);
-CType* new_socket_function_ctype(Vector* arg_types);
+CType* new_function_ctype(Vector* params, CType* return_ctype);
+CType* new_socket_function_ctype(Vector* params);
 CType* ctype_copy(CType* ctype);
 CType* ctype_connect(CType* socket, CType* plug);
 int    ctype_size(CType* ctype);

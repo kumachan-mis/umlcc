@@ -5,10 +5,10 @@
 typedef struct _CType CType;
 
 typedef struct _CPointer {
-    CType* to_type;
+    CType* to_ctype;
 } CPointer;
 
-CPointer* new_cpointer(CType* to_type);
+CPointer* new_cpointer(CType* to_ctype);
 CPointer* new_socket_cpointer();
 CPointer* cpointer_copy(CPointer* cpointer);
 CType*    cpointer_next(CPointer* cpointer);

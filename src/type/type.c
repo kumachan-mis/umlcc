@@ -11,10 +11,10 @@ CType* new_integer_ctype() {
     return ctype;
 }
 
-CType* new_pointer_ctype(CType* to_type) {
+CType* new_pointer_ctype(CType* to_ctype) {
     CType* ctype = malloc(sizeof(CType));
     ctype->type = CTYPE_POINTER;
-    ctype->pointer = new_cpointer(to_type);
+    ctype->pointer = new_cpointer(to_ctype);
     ctype->function = NULL;
     return ctype;
 }
@@ -27,19 +27,19 @@ CType* new_socket_pointer_ctype() {
     return ctype;
 }
 
-CType* new_function_ctype(Vector* arg_types, CType* return_type) {
+CType* new_function_ctype(Vector* params, CType* return_ctype) {
     CType* ctype = malloc(sizeof(CType));
     ctype->type = CTYPE_FUNCUCTION;
     ctype->pointer = NULL;
-    ctype->function = new_cfunction(arg_types, return_type);
+    ctype->function = new_cfunction(params, return_ctype);
     return ctype;
 }
 
-CType* new_socket_function_ctype(Vector* arg_types) {
+CType* new_socket_function_ctype(Vector* params) {
     CType* ctype = malloc(sizeof(CType));
     ctype->type = CTYPE_FUNCUCTION;
     ctype->pointer = NULL;
-    ctype->function = new_socket_cfunction(arg_types);
+    ctype->function = new_socket_cfunction(params);
     return ctype;
 }
 

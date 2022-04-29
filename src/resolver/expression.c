@@ -108,7 +108,7 @@ Srt* resolve_postfix_expr(Resolver* resolver) {
             resolver->_ast = vector_at(ast->children, 1);
             Srt* rhs_srt = resolve_argument_expr_list(resolver);
             
-            CType* ctype = ctype_copy(raw_lhs_srt->ctype->function->return_type);
+            CType* ctype = ctype_copy(raw_lhs_srt->ctype->function->return_ctype);
             resolver->_ast = ast;
             return new_ctyped_srt(SRT_CALL_EXPR, ctype, 2, lhs_srt, rhs_srt);
         }
@@ -134,10 +134,10 @@ Srt* resolve_argument_expr_list(Resolver* resolver) {
 
 Srt* resolve_primary_expr(Resolver* resolver) {
     Ast* ast = resolver->_ast;
+    Symbol* symbol = NULL;
 
     switch (ast->type) {
-        case AST_IDENT_EXPR: {
-            Symbol* symbol = NULL;
+        case AST_IDENT_EXPR:
             if (symbol == NULL) {
                 symbol = symboltable_search(resolver->_local_table, ast->ident_name);
             }
@@ -149,7 +149,6 @@ Srt* resolve_primary_expr(Resolver* resolver) {
                 exit(1);
             }
             return new_identifier_srt(SRT_IDENT_EXPR, ctype_copy(symbol->ctype), string_copy(ast->ident_name));
-        }
         case AST_INT_EXPR:
             return new_integer_srt(SRT_INT_EXPR, ast->value_int);
         default:

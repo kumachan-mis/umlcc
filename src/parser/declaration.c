@@ -94,7 +94,7 @@ Ast* parse_parameter_list(Parser* parser) {
     if (token->type == TOKEN_RPALEN) return ast;
 
     while (1) {
-        vector_push(ast->children, parse_parameter_declaration(parser));
+        vector_push(ast->children, parse_parameter_decl(parser));
         token = vector_at(parser->_tokens, parser->_index);
         if (token->type == TOKEN_RPALEN) break;
         consume_token(parser, TOKEN_COMMA);
@@ -103,7 +103,7 @@ Ast* parse_parameter_list(Parser* parser) {
     return ast;
 }
 
-Ast* parse_parameter_declaration(Parser* parser) {
+Ast* parse_parameter_decl(Parser* parser) {
     Ast* specifiers_ast = parse_decl_specifiers(parser);
     Ast* declarator_ast = parse_declarator(parser);
     return new_ast(AST_PARAM_DECL, 2, specifiers_ast, declarator_ast);

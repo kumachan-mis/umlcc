@@ -5,7 +5,7 @@
 #include "./gen.h"
 
 
-Vector* gen_translation_unit(Codegen* codegen);
-Vector* gen_function_definition(Codegen* codegen);
+Vector* gen_translation_unit_code(Codegen* codegen);
+Vector* gen_function_definition_code(Codegen* codegen);
 
 #endif

@@ -42,8 +42,23 @@ Srt* resolve_function_definition(Resolver* resolver) {
     symboltable_define(resolver->_global_table, table_ident_name, table_ctype);
 
     resolver->_local_table = new_symboltable();
+
+    Vector* params = declarator_srt->ctype->function->params;
+    int num_params = vector_size(params);
+    for (int i = 0; i < num_params; i++) {
+        CParam* cparam = vector_at(params, i);
+        if (!symboltable_can_define(resolver->_local_table, cparam->ident_name)) {
+            fprintf(stderr, "Error: identifier '%s' is already defined\n", declarator_srt->ident_name);
+            exit(1);
+        }
+        table_ident_name = string_copy(cparam->ident_name);
+        table_ctype = ctype_copy(cparam->ctype);
+        symboltable_define(resolver->_local_table, table_ident_name, table_ctype);
+    }
+
     resolver->_ast = vector_at(ast->children, 2);
     vector_push(srt->children, resolve_compound_stmt(resolver));
+
     delete_symboltable(resolver->_local_table);
     resolver->_local_table = NULL;
 

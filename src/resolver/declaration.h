@@ -4,10 +4,12 @@
 #include "./resolver.h"
 
 
-Vector* resolve_decl(Resolver* resolver);
+Srt*    resolve_decl(Resolver* resolver);
 CType*  resolve_decl_specifiers(Resolver* resolver);
-Vector* resolve_init_declarator_list(Resolver* resolver);
+Srt*    resolve_init_declarator_list(Resolver* resolver);
 Srt*    resolve_init_declarator(Resolver* resolver);
 Srt*    resolve_declarator(Resolver* resolver);
+Vector* resolve_parameter_list(Resolver* resolver);
+CParam* resolve_parameter_decl(Resolver* resolver);
 
 #endif

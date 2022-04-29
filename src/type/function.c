@@ -1,4 +1,5 @@
 #include "./function.h"
+#include "../common/common.h"
 
 #include <stdlib.h>
 
@@ -7,49 +8,69 @@ CType* ctype_copy(CType* ctype);
 void   delete_ctype(CType* ctype);
 
 
-CFunction* new_cfunction(Vector* arg_types, CType* return_type) {
+CFunction* new_cfunction(Vector* params, CType* return_ctype) {
     CFunction* cfunction = malloc(sizeof(CFunction));
-    cfunction->arg_types = arg_types;
-    cfunction->return_type = return_type;
+    cfunction->params = params;
+    cfunction->return_ctype = return_ctype;
     return cfunction;
 }
 
-CFunction* new_socket_cfunction(Vector* arg_types) {
-    return new_cfunction(arg_types, NULL);
+CFunction* new_socket_cfunction(Vector* params) {
+    return new_cfunction(params, NULL);
 }
 
 CFunction* cfunction_copy(CFunction* cfunction) {
     CFunction* copied_cfunction = malloc(sizeof(CFunction));
 
-    Vector* copied_arg_types = new_vector();
-    int num_args = vector_size(cfunction->arg_types);
+    Vector* copied_params = new_vector();
+    int num_args = vector_size(cfunction->params);
     for (int i = 0; i < num_args; i++) {
-        CType* copied_arg_type = ctype_copy(vector_at(cfunction->arg_types, i));
-        vector_push(copied_arg_types, copied_arg_type);
+        CParam* copied_param = cparam_copy(vector_at(cfunction->params, i));
+        vector_push(copied_params, copied_param);
     }
-    copied_cfunction->arg_types = copied_arg_types;
+    copied_cfunction->params = copied_params;
 
-    copied_cfunction->return_type = NULL;
-    if (cfunction->return_type != NULL) {
-        copied_cfunction->return_type = ctype_copy(cfunction->return_type);
+    copied_cfunction->return_ctype = NULL;
+    if (cfunction->return_ctype != NULL) {
+        copied_cfunction->return_ctype = ctype_copy(cfunction->return_ctype);
     }
 
     return copied_cfunction;
 }
 
 CType* cfunction_next(CFunction* cfunction) {
-    return cfunction->return_type;
+    return cfunction->return_ctype;
 }
 
 CFunction* cfunction_connect(CFunction* socket, CType* plug) {
-    socket->return_type = plug;
+    socket->return_ctype = plug;
     return socket;
 }
 
 void delete_cfunction(CFunction* cfunction) {
-    delete_vector(cfunction->arg_types, (void (*)(void* item))delete_ctype);
-    if (cfunction->return_type != NULL) {
-        delete_ctype(cfunction->return_type);
+    delete_vector(cfunction->params, (void (*)(void* item))delete_cparam);
+    if (cfunction->return_ctype != NULL) {
+        delete_ctype(cfunction->return_ctype);
     }
     free(cfunction);
+}
+
+CParam* new_cparam(char* ident_name, CType* ctype) {
+    CParam* cparam = malloc(sizeof(CParam));
+    cparam->ident_name = ident_name;
+    cparam->ctype = ctype;
+    return cparam;
+}
+
+CParam* cparam_copy(CParam* cparam) {
+    CParam* copied_cparam = malloc(sizeof(CParam));
+    copied_cparam->ident_name = string_copy(cparam->ident_name);
+    copied_cparam->ctype = ctype_copy(cparam->ctype);
+    return copied_cparam;
+}
+
+void delete_cparam(CParam* cparam) {
+    free(cparam->ident_name);
+    delete_ctype(cparam->ctype);
+    free(cparam);
 }

@@ -13,9 +13,9 @@ typedef enum _SrtType {
     SRT_FUNC_DEF,
 
     // declaration
-    SRT_OBJ_DECL,
-    SRT_FUNC_DECL,
-    SRT_PARAM_LIST,
+    SRT_DECL_LIST,
+    SRT_INIT_DECL,
+    SRT_DECL,
 
     // statement
     SRT_CMPD_STMT,
