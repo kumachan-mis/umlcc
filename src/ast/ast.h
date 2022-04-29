@@ -19,7 +19,6 @@ typedef enum _AstType {
     //   type-specifiers 
     AST_TYPE_INT,
     //   declarators
-    AST_DECLOR,
     AST_IDENT_DECLOR,
     AST_FUNC_DECLOR,
     AST_PARAM_LIST,

@@ -74,17 +74,6 @@ Srt* resolve_init_declarator(Resolver* resolver) {
 
 Srt* resolve_declarator(Resolver* resolver) {
     Srt* srt = NULL;
-    Ast* ast = resolver->_ast;
-
-    resolver->_ast = vector_at(ast->children, 0);
-    srt = resolve_direct_declarator(resolver);
-
-    resolver->_ast = ast;
-    return srt;
-}
-
-Srt* resolve_direct_declarator(Resolver* resolver) {
-    Srt* srt = NULL;
     CType* ctype = NULL;
 
     Ast* ast = resolver->_ast;
@@ -109,5 +98,6 @@ Srt* resolve_direct_declarator(Resolver* resolver) {
         } 
     }
 
+    resolver->_ast = ast;
     return srt;
 }

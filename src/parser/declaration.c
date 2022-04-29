@@ -52,7 +52,7 @@ Ast* parse_init_declarator(Parser* parser) {
 
 Ast* parse_declarator(Parser* parser) {
     Ast* direct_declarator_ast = parse_direct_declarator(parser);
-    return new_ast(AST_DECLOR, 1, direct_declarator_ast);
+    return direct_declarator_ast;
 }
 
 Ast* parse_direct_declarator(Parser* parser) {
