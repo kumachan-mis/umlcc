@@ -155,7 +155,7 @@ Vector* gen_argument_expr_list_code(Codegen* codegen) {
     Vector* sub_codes = NULL;
     Srt* srt = codegen->_srt;
 
-    char arg_regs[][6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
+    char arg_regs[][6] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
 
     int num_args = vector_size(srt->children);
     for (int i = 0; i < num_args; i++) {
@@ -163,7 +163,7 @@ Vector* gen_argument_expr_list_code(Codegen* codegen) {
         sub_codes = codegen_generate_code(codegen);
         vector_extend(codes, sub_codes);
         delete_vector(sub_codes, free);
-        if (i < 6) append_code(codes, "    popq %d\n", arg_regs[i]);
+        if (i < 6) append_code(codes, "    popq %s\n", arg_regs[i]);
     }
 
     codegen->_srt = srt;
