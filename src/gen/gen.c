@@ -71,9 +71,6 @@ Vector* codegen_generate_code(Codegen* codegen) {
         case SRT_CALL_EXPR:
             codes = gen_postfix_expr_code(codegen);
             break;
-        case SRT_ARG_LIST:
-            codes = gen_argument_expr_list_code(codegen);
-            break;
         case SRT_IDENT_EXPR:
         case SRT_INT_EXPR:
             codes = gen_primary_expr_code(codegen);

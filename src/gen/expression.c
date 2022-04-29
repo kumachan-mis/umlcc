@@ -92,20 +92,20 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
 
-    append_code(codes, "    popq %%rcx\n");
+    append_code(codes, "    popq %%rsi\n");
     append_code(codes, "    popq %%rax\n");
 
     switch (srt->type) {
         case SRT_MUL_EXPR:
-            append_code(codes, "    imull %%ecx, %%eax\n");
+            append_code(codes, "    imull %%esi, %%eax\n");
             break;
         case SRT_DIV_EXPR:
             append_code(codes, "    cltd\n");
-            append_code(codes, "    idivl %%ecx\n");
+            append_code(codes, "    idivl %%esi\n");
             break;
         case SRT_MOD_EXPR:
             append_code(codes, "    cltd\n");
-            append_code(codes, "    idivl %%ecx\n");
+            append_code(codes, "    idivl %%esi\n");
             append_code(codes, "    movl %%edx, %%eax\n");
             break;
         default:
@@ -132,39 +132,30 @@ Vector* gen_postfix_expr_code(Codegen* codegen) {
     append_code(codes, "    popq %%rax\n");
 
     switch (srt->type) {
-        case SRT_CALL_EXPR:
-            codegen->_srt = vector_at(srt->children, 1);
-            sub_codes = codegen_generate_code(codegen);
-            vector_extend(codes, sub_codes);
-            delete_vector(sub_codes, free);
+        case SRT_CALL_EXPR: {
+            Srt* params_srt = vector_at(srt->children, 1);
+            char arg_regs[][6] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
+            int num_args = vector_size(params_srt->children);
+            for (int i = 0; i < num_args; i++) {
+                codegen->_srt = vector_at(params_srt->children, i);
+                sub_codes = codegen_generate_code(codegen);
+                vector_extend(codes, sub_codes);
+                delete_vector(sub_codes, free);
+                if (i < 6) append_code(codes, "    popq %s\n", arg_regs[i]);
+            }
             append_code(codes, "    call *%%rax\n");
+            if (num_args > 6) {
+                int params_offset = (num_args - 6) * 8; // 8 is size of address
+                append_code(codes, "    addq $%d, %%rsp\n", params_offset);
+            }
             break;
+        }
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);
     }
 
     append_code(codes, "    pushq %%rax\n");
-
-    codegen->_srt = srt;
-    return codes;
-}
-
-Vector* gen_argument_expr_list_code(Codegen* codegen) {
-    Vector* codes = new_vector();
-    Vector* sub_codes = NULL;
-    Srt* srt = codegen->_srt;
-
-    char arg_regs[][6] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
-
-    int num_args = vector_size(srt->children);
-    for (int i = 0; i < num_args; i++) {
-        codegen->_srt = vector_at(srt->children, i);
-        sub_codes = codegen_generate_code(codegen);
-        vector_extend(codes, sub_codes);
-        delete_vector(sub_codes, free);
-        if (i < 6) append_code(codes, "    popq %s\n", arg_regs[i]);
-    }
 
     codegen->_srt = srt;
     return codes;

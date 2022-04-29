@@ -9,7 +9,6 @@ Vector* gen_additive_expr_code(Codegen* codegen);
 Vector* gen_multiplicative_expr_code(Codegen* codegen);
 Vector* gen_unary_expr_code(Codegen* codegen);
 Vector* gen_postfix_expr_code(Codegen* codegen);
-Vector* gen_argument_expr_list_code(Codegen* codegen);
 Vector* gen_primary_expr_code(Codegen* codegen);
 
 #endif
