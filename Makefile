@@ -1,6 +1,6 @@
 UMLCC   = umlcc
 CC      = gcc-11
-CFLAGS  = -O3 -Wall -Werror -pedantic
+CFLAGS  = -O3 -std=c99 -Wall -Werror -pedantic
 
 SRC_DIR = src
 BLD_DIR = build
