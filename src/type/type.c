@@ -2,7 +2,6 @@
 
 #include <stdlib.h>
 
-
 CType* new_integer_ctype() {
     CType* ctype = malloc(sizeof(CType));
     ctype->type = CTYPE_INT;
@@ -48,13 +47,9 @@ CType* ctype_copy(CType* ctype) {
     copied_ctype->type = ctype->type;
 
     copied_ctype->pointer = NULL;
-    if (ctype->pointer != NULL) {
-        copied_ctype->pointer = cpointer_copy(ctype->pointer);
-    }
+    if (ctype->pointer != NULL) { copied_ctype->pointer = cpointer_copy(ctype->pointer); }
     copied_ctype->function = NULL;
-    if (ctype->function != NULL) {
-        copied_ctype->function = cfunction_copy(ctype->function);
-    }
+    if (ctype->function != NULL) { copied_ctype->function = cfunction_copy(ctype->function); }
     return copied_ctype;
 }
 
@@ -102,11 +97,7 @@ int ctype_size(CType* ctype) {
 }
 
 void delete_ctype(CType* ctype) {
-     if (ctype->pointer != NULL) {
-        delete_cpointer(ctype->pointer);
-    }
-    if (ctype->function != NULL) {
-        delete_cfunction(ctype->function);
-    }
+    if (ctype->pointer != NULL) { delete_cpointer(ctype->pointer); }
+    if (ctype->function != NULL) { delete_cfunction(ctype->function); }
     free(ctype);
 }

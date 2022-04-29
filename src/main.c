@@ -1,13 +1,12 @@
+#include "./gen/gen.h"
 #include "./lexer/lexer.h"
 #include "./parser/parser.h"
 #include "./resolver/resolver.h"
-#include "./gen/gen.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: umlcc [src] [dest]\n");
         exit(1);

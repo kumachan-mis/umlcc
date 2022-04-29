@@ -4,9 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 char arg_regs[][6] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
-
 
 Vector* gen_assignment_expr_code(Codegen* codegen) {
     Vector* codes = new_vector();
@@ -163,7 +161,7 @@ Vector* gen_postfix_expr_code(Codegen* codegen) {
 Vector* gen_unary_expr_code(Codegen* codegen) {
     Vector* codes = NULL;
     Srt* srt = codegen->_srt;
-    Vector* gen_address_expr_code(Codegen* codegen);
+    Vector* gen_address_expr_code(Codegen * codegen);
 
     codegen->_srt = vector_at(srt->children, 0);
 
@@ -214,7 +212,7 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
     Symbol* symbol = NULL;
 
     switch (srt->type) {
-        case SRT_IDENT_EXPR: 
+        case SRT_IDENT_EXPR:
             symbol = symboltable_search(codegen->_local_table, srt->ident_name);
             if (symbol != NULL) {
                 append_code(codes, "    movl -%d(%%rbp), %%eax\n", symbol->memory_offset);

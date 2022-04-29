@@ -3,7 +3,6 @@
 
 #include "./resolver.h"
 
-
 Srt* resolve_expr(Resolver* resolver);
 Srt* resolve_assignment_expr(Resolver* resolver);
 Srt* resolve_additive_expr(Resolver* resolver);

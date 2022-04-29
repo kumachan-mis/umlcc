@@ -1,10 +1,9 @@
 #include "./reader.h"
 #include "./util.h"
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-
 
 int keyword_or_identifier_startswith(char c);
 int keyword_or_identifier_consistsof(char c);
@@ -12,9 +11,8 @@ int integer_constant_startswith(char c);
 int integer_constant_consistsof(char c);
 
 Token* read_keyword_or_identifier(Lexer* lexer) {
-    char* keyword_or_identifier_str = read_token_str(
-        lexer, keyword_or_identifier_startswith, keyword_or_identifier_consistsof
-    );
+    char* keyword_or_identifier_str =
+        read_token_str(lexer, keyword_or_identifier_startswith, keyword_or_identifier_consistsof);
     if (keyword_or_identifier_str == NULL) return NULL;
 
     if (strcmp(keyword_or_identifier_str, "int") == 0) {
@@ -34,9 +32,8 @@ int keyword_or_identifier_consistsof(char c) {
 }
 
 Token* read_integer_constant(Lexer* lexer) {
-    char* integer_str = read_token_str(
-        lexer, integer_constant_startswith, integer_constant_consistsof
-    );
+    char* integer_str =
+        read_token_str(lexer, integer_constant_startswith, integer_constant_consistsof);
     if (integer_str == NULL) return NULL;
 
     Token* token = new_integer_token(atoi(integer_str));
@@ -69,13 +66,13 @@ Token* read_punctuator(Lexer* lexer) {
         case ')':
             token = new_token(TOKEN_RPALEN);
             break;
-        case '+': 
+        case '+':
             token = new_token(TOKEN_PLUS);
             break;
-        case '-': 
+        case '-':
             token = new_token(TOKEN_MINUS);
             break;
-        case '*': 
+        case '*':
             token = new_token(TOKEN_ASTERISK);
             break;
         case '/':
@@ -93,10 +90,10 @@ Token* read_punctuator(Lexer* lexer) {
         case ',':
             token = new_token(TOKEN_COMMA);
             break;
-        case EOF: 
+        case EOF:
             token = new_token(TOKEN_EOF);
             break;
-        default: 
+        default:
             ungetc(c, lexer->_file_ptr);
             token = NULL;
             break;

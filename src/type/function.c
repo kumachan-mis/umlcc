@@ -3,10 +3,8 @@
 
 #include <stdlib.h>
 
-
 struct _CType* ctype_copy(struct _CType* ctype);
-void           delete_ctype(struct _CType* ctype);
-
+void delete_ctype(struct _CType* ctype);
 
 CFunction* new_cfunction(Vector* params, struct _CType* return_ctype) {
     CFunction* cfunction = malloc(sizeof(CFunction));
@@ -49,9 +47,7 @@ CFunction* cfunction_connect(CFunction* socket, struct _CType* plug) {
 
 void delete_cfunction(CFunction* cfunction) {
     delete_vector(cfunction->params, (void (*)(void* item))delete_cparam);
-    if (cfunction->return_ctype != NULL) {
-        delete_ctype(cfunction->return_ctype);
-    }
+    if (cfunction->return_ctype != NULL) { delete_ctype(cfunction->return_ctype); }
     free(cfunction);
 }
 

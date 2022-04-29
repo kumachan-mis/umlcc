@@ -1,8 +1,7 @@
-#include "./declaration.h"
 #include "./statement.h"
+#include "./declaration.h"
 #include "./expression.h"
 #include "./util.h"
-
 
 Ast* parse_stmt(Parser* parser) {
     Token* token = vector_at(parser->_tokens, parser->_index);

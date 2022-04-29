@@ -1,12 +1,10 @@
 #include "./external.h"
-#include "./util.h"
 #include "../common/common.h"
+#include "./util.h"
 
 #include <stdlib.h>
 
-
 char param_regs[][6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
-
 
 Vector* gen_translation_unit_code(Codegen* codegen) {
     return gen_children_code(codegen);
@@ -33,9 +31,11 @@ Vector* gen_function_definition_code(Codegen* codegen) {
         Symbol* symbol = symboltable_define(codegen->_local_table, table_ident_name, table_ctype);
 
         if (i < 6) {
-            append_code(param_codes, "    movl  %s, -%d(%%rbp)\n", param_regs[i], symbol->memory_offset);
+            append_code(param_codes, "    movl  %s, -%d(%%rbp)\n", param_regs[i],
+                        symbol->memory_offset);
         } else {
-            int param_offset = (num_params - i) * 8 + 8; // 8 is size of address. + 8 is for "pushq %rbp"
+            int param_offset =
+                (num_params - i) * 8 + 8; // 8 is size of address. + 8 is for "pushq %rbp"
             append_code(param_codes, "    movl  %d(%%rbp), %%eax\n", param_offset);
             append_code(param_codes, "    movl  %%eax, -%d(%%rbp)\n", symbol->memory_offset);
         }

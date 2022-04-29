@@ -1,8 +1,7 @@
 #include "./external.h"
+#include "../token/token.h"
 #include "./declaration.h"
 #include "./statement.h"
-#include "../token/token.h"
-
 
 Ast* parse_translation_unit(Parser* parser) {
     Ast* ast = new_ast(AST_TRAS_UNIT, 0);

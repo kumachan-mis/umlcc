@@ -1,10 +1,9 @@
 #include "./expression.h"
-#include "./conversion.h"
 #include "../common/common.h"
+#include "./conversion.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
 
 Srt* resolve_expr(Resolver* resolver) {
     Ast* ast = resolver->_ast;
@@ -27,7 +26,6 @@ Srt* resolve_expr(Resolver* resolver) {
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
             exit(1);
-
     }
 }
 
@@ -55,7 +53,7 @@ Srt* resolve_additive_expr(Resolver* resolver) {
     resolver->_ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
 
-    CType* ctype =  new_integer_ctype();
+    CType* ctype = new_integer_ctype();
     resolver->_ast = ast;
 
     switch (ast->type) {
@@ -104,10 +102,10 @@ Srt* resolve_postfix_expr(Resolver* resolver) {
             Srt* raw_lhs_srt = resolve_expr(resolver);
             Srt* lhs_srt = convert_function_to_ptr(raw_lhs_srt);
             // TODO: type conversion is always performed, not only in function calls
-        
+
             resolver->_ast = vector_at(ast->children, 1);
             Srt* rhs_srt = resolve_argument_expr_list(resolver);
-            
+
             CType* ctype = ctype_copy(raw_lhs_srt->ctype->function->return_ctype);
             resolver->_ast = ast;
             return new_ctyped_srt(SRT_CALL_EXPR, ctype, 2, lhs_srt, rhs_srt);
@@ -145,10 +143,12 @@ Srt* resolve_primary_expr(Resolver* resolver) {
                 symbol = symboltable_search(resolver->_global_table, ast->ident_name);
             }
             if (symbol == NULL) {
-                fprintf(stderr, "Error: identifier '%s' is used before declared\n", ast->ident_name);
+                fprintf(stderr, "Error: identifier '%s' is used before declared\n",
+                        ast->ident_name);
                 exit(1);
             }
-            return new_identifier_srt(SRT_IDENT_EXPR, ctype_copy(symbol->ctype), string_copy(ast->ident_name));
+            return new_identifier_srt(SRT_IDENT_EXPR, ctype_copy(symbol->ctype),
+                                      string_copy(ast->ident_name));
         case AST_INT_EXPR:
             return new_integer_srt(SRT_INT_EXPR, ast->value_int);
         default:

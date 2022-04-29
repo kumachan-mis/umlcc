@@ -2,8 +2,7 @@
 #include "./reader.h"
 #include "./util.h"
 
-#include  <stdlib.h>
-
+#include <stdlib.h>
 
 Lexer* new_lexer(FILE* file_ptr) {
     Lexer* lexer = malloc(sizeof(Lexer));
@@ -24,7 +23,7 @@ Vector* lexer_read_tokens(Lexer* lexer) {
         if (token == NULL) token = read_keyword_or_identifier(lexer);
         if (token == NULL) token = read_integer_constant(lexer);
         if (token == NULL) token = read_punctuator(lexer);
-    
+
         if (token == NULL) {
             int c = fgetc(lexer->_file_ptr);
             fprintf(stderr, "Error: unexpected character %c\n", c);
@@ -33,10 +32,9 @@ Vector* lexer_read_tokens(Lexer* lexer) {
             vector_push(tokens, token);
             break;
         }
-    
+
         vector_push(tokens, token);
         skip_white_spaces(lexer);
     }
     return tokens;
 }
-

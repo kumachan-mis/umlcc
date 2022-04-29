@@ -4,26 +4,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 typedef struct _MapCell {
     char* key;
     void* value;
-    int   deleted;
+    int deleted;
 } MapCell;
 
 struct _Map {
     MapCell** container;
-    int       size;
-    int       capacity;
+    int size;
+    int capacity;
 };
 
-void     map_update_capacity(Map* map, int new_capacity, void delete_value(void* value));
-int      map_calculate_hash(char* key, int capacity);
-int      map_calculate_next_hash(int hash, char* key, int capacity);
+void map_update_capacity(Map* map, int new_capacity, void delete_value(void* value));
+int map_calculate_hash(char* key, int capacity);
+int map_calculate_next_hash(int hash, char* key, int capacity);
 MapCell* new_mapcell(char* key, void* value);
-void     delete_mapcell(MapCell* cell, void delete_value(void* value));
-void     mapcell_markas_deleted(MapCell* cell, void delete_value(void* value));
-
+void delete_mapcell(MapCell* cell, void delete_value(void* value));
+void mapcell_markas_deleted(MapCell* cell, void delete_value(void* value));
 
 Map* new_map() {
     Map* map = malloc(sizeof(Map));
@@ -51,21 +49,21 @@ void* map_get(Map* map, char* key) {
     return map_get_with_default(map, key, NULL);
 }
 
-void* map_get_with_default(Map* map, char* key,  void* default_value) {
+void* map_get_with_default(Map* map, char* key, void* default_value) {
     int hash = map_calculate_hash(key, map->capacity);
     MapCell* cell = map->container[hash];
 
     int found = 0;
-    while (cell != NULL){
+    while (cell != NULL) {
         if (!cell->deleted && strcmp(cell->key, key) == 0) {
-           found = 1;
-           break;
+            found = 1;
+            break;
         }
         hash = map_calculate_next_hash(hash, key, map->capacity);
         cell = map->container[hash];
     }
 
-    return found? cell->value : default_value;
+    return found ? cell->value : default_value;
 }
 
 void map_set(Map* map, char* key, void* value, void delete_value(void* value)) {
@@ -73,7 +71,7 @@ void map_set(Map* map, char* key, void* value, void delete_value(void* value)) {
     MapCell* cell = map->container[hash];
 
     int found = 0;
-    while (cell != NULL && !cell->deleted){
+    while (cell != NULL && !cell->deleted) {
         if (strcmp(cell->key, key) == 0) {
             found = 1;
             break;
@@ -93,9 +91,7 @@ void map_set(Map* map, char* key, void* value, void delete_value(void* value)) {
     map->size++;
 
     int std_capacity = 2 * (map->size + 1) - 1;
-    if (2 * map->capacity <= std_capacity) {
-        map_update_capacity(map, std_capacity, delete_value);
-    }
+    if (2 * map->capacity <= std_capacity) { map_update_capacity(map, std_capacity, delete_value); }
 }
 
 void map_erase(Map* map, char* key, void delete_value(void* value)) {
@@ -103,10 +99,10 @@ void map_erase(Map* map, char* key, void delete_value(void* value)) {
     MapCell* cell = map->container[hash];
 
     int found = 0;
-    while (cell != NULL){
+    while (cell != NULL) {
         if (!cell->deleted && strcmp(cell->key, key) == 0) {
-           found = 1;
-           break;
+            found = 1;
+            break;
         }
         hash = map_calculate_next_hash(hash, key, map->capacity);
         cell = map->container[hash];
@@ -118,14 +114,13 @@ void map_erase(Map* map, char* key, void delete_value(void* value)) {
     map->size--;
 
     int std_capacity = 2 * (map->size + 1) - 1;
-    if (2 * std_capacity < map->capacity) {
-        map_update_capacity(map, std_capacity, delete_value);
-    }
+    if (2 * std_capacity < map->capacity) { map_update_capacity(map, std_capacity, delete_value); }
 }
 
 void map_update_capacity(Map* map, int new_capacity, void delete_value(void* value)) {
     MapCell** new_container = malloc(new_capacity * sizeof(MapCell*));
-    for (int i = 0; i < new_capacity; i++) new_container[i] = NULL;
+    for (int i = 0; i < new_capacity; i++)
+        new_container[i] = NULL;
 
     for (int i = 0; i < map->capacity; i++) {
         MapCell* cell = map->container[i];
@@ -165,19 +160,15 @@ int map_calculate_next_hash(int hash, char* key, int capacity) {
 
 MapCell* new_mapcell(char* key, void* value) {
     MapCell* cell = malloc(sizeof(MapCell));
-    cell->key =  string_copy(key);
+    cell->key = string_copy(key);
     cell->value = value;
     cell->deleted = 0;
     return cell;
 }
 
 void delete_mapcell(MapCell* cell, void delete_value(void* value)) {
-    if (cell->key != NULL) {
-        free(cell->key);
-    }
-    if (cell->value != NULL) {
-        delete_value(cell->value);
-    }
+    if (cell->key != NULL) { free(cell->key); }
+    if (cell->value != NULL) { delete_value(cell->value); }
     free(cell);
 }
 

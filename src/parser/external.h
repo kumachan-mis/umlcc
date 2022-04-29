@@ -3,7 +3,6 @@
 
 #include "./parser.h"
 
-
 Ast* parse_translation_unit(Parser* parser);
 Ast* parse_function_definition(Parser* parser);
 

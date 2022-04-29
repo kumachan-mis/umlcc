@@ -1,12 +1,11 @@
 #include "./gen.h"
-#include "./external.h"
 #include "./declaration.h"
-#include "./statement.h"
 #include "./expression.h"
+#include "./external.h"
+#include "./statement.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
 
 Codegen* new_codegen(Srt* srt) {
     Codegen* codegen = malloc(sizeof(Codegen));
@@ -19,9 +18,7 @@ Codegen* new_codegen(Srt* srt) {
 void delete_codegen(Codegen* codegen) {
     delete_srt(codegen->_srt);
     delete_symboltable(codegen->_global_table);
-    if (codegen->_local_table != NULL) {
-        delete_symboltable(codegen->_local_table);
-    }
+    if (codegen->_local_table != NULL) { delete_symboltable(codegen->_local_table); }
     free(codegen);
 }
 
@@ -36,7 +33,7 @@ Vector* codegen_generate_code(Codegen* codegen) {
         case SRT_FUNC_DEF:
             codes = gen_function_definition_code(codegen);
             break;
-         case SRT_DECL_LIST:
+        case SRT_DECL_LIST:
             codes = gen_decl_list_code(codegen);
             break;
         case SRT_INIT_DECL:
@@ -77,7 +74,8 @@ Vector* codegen_generate_code(Codegen* codegen) {
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
-            exit(1);;
+            exit(1);
+            ;
     }
 
     return codes;

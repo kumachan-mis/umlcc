@@ -1,8 +1,7 @@
 #include "../src/map/map.h"
 
-#include <stdlib.h>
 #include <assert.h>
-
+#include <stdlib.h>
 
 void test_map_set();
 void test_map_get_with_default();

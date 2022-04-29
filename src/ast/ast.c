@@ -1,9 +1,8 @@
 #include "./ast.h"
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
-
 
 Ast* new_ast(AstType type, int num_children, ...) {
     Ast* ast = malloc(sizeof(Ast));
