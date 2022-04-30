@@ -12,9 +12,9 @@ FROM mcr.microsoft.com/vscode/devcontainers/cpp:0-${VARIANT}
 # Install CMake version different from what base image has already installed. 
 # CMake reinstall choices: none, 3.21.5, 3.22.2, or versions from https://cmake.org/download/
 
-ARG CMAKE_VERSION="default"
+ARG CMAKE_VERSION="none"
 COPY ./reinstall-cmake.sh /tmp/
-RUN if [ ${CMAKE_VERSION} != "default" ]; \
+RUN if [ ${CMAKE_VERSION} != "none" ]; \
     then \
         chmod +x /tmp/reinstall-cmake.sh && \
         /tmp/reinstall-cmake.sh ${CMAKE_VERSION}; \
