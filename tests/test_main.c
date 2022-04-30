@@ -13,5 +13,5 @@ int main(void) {
     CU_basic_run_tests();
 
     CU_cleanup_registry();
-    return 0;
+    return CU_get_error();
 }
