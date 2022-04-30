@@ -1,5 +1,5 @@
-#include "./test_vector.h"
 #include "./test_map.h"
+#include "./test_vector.h"
 
 #include <CUnit/Basic.h>
 
