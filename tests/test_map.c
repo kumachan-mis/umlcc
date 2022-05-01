@@ -95,7 +95,7 @@ void test_map_erase() {
     map_erase(map, "erased_key", free);
 
     value = map_get(map, "key");
-    CU_ASSERT_EQUAL(*value, 7);
+    CU_ASSERT_EQUAL(*value, 6);
 
     value = map_get(map, "erased_key");
     CU_ASSERT_PTR_NULL(value);
