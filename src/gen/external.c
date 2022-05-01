@@ -7,15 +7,7 @@
 char param_regs[][6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
 
 Vector* gen_translation_unit_code(Codegen* codegen) {
-    Vector* codes = new_vector()
-;
-    append_code(codes, "    .text\n");
-
-    Vector* sub_codes = gen_children_code(codegen);
-    vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, free);
-
-    return codes;
+    return gen_children_code(codegen);
 }
 
 Vector* gen_function_definition_code(Codegen* codegen) {
