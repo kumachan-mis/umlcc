@@ -7,7 +7,15 @@
 char param_regs[][6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
 
 Vector* gen_translation_unit_code(Codegen* codegen) {
-    return gen_children_code(codegen);
+    Vector* codes = new_vector()
+;
+    append_code(codes, "    .text\n");
+
+    Vector* sub_codes = gen_children_code(codegen);
+    vector_extend(codes, sub_codes);
+    delete_vector(sub_codes, free);
+
+    return codes;
 }
 
 Vector* gen_function_definition_code(Codegen* codegen) {
@@ -43,8 +51,9 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     codegen->_srt = vector_at(srt->children, 1);
     Vector* body_codes = gen_children_code(codegen);
 
-    append_code(codes, "    .globl _%s\n", table_ident_name);
-    append_code(codes, "_%s:\n", table_ident_name);
+    append_code(codes, "    .globl %s\n", table_ident_name);
+    append_code(codes, "    .type %s, @function\n", table_ident_name);
+    append_code(codes, "%s:\n", table_ident_name);
     append_code(codes, "    pushq  %%rbp\n");
     append_code(codes, "    movq  %%rsp, %%rbp\n");
     append_code(codes, "    subq  $%d, %%rsp\n", codegen->_local_table->_memory_offset);
@@ -58,6 +67,7 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     append_code(codes, "    addq  $%d, %%rsp\n", codegen->_local_table->_memory_offset);
     append_code(codes, "    popq  %%rbp\n");
     append_code(codes, "    ret\n");
+    append_code(codes, "    .size %s, .-%s\n", table_ident_name, table_ident_name);
 
     delete_symboltable(codegen->_local_table);
     codegen->_local_table = NULL;
