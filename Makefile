@@ -61,7 +61,8 @@ $(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
 
 $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
 	$(MKDIR) $(dir $@)
-	$(CC) $(CFLAGS) -MP -MM $< | sed 's|^.*\.o:|$(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$<):|g' > $@
+	$(CC) $(CFLAGS) -MP -MM $< | \
+	sed 's|^.*\.o:|$(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$<):|g' > $@
 
 $(BIN_DIR)/$(TEST): $(filter-out $(OBJ_DIR)/$(SRC_MAIN)$(OBJ_EXT),$(OBJS)) $(TEST_OBJS)
 	$(MKDIR) $(dir $@)
@@ -73,7 +74,8 @@ $(TEST_OBJ_DIR)/%$(OBJ_EXT): $(TEST_DIR)/%$(TEST_EXT) $(TEST_DEP_DIR)/%$(DEP_EXT
 
 $(TEST_DEP_DIR)/%$(DEP_EXT): $(TEST_DIR)/%$(TEST_EXT)
 	$(MKDIR) $(dir $@)
-	$(CC) $(CFLAGS) -MP -MM $< | sed 's|^.*\.o:|$(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_OBJ_DIR)/%$(OBJ_EXT),$<):|g' > $@
+	$(CC) $(CFLAGS) -MP -MM $< | \
+	sed 's|^.*\.o:|$(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_OBJ_DIR)/%$(OBJ_EXT),$<):|g' > $@
 
 $(SAMPLE_OUT)/%$(ASM_EXT): $(SAMPLE_DIR)/%$(SRC_EXT)
 	$(MKDIR) $(dir $@)
