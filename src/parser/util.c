@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 int external_may_function_definition(Parser* parser) {
     Ast* ast = NULL;
     int index = parser->_index;
@@ -17,7 +16,6 @@ int external_may_function_definition(Parser* parser) {
     parser->_index = index;
     return token->type == TOKEN_LBRACE;
 }
-
 
 int block_item_may_decl(Parser* parser) {
     Token* token = vector_at(parser->_tokens, parser->_index);

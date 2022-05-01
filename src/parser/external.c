@@ -1,8 +1,8 @@
 #include <stdlib.h>
 
-#include "./external.h"
 #include "../token/token.h"
 #include "./declaration.h"
+#include "./external.h"
 #include "./statement.h"
 #include "./util.h"
 
