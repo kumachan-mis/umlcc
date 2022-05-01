@@ -99,7 +99,7 @@ clean-sample:
 	$(RM) $(SAMPLE_OUT)
 
 install-pre-commit:
-	ln -s -f .pre-commit .git/hooks/pre-commit
+	cp .pre-commit .git/hooks/pre-commit
 
 ifeq ($(MAKECMDGOALS),)
 -include $(DEPS)

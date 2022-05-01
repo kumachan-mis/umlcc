@@ -1,3 +1,5 @@
+#!/bin/bash
+
 BASE_DIR=$(cd $(dirname $0)/.. && pwd)
 
 FIXTURES_DIR=${BASE_DIR}/test-fixtures
