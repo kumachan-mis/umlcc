@@ -1,7 +1,4 @@
 #!/bin/bash
 
-BASE_DIR=$(cd $(dirname $0)/../../ && pwd)
-# pre-commit is placed on .git/hooks/pre-commit
-
 find . -name *.h -o -name *.c | xargs clang-format -i
 git add -A
