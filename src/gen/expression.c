@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// If the class is INTEGER, the next available register of the sequence
+// %rdi, %rsi, %rdx, %rcx, %r8 and %r9 is used.
+// cf. System V Application Binary Interface (p20)
+//     https://uclibc.org/docs/psABI-x86_64.pdf
 char arg_regs[][6] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
 
 Vector* gen_assignment_expr_code(Codegen* codegen) {
@@ -122,26 +126,37 @@ Vector* gen_postfix_expr_code(Codegen* codegen) {
     Vector* sub_codes = NULL;
     Srt* srt = codegen->_srt;
 
-    codegen->_srt = vector_at(srt->children, 0);
-    sub_codes = codegen_generate_code(codegen);
-    vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, free);
-
     switch (srt->type) {
         case SRT_CALL_EXPR: {
             Srt* params_srt = vector_at(srt->children, 1);
             int num_args = vector_size(params_srt->children);
-            for (int i = 0; i < num_args; i++) {
+
+            // The end of the input argument area shall be aligned on a 16 byte boundary.
+            if (num_args > 6 && num_args % 2 == 1) {
+                append_code(codes, "    subq $%d, %%rsp\n", 8);
+            }
+
+            // Once registers are assigned,
+            // the arguments passed in memory are pushed on the stack in REVERSED order.
+            for (int i = num_args - 1; i >= 0; i--) {
                 codegen->_srt = vector_at(params_srt->children, i);
                 sub_codes = codegen_generate_code(codegen);
                 vector_extend(codes, sub_codes);
                 delete_vector(sub_codes, free);
                 if (i < 6) append_code(codes, "    popq %s\n", arg_regs[i]);
             }
+
+            codegen->_srt = vector_at(srt->children, 0);
+            sub_codes = codegen_generate_code(codegen);
+            vector_extend(codes, sub_codes);
+            delete_vector(sub_codes, free);
             append_code(codes, "    popq %%rax\n");
             append_code(codes, "    call *%%rax\n");
+
+            // The end of the input argument area shall be aligned on a 16 byte boundary.
             if (num_args > 6) {
                 int params_offset = (num_args - 6) * 8;
+                if (num_args % 2 == 1) params_offset += 8;
                 append_code(codes, "    addq $%d, %%rsp\n", params_offset);
             }
             break;
