@@ -44,7 +44,6 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     Vector* body_codes = gen_children_code(codegen);
 
     append_code(codes, "    .globl %s\n", table_ident_name);
-    append_code(codes, "    .type %s, @function\n", table_ident_name);
     append_code(codes, "%s:\n", table_ident_name);
     append_code(codes, "    pushq  %%rbp\n");
     append_code(codes, "    movq  %%rsp, %%rbp\n");
@@ -59,7 +58,6 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     append_code(codes, "    addq  $%d, %%rsp\n", codegen->_local_table->_memory_offset);
     append_code(codes, "    popq  %%rbp\n");
     append_code(codes, "    ret\n");
-    append_code(codes, "    .size %s, .-%s\n", table_ident_name, table_ident_name);
 
     delete_symboltable(codegen->_local_table);
     codegen->_local_table = NULL;
