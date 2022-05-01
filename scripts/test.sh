@@ -36,6 +36,8 @@ do
     expected=${fixture_dir}/${EXPECTED}
     actual=${fixture_dir}/${ACTUAL}
 
+    rm ${output} ${binary} ${actual}
+
     ${TARGET} ${input} ${output}
     gcc -o ${binary} ${output} ${TESTLIB}
     ${binary} > ${actual}
