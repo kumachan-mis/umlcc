@@ -40,5 +40,5 @@ int main(int argc, char* argv[]) {
     fclose(dest);
     fclose(src);
 
-            return 0;
+        return 0;
 }
