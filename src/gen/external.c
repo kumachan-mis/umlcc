@@ -42,12 +42,13 @@ Vector* gen_function_definition_code(Codegen* codegen) {
 
     codegen->_srt = vector_at(srt->children, 1);
     Vector* body_codes = gen_children_code(codegen);
+    int aligned_memory_offset = ((codegen->_local_table->_memory_offset + 15) / 16) * 16;
 
     append_code(codes, "    .globl %s\n", table_ident_name);
     append_code(codes, "%s:\n", table_ident_name);
     append_code(codes, "    pushq  %%rbp\n");
     append_code(codes, "    movq  %%rsp, %%rbp\n");
-    append_code(codes, "    subq  $%d, %%rsp\n", codegen->_local_table->_memory_offset);
+    append_code(codes, "    subq  $%d, %%rsp\n", aligned_memory_offset);
 
     vector_extend(codes, param_codes);
     delete_vector(param_codes, free);
@@ -55,7 +56,7 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     vector_extend(codes, body_codes);
     delete_vector(body_codes, free);
 
-    append_code(codes, "    addq  $%d, %%rsp\n", codegen->_local_table->_memory_offset);
+    append_code(codes, "    addq  $%d, %%rsp\n", aligned_memory_offset);
     append_code(codes, "    popq  %%rbp\n");
     append_code(codes, "    ret\n");
 
