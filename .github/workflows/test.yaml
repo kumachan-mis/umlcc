@@ -15,9 +15,9 @@ jobs:
       
       - name: Install Dependencies
         run: |
-             apt-get update
+             sudo apt-get update
              export DEBIAN_FRONTEND=noninteractive
-             apt-get -y install --no-install-recommends libcunit1 libcunit1-dev
+             sudo apt-get -y install --no-install-recommends libcunit1 libcunit1-dev
       
       - name: Show GCC Version
         run: gcc --version
