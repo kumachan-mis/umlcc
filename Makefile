@@ -42,12 +42,17 @@ TEST_DEPS := $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_DEP_DIR)/%$(DEP_EXT),$(T
 SAMPLES     := $(wildcard $(SAMPLE_DIR)/*$(SRC_EXT))
 SAMPLE_ASMS := $(patsubst $(SAMPLE_DIR)/%$(SRC_EXT),$(SAMPLE_OUT)/%$(ASM_EXT),$(SAMPLES))
 
-.PHONY: all test sample format clean clean-sample
+.PHONY: all test unittest e2etest sample format clean clean-sample
 
 all: $(BIN_DIR)/$(UMLCC)
 
-test: $(BIN_DIR)/$(TEST)
+test: unittest e2etest
+
+unittest: $(BIN_DIR)/$(TEST)
 	$^
+
+e2etest: $(BIN_DIR)/$(UMLCC)
+	bash scripts/test.sh
 
 sample: $(SAMPLE_ASMS)
 
@@ -99,5 +104,9 @@ ifeq ($(MAKECMDGOALS),all)
 endif
 
 ifeq ($(MAKECMDGOALS),test)
+-include $(DEPS) $(TEST_DEPS)
+endif
+
+ifeq ($(MAKECMDGOALS),unittest)
 -include $(DEPS) $(TEST_DEPS)
 endif
