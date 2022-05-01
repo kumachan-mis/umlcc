@@ -12,7 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
+      
+      - name: Install Dependencies
+        run: |
+             apt-get update
+             export DEBIAN_FRONTEND=noninteractive
+             apt-get -y install --no-install-recommends libcunit1 libcunit1-dev
+      
       - name: Show GCC Version
         run: gcc --version
 
