@@ -142,7 +142,7 @@ Vector* gen_postfix_expr_code(Codegen* codegen) {
             }
             append_code(codes, "    call *%%rax\n");
             if (num_args > 6) {
-                int params_offset = (num_args - 6) * 8; // 8 is size of address
+                int params_offset = (num_args - 6) * 8;
                 append_code(codes, "    addq $%d, %%rsp\n", params_offset);
             }
             break;

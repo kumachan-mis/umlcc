@@ -60,13 +60,16 @@ Srt* resolve_init_declarator(Resolver* resolver) {
     declarator_srt->ctype =
         ctype_connect(declarator_srt->ctype, ctype_copy(resolver->_shared_ctype));
 
-    if (!symboltable_can_define(resolver->_local_table, declarator_srt->ident_name)) {
+    SymbolTable* table = resolver->_global_table;
+    if (resolver->_local_table != NULL) table = resolver->_local_table;
+
+    if (!symboltable_can_define(table, declarator_srt->ident_name)) {
         fprintf(stderr, "Error: identifier '%s' is already defined\n", declarator_srt->ident_name);
         exit(1);
     }
     char* table_ident_name = string_copy(declarator_srt->ident_name);
     CType* table_ctype = ctype_copy(declarator_srt->ctype);
-    symboltable_define(resolver->_local_table, table_ident_name, table_ctype);
+    symboltable_define(table, table_ident_name, table_ctype);
 
     vector_push(srt->children, declarator_srt);
 

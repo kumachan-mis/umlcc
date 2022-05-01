@@ -18,18 +18,22 @@ int main(int argc, char* argv[]) {
     Lexer* lexer = new_lexer(src);
     Vector* tokens = lexer_read_tokens(lexer);
     delete_lexer(lexer);
+    printf("lexer\n");
 
     Parser* parser = new_parser(tokens);
     Ast* ast = parser_create_ast(parser);
     delete_parser(parser);
+    printf("parser\n");
 
     Resolver* resolver = new_resolver(ast);
     Srt* srt = resolver_resolve_semantics(resolver);
     delete_resolver(resolver);
+    printf("resolver\n");
 
     Codegen* codegen = new_codegen(srt);
     Vector* codes = codegen_generate_code(codegen);
     delete_codegen(codegen);
+    printf("codegen\n");
 
     int codes_len = vector_size(codes);
     for (int i = 0; i < codes_len; i++) {
