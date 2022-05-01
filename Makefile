@@ -42,7 +42,7 @@ TEST_DEPS := $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_DEP_DIR)/%$(DEP_EXT),$(T
 SAMPLES     := $(wildcard $(SAMPLE_DIR)/*$(SRC_EXT))
 SAMPLE_ASMS := $(patsubst $(SAMPLE_DIR)/%$(SRC_EXT),$(SAMPLE_OUT)/%$(ASM_EXT),$(SAMPLES))
 
-.PHONY: all test sample format clean
+.PHONY: all test sample format clean clean-sample
 
 all: $(BIN_DIR)/$(UMLCC)
 
@@ -84,6 +84,9 @@ format:
 
 clean:
 	$(RM) $(BIN_DIR) $(BLD_DIR)
+
+clean-sample:
+	$(RM) $(SAMPLE_OUT)
 
 ifeq ($(MAKECMDGOALS),)
 -include $(DEPS)
