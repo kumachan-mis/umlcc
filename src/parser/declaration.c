@@ -107,8 +107,3 @@ Ast* parse_parameter_decl(Parser* parser) {
     Ast* declarator_ast = parse_declarator(parser);
     return new_ast(AST_PARAM_DECL, 2, specifiers_ast, declarator_ast);
 }
-
-int should_decl(Parser* parser) {
-    Token* token = vector_at(parser->_tokens, parser->_index);
-    return token->type == TOKEN_KEYWORD_INT;
-}

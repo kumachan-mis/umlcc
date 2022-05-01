@@ -13,7 +13,11 @@ Srt* resolve_transration_unit(Resolver* resolver) {
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
         resolver->_ast = vector_at(ast->children, i);
-        vector_push(srt->children, resolve_function_definition(resolver));
+        if (resolver->_ast->type == AST_FUNC_DEF) {
+            vector_push(srt->children, resolve_function_definition(resolver));
+        } else {
+            vector_push(srt->children, resolve_decl(resolver));
+        }
     }
 
     resolver->_ast = ast;
@@ -47,12 +51,11 @@ Srt* resolve_function_definition(Resolver* resolver) {
     for (int i = 0; i < num_params; i++) {
         CParam* cparam = vector_at(params, i);
         if (!symboltable_can_define(resolver->_local_table, cparam->ident_name)) {
-            fprintf(stderr, "Error: identifier '%s' is already defined\n",
-                    declarator_srt->ident_name);
+            fprintf(stderr, "Error: identifier '%s' is already defined\n", cparam->ident_name);
             exit(1);
         }
-        table_ident_name = string_copy(cparam->ident_name);
-        table_ctype = ctype_copy(cparam->ctype);
+        char* table_ident_name = string_copy(cparam->ident_name);
+        CType* table_ctype = ctype_copy(cparam->ctype);
         symboltable_define(resolver->_local_table, table_ident_name, table_ctype);
     }
 

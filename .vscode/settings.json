@@ -1,6 +1,5 @@
 {
-    "files.associations": {
-        "*.d": "makefile"
-    },
-    "githubPullRequests.defaultMergeMethod": "squash"
+    "C_Cpp.intelliSenseCacheSize": 0,
+    "files.associations": { "*.d": "makefile" },
+    "githubPullRequests.defaultMergeMethod": "squash",
 }

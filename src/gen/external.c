@@ -28,14 +28,13 @@ Vector* gen_function_definition_code(Codegen* codegen) {
         CParam* cparam = vector_at(params, i);
         char* table_ident_name = string_copy(cparam->ident_name);
         CType* table_ctype = ctype_copy(cparam->ctype);
-        Symbol* symbol = symboltable_define(codegen->_local_table, table_ident_name, table_ctype);
 
+        Symbol* symbol = symboltable_define(codegen->_local_table, table_ident_name, table_ctype);
         if (i < 6) {
             append_code(param_codes, "    movl  %s, -%d(%%rbp)\n", param_regs[i],
                         symbol->memory_offset);
         } else {
-            int param_offset =
-                (num_params - i) * 8 + 8; // 8 is size of address. + 8 is for "pushq %rbp"
+            int param_offset = (num_params - i) * 8 + 8;
             append_code(param_codes, "    movl  %d(%%rbp), %%eax\n", param_offset);
             append_code(param_codes, "    movl  %%eax, -%d(%%rbp)\n", symbol->memory_offset);
         }
@@ -44,8 +43,8 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     codegen->_srt = vector_at(srt->children, 1);
     Vector* body_codes = gen_children_code(codegen);
 
-    append_code(codes, "    .globl _%s\n", table_ident_name);
-    append_code(codes, "_%s:\n", table_ident_name);
+    append_code(codes, "    .globl %s\n", table_ident_name);
+    append_code(codes, "%s:\n", table_ident_name);
     append_code(codes, "    pushq  %%rbp\n");
     append_code(codes, "    movq  %%rsp, %%rbp\n");
     append_code(codes, "    subq  $%d, %%rsp\n", codegen->_local_table->_memory_offset);

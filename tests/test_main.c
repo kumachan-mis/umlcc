@@ -12,6 +12,7 @@ int main(void) {
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
 
+    int exit_code = CU_get_number_of_failures();
     CU_cleanup_registry();
-    return CU_get_error();
+    return exit_code;
 }

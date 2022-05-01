@@ -1,14 +1,21 @@
-#include "./external.h"
+#include <stdlib.h>
+
 #include "../token/token.h"
 #include "./declaration.h"
+#include "./external.h"
 #include "./statement.h"
+#include "./util.h"
 
 Ast* parse_translation_unit(Parser* parser) {
     Ast* ast = new_ast(AST_TRAS_UNIT, 0);
     while (1) {
         Token* token = vector_at(parser->_tokens, parser->_index);
         if (token->type == TOKEN_EOF) break;
-        vector_push(ast->children, parse_function_definition(parser));
+        if (external_may_function_definition(parser)) {
+            vector_push(ast->children, parse_function_definition(parser));
+        } else {
+            vector_push(ast->children, parse_decl(parser));
+        }
     }
     return ast;
 }

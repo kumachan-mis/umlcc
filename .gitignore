@@ -5,6 +5,9 @@
 ### Project Specific Settings ###
 build/
 bin/
+sample-out/
+test-fixtures/**/*.s
+test-fixtures/**/actual.txt
 
 ### C ###
 # Prerequisites
