@@ -13,13 +13,13 @@ DEP_DIR  := $(BLD_DIR)/src/depend
 TEST_LIBS    := -lcunit
 TEST         := test_umlcc
 TEST_MAIN    := test_main
-TEST_DIR     := $(BASE_DIR)/tests
+TEST_DIR     := tests
 TEST_OBJ_DIR := $(BLD_DIR)/tests/object
 TEST_DEP_DIR := $(BLD_DIR)/tests/depend
 
 SAMPLE_CFLAGS := -S -O0 -fno-asynchronous-unwind-tables
-SAMPLE_DIR    := $(BASE_DIR)/sample
-SAMPLE_OUT    := $(BASE_DIR)/sample-out
+SAMPLE_DIR    := sample
+SAMPLE_OUT    := sample-out
 
 SRC_EXT  := .c
 TEST_EXT := .c
@@ -40,7 +40,7 @@ TEST_OBJS := $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_OBJ_DIR)/%$(OBJ_EXT),$(T
 TEST_DEPS := $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_DEP_DIR)/%$(DEP_EXT),$(TESTS))
 
 SAMPLES     := $(wildcard $(SAMPLE_DIR)/*$(SRC_EXT))
-SAMPLE_ASMS := $(patsubst $(SAMPLE_DIR)/%$(SRC_EXT),$(SAMPLE_OUT)%$(ASM_EXT),$(SAMPLES))
+SAMPLE_ASMS := $(patsubst $(SAMPLE_DIR)/%$(SRC_EXT),$(SAMPLE_OUT)/%$(ASM_EXT),$(SAMPLES))
 
 .PHONY: all test sample format clean
 
