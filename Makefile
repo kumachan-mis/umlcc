@@ -91,6 +91,7 @@ format:
 
 clean:
 	$(RM) $(BIN_DIR) $(BLD_DIR)
+	bash scripts/clean.sh
 
 clean-sample:
 	$(RM) $(SAMPLE_OUT)
