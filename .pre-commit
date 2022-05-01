@@ -1,0 +1,2 @@
+BASE_DIR=$(cd $(dirname $(readlink -f $0))/.. && pwd)
+find . -name *.h -o -name *.c | xargs clang-format -i

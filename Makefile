@@ -46,11 +46,9 @@ TEST_DEPS := $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_DEP_DIR)/%$(DEP_EXT),$(T
 SAMPLES     := $(wildcard $(SAMPLE_DIR)/*$(SRC_EXT))
 SAMPLE_ASMS := $(patsubst $(SAMPLE_DIR)/%$(SRC_EXT),$(SAMPLE_OUT)/%$(ASM_EXT),$(SAMPLES))
 
-.PHONY: all test unittest e2etest sample format clean clean-sample
+.PHONY: all unittest e2etest sample format clean clean-sample install-pre-commit
 
 all: $(BIN_DIR)/$(UMLCC)
-
-test: unittest e2etest
 
 unittest: $(BIN_DIR)/$(TEST)
 	$^
@@ -100,16 +98,15 @@ clean:
 clean-sample:
 	$(RM) $(SAMPLE_OUT)
 
+install-pre-commit:
+	ln -s -f .pre-commit .git/hooks/pre-commit
+
 ifeq ($(MAKECMDGOALS),)
 -include $(DEPS)
 endif
 
 ifeq ($(MAKECMDGOALS),all)
 -include $(DEPS)
-endif
-
-ifeq ($(MAKECMDGOALS),test)
--include $(DEPS) $(TEST_DEPS)
 endif
 
 ifeq ($(MAKECMDGOALS),unittest)
