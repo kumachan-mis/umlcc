@@ -17,6 +17,9 @@ TEST_DIR     := tests
 TEST_OBJ_DIR := $(BLD_DIR)/tests/object
 TEST_DEP_DIR := $(BLD_DIR)/tests/depend
 
+E2E_TEST  := scripts/test.sh
+E2E_CLEAN := scripts/clean.sh
+
 SAMPLE_CFLAGS := -S -O0 -fno-asynchronous-unwind-tables
 SAMPLE_DIR    := sample
 SAMPLE_OUT    := sample-out
@@ -28,8 +31,9 @@ INC_EXT  := .h
 OBJ_EXT  := .o
 DEP_EXT  := .d
 
-MKDIR = mkdir -p
-RM    = rm -rf
+MKDIR := mkdir -p
+SH    := bash
+RM    := rm -rf
 
 SRCS := $(wildcard $(SRC_DIR)/*$(SRC_EXT)) $(wildcard $(SRC_DIR)/**/*$(SRC_EXT))
 OBJS := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$(SRCS))
@@ -52,7 +56,7 @@ unittest: $(BIN_DIR)/$(TEST)
 	$^
 
 e2etest: $(BIN_DIR)/$(UMLCC)
-	bash scripts/test.sh
+	$(SH) $(E2E_TEST)
 
 sample: $(SAMPLE_ASMS)
 
@@ -91,7 +95,7 @@ format:
 
 clean:
 	$(RM) $(BIN_DIR) $(BLD_DIR)
-	bash scripts/clean.sh
+	$(SH) $(E2E_CLEAN)
 
 clean-sample:
 	$(RM) $(SAMPLE_OUT)
