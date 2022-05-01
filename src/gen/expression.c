@@ -127,8 +127,6 @@ Vector* gen_postfix_expr_code(Codegen* codegen) {
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
 
-    append_code(codes, "    popq %%rax\n");
-
     switch (srt->type) {
         case SRT_CALL_EXPR: {
             Srt* params_srt = vector_at(srt->children, 1);
@@ -140,6 +138,7 @@ Vector* gen_postfix_expr_code(Codegen* codegen) {
                 delete_vector(sub_codes, free);
                 if (i < 6) append_code(codes, "    popq %s\n", arg_regs[i]);
             }
+            append_code(codes, "    popq %%rax\n");
             append_code(codes, "    call *%%rax\n");
             if (num_args > 6) {
                 int params_offset = (num_args - 6) * 8;
@@ -193,7 +192,7 @@ Vector* gen_address_expr_code(Codegen* codegen) {
             }
             symbol = symboltable_search(codegen->_global_table, srt->ident_name);
             if (symbol != NULL) {
-                append_code(codes, "    leaq _%s(%%rip), %%rax\n", symbol->name);
+                append_code(codes, "    leaq %s(%%rip), %%rax\n", symbol->name);
                 append_code(codes, "    pushq %%rax\n");
                 break;
             }
