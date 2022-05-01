@@ -1,4 +1,5 @@
 #include "./util.h"
+#include "./declaration.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,7 +18,7 @@ int external_may_function_definition(Parser* parser) {
     return token->type == TOKEN_LBRACE;
 }
 
-int block_item_may_decl(Parser* parser) {
+int blockitem_may_decl(Parser* parser) {
     Token* token = vector_at(parser->_tokens, parser->_index);
     return token->type == TOKEN_KEYWORD_INT;
 }
