@@ -17,6 +17,9 @@ TEST_DIR     := tests
 TEST_OBJ_DIR := $(BLD_DIR)/tests/object
 TEST_DEP_DIR := $(BLD_DIR)/tests/depend
 
+E2E_TEST  := scripts/test.sh
+E2E_CLEAN := scripts/clean.sh
+
 SAMPLE_CFLAGS := -S -O0 -fno-asynchronous-unwind-tables
 SAMPLE_DIR    := sample
 SAMPLE_OUT    := sample-out
@@ -28,8 +31,9 @@ INC_EXT  := .h
 OBJ_EXT  := .o
 DEP_EXT  := .d
 
-MKDIR = mkdir -p
-RM    = rm -rf
+MKDIR := mkdir -p
+SH    := bash
+RM    := rm -rf
 
 SRCS := $(wildcard $(SRC_DIR)/*$(SRC_EXT)) $(wildcard $(SRC_DIR)/**/*$(SRC_EXT))
 OBJS := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$(SRCS))
@@ -42,17 +46,15 @@ TEST_DEPS := $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_DEP_DIR)/%$(DEP_EXT),$(T
 SAMPLES     := $(wildcard $(SAMPLE_DIR)/*$(SRC_EXT))
 SAMPLE_ASMS := $(patsubst $(SAMPLE_DIR)/%$(SRC_EXT),$(SAMPLE_OUT)/%$(ASM_EXT),$(SAMPLES))
 
-.PHONY: all test unittest e2etest sample format clean clean-sample
+.PHONY: all unittest e2etest sample format clean clean-sample install-pre-commit
 
 all: $(BIN_DIR)/$(UMLCC)
-
-test: unittest e2etest
 
 unittest: $(BIN_DIR)/$(TEST)
 	$^
 
 e2etest: $(BIN_DIR)/$(UMLCC)
-	bash scripts/test.sh
+	$(SH) $(E2E_TEST)
 
 sample: $(SAMPLE_ASMS)
 
@@ -91,9 +93,13 @@ format:
 
 clean:
 	$(RM) $(BIN_DIR) $(BLD_DIR)
+	$(SH) $(E2E_CLEAN)
 
 clean-sample:
 	$(RM) $(SAMPLE_OUT)
+
+install-pre-commit:
+	cp .pre-commit .git/hooks/pre-commit
 
 ifeq ($(MAKECMDGOALS),)
 -include $(DEPS)
@@ -101,10 +107,6 @@ endif
 
 ifeq ($(MAKECMDGOALS),all)
 -include $(DEPS)
-endif
-
-ifeq ($(MAKECMDGOALS),test)
--include $(DEPS) $(TEST_DEPS)
 endif
 
 ifeq ($(MAKECMDGOALS),unittest)

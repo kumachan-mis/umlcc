@@ -1,0 +1,29 @@
+name: test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    if: ${{ !startsWith(github.event.pull_request.title, '[WIP]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install Dependencies
+        run: |
+             sudo apt-get update
+             export DEBIAN_FRONTEND=noninteractive
+             sudo apt-get -y install --no-install-recommends libcunit1 libcunit1-dev
+      
+      - name: Show GCC Version
+        run: gcc --version
+
+      - name: Run Unit Test
+        run: make unittest
+      
+      - name: Run End-to-End Test
+        run: make e2etest
