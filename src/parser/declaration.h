@@ -11,6 +11,5 @@ Ast* parse_declarator(Parser* parser);
 Ast* parse_direct_declarator(Parser* parser);
 Ast* parse_parameter_list(Parser* parser);
 Ast* parse_parameter_decl(Parser* parser);
-int should_decl(Parser* parser);
 
 #endif

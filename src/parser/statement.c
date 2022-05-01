@@ -23,7 +23,7 @@ Ast* parse_compound_stmt(Parser* parser) {
             parser->_index++;
             return ast;
         }
-        if (should_decl(parser)) {
+        if (blockitem_may_decl(parser)) {
             vector_push(ast->children, parse_decl(parser));
         } else {
             vector_push(ast->children, parse_stmt(parser));
