@@ -196,6 +196,7 @@ Vector* gen_address_expr_code(Codegen* codegen) {
                 append_code(codes, "    pushq %%rax\n");
                 break;
             }
+            break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);
@@ -224,6 +225,7 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
                 append_code(codes, "    pushq %%rax\n");
                 break;
             }
+            break;
         case SRT_INT_EXPR:
             append_code(codes, "    pushq $%d\n", srt->value_int);
             break;

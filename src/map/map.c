@@ -18,7 +18,7 @@ struct _Map {
 
 void map_update_capacity(Map* map, int new_capacity, void delete_value(void* value));
 int map_calculate_hash(char* key, int capacity);
-int map_calculate_next_hash(int hash, char* key, int capacity);
+int map_calculate_next_hash(int hash, int capacity);
 MapCell* new_mapcell(char* key, void* value);
 void delete_mapcell(MapCell* cell, void delete_value(void* value));
 void mapcell_markas_deleted(MapCell* cell, void delete_value(void* value));
@@ -59,7 +59,7 @@ void* map_get_with_default(Map* map, char* key, void* default_value) {
             found = 1;
             break;
         }
-        hash = map_calculate_next_hash(hash, key, map->capacity);
+        hash = map_calculate_next_hash(hash, map->capacity);
         cell = map->container[hash];
     }
 
@@ -76,7 +76,7 @@ void map_set(Map* map, char* key, void* value, void delete_value(void* value)) {
             found = 1;
             break;
         }
-        hash = map_calculate_next_hash(hash, key, map->capacity);
+        hash = map_calculate_next_hash(hash, map->capacity);
         cell = map->container[hash];
     }
 
@@ -104,7 +104,7 @@ void map_erase(Map* map, char* key, void delete_value(void* value)) {
             found = 1;
             break;
         }
-        hash = map_calculate_next_hash(hash, key, map->capacity);
+        hash = map_calculate_next_hash(hash, map->capacity);
         cell = map->container[hash];
     }
 
@@ -131,7 +131,7 @@ void map_update_capacity(Map* map, int new_capacity, void delete_value(void* val
 
         int rehash = map_calculate_hash(cell->key, new_capacity);
         while (new_container[rehash] != NULL) {
-            rehash = map_calculate_next_hash(rehash, cell->key, new_capacity);
+            rehash = map_calculate_next_hash(rehash, new_capacity);
         }
         new_container[rehash] = cell;
     }
@@ -154,7 +154,7 @@ int map_calculate_hash(char* key, int capacity) {
     return hash % capacity;
 }
 
-int map_calculate_next_hash(int hash, char* key, int capacity) {
+int map_calculate_next_hash(int hash, int capacity) {
     return (hash + 1) % capacity;
 }
 

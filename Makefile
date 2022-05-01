@@ -1,24 +1,26 @@
 CC      = gcc
 CFLAGS  = -O3 -std=c99 -pedantic -W -Wall -Werror
-BLD_DIR = build
-BIN_DIR = bin
+
+BASE_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
+BLD_DIR  = $(BASE_DIR)build/
+BIN_DIR  = $(BASE_DIR)bin/
 
 UMLCC    = umlcc
 SRC_MAIN = main
-SRC_DIR  = src
-OBJ_DIR  = $(BLD_DIR)/src/object
-DEP_DIR  = $(BLD_DIR)/src/depend
+SRC_DIR  = $(BASE_DIR)src/
+OBJ_DIR  = $(BLD_DIR)src/object/
+DEP_DIR  = $(BLD_DIR)src/depend/
 
 TEST_LIBS    = -lcunit
 TEST         = test_umlcc
 TEST_MAIN    = test_main
-TEST_DIR     = tests
-TEST_OBJ_DIR = $(BLD_DIR)/tests/object
-TEST_DEP_DIR = $(BLD_DIR)/tests/depend
+TEST_DIR     = $(BASE_DIR)tests/
+TEST_OBJ_DIR = $(BLD_DIR)tests/object/
+TEST_DEP_DIR = $(BLD_DIR)tests/depend/
 
 SAMPLE_CFLAGS = -S -O0 -fno-asynchronous-unwind-tables
-SAMPLE_DIR    = sample
-SAMPLE_OUT    = sample-out
+SAMPLE_DIR    = $(BASE_DIR)sample/
+SAMPLE_OUT    = $(BASE_DIR)sample-out/
 
 SRC_EXT  = .c
 TEST_EXT = .c
@@ -30,68 +32,68 @@ DEP_EXT  = .d
 MKDIR = mkdir -p
 RM    = rm -rf
 
-SRCS = $(wildcard $(SRC_DIR)/*$(SRC_EXT)) $(wildcard $(SRC_DIR)/**/*$(SRC_EXT))
-OBJS = $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$(SRCS))
-DEPS = $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(DEP_DIR)/%$(DEP_EXT),$(SRCS))
+SRCS = $(wildcard $(SRC_DIR)*$(SRC_EXT)) $(wildcard $(SRC_DIR)**/*$(SRC_EXT))
+OBJS = $(patsubst $(SRC_DIR)%$(SRC_EXT),$(OBJ_DIR)%$(OBJ_EXT),$(SRCS))
+DEPS = $(patsubst $(SRC_DIR)%$(SRC_EXT),$(DEP_DIR)%$(DEP_EXT),$(SRCS))
 
-TESTS     = $(wildcard $(TEST_DIR)/*$(TEST_EXT))
-TEST_OBJS = $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_OBJ_DIR)/%$(OBJ_EXT),$(TESTS))
-TEST_DEPS = $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_DEP_DIR)/%$(DEP_EXT),$(TESTS))
+TESTS     = $(wildcard $(TEST_DIR)*$(TEST_EXT))
+TEST_OBJS = $(patsubst $(TEST_DIR)%$(TEST_EXT),$(TEST_OBJ_DIR)%$(OBJ_EXT),$(TESTS))
+TEST_DEPS = $(patsubst $(TEST_DIR)%$(TEST_EXT),$(TEST_DEP_DIR)%$(DEP_EXT),$(TESTS))
 
-SAMPLES     = $(wildcard $(SAMPLE_DIR)/*$(SRC_EXT))
-SAMPLE_ASMS = $(patsubst $(SAMPLE_DIR)/%$(SRC_EXT),$(SAMPLE_OUT)/%$(ASM_EXT),$(SAMPLES))
+SAMPLES     = $(wildcard $(SAMPLE_DIR)*$(SRC_EXT))
+SAMPLE_ASMS = $(patsubst $(SAMPLE_DIR)%$(SRC_EXT),$(SAMPLE_OUT)%$(ASM_EXT),$(SAMPLES))
 
-.PHONY: all test clean format
+.PHONY: all test sample format clean
 
-all: $(BIN_DIR)/$(UMLCC)
+all: $(BIN_DIR)$(UMLCC)
 
-test: $(BIN_DIR)/$(TEST)
+test: $(BIN_DIR)$(TEST)
 	$^
 
 sample: $(SAMPLE_ASMS)
 
-$(BIN_DIR)/$(UMLCC): $(OBJS)
+$(BIN_DIR)$(UMLCC): $(OBJS)
 	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) $^ -o $@
 
-$(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
+$(OBJ_DIR)%$(OBJ_EXT): $(SRC_DIR)%$(SRC_EXT) $(DEP_DIR)%$(DEP_EXT)
 	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
+$(DEP_DIR)%$(DEP_EXT): $(SRC_DIR)%$(SRC_EXT)
 	$(MKDIR) $(dir $@)
-	$(CC) $(CFLAGS) -MP -MM $< | sed 's|^\(.*\)\.o:|$(OBJ_DIR)/\1.o:|g' > $@
+	$(CC) $(CFLAGS) -MP -MM $< | sed 's|^\(.*\)\.o:|$(OBJ_DIR)\1.o:|g' > $@
 
-$(BIN_DIR)/$(TEST): $(filter-out $(OBJ_DIR)/$(SRC_MAIN)$(OBJ_EXT), $(OBJS)) $(TEST_OBJS)
+$(BIN_DIR)$(TEST): $(filter-out $(OBJ_DIR)$(SRC_MAIN)$(OBJ_EXT), $(OBJS)) $(TEST_OBJS)
 	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) $^ $(TEST_LIBS) -o $@
 
-$(TEST_OBJ_DIR)/%$(OBJ_EXT): $(TEST_DIR)/%$(TEST_EXT) $(TEST_DEP_DIR)/%$(DEP_EXT)
+$(TEST_OBJ_DIR)%$(OBJ_EXT): $(TEST_DIR)%$(TEST_EXT) $(TEST_DEP_DIR)%$(DEP_EXT)
 	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(TEST_DEP_DIR)/%$(DEP_EXT): $(TEST_DIR)/%$(TEST_EXT)
+$(TEST_DEP_DIR)%$(DEP_EXT): $(TEST_DIR)%$(TEST_EXT)
 	$(MKDIR) $(dir $@)
-	$(CC) $(CFLAGS) -MP -MM $< | sed 's|^\(.*\)\.o:|$(OBJ_DIR)/\1.o:|g' > $@
+	$(CC) $(CFLAGS) -MP -MM $< | sed 's|^\(.*\)\.o:|$(OBJ_DIR)\1.o:|g' > $@
 
-$(SAMPLE_OUT)/%$(ASM_EXT): $(SAMPLE_DIR)/%$(SRC_EXT)
+$(SAMPLE_OUT)/%$(ASM_EXT): $(SAMPLE_DIR)%$(SRC_EXT)
 	$(MKDIR) $(dir $@)
 	$(CC) $(SAMPLE_CFLAGS) -S $< -o $@
-
-clean:
-	$(RM) $(BIN_DIR) $(BLD_DIR)
 
 format:
 	find . -name *.h -o -name *.c | xargs clang-format -i
 
-ifneq ($(MAKECMDGOALS),sample)
-ifneq ($(MAKECMDGOALS),format)
-ifneq ($(MAKECMDGOALS),clean)
+clean:
+	$(RM) $(BIN_DIR) $(BLD_DIR)
+
+ifeq ($(MAKECMDGOALS),)
 -include $(DEPS)
 endif
-endif
+
+ifeq ($(MAKECMDGOALS),all)
+-include $(DEPS)
 endif
 
 ifeq ($(MAKECMDGOALS),test)
--include $(TEST_DEPS)
+-include $(DEPS) $(TEST_DEPS)
 endif
