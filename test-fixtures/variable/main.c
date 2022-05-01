@@ -1,7 +1,7 @@
 int put_int(int x);
 
 int main() {
-    int a, b, c, d;
+    int a, b, c;
     a = 3;
     b = a - 1;
     c = a * b;
