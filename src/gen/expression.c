@@ -122,53 +122,58 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
 }
 
 Vector* gen_postfix_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector();
-    Vector* sub_codes = NULL;
+    Vector* codes = NULL;
     Srt* srt = codegen->_srt;
+    Vector* gen_call_expr_code(Codegen * codegen);
 
     switch (srt->type) {
-        case SRT_CALL_EXPR: {
-            Srt* params_srt = vector_at(srt->children, 1);
-            int num_args = vector_size(params_srt->children);
-
-            // The end of the input argument area shall be aligned on a 16 byte boundary.
-            if (num_args > 6 && num_args % 2 == 1) {
-                append_code(codes, "    subq $%d, %%rsp\n", 8);
-            }
-
-            // Once registers are assigned,
-            // the arguments passed in memory are pushed on the stack in REVERSED order.
-            for (int i = num_args - 1; i >= 0; i--) {
-                codegen->_srt = vector_at(params_srt->children, i);
-                sub_codes = codegen_generate_code(codegen);
-                vector_extend(codes, sub_codes);
-                delete_vector(sub_codes, free);
-                if (i < 6) append_code(codes, "    popq %s\n", arg_regs[i]);
-            }
-
-            codegen->_srt = vector_at(srt->children, 0);
-            sub_codes = codegen_generate_code(codegen);
-            vector_extend(codes, sub_codes);
-            delete_vector(sub_codes, free);
-            append_code(codes, "    popq %%rax\n");
-            append_code(codes, "    call *%%rax\n");
-
-            // The end of the input argument area shall be aligned on a 16 byte boundary.
-            if (num_args > 6) {
-                int params_offset = (num_args - 6) * 8;
-                if (num_args % 2 == 1) params_offset += 8;
-                append_code(codes, "    addq $%d, %%rsp\n", params_offset);
-            }
+        case SRT_CALL_EXPR:
+            codes = gen_call_expr_code(codegen);
             break;
-        }
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);
     }
 
+    return codes;
+}
+
+Vector* gen_call_expr_code(Codegen* codegen) {
+    Vector* codes = new_vector();
+    Vector* sub_codes = NULL;
+    Srt* srt = codegen->_srt;
+
+    Srt* params_srt = vector_at(srt->children, 1);
+    int num_args = vector_size(params_srt->children);
+
+    // The end of the input argument area shall be aligned on a 16 byte boundary.
+    if (num_args > 6 && num_args % 2 == 1) { append_code(codes, "    subq $%d, %%rsp\n", 8); }
+
+    // Once registers are assigned,
+    // the arguments passed in memory are pushed on the stack in REVERSED order.
+    for (int i = num_args - 1; i >= 0; i--) {
+        codegen->_srt = vector_at(params_srt->children, i);
+        sub_codes = codegen_generate_code(codegen);
+        vector_extend(codes, sub_codes);
+        delete_vector(sub_codes, free);
+        if (i < 6) append_code(codes, "    popq %s\n", arg_regs[i]);
+    }
+
+    codegen->_srt = vector_at(srt->children, 0);
+    sub_codes = codegen_generate_code(codegen);
+    vector_extend(codes, sub_codes);
+    delete_vector(sub_codes, free);
+    append_code(codes, "    popq %%rax\n");
+    append_code(codes, "    call *%%rax\n");
+
+    if (num_args > 6) {
+        int params_offset = (num_args - 6) * 8;
+        if (num_args % 2 == 1) params_offset += 8;
+        append_code(codes, "    addq $%d, %%rsp\n", params_offset);
+    }
+
     append_code(codes, "    pushq %%rax\n");
 
-    codegen->_srt = srt;
     return codes;
 }
 
@@ -176,8 +181,6 @@ Vector* gen_unary_expr_code(Codegen* codegen) {
     Vector* codes = NULL;
     Srt* srt = codegen->_srt;
     Vector* gen_address_expr_code(Codegen * codegen);
-
-    codegen->_srt = vector_at(srt->children, 0);
 
     switch (srt->type) {
         case SRT_ADDR_EXPR:
@@ -188,13 +191,12 @@ Vector* gen_unary_expr_code(Codegen* codegen) {
             exit(1);
     }
 
-    codegen->_srt = srt;
     return codes;
 }
 
 Vector* gen_address_expr_code(Codegen* codegen) {
     Vector* codes = new_vector();
-    Srt* srt = codegen->_srt;
+    Srt* srt = vector_at(codegen->_srt->children, 0);
     Symbol* symbol = NULL;
 
     switch (srt->type) {
