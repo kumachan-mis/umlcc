@@ -17,8 +17,6 @@ Vector* gen_expression_stmt_code(Codegen* codegen) {
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
 
-    append_code(codes, "    popq %%rax\n");
-
     codegen->_srt = srt;
     return codes;
 }

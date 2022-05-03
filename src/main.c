@@ -3,6 +3,8 @@
 #include "./parser/parser.h"
 #include "./resolver/resolver.h"
 
+#include "./imml/imml.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -28,14 +30,16 @@ int main(int argc, char* argv[]) {
     delete_resolver(resolver);
 
     Codegen* codegen = new_codegen(srt);
-    Vector* codes = codegen_generate_code(codegen);
+    Vector* immlcodes = codegen_generate_code(codegen);
     delete_codegen(codegen);
 
-    int codes_len = vector_size(codes);
-    for (int i = 0; i < codes_len; i++) {
-        fprintf(dest, "%s", (char*)vector_at(codes, i));
+    int immlcodes_len = vector_size(immlcodes);
+    for (int i = 0; i < immlcodes_len; i++) {
+        char* immlcode_str = immlcode_tostring(vector_at(immlcodes, i));
+        fprintf(dest, "%s", immlcode_str);
+        free(immlcode_str);
     }
-    delete_vector(codes, free);
+    delete_vector(immlcodes, delete_immlcode);
 
     fclose(dest);
     fclose(src);
