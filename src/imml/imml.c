@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* inst_strings[] = {"load", "addr", "store", "ldarg", "starg", "add",    "sub",  "mul",
-                        "div",  "mod",  "call",  "enter", "leave", "glabel", "label"};
+char* inst_strings[] = {"load  ", "addr  ", "store ", "ldarg ", "starg ",
+                        "add   ", "sub   ", "mul   ", "div   ", "mod   ",
+                        "call  ", "enter ", "leave ", "glabel", "label "};
 
 ImmlCode* new_immlcode(ImmlInst inst, ImmlOpe* dest, ImmlOpe* fst_src, ImmlOpe* snd_src) {
     ImmlCode* immlcode = malloc(sizeof(ImmlCode));
