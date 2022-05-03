@@ -1,0 +1,17 @@
+int put_int(int x);
+
+int grandchild(int x, int y) {
+    x* x + y* y;
+}
+
+int child(int a, int b) {
+    int c, d;
+    c = a + b;
+    d = a - b;
+    grandchild(c, d) - grandchild(a, b);
+}
+
+int main() {
+    put_int(child(1, 3));
+    put_int(child(4, 3));
+}

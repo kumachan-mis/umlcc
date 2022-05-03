@@ -1,14 +1,14 @@
 int put_int(int x);
 
 int main() {
-    int a, b, c;
-    a = 3;
-    b = a - 1;
-    c = a * b;
+    int first, second, third;
+    first = 3;
+    second = first - 1;
+    third = first * second;
 
-    put_int(a);
-    put_int(b);
-    put_int(c);
-    put_int(c - (a - b));
+    put_int(first);
+    put_int(second);
+    put_int(third);
+    put_int(third - (first - second));
     0;
 }
