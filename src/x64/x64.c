@@ -14,6 +14,6 @@ void delete_x64gen(X64gen* x64gen) {
     free(x64gen);
 }
 
-Vector* x64gen_generate_x64code(X64gen* x64gen) {
-    return NULL;
-}
+// Vector* x64gen_generate_x64code(X64gen* x64gen) {
+//     return NULL;
+// }
