@@ -15,8 +15,8 @@ Resolver* new_resolver(Ast* ast) {
 void delete_resolver(Resolver* resolver) {
     delete_ast(resolver->_ast);
     delete_symboltable(resolver->_global_table);
-    if (resolver->_local_table != NULL) { delete_symboltable(resolver->_local_table); }
-    if (resolver->_shared_ctype != NULL) { delete_ctype(resolver->_shared_ctype); }
+    if (resolver->_local_table != NULL) delete_symboltable(resolver->_local_table);
+    if (resolver->_shared_ctype != NULL) delete_ctype(resolver->_shared_ctype);
     free(resolver);
 }
 

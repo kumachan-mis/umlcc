@@ -7,6 +7,7 @@
 
 typedef struct _Codegen {
     Srt* _srt;
+    int register_name;
     SymbolTable* _global_table;
     SymbolTable* _local_table;
 } Codegen;

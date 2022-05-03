@@ -15,7 +15,7 @@ SymbolTable* new_symboltable() {
 }
 
 void delete_symboltable(SymbolTable* table) {
-    if (table->_outer_scope != NULL) { delete_symboltable(table->_outer_scope); }
+    if (table->_outer_scope != NULL) delete_symboltable(table->_outer_scope);
     delete_map(table->_symbol_map, (void (*)(void* value))delete_symbol);
     free(table);
 }

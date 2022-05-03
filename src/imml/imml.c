@@ -12,9 +12,9 @@ ImmlCode* new_immlcode(ImmlInst inst, ImmlOpe* dest, ImmlOpe* fst_src, ImmlOpe* 
 }
 
 void delete_immlcode(ImmlCode* immlcode) {
-    if (immlcode->dest != NULL) { delete_immope(immlcode->dest); }
-    if (immlcode->fst_src != NULL) { delete_immope(immlcode->fst_src); }
-    if (immlcode->snd_src != NULL) { delete_immope(immlcode->snd_src); }
+    if (immlcode->dest != NULL) delete_immope(immlcode->dest);
+    if (immlcode->fst_src != NULL) delete_immope(immlcode->fst_src);
+    if (immlcode->snd_src != NULL) delete_immope(immlcode->snd_src);
     free(immlcode);
 }
 
@@ -59,6 +59,6 @@ ImmlOpe* new_label_immlope(char* label_name) {
 }
 
 void delete_immope(ImmlOpe* immlope) {
-    if (immlope->label_name != NULL) { free(immlope->label_name); }
+    if (immlope->label_name != NULL) free(immlope->label_name);
     free(immlope);
 }

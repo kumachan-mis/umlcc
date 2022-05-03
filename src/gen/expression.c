@@ -147,7 +147,7 @@ Vector* gen_call_expr_code(Codegen* codegen) {
     int num_args = vector_size(params_srt->children);
 
     // The end of the input argument area shall be aligned on a 16 byte boundary.
-    if (num_args > 6 && num_args % 2 == 1) { append_code(codes, "    subq $%d, %%rsp\n", 8); }
+    if (num_args > 6 && num_args % 2 == 1) append_code(codes, "    subq $%d, %%rsp\n", 8);
 
     // Once registers are assigned,
     // the arguments passed in memory are pushed on the stack in REVERSED order.
