@@ -118,10 +118,10 @@ ImmlOpe* immlope_copy(ImmlOpe* immlope) {
     copied_immlope->imm_value = immlope->imm_value;
     copied_immlope->reg_name = immlope->reg_name;
     copied_immlope->mem_offset = immlope->mem_offset;
-    if (immlope->label_name == NULL)
-        copied_immlope->label_name = NULL;
-    else
+    copied_immlope->label_name = NULL;
+    if (immlope->label_name != NULL) {
         copied_immlope->label_name = string_copy(immlope->label_name);
+    }
     return copied_immlope;
 }
 
