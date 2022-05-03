@@ -21,15 +21,3 @@ Vector* gen_children_code(Codegen* codegen) {
     codegen->_srt = srt;
     return codes;
 }
-
-void append_code(Vector* codes, char* format, ...) {
-    va_list arg_ptr;
-    va_start(arg_ptr, format);
-
-    char* code = malloc((100 + 1) * sizeof(char));
-    vsprintf(code, format, arg_ptr);
-    code = realloc(code, (strlen(code) + 1) * sizeof(char));
-    vector_push(codes, code);
-
-    va_end(arg_ptr);
-}

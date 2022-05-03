@@ -1,4 +1,5 @@
 #include "./expression.h"
+#include "../imml/imml.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -243,9 +244,13 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
                 break;
             }
             break;
-        case SRT_INT_EXPR:
-            append_code(codes, "    pushq $%d\n", srt->value_int);
+        case SRT_INT_EXPR: {
+            ImmlOpe* src = new_imm_immlope(srt->value_int);
+            ImmlOpe* dest = new_reg_immlope(codegen->register_name);
+            codegen->register_name++;
+            vector_push(codes, new_immlcode(INST_LOAD, dest, src, NULL));
             break;
+        }
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);

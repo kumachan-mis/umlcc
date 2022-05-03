@@ -5,7 +5,7 @@ typedef enum _ImmlInst {
     // data transfar instructions
     INST_LOAD,
     // load data.
-    // load dest{reg}, fst_src{imm,mem}
+    // load dest{reg}, fst_src{imm,mem,label}
     INST_ADDR,
     // load affress.
     // addr dest{reg}, fst_src{mem,label}
