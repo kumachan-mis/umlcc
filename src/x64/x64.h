@@ -4,7 +4,7 @@
 #include "../vector/vector.h"
 
 typedef struct _X64gen {
-    Vector* immlcodes;
+    Vector* _immlcodes;
 } X64gen;
 
 X64gen* new_x64gen(Vector* immlcodes);
