@@ -1,4 +1,4 @@
 #!/bin/bash
 
-find . -name *.h -o -name *.c | xargs clang-format -i
+git diff --name-only --cached | grep -E "^.*\.[ch]$" | xargs clang-format -i
 git add -A
