@@ -1,5 +1,6 @@
 #include "./declaration.h"
 #include "../common/common.h"
+#include "../imml/imml.h"
 #include "../type/type.h"
 #include "./util.h"
 
@@ -18,7 +19,7 @@ Vector* gen_init_decl_code(Codegen* codegen) {
     codegen->_srt = vector_at(srt->children, 0);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, free);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
 
     codegen->_srt = srt;
     return codes;

@@ -2,7 +2,6 @@
 #define _UMLCC_X64_UTIL_H_
 
 #include "../vector/vector.h"
-#include "./gen.h"
 
 extern int num_arg_reg;
 extern char* quad_regs[8];

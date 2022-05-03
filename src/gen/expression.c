@@ -19,7 +19,7 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
     sub_codes = codegen_generate_code(codegen);
     tail_code = vector_at(sub_codes, vector_size(sub_codes) - 1);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, free);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
 
     src = new_reg_immlope(tail_code->dest->reg_name);
 
@@ -27,13 +27,13 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
     sub_codes = codegen_generate_code(codegen);
     tail_code = vector_at(sub_codes, vector_size(sub_codes) - 1);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, free);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
 
     dest = new_ptr_immlope(tail_code->dest->reg_name);
 
     switch (srt->type) {
         case SRT_ASSIGN_EXPR:
-            vector_push(codes, new_immlcode(INST_STORE, dest, src, dest));
+            vector_push(codes, new_immlcode(INST_STORE, dest, src, NULL));
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
@@ -42,9 +42,10 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
 
     // implementation limit
     // dest of tail of expression codes should be a register
+    src = immlope_copy(src);
     dest = new_reg_immlope(codegen->register_name);
     codegen->register_name++;
-    vector_push(codes, new_immlcode(INST_STORE, dest, src, dest));
+    vector_push(codes, new_immlcode(INST_STORE, dest, src, NULL));
 
     codegen->_srt = srt;
     return codes;
@@ -64,7 +65,7 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
     sub_codes = codegen_generate_code(codegen);
     tail_code = vector_at(sub_codes, vector_size(sub_codes) - 1);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, free);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
 
     fst_src = new_reg_immlope(tail_code->dest->reg_name);
 
@@ -72,7 +73,7 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
     sub_codes = codegen_generate_code(codegen);
     tail_code = vector_at(sub_codes, vector_size(sub_codes) - 1);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, free);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
 
     snd_src = new_reg_immlope(tail_code->dest->reg_name);
 
@@ -81,10 +82,10 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
 
     switch (srt->type) {
         case SRT_ADD_EXPR:
-            vector_push(codes, new_immlcode(INST_ADD, fst_src, snd_src, dest));
+            vector_push(codes, new_immlcode(INST_ADD, dest, fst_src, snd_src));
             break;
         case SRT_SUB_EXPR:
-            vector_push(codes, new_immlcode(INST_SUB, fst_src, snd_src, dest));
+            vector_push(codes, new_immlcode(INST_SUB, dest, fst_src, snd_src));
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
@@ -109,7 +110,7 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
     sub_codes = codegen_generate_code(codegen);
     tail_code = vector_at(sub_codes, vector_size(sub_codes) - 1);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, free);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
 
     fst_src = new_reg_immlope(tail_code->dest->reg_name);
 
@@ -117,7 +118,7 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
     sub_codes = codegen_generate_code(codegen);
     tail_code = vector_at(sub_codes, vector_size(sub_codes) - 1);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, free);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
 
     snd_src = new_reg_immlope(tail_code->dest->reg_name);
 
@@ -177,7 +178,7 @@ Vector* gen_call_expr_code(Codegen* codegen) {
         sub_codes = codegen_generate_code(codegen);
         tail_code = vector_at(sub_codes, vector_size(sub_codes) - 1);
         vector_extend(codes, sub_codes);
-        delete_vector(sub_codes, free);
+        delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
 
         fst_src = new_imm_immlope(i);
         snd_src = new_reg_immlope(tail_code->dest->reg_name);
@@ -188,7 +189,7 @@ Vector* gen_call_expr_code(Codegen* codegen) {
     sub_codes = codegen_generate_code(codegen);
     tail_code = vector_at(sub_codes, vector_size(sub_codes) - 1);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, free);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
 
     fst_src = new_ptr_immlope(tail_code->dest->reg_name);
     snd_src = new_imm_immlope(num_args);

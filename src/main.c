@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
         fprintf(dest, "%s", immlcode_str);
         free(immlcode_str);
     }
-    delete_vector(immlcodes, delete_immlcode);
+    delete_vector(immlcodes, (void (*)(void* item))delete_immlcode);
 
     fclose(dest);
     fclose(src);

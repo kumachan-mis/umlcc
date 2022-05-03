@@ -1,4 +1,5 @@
 #include "./imml.h"
+#include "../common/common.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,39 +19,37 @@ ImmlCode* new_immlcode(ImmlInst inst, ImmlOpe* dest, ImmlOpe* fst_src, ImmlOpe* 
 
 char* immlcode_tostring(ImmlCode* immlcode) {
     char* code_str = malloc(100 * sizeof(char));
-    if (immlcode->inst == INST_GLABEL || immlcode->inst == INST_LABEL) {
-        sprintf(code_str, "%s", inst_strings[immlcode->inst]);
-    } else {
-        sprintf(code_str, "\t%s", inst_strings[immlcode->inst]);
-    }
+    memset(code_str, 0, 100 * sizeof(char));
+
+    if (immlcode->inst != INST_GLABEL && immlcode->inst != INST_LABEL) strcat(code_str, "\t");
+    strcat(code_str, inst_strings[immlcode->inst]);
 
     int operand_appears = 0;
     if (immlcode->dest != NULL) {
-        sprintf(code_str, "\t%s", immlope_tostring(immlcode->dest));
+        char* dest_string = immlope_tostring(immlcode->dest);
+        strcat(code_str, "\t");
+        strcat(code_str, dest_string);
+        free(dest_string);
         operand_appears = 1;
     }
 
     if (immlcode->fst_src != NULL) {
         char* fst_src_string = immlope_tostring(immlcode->fst_src);
-        if (operand_appears) {
-            sprintf(code_str, "%s, %s", code_str, fst_src_string);
-        } else {
-            sprintf(code_str, "%s\t%s", code_str, fst_src_string);
-        }
+        strcat(code_str, operand_appears ? ", " : "\t");
+        strcat(code_str, fst_src_string);
+        free(fst_src_string);
         operand_appears = 1;
     }
 
     if (immlcode->snd_src != NULL) {
         char* snd_src_string = immlope_tostring(immlcode->snd_src);
-        if (operand_appears) {
-            sprintf(code_str, "%s, %s", code_str, snd_src_string);
-        } else {
-            sprintf(code_str, "%s\t%s", code_str, snd_src_string);
-        }
+        strcat(code_str, operand_appears ? ", " : "\t");
+        strcat(code_str, snd_src_string);
+        free(snd_src_string);
         operand_appears = 1;
     }
 
-    sprintf(code_str, "%s\n", code_str);
+    strcat(code_str, "\n");
     code_str = realloc(code_str, (strlen(code_str) + 1) * sizeof(char));
     return code_str;
 }
@@ -72,9 +71,9 @@ ImmlOpe* new_imm_immlope(int imm_value) {
     return immlope;
 }
 
-ImmlOpe* new_ptr_immlope(int reg_name) {
+ImmlOpe* new_reg_immlope(int reg_name) {
     ImmlOpe* immlope = malloc(sizeof(ImmlOpe));
-    immlope->type = OPERAND_PTR;
+    immlope->type = OPERAND_REG;
     immlope->imm_value = -1;
     immlope->reg_name = reg_name;
     immlope->mem_offset = -1;
@@ -82,9 +81,9 @@ ImmlOpe* new_ptr_immlope(int reg_name) {
     return immlope;
 }
 
-ImmlOpe* new_reg_immlope(int reg_name) {
+ImmlOpe* new_ptr_immlope(int reg_name) {
     ImmlOpe* immlope = malloc(sizeof(ImmlOpe));
-    immlope->type = OPERAND_REG;
+    immlope->type = OPERAND_PTR;
     immlope->imm_value = -1;
     immlope->reg_name = reg_name;
     immlope->mem_offset = -1;
@@ -110,6 +109,19 @@ ImmlOpe* new_label_immlope(char* label_name) {
     immlope->mem_offset = -1;
     immlope->label_name = label_name;
     return immlope;
+}
+
+ImmlOpe* immlope_copy(ImmlOpe* immlope) {
+    ImmlOpe* copied_immlope = malloc(sizeof(ImmlOpe));
+    copied_immlope->type = immlope->type;
+    copied_immlope->imm_value = immlope->imm_value;
+    copied_immlope->reg_name = immlope->reg_name;
+    copied_immlope->mem_offset = immlope->mem_offset;
+    if (immlope->label_name == NULL)
+        copied_immlope->label_name = NULL;
+    else
+        copied_immlope->label_name = string_copy(immlope->label_name);
+    return copied_immlope;
 }
 
 char* immlope_tostring(ImmlOpe* immlope) {
