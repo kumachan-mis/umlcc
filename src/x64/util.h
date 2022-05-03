@@ -4,6 +4,7 @@
 #include "../vector/vector.h"
 #include "./gen.h"
 
+extern int num_arg_reg;
 extern char* quad_regs[8];
 extern char* double_regs[8];
 char* arg_reg(char* regs[8], int index);

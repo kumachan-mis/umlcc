@@ -9,6 +9,13 @@ char* quad_regs[8] = {"%rax", "%rbx", "%rcx", "%rdx", "%rsi", "%rdi", "%r8", "%r
 
 char* double_regs[8] = {"%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi", "%r8d", "%r9d"};
 
+// If the class is INTEGER, the next available register of the sequence
+// %rdi, %rsi, %rdx, %rcx, %r8 and %r9 is used.
+// cf. System V Application Binary Interface (p20)
+//     https://uclibc.org/docs/psABI-x86_64.pdf
+
+int num_arg_reg = 6;
+
 char* arg_reg(char* regs[8], int index) {
     switch (index) {
         case 0:
