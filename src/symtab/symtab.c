@@ -9,7 +9,7 @@ void delete_symbol(Symbol* symbol);
 SymbolTable* new_symboltable() {
     SymbolTable* table = malloc(sizeof(SymbolTable));
     table->_symbol_map = new_map();
-    table->_memory_offset = 0;
+    table->_memory_size = 0;
     table->_outer_scope = NULL;
     return table;
 }
@@ -26,8 +26,8 @@ int symboltable_can_define(SymbolTable* table, char* name) {
 
 Symbol* symboltable_define(SymbolTable* table, char* name, CType* ctype) {
     if (!symboltable_can_define(table, name)) return NULL;
-    table->_memory_offset += ctype_size(ctype);
-    Symbol* symbol = new_symbol(name, ctype, table->_memory_offset);
+    table->_memory_size += ctype_size(ctype);
+    Symbol* symbol = new_symbol(name, ctype, table->_memory_size);
     map_set(table->_symbol_map, name, symbol, (void (*)(void* value))delete_symbol);
     return symbol;
 }
@@ -45,7 +45,7 @@ Symbol* symboltable_search(SymbolTable* table, char* name) {
 SymbolTable* symboltable_enter_scope(SymbolTable* table) {
     SymbolTable* inner_table = new_symboltable();
     if (table != NULL) {
-        inner_table->_memory_offset = table->_memory_offset;
+        inner_table->_memory_size = table->_memory_size;
         inner_table->_outer_scope = table;
     }
     return inner_table;
@@ -53,7 +53,7 @@ SymbolTable* symboltable_enter_scope(SymbolTable* table) {
 
 SymbolTable* symboltable_exit_scope(SymbolTable* table) {
     SymbolTable* outer_table = table->_outer_scope;
-    if (outer_table != NULL) outer_table->_memory_offset = table->_memory_offset;
+    if (outer_table != NULL) outer_table->_memory_size = table->_memory_size;
     delete_map(table->_symbol_map, (void (*)(void* value))delete_symbol);
     free(table);
     return outer_table;

@@ -6,7 +6,7 @@
 
 typedef struct _SymbolTable {
     Map* _symbol_map;
-    int _memory_offset;
+    int _memory_size;
     struct _SymbolTable* _outer_scope;
 } SymbolTable;
 

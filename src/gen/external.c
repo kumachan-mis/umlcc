@@ -51,13 +51,13 @@ Vector* gen_function_definition_code(Codegen* codegen) {
 
     // The end of the input argument area shall be aligned on a 16 byte boundary.
     // (It is efficient to keep 16-bytes-boundary alignment in advance)
-    int aligned_memory_offset = ((codegen->_local_table->_memory_offset + 15) / 16) * 16;
+    int aligned_memory_size = ((codegen->_local_table->_memory_size + 15) / 16) * 16;
 
     append_code(codes, "    .globl %s\n", table_ident_name);
     append_code(codes, "%s:\n", table_ident_name);
     append_code(codes, "    pushq  %%rbp\n");
     append_code(codes, "    movq  %%rsp, %%rbp\n");
-    append_code(codes, "    subq  $%d, %%rsp\n", aligned_memory_offset);
+    append_code(codes, "    subq  $%d, %%rsp\n", aligned_memory_size);
 
     vector_extend(codes, param_codes);
     delete_vector(param_codes, free);
@@ -65,7 +65,7 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     vector_extend(codes, body_codes);
     delete_vector(body_codes, free);
 
-    append_code(codes, "    addq  $%d, %%rsp\n", aligned_memory_offset);
+    append_code(codes, "    addq  $%d, %%rsp\n", aligned_memory_size);
     append_code(codes, "    popq  %%rbp\n");
     append_code(codes, "    ret\n");
 
