@@ -38,8 +38,8 @@ Vector* gen_function_definition_code(Codegen* codegen) {
             append_code(param_codes, "    movl  %s, -%d(%%rbp)\n", param_regs[i],
                         symbol->memory_offset);
         } else {
-            // (1-indexed non-register param no.) * (bytes of memory address) + (offset for pushq
-            // %%rbp)
+            // (1-indexed non-register param no.) * (bytes of memory address) +
+            // (offset for pushq %%rbp)
             int param_offset = (i - 5) * 8 + 8;
             append_code(param_codes, "    movl  %d(%%rbp), %%eax\n", param_offset);
             append_code(param_codes, "    movl  %%eax, -%d(%%rbp)\n", symbol->memory_offset);
