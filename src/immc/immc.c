@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-Immc* new_code_immc(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcOpe* snd_src) {
+Immc* new_inst_immc(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcOpe* snd_src) {
     Immc* immc = malloc(sizeof(Immc));
     immc->type = UNIT_INST;
     immc->inst = new_immcinst(type, dest, fst_src, snd_src);
