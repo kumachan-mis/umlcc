@@ -141,7 +141,7 @@ char* immcope_tostring(ImmcOpe* immcope) {
             sprintf(ope_str, "M[%d]", immcope->mem_offset);
             break;
         case OPERAND_LABEL:
-            sprintf(ope_str, "L.%s", immcope->label_name);
+            sprintf(ope_str, "%s", immcope->label_name);
             break;
     }
     ope_str = realloc(ope_str, (strlen(ope_str) + 1) * sizeof(char));

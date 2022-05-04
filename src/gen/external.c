@@ -38,8 +38,7 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     Vector* body_codes = gen_children_code(codegen);
 
     char* label_name = string_copy(declarator_srt->ident_name);
-    vector_push(codes, new_label_immc(LABEL_GLOBAL, label_name));
-
+    vector_push(codes, new_label_immc(LABEL_FUNCTION_HEAD, VISIBILITY_GLOBAL, label_name));
     ImmcOpe* memory_size = new_imm_immcope(codegen->_local_table->_memory_size);
     vector_push(codes, new_inst_immc(INST_ENTER, NULL, memory_size, NULL));
 
@@ -51,6 +50,8 @@ Vector* gen_function_definition_code(Codegen* codegen) {
 
     memory_size = new_imm_immcope(codegen->_local_table->_memory_size);
     vector_push(codes, new_inst_immc(INST_LEAVE, NULL, memory_size, NULL));
+    label_name = string_copy(declarator_srt->ident_name);
+    vector_push(codes, new_label_immc(LABEL_FUNCTION_TAIL, VISIBILITY_DEFAULT, label_name));
 
     delete_symboltable(codegen->_local_table);
     codegen->_local_table = NULL;
