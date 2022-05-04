@@ -76,7 +76,6 @@ Vector* codegen_generate_code(Codegen* codegen) {
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);
-            ;
     }
 
     return codes;

@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     int x64codes_len = vector_size(x64codes);
     for (int i = 0; i < x64codes_len; i++) {
-        fprintf(dest, "%s", vector_at(x64codes, i));
+        fprintf(dest, "%s", (char*)vector_at(x64codes, i));
     }
     delete_vector(x64codes, free);
 

@@ -2,6 +2,9 @@
 #include "../immc/immc.h"
 #include "./util.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 Vector* gen_global_label_x64code(X64gen* x64gen);
 Vector* gen_local_label_x64code(X64gen* x64gen);
 Vector* gen_default_label_x64code(X64gen* x64gen);
@@ -15,6 +18,9 @@ Vector* gen_label_x64code(X64gen* x64gen) {
             return gen_local_label_x64code(x64gen);
         case VISIBILITY_DEFAULT:
             return gen_default_label_x64code(x64gen);
+        default:
+            fprintf(stderr, "Error: unexpected label visibility %d\n", immc->label->visibility);
+            exit(1);
     }
 }
 

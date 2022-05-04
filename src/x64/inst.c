@@ -2,6 +2,9 @@
 #include "../immc/immc.h"
 #include "./util.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 Vector* gen_load_x64code(X64gen* x64gen);
 Vector* gen_addr_x64code(X64gen* x64gen);
 Vector* gen_store_x64code(X64gen* x64gen);
@@ -45,44 +48,112 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
             return gen_enter_x64code(x64gen);
         case INST_LEAVE:
             return gen_leave_x64code(x64gen);
+        default:
+            fprintf(stderr, "Error: unexpected imcc inst %d\n", immc->inst->type);
+            exit(1);
     }
 }
 
 Vector* gen_load_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
 
 Vector* gen_addr_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
 
 Vector* gen_store_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
 
 Vector* gen_ldarg_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
 
 Vector* gen_starg_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
 
 Vector* gen_add_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
 
 Vector* gen_sub_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
 
 Vector* gen_mul_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
 
 Vector* gen_div_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
 
 Vector* gen_mod_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
 
 Vector* gen_call_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
 
 Vector* gen_enter_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
 
 Vector* gen_leave_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    return codes;
 }
