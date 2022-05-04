@@ -21,21 +21,30 @@ Vector* gen_label_x64code(X64gen* x64gen) {
 Vector* gen_global_label_x64code(X64gen* x64gen) {
     Vector* codes = new_vector();
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
     append_code(codes, "    .globl %s\n", immc->label->label_name);
     append_code(codes, "%s:\n", immc->label->label_name);
+
     return codes;
 }
 
 Vector* gen_local_label_x64code(X64gen* x64gen) {
     Vector* codes = new_vector();
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
     append_code(codes, "    .local %s\n", immc->label->label_name);
     append_code(codes, "%s:\n", immc->label->label_name);
+
     return codes;
 }
 Vector* gen_default_label_x64code(X64gen* x64gen) {
     Vector* codes = new_vector();
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
     append_code(codes, "%s:\n", immc->label->label_name);
+
     return codes;
 }
