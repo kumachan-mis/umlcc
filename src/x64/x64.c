@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 Vector* gen_function_x64code(X64gen* x64gen);
+Vector* gen_function_body_x64code(X64gen* x64gen);
 
 X64gen* new_x64gen(Vector* immcs) {
     X64gen* x64gen = malloc(sizeof(X64gen));
@@ -48,7 +49,6 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     Vector* codes = new_vector();
 
     Vector* head_codes = new_vector();
-    Vector* body_codes = new_vector();
     Vector* tail_codes = new_vector();
     Vector* sub_codes = NULL;
 
@@ -60,26 +60,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     vector_extend(head_codes, sub_codes);
     delete_vector(sub_codes, free);
 
-    int terminated = 0;
-    while (!terminated) {
-        Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
-        switch (immc->type) {
-            case IMMC_INST:
-                if (immc->inst->type == INST_LEAVE) {
-                    terminated = 1;
-                    break;
-                }
-                sub_codes = gen_inst_x64code(x64gen);
-                vector_extend(body_codes, sub_codes);
-                delete_vector(sub_codes, free);
-                break;
-            case IMMC_LABEL:
-                sub_codes = gen_label_x64code(x64gen);
-                vector_extend(body_codes, sub_codes);
-                delete_vector(sub_codes, free);
-                break;
-        }
-    }
+    Vector* body_codes = gen_function_body_x64code(x64gen);
 
     // push calee-saved register
     // pup calee-saved register
@@ -94,6 +75,30 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     delete_vector(body_codes, free);
     vector_extend(codes, tail_codes);
     delete_vector(tail_codes, free);
+
+    return codes;
+}
+
+Vector* gen_function_body_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    Vector* sub_codes = NULL;
+
+    while (1) {
+        Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+        if (immc->type == IMMC_INST && immc->inst->type == INST_LEAVE) break;
+
+        switch (immc->type) {
+            case IMMC_INST:
+                sub_codes = gen_inst_x64code(x64gen);
+                break;
+            case IMMC_LABEL:
+                sub_codes = gen_label_x64code(x64gen);
+                break;
+        }
+
+        vector_extend(codes, sub_codes);
+        delete_vector(sub_codes, free);
+    }
 
     return codes;
 }
