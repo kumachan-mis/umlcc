@@ -5,9 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* inst_strings[] = {"load  ", "addr  ", "store ", "ldarg ", "starg ",
-                        "add   ", "sub   ", "mul   ", "div   ", "mod   ",
-                        "call  ", "enter ", "leave ", "glabel", "label "};
+char* inst_strings[] = {"load  ", "addr  ", "store ", "ldarg ", "starg ", "add   ", "sub   ",
+                        "mul   ", "div   ", "mod   ", "call  ", "enter ", "leave "};
 
 ImmlCode* new_immlcode(ImmlInst inst, ImmlOpe* dest, ImmlOpe* fst_src, ImmlOpe* snd_src) {
     ImmlCode* immlcode = malloc(sizeof(ImmlCode));
@@ -22,7 +21,7 @@ char* immlcode_tostring(ImmlCode* immlcode) {
     char* code_str = malloc(100 * sizeof(char));
     memset(code_str, 0, 100 * sizeof(char));
 
-    if (immlcode->inst != INST_GLABEL && immlcode->inst != INST_LABEL) strcat(code_str, "\t");
+    strcat(code_str, "\t");
     strcat(code_str, inst_strings[immlcode->inst]);
 
     int operand_appears = 0;

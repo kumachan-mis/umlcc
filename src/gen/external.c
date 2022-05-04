@@ -37,9 +37,6 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     codegen->_srt = vector_at(srt->children, 1);
     Vector* body_codes = gen_children_code(codegen);
 
-    ImmlOpe* function_label = new_label_immlope(string_copy(declarator_srt->ident_name));
-    vector_push(codes, new_immlcode(INST_GLABEL, NULL, function_label, NULL));
-
     ImmlOpe* memory_size = new_imm_immlope(codegen->_local_table->_memory_size);
     vector_push(codes, new_immlcode(INST_ENTER, NULL, memory_size, NULL));
 

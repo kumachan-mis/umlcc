@@ -55,14 +55,6 @@ typedef enum _ImmlInst {
     INST_LEAVE,
     // - leave function which needed fst_src-bytes local memory.
     // leave           fst_src(imm)
-
-    // label
-    INST_GLABEL,
-    // - put global label named fst_src
-    // glabel           fst_src(label)
-    INST_LABEL,
-    // - put file-local label named fst_src
-    // glabel           fst_src(label)
 } ImmlInst;
 
 typedef enum _ImmlOpeType {
