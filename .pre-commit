@@ -1,5 +1,6 @@
-#!/bin/bash
+#!/ bin / bash
 
-staged_files=$(git diff --name-only --cached)
-echo ${staged_files} | grep -E "^.*\.[ch]$" | xargs clang-format -i
-git add ${staged_files}
+staged_files = $(git diff-- name - only-- cached-- diff - filter = d) echo ${staged_files} |
+               grep - E "^.*\.[ch]$" | xargs clang - format - i git add $ {
+    staged_files
+}

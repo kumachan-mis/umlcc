@@ -1,5 +1,5 @@
 #include "./statement.h"
-#include "../imml/imml.h"
+#include "../immc/immc.h"
 #include "./util.h"
 
 #include <stdlib.h>
@@ -16,7 +16,7 @@ Vector* gen_expression_stmt_code(Codegen* codegen) {
     codegen->_srt = vector_at(srt->children, 0);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immc);
 
     codegen->_srt = srt;
     return codes;

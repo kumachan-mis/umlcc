@@ -1,6 +1,6 @@
 #include "./expression.h"
 #include "../common/common.h"
-#include "../imml/imml.h"
+#include "../immc/immc.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -14,18 +14,18 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
     codegen->_srt = vector_at(srt->children, 1);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
-    ImmlOpe* src = new_reg_immlope(codegen->register_name);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immc);
+    ImmcOpe* src = new_reg_immcope(codegen->register_name);
 
     codegen->_srt = vector_at(srt->children, 0);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
-    ImmlOpe* dest = new_ptr_immlope(codegen->register_name);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immc);
+    ImmcOpe* dest = new_ptr_immcope(codegen->register_name);
 
     switch (srt->type) {
         case SRT_ASSIGN_EXPR:
-            vector_push(codes, new_immlcode(INST_STORE, dest, src, NULL));
+            vector_push(codes, new_inst_immc(INST_STORE, dest, src, NULL));
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
@@ -35,9 +35,9 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
     // implementation limit
     // dest of tail of expression codes should be a register
     codegen->register_name++;
-    ImmlOpe* dummy_src = immlope_copy(src);
-    ImmlOpe* dummy_dest = new_reg_immlope(codegen->register_name);
-    vector_push(codes, new_immlcode(INST_STORE, dummy_dest, dummy_src, NULL));
+    ImmcOpe* dummy_src = immcope_copy(src);
+    ImmcOpe* dummy_dest = new_reg_immcope(codegen->register_name);
+    vector_push(codes, new_inst_immc(INST_STORE, dummy_dest, dummy_src, NULL));
 
     codegen->_srt = srt;
     return codes;
@@ -51,24 +51,24 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
     codegen->_srt = vector_at(srt->children, 0);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
-    ImmlOpe* fst_src = new_reg_immlope(codegen->register_name);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immc);
+    ImmcOpe* fst_src = new_reg_immcope(codegen->register_name);
 
     codegen->_srt = vector_at(srt->children, 1);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
-    ImmlOpe* snd_src = new_reg_immlope(codegen->register_name);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immc);
+    ImmcOpe* snd_src = new_reg_immcope(codegen->register_name);
 
     codegen->register_name++;
-    ImmlOpe* dest = new_reg_immlope(codegen->register_name);
+    ImmcOpe* dest = new_reg_immcope(codegen->register_name);
 
     switch (srt->type) {
         case SRT_ADD_EXPR:
-            vector_push(codes, new_immlcode(INST_ADD, dest, fst_src, snd_src));
+            vector_push(codes, new_inst_immc(INST_ADD, dest, fst_src, snd_src));
             break;
         case SRT_SUB_EXPR:
-            vector_push(codes, new_immlcode(INST_SUB, dest, fst_src, snd_src));
+            vector_push(codes, new_inst_immc(INST_SUB, dest, fst_src, snd_src));
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
@@ -87,27 +87,27 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
     codegen->_srt = vector_at(srt->children, 0);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
-    ImmlOpe* fst_src = new_reg_immlope(codegen->register_name);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immc);
+    ImmcOpe* fst_src = new_reg_immcope(codegen->register_name);
 
     codegen->_srt = vector_at(srt->children, 1);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
-    ImmlOpe* snd_src = new_reg_immlope(codegen->register_name);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immc);
+    ImmcOpe* snd_src = new_reg_immcope(codegen->register_name);
 
     codegen->register_name++;
-    ImmlOpe* dest = new_reg_immlope(codegen->register_name);
+    ImmcOpe* dest = new_reg_immcope(codegen->register_name);
 
     switch (srt->type) {
         case SRT_MUL_EXPR:
-            vector_push(codes, new_immlcode(INST_MUL, dest, fst_src, snd_src));
+            vector_push(codes, new_inst_immc(INST_MUL, dest, fst_src, snd_src));
             break;
         case SRT_DIV_EXPR:
-            vector_push(codes, new_immlcode(INST_DIV, dest, fst_src, snd_src));
+            vector_push(codes, new_inst_immc(INST_DIV, dest, fst_src, snd_src));
             break;
         case SRT_MOD_EXPR:
-            vector_push(codes, new_immlcode(INST_MOD, dest, fst_src, snd_src));
+            vector_push(codes, new_inst_immc(INST_MOD, dest, fst_src, snd_src));
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
@@ -146,25 +146,25 @@ Vector* gen_call_expr_code(Codegen* codegen) {
         codegen->_srt = vector_at(params_srt->children, i);
         sub_codes = codegen_generate_code(codegen);
         vector_extend(codes, sub_codes);
-        delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
+        delete_vector(sub_codes, (void (*)(void* item))delete_immc);
 
-        ImmlOpe* fst_src = new_imm_immlope(i);
-        ImmlOpe* snd_src = new_reg_immlope(codegen->register_name);
-        vector_push(codes, new_immlcode(INST_STARG, NULL, fst_src, snd_src));
+        ImmcOpe* fst_src = new_imm_immcope(i);
+        ImmcOpe* snd_src = new_reg_immcope(codegen->register_name);
+        vector_push(codes, new_inst_immc(INST_STARG, NULL, fst_src, snd_src));
     }
 
     codegen->_srt = vector_at(srt->children, 0);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, (void (*)(void* item))delete_immlcode);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immc);
 
-    ImmlOpe* fst_src = new_ptr_immlope(codegen->register_name);
-    ImmlOpe* snd_src = new_imm_immlope(num_args);
+    ImmcOpe* fst_src = new_ptr_immcope(codegen->register_name);
+    ImmcOpe* snd_src = new_imm_immcope(num_args);
 
     codegen->register_name++;
-    ImmlOpe* dest = new_reg_immlope(codegen->register_name);
+    ImmcOpe* dest = new_reg_immcope(codegen->register_name);
 
-    vector_push(codes, new_immlcode(INST_CALL, dest, fst_src, snd_src));
+    vector_push(codes, new_inst_immc(INST_CALL, dest, fst_src, snd_src));
 
     return codes;
 }
@@ -190,19 +190,19 @@ Vector* gen_address_expr_code(Codegen* codegen) {
     Vector* codes = new_vector();
     Srt* srt = vector_at(codegen->_srt->children, 0);
 
-    ImmlOpe* dest = NULL;
-    ImmlOpe* src = NULL;
+    ImmcOpe* dest = NULL;
+    ImmcOpe* src = NULL;
 
     switch (srt->type) {
         case SRT_IDENT_EXPR: {
             Symbol* symbol = symboltable_search(codegen->_local_table, srt->ident_name);
             if (symbol != NULL) {
-                src = new_mem_immlope(symbol->memory_offset);
+                src = new_mem_immcope(symbol->memory_offset);
                 break;
             }
             symbol = symboltable_search(codegen->_global_table, srt->ident_name);
             if (symbol != NULL) {
-                src = new_label_immlope(string_copy(symbol->name));
+                src = new_label_immcope(string_copy(symbol->name));
                 break;
             }
             break;
@@ -213,8 +213,8 @@ Vector* gen_address_expr_code(Codegen* codegen) {
     }
 
     codegen->register_name++;
-    dest = new_reg_immlope(codegen->register_name);
-    vector_push(codes, new_immlcode(INST_ADDR, dest, src, NULL));
+    dest = new_reg_immcope(codegen->register_name);
+    vector_push(codes, new_inst_immc(INST_ADDR, dest, src, NULL));
 
     return codes;
 }
@@ -223,25 +223,25 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
     Vector* codes = new_vector();
     Srt* srt = codegen->_srt;
 
-    ImmlOpe* dest = NULL;
-    ImmlOpe* src = NULL;
+    ImmcOpe* dest = NULL;
+    ImmcOpe* src = NULL;
 
     switch (srt->type) {
         case SRT_IDENT_EXPR: {
             Symbol* symbol = symboltable_search(codegen->_local_table, srt->ident_name);
             if (symbol != NULL) {
-                src = new_mem_immlope(symbol->memory_offset);
+                src = new_mem_immcope(symbol->memory_offset);
                 break;
             }
             symbol = symboltable_search(codegen->_global_table, srt->ident_name);
             if (symbol != NULL) {
-                src = new_label_immlope(string_copy(symbol->name));
+                src = new_label_immcope(string_copy(symbol->name));
                 break;
             }
             break;
         }
         case SRT_INT_EXPR:
-            src = new_imm_immlope(srt->value_int);
+            src = new_imm_immcope(srt->value_int);
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
@@ -249,8 +249,8 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
     }
 
     codegen->register_name++;
-    dest = new_reg_immlope(codegen->register_name);
-    vector_push(codes, new_immlcode(INST_LOAD, dest, src, NULL));
+    dest = new_reg_immcope(codegen->register_name);
+    vector_push(codes, new_inst_immc(INST_LOAD, dest, src, NULL));
 
     return codes;
 }

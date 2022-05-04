@@ -1,6 +1,6 @@
 #include "./external.h"
 #include "../common/common.h"
-#include "../imml/imml.h"
+#include "../immc/immc.h"
 #include "./util.h"
 
 #include <stdlib.h>
@@ -29,16 +29,19 @@ Vector* gen_function_definition_code(Codegen* codegen) {
         CType* table_ctype = ctype_copy(cparam->ctype);
 
         Symbol* symbol = symboltable_define(codegen->_local_table, table_ident_name, table_ctype);
-        ImmlOpe* dest = new_mem_immlope(symbol->memory_offset);
-        ImmlOpe* src = new_imm_immlope(i);
-        vector_push(param_codes, new_immlcode(INST_LDARG, dest, src, NULL));
+        ImmcOpe* dest = new_mem_immcope(symbol->memory_offset);
+        ImmcOpe* src = new_imm_immcope(i);
+        vector_push(param_codes, new_inst_immc(INST_LDARG, dest, src, NULL));
     }
 
     codegen->_srt = vector_at(srt->children, 1);
     Vector* body_codes = gen_children_code(codegen);
 
-    ImmlOpe* memory_size = new_imm_immlope(codegen->_local_table->_memory_size);
-    vector_push(codes, new_immlcode(INST_ENTER, NULL, memory_size, NULL));
+    char* label_name = string_copy(declarator_srt->ident_name);
+    vector_push(codes, new_label_immc(LABEL_GLOBAL, label_name));
+
+    ImmcOpe* memory_size = new_imm_immcope(codegen->_local_table->_memory_size);
+    vector_push(codes, new_inst_immc(INST_ENTER, NULL, memory_size, NULL));
 
     vector_extend(codes, param_codes);
     delete_vector(param_codes, free);
@@ -46,8 +49,8 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     vector_extend(codes, body_codes);
     delete_vector(body_codes, free);
 
-    memory_size = new_imm_immlope(codegen->_local_table->_memory_size);
-    vector_push(codes, new_immlcode(INST_LEAVE, NULL, memory_size, NULL));
+    memory_size = new_imm_immcope(codegen->_local_table->_memory_size);
+    vector_push(codes, new_inst_immc(INST_LEAVE, NULL, memory_size, NULL));
 
     delete_symboltable(codegen->_local_table);
     codegen->_local_table = NULL;

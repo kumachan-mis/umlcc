@@ -1,7 +1,7 @@
-#ifndef _UMLCC_IMML_H_
-#define _UMLCC_IMML_H_
+#ifndef _UMLCC_IMMC_INST_H_
+#define _UMLCC_IMMC_IIST_H_
 
-typedef enum _ImmlInst {
+typedef enum _ImmcInstType {
     // data transfar instructions
     INST_LOAD,
     // - load fst_src value to dest.
@@ -55,42 +55,42 @@ typedef enum _ImmlInst {
     INST_LEAVE,
     // - leave function which needed fst_src-bytes local memory.
     // leave           fst_src(imm)
-} ImmlInst;
+} ImmcInstType;
 
-typedef enum _ImmlOpeType {
+typedef enum _ImmcOpeType {
     OPERAND_IMM,
     OPERAND_REG,
     OPERAND_PTR,
     OPERAND_MEM,
     OPERAND_LABEL
-} ImmlOpeType;
+} ImmcOpeType;
 
-typedef struct _ImmlOpe {
-    ImmlOpeType type;
+typedef struct _ImmcOpe {
+    ImmcOpeType type;
     int imm_value;
     int reg_name;
     int mem_offset;
     char* label_name;
-} ImmlOpe;
+} ImmcOpe;
 
-typedef struct _ImmlCode {
-    ImmlInst inst;
-    ImmlOpe* dest;
-    ImmlOpe* fst_src;
-    ImmlOpe* snd_src;
-} ImmlCode;
+typedef struct _ImmcInst {
+    ImmcInstType type;
+    ImmcOpe* dest;
+    ImmcOpe* fst_src;
+    ImmcOpe* snd_src;
+} ImmcInst;
 
-ImmlCode* new_immlcode(ImmlInst inst, ImmlOpe* dest, ImmlOpe* fst_src, ImmlOpe* snd_src);
-char* immlcode_tostring(ImmlCode* immlcode);
-void delete_immlcode(ImmlCode* immlcode);
+ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcOpe* snd_src);
+char* immcinst_tostring(ImmcInst* immcinst);
+void delete_immcinst(ImmcInst* immcinst);
 
-ImmlOpe* new_imm_immlope(int imm_value);
-ImmlOpe* new_ptr_immlope(int reg_name);
-ImmlOpe* new_reg_immlope(int reg_name);
-ImmlOpe* new_mem_immlope(int mem_offset);
-ImmlOpe* new_label_immlope(char* label_name);
-ImmlOpe* immlope_copy(ImmlOpe* immlope);
-char* immlope_tostring(ImmlOpe* immlope);
-void delete_immope(ImmlOpe* immlope);
+ImmcOpe* new_imm_immcope(int imm_value);
+ImmcOpe* new_ptr_immcope(int reg_name);
+ImmcOpe* new_reg_immcope(int reg_name);
+ImmcOpe* new_mem_immcope(int mem_offset);
+ImmcOpe* new_label_immcope(char* label_name);
+ImmcOpe* immcope_copy(ImmcOpe* immcope);
+char* immcope_tostring(ImmcOpe* immcope);
+void delete_immope(ImmcOpe* immcope);
 
 #endif
