@@ -5,6 +5,7 @@
 
 typedef struct _X64gen {
     Vector* _immcs;
+    int index;
 } X64gen;
 
 X64gen* new_x64gen(Vector* immcs);

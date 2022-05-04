@@ -27,11 +27,8 @@ char* immclabel_tostring(ImmcLabel* immclabel) {
     }
 
     switch (immclabel->type) {
-        case LABEL_FUNCTION_HEAD:
+        case LABEL_FUNCTION:
             strcat(label_str, "function ");
-            break;
-        case LABEL_FUNCTION_TAIL:
-            strcat(label_str, "endfunction ");
             break;
         default:
             break;

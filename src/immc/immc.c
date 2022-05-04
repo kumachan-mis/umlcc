@@ -4,7 +4,7 @@
 
 Immc* new_inst_immc(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcOpe* snd_src) {
     Immc* immc = malloc(sizeof(Immc));
-    immc->type = UNIT_INST;
+    immc->type = IMMC_INST;
     immc->inst = new_immcinst(type, dest, fst_src, snd_src);
     immc->label = NULL;
     return immc;
@@ -12,7 +12,7 @@ Immc* new_inst_immc(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcOpe*
 
 Immc* new_label_immc(ImmcLabelType type, ImmcLabelVisibility visibility, char* label_name) {
     Immc* immc = malloc(sizeof(Immc));
-    immc->type = UNIT_LABEL;
+    immc->type = IMMC_LABEL;
     immc->inst = NULL;
     immc->label = new_immclabel(type, visibility, label_name);
     return immc;
@@ -20,9 +20,9 @@ Immc* new_label_immc(ImmcLabelType type, ImmcLabelVisibility visibility, char* l
 
 char* immc_tostring(Immc* immc) {
     switch (immc->type) {
-        case UNIT_INST:
+        case IMMC_INST:
             return immcinst_tostring(immc->inst);
-        case UNIT_LABEL:
+        case IMMC_LABEL:
             return immclabel_tostring(immc->label);
         default:
             return NULL;

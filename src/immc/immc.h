@@ -5,8 +5,8 @@
 #include "./label.h"
 
 typedef enum _ImmcType {
-    UNIT_INST,
-    UNIT_LABEL,
+    IMMC_INST,
+    IMMC_LABEL,
 } ImmcType;
 
 typedef struct _Immc {

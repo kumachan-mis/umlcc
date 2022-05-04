@@ -1,11 +1,7 @@
 #ifndef _UMLCC_IMMC_LABEL_H_
 #define _UMLCC_IMMC_LABEL_H_
 
-typedef enum _ImmcLabelType {
-    LABEL_FUNCTION_HEAD,
-    LABEL_FUNCTION_TAIL,
-    LABEL_NORMAL
-} ImmcLabelType;
+typedef enum _ImmcLabelType { LABEL_FUNCTION, LABEL_NORMAL } ImmcLabelType;
 typedef enum _ImmcLabelVisibility {
     VISIBILITY_GLOBAL,
     VISIBILITY_LOCAL,
