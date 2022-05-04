@@ -15,14 +15,14 @@ X64gen* new_x64gen(Vector* immcs) {
     X64gen* x64gen = malloc(sizeof(X64gen));
     x64gen->_immcs = immcs;
     x64gen->index = 0;
-    x64gen->caller_saved_map = new_caller_saved_map();
+    x64gen->caller_saved_map = NULL;
     x64gen->callee_saved_count = 0;
     return x64gen;
 }
 
 void delete_x64gen(X64gen* x64gen) {
     delete_vector(x64gen->_immcs, (void (*)(void* item))delete_immc);
-    delete_caller_saved_map(x64gen->caller_saved_map);
+    if (x64gen->caller_saved_map != NULL) delete_caller_saved_map(x64gen->caller_saved_map);
     free(x64gen);
 }
 
@@ -57,6 +57,9 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     Vector* tail_codes = new_vector();
     Vector* sub_codes = NULL;
 
+    x64gen->caller_saved_map = new_caller_saved_map();
+    x64gen->callee_saved_count = 0;
+
     sub_codes = gen_label_x64code(x64gen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, free);
@@ -72,8 +75,8 @@ Vector* gen_function_x64code(X64gen* x64gen) {
         append_code(head_codes, "\tpushq\t%s\n", callee_saved_reg(quad_regs, i));
     }
     if (callee_saved_count % 2 == 1) {
-        append_code(head_codes, "\tsubq\t%s, $%d", stkptr_reg(quad_regs), 8);
-        append_code(tail_codes, "\taddq\t%s, $%d", stkptr_reg(quad_regs), 8);
+        append_code(head_codes, "\tsubq\t$%d, %s", 8, stkptr_reg(quad_regs));
+        append_code(tail_codes, "\taddq\t$%d, %s", 8, stkptr_reg(quad_regs));
     }
     for (int i = callee_saved_count - 1; i >= 0; i--) {
         append_code(tail_codes, "\tpopq\t%s\n", callee_saved_reg(quad_regs, i));
@@ -90,6 +93,9 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     vector_extend(codes, tail_codes);
     delete_vector(tail_codes, free);
 
+    x64gen->callee_saved_count = 0;
+    delete_caller_saved_map(x64gen->caller_saved_map);
+    x64gen->caller_saved_map = NULL;
     return codes;
 }
 

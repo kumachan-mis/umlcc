@@ -2,6 +2,8 @@
 
 #include <stdlib.h>
 
+char* prog_counter = "%rip";
+
 char* quad_regs[16] = {"%rax", "%rbx", "%rcx", "%rdx", "%rsp", "%rbp", "%rsi", "%rdi",
                        "%r8",  "%r9",  "%r10", "%r11", "%r12", "%r13", "%r14", "%r15"};
 
@@ -108,6 +110,11 @@ int caller_saved_map_allocate(int* caller_saved_map, int virtual_reg_name) {
         }
     }
     return -1;
+}
+
+int caller_saved_map_force_allocate(int* caller_saved_map, int reg_name, int virtual_reg_name) {
+    caller_saved_map[reg_name] = virtual_reg_name;
+    return reg_name;
 }
 
 int caller_saved_map_search(int* caller_saved_map, int virtual_reg_name) {
