@@ -2,8 +2,7 @@
 #include "./lexer/lexer.h"
 #include "./parser/parser.h"
 #include "./resolver/resolver.h"
-
-#include "./immc/immc.h"
+#include "./x64/x64.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,13 +32,15 @@ int main(int argc, char* argv[]) {
     Vector* immcs = codegen_generate_code(codegen);
     delete_codegen(codegen);
 
-    int immcs_len = vector_size(immcs);
-    for (int i = 0; i < immcs_len; i++) {
-        char* immc_str = immc_tostring(vector_at(immcs, i));
-        fprintf(dest, "%s", immc_str);
-        free(immc_str);
+    X64gen* x64gen = new_x64gen(immcs);
+    Vector* x64codes = x64gen_generate_x64code(x64gen);
+    delete_x64gen(x64gen);
+
+    int x64codes_len = vector_size(x64codes);
+    for (int i = 0; i < x64codes_len; i++) {
+        fprintf(dest, "%s", vector_at(x64codes, i));
     }
-    delete_vector(immcs, (void (*)(void* item))delete_immc);
+    delete_vector(x64codes, free);
 
     fclose(dest);
     fclose(src);
