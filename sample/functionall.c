@@ -19,7 +19,7 @@ int eight_param_function(int a, int b, int c, int d, int e, int f, int g, int h)
     return a + b + c + d + e + f + g + h;
 }
 
-void usual_function_call() {
+void simple_function_call() {
     func_param_function(zero_param_function);
     six_param_function(1, 2, 3, 4, 5, 6);
     seven_param_function(1, 2, 3, 4, 5, 6, 7);
@@ -27,7 +27,8 @@ void usual_function_call() {
 }
 
 void reg_saving_function_call() {
+    int x = create_param() + create_param();
     six_param_function(1, 2, 3, 4, create_param(), 6);
     six_param_function(1, 2, 3, create_param(), create_param(), 6);
-    six_param_function(1, 2, 3, create_param(), create_param(), create_param());
+    six_param_function(1, 2, 3, 4, create_param(), create_param());
 }
