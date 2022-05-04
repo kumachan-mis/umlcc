@@ -2,6 +2,8 @@
 #include "../immc/immc.h"
 #include "./inst.h"
 #include "./label.h"
+#include "./register.h"
+#include "./util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,11 +15,14 @@ X64gen* new_x64gen(Vector* immcs) {
     X64gen* x64gen = malloc(sizeof(X64gen));
     x64gen->_immcs = immcs;
     x64gen->index = 0;
+    x64gen->caller_saved_map = new_caller_saved_map();
+    x64gen->callee_saved_count = 0;
     return x64gen;
 }
 
 void delete_x64gen(X64gen* x64gen) {
     delete_vector(x64gen->_immcs, (void (*)(void* item))delete_immc);
+    delete_caller_saved_map(x64gen->caller_saved_map);
     free(x64gen);
 }
 
@@ -62,8 +67,17 @@ Vector* gen_function_x64code(X64gen* x64gen) {
 
     Vector* body_codes = gen_function_body_x64code(x64gen);
 
-    // push calee-saved register
-    // pup calee-saved register
+    int callee_saved_count = x64gen->callee_saved_count;
+    for (int i = 0; i < callee_saved_count; i++) {
+        append_code(head_codes, "\tpushq\t%s\n", callee_saved_reg(quad_regs, i));
+    }
+    if (callee_saved_count % 2 == 1) {
+        append_code(head_codes, "\tsubq\t%s, $%d", stkptr_reg(quad_regs), 8);
+        append_code(tail_codes, "\taddq\t%s, $%d", stkptr_reg(quad_regs), 8);
+    }
+    for (int i = callee_saved_count - 1; i >= 0; i--) {
+        append_code(tail_codes, "\tpopq\t%s\n", callee_saved_reg(quad_regs, i));
+    }
 
     sub_codes = gen_inst_x64code(x64gen);
     vector_extend(tail_codes, sub_codes);
