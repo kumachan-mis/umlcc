@@ -11,17 +11,17 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
     Vector* sub_codes = NULL;
     Srt* srt = codegen->_srt;
 
-    codegen->_srt = vector_at(srt->children, 1);
-    sub_codes = codegen_generate_code(codegen);
-    vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, (void (*)(void* item))delete_immc);
-    ImmcOpe* src = new_reg_immcope(codegen->virtual_reg_id);
-
     codegen->_srt = vector_at(srt->children, 0);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, (void (*)(void* item))delete_immc);
     ImmcOpe* dest = new_ptr_immcope(codegen->virtual_reg_id);
+
+    codegen->_srt = vector_at(srt->children, 1);
+    sub_codes = codegen_generate_code(codegen);
+    vector_extend(codes, sub_codes);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immc);
+    ImmcOpe* src = new_reg_immcope(codegen->virtual_reg_id);
 
     switch (srt->type) {
         case SRT_ASSIGN_EXPR:
@@ -31,13 +31,6 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);
     }
-
-    // implementation limit
-    // dest of tail of expression codes should be a register
-    codegen->virtual_reg_id++;
-    ImmcOpe* dummy_src = immcope_copy(src);
-    ImmcOpe* dummy_dest = new_reg_immcope(codegen->virtual_reg_id);
-    vector_push(codes, new_inst_immc(INST_STORE, dummy_dest, dummy_src, NULL));
 
     codegen->_srt = srt;
     return codes;
