@@ -127,12 +127,12 @@ Vector* gen_store_x64code(X64gen* x64gen) {
 
     switch (dest->type) {
         case OPERAND_REG: {
-            regalloc_force_allocate(x64gen->regalloc, dest->reg_id, src_id);
+            // regalloc_force_allocate(x64gen->regalloc, dest->reg_id, src_id);
             break;
         }
         case OPERAND_PTR: {
             int dest_id = regalloc_search(x64gen->regalloc, dest->reg_id);
-            char* dest_name = LREG_NAMES[dest_id];
+            char* dest_name = QREG_NAMES[dest_id];
             regalloc_free(x64gen->regalloc, dest->reg_id);
             append_code(codes, "\tmovl\t%s, (%s)\n", src_name, dest_name);
             break;
@@ -360,6 +360,7 @@ Vector* gen_enter_x64code(X64gen* x64gen) {
     int aligned_memory_size = ((src->imm_value + 15) / 16) * 16;
 
     append_code(codes, "\tpushq\t%s\n", QREG_NAMES[BP_REG_ID]);
+    append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[SP_REG_ID], QREG_NAMES[BP_REG_ID]);
     append_code(codes, "\tsubq\t$%d, %s\n", aligned_memory_size, QREG_NAMES[SP_REG_ID]);
 
     return codes;
