@@ -141,9 +141,10 @@ Vector* gen_call_expr_code(Codegen* codegen) {
         vector_extend(codes, sub_codes);
         delete_vector(sub_codes, (void (*)(void* item))delete_immc);
 
+        ImmcOpe* dest = new_imm_immcope(num_args);
         ImmcOpe* fst_src = new_imm_immcope(i);
         ImmcOpe* snd_src = new_reg_immcope(codegen->virtual_reg_id);
-        vector_push(codes, new_inst_immc(INST_STARG, NULL, fst_src, snd_src));
+        vector_push(codes, new_inst_immc(INST_STARG, dest, fst_src, snd_src));
     }
 
     codegen->_srt = vector_at(srt->children, 0);
