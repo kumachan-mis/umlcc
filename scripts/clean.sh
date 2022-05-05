@@ -1,4 +1,4 @@
-#!/ bin / bash
+#!/bin/bash
 
 BASE_DIR=$(cd $(dirname $0)/.. && pwd)
 
@@ -9,10 +9,7 @@ OUTPUT=main.s
 BINARY=main.out
 ACTUAL=actual.txt
 
-for fixture_dir in ${
-    FIXTURES_DIR
-}
-/*
+for fixture_dir in ${FIXTURES_DIR}/*
 do
     immediate=${fixture_dir}/${IMMEDIATE}
     output=${fixture_dir}/${OUTPUT}

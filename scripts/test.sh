@@ -1,4 +1,4 @@
-#!/ bin / bash
+#!/bin/bash
 
 BASE_DIR=$(cd $(dirname $0)/.. && pwd)
 
@@ -21,10 +21,7 @@ fi
 
 exit_code=0
 
-for fixture_dir in ${
-    FIXTURES_DIR
-}
-/*
+for fixture_dir in ${FIXTURES_DIR}/*
 do
     testcase=$(basename ${fixture_dir})
     printf "TEST: %s\n" ${testcase}
