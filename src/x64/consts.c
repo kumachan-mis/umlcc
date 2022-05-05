@@ -10,6 +10,16 @@ char* QREG_NAMES[16] = {"%rax", "%rbx", "%rcx", "%rdx", "%rsp", "%rbp", "%rsi", 
 char* LREG_NAMES[16] = {"%eax", "%ebx", "%ecx",  "%edx",  "%esp",  "%ebp",  "%esi",  "%edi",
                         "%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d", "%r14d", "%r15d"};
 
+// If the class is INTEGER, the next available register of the sequence
+// %rdi, %rsi, %rdx, %rcx, %r8 and %r9 is used.
+// cf. System V Application Binary Interface (p20)
+//     https://uclibc.org/docs/psABI-x86_64.pdf
+int ARG_REG_IDS[6] = {7, 6, 3, 2, 8, 9};
+
+int CALLER_SAVED_REG_IDS[8] = {2, 3, 6, 7, 8, 9, 10, 11};
+
+int CALLEE_SAVED_REG_IDS[5] = {1, 12, 13, 14, 15};
+
 int AX_REG_ID = 0;
 int BX_REG_ID = 1;
 int CX_REG_ID = 2;
@@ -27,45 +37,7 @@ int R13_REG_ID = 13;
 int R14_REG_ID = 14;
 int R15_REG_ID = 15;
 
-int NUM_ARGREGS = 6;
-
-// If the class is INTEGER, the next available register of the sequence
-// %rdi, %rsi, %rdx, %rcx, %r8 and %r9 is used.
-// cf. System V Application Binary Interface (p20)
-//     https://uclibc.org/docs/psABI-x86_64.pdf
-
-char* arg_reg_name(char* reg_names[16], int index) {
-    switch (index) {
-        case 0:
-            return reg_names[7];
-        case 1:
-            return reg_names[6];
-        case 2:
-            return reg_names[3];
-        case 3:
-            return reg_names[2];
-        case 4:
-            return reg_names[8];
-        case 5:
-            return reg_names[9];
-        default:
-            return NULL;
-    }
-}
-
-char* callee_reg_name(char* reg_names[16], int index) {
-    switch (index) {
-        case 0:
-            return reg_names[1];
-        case 1:
-            return reg_names[12];
-        case 2:
-            return reg_names[13];
-        case 3:
-            return reg_names[14];
-        case 4:
-            return reg_names[15];
-        default:
-            return NULL;
-    }
-}
+int NUM_REGS = 16;
+int NUM_ARG_REGS = 6;
+int NUM_CALLER_SAVED_REGS = 8;
+int NUM_CALLEE_SAVED_REGS = 5;

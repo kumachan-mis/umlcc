@@ -6,6 +6,7 @@
 typedef struct _X64gen {
     Vector* _immcs;
     int index;
+    int* regalloc;
     int callee_saved_count;
 } X64gen;
 

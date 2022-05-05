@@ -45,8 +45,8 @@ do
     ${TARGET} ${input} ${immediate} ${output}
     gcc -o ${binary} ${output} ${TESTLIB}
     ${binary} > ${actual}
+
     test_diff=$(diff -u ${expected} ${actual})
-}
     if [ "${test_diff}" = "" ]
     then
         printf "\033[0;32mPASS\033[0m\n"

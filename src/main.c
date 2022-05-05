@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 int main(int argc, char* argv[]) {
-    if (argc != 3) {
+    if (argc != 4) {
         fprintf(stderr, "Usage: umlcc [src] [imm] [dest]\n");
         exit(1);
     }
