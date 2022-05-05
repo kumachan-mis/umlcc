@@ -62,13 +62,6 @@ int regalloc_change_caller_saved_allocation(int* regalloc, int virtual_reg_id) {
     return current_real_reg_id;
 }
 
-int regalloc_search(int* regalloc, int virtual_reg_id) {
-    for (int real_reg_id = 0; real_reg_id < NUM_REGS; real_reg_id++) {
-        if (regalloc[real_reg_id] == virtual_reg_id) return real_reg_id;
-    }
-    return -1;
-}
-
 void regalloc_free(int* regalloc, int virtual_reg_id) {
     for (int real_reg_id = 0; real_reg_id < NUM_REGS; real_reg_id++) {
         if (regalloc[real_reg_id] == virtual_reg_id) {
@@ -76,4 +69,15 @@ void regalloc_free(int* regalloc, int virtual_reg_id) {
             break;
         }
     }
+}
+
+int regalloc_search(int* regalloc, int virtual_reg_id) {
+    for (int real_reg_id = 0; real_reg_id < NUM_REGS; real_reg_id++) {
+        if (regalloc[real_reg_id] == virtual_reg_id) return real_reg_id;
+    }
+    return -1;
+}
+
+int regalloc_is_allocated(int* regalloc, int real_reg_id) {
+    return regalloc[real_reg_id] != -1;
 }

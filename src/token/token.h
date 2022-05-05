@@ -4,6 +4,7 @@
 typedef enum _TokenType {
     // keyword
     TOKEN_KEYWORD_INT,
+    TOKEN_KEYWORD_RETURN,
 
     // identifier
     TOKEN_IDENT,

@@ -18,6 +18,7 @@ typedef enum _SrtType {
 
     // statement
     SRT_CMPD_STMT,
+    SRT_RET_STMT,
     SRT_EXPR_STMT,
 
     // expression

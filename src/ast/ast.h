@@ -25,6 +25,7 @@ typedef enum _AstType {
 
     // statement
     AST_CMPD_STMT,
+    AST_RET_STMT,
     AST_EXPR_STMT,
 
     // expression

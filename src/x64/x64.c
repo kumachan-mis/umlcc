@@ -76,8 +76,8 @@ Vector* gen_function_x64code(X64gen* x64gen) {
         append_code(head_codes, "\tpushq\t%s\n", QREG_NAMES[CALLEE_SAVED_REG_IDS[i]]);
     }
     if (callee_saved_count % 2 == 1) {
-        append_code(head_codes, "\tsubq\t$%d, %s", 8, QREG_NAMES[SP_REG_ID]);
-        append_code(tail_codes, "\taddq\t$%d, %s", 8, QREG_NAMES[SP_REG_ID]);
+        append_code(head_codes, "\tsubq\t$%d, %s\n", 8, QREG_NAMES[SP_REG_ID]);
+        append_code(tail_codes, "\taddq\t$%d, %s\n", 8, QREG_NAMES[SP_REG_ID]);
     }
     for (int i = callee_saved_count - 1; i >= 0; i--) {
         append_code(tail_codes, "\tpopq\t%s\n", QREG_NAMES[CALLEE_SAVED_REG_IDS[i]]);

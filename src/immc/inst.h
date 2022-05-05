@@ -24,6 +24,9 @@ typedef enum _ImmcInstType {
     INST_STARG,
     // - store snd_src to fst_src-th argument of function.
     // starg            fst_src(imm), snd_src(reg)
+    INST_STRET,
+    // - store fst_src to return value of function.
+    // stret           fst_src(reg)
 
     // arithmetic instructions
     INST_ADD,
@@ -43,6 +46,9 @@ typedef enum _ImmcInstType {
     // mod dest(reg), fst_src(reg), snd_src(reg)
 
     // control transfar instructions
+    INST_JMP,
+    // - jump to fst_src label
+    // jmp           fst_src(label)
     INST_CALL,
     // - call function at address of fst_src, which takes snd_src-params.
     //   (return value is stored to dest)
@@ -51,8 +57,13 @@ typedef enum _ImmcInstType {
     // - enter function which needs fst_src-bytes local memory.
     // enter           fst_src(imm)
     INST_LEAVE,
-    // - leave function which returns snd_reg, needed fst_src-bytes local memory.
-    // leave           fst_src(imm), snd_src(reg)
+    // - leave function which needed fst_src-bytes local memory.
+    // leave           fst_src(imm)
+
+    // misc instructions
+    INST_FREE,
+    // - force to free snd_src
+    // free           fst_src(reg)
 } ImmcInstType;
 
 typedef enum _ImmcOpeType {

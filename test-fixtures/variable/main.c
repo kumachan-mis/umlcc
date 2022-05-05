@@ -10,5 +10,6 @@ int main() {
     put_int(second);
     put_int(third);
     put_int(third - (first - second));
-    0;
+
+    return 0;
 }

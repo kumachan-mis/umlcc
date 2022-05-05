@@ -8,6 +8,8 @@ Ast* parse_stmt(Parser* parser) {
     switch (token->type) {
         case TOKEN_LBRACE:
             return parse_compound_stmt(parser);
+        case TOKEN_KEYWORD_RETURN:
+            return parse_return_stmt(parser);
         default:
             return parse_expression_stmt(parser);
     }
@@ -29,6 +31,13 @@ Ast* parse_compound_stmt(Parser* parser) {
             vector_push(ast->children, parse_stmt(parser));
         }
     }
+}
+
+Ast* parse_return_stmt(Parser* parser) {
+    consume_token(parser, TOKEN_KEYWORD_RETURN);
+    Ast* expr = parse_expr(parser);
+    consume_token(parser, TOKEN_SEMICOLON);
+    return new_ast(AST_RET_STMT, 1, expr);
 }
 
 Ast* parse_expression_stmt(Parser* parser) {

@@ -6,4 +6,5 @@ int main() {
     y = x - 2;
     put_int(x);
     put_int(y);
+    return 0;
 }

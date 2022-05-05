@@ -18,6 +18,9 @@ Token* read_keyword_or_identifier(Lexer* lexer) {
     if (strcmp(keyword_or_identifier_str, "int") == 0) {
         free(keyword_or_identifier_str);
         return new_token(TOKEN_KEYWORD_INT);
+    } else if (strcmp(keyword_or_identifier_str, "return") == 0) {
+        free(keyword_or_identifier_str);
+        return new_token(TOKEN_KEYWORD_RETURN);
     }
 
     return new_identifier_token(keyword_or_identifier_str);
