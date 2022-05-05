@@ -20,6 +20,7 @@ Vector* gen_mod_x64code(X64gen* x64gen);
 Vector* gen_call_x64code(X64gen* x64gen);
 Vector* gen_enter_x64code(X64gen* x64gen);
 Vector* gen_leave_x64code(X64gen* x64gen);
+Vector* gen_free_x64code(X64gen* x64gen);
 
 Vector* gen_inst_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
@@ -50,6 +51,8 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
             return gen_enter_x64code(x64gen);
         case INST_LEAVE:
             return gen_leave_x64code(x64gen);
+        case INST_FREE:
+            return gen_free_x64code(x64gen);
         default:
             fprintf(stderr, "Error: unexpected imcc inst %d\n", immc->inst->type);
             exit(1);
@@ -127,7 +130,7 @@ Vector* gen_store_x64code(X64gen* x64gen) {
 
     switch (dest->type) {
         case OPERAND_REG: {
-            // regalloc_force_allocate(x64gen->regalloc, dest->reg_id, src_id);
+            regalloc_force_allocate(x64gen->regalloc, dest->reg_id, src_id);
             break;
         }
         case OPERAND_PTR: {
@@ -377,6 +380,17 @@ Vector* gen_leave_x64code(X64gen* x64gen) {
     append_code(codes, "\taddq\t$%d, %s\n", aligned_memory_size, QREG_NAMES[SP_REG_ID]);
     append_code(codes, "\tpopq\t%s\n", QREG_NAMES[BP_REG_ID]);
     append_code(codes, "\tret\n");
+
+    return codes;
+}
+
+Vector* gen_free_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    ImmcOpe* src = immc->inst->fst_src;
+    regalloc_free(x64gen->regalloc, src->reg_id);
 
     return codes;
 }

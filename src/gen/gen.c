@@ -10,7 +10,7 @@
 Codegen* new_codegen(Srt* srt) {
     Codegen* codegen = malloc(sizeof(Codegen));
     codegen->_srt = srt;
-    codegen->register_name = 0;
+    codegen->virtual_reg_id = 0;
     codegen->_global_table = new_symboltable();
     codegen->_local_table = NULL;
     return codegen;

@@ -6,7 +6,7 @@
 #include <string.h>
 
 char* inst_strings[] = {"load  ", "addr  ", "store ", "ldarg ", "starg ", "add   ", "sub   ",
-                        "mul   ", "div   ", "mod   ", "call  ", "enter ", "leave "};
+                        "mul   ", "div   ", "mod   ", "call  ", "enter ", "leave ", "free"};
 
 ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcOpe* snd_src) {
     ImmcInst* immcinst = malloc(sizeof(ImmcInst));

@@ -55,6 +55,11 @@ typedef enum _ImmcInstType {
     INST_LEAVE,
     // - leave function which needed fst_src-bytes local memory.
     // leave           fst_src(imm)
+
+    // misc instructions
+    INST_FREE,
+    // - forcely 'use' fst_src register. (all virtual register should be used exactly once)
+    // free           fst_src(reg)
 } ImmcInstType;
 
 typedef enum _ImmcOpeType {

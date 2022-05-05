@@ -15,13 +15,13 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, (void (*)(void* item))delete_immc);
-    ImmcOpe* src = new_reg_immcope(codegen->register_name);
+    ImmcOpe* src = new_reg_immcope(codegen->virtual_reg_id);
 
     codegen->_srt = vector_at(srt->children, 0);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, (void (*)(void* item))delete_immc);
-    ImmcOpe* dest = new_ptr_immcope(codegen->register_name);
+    ImmcOpe* dest = new_ptr_immcope(codegen->virtual_reg_id);
 
     switch (srt->type) {
         case SRT_ASSIGN_EXPR:
@@ -34,9 +34,9 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
 
     // implementation limit
     // dest of tail of expression codes should be a register
-    codegen->register_name++;
+    codegen->virtual_reg_id++;
     ImmcOpe* dummy_src = immcope_copy(src);
-    ImmcOpe* dummy_dest = new_reg_immcope(codegen->register_name);
+    ImmcOpe* dummy_dest = new_reg_immcope(codegen->virtual_reg_id);
     vector_push(codes, new_inst_immc(INST_STORE, dummy_dest, dummy_src, NULL));
 
     codegen->_srt = srt;
@@ -52,16 +52,16 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, (void (*)(void* item))delete_immc);
-    ImmcOpe* fst_src = new_reg_immcope(codegen->register_name);
+    ImmcOpe* fst_src = new_reg_immcope(codegen->virtual_reg_id);
 
     codegen->_srt = vector_at(srt->children, 1);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, (void (*)(void* item))delete_immc);
-    ImmcOpe* snd_src = new_reg_immcope(codegen->register_name);
+    ImmcOpe* snd_src = new_reg_immcope(codegen->virtual_reg_id);
 
-    codegen->register_name++;
-    ImmcOpe* dest = new_reg_immcope(codegen->register_name);
+    codegen->virtual_reg_id++;
+    ImmcOpe* dest = new_reg_immcope(codegen->virtual_reg_id);
 
     switch (srt->type) {
         case SRT_ADD_EXPR:
@@ -88,16 +88,16 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, (void (*)(void* item))delete_immc);
-    ImmcOpe* fst_src = new_reg_immcope(codegen->register_name);
+    ImmcOpe* fst_src = new_reg_immcope(codegen->virtual_reg_id);
 
     codegen->_srt = vector_at(srt->children, 1);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, (void (*)(void* item))delete_immc);
-    ImmcOpe* snd_src = new_reg_immcope(codegen->register_name);
+    ImmcOpe* snd_src = new_reg_immcope(codegen->virtual_reg_id);
 
-    codegen->register_name++;
-    ImmcOpe* dest = new_reg_immcope(codegen->register_name);
+    codegen->virtual_reg_id++;
+    ImmcOpe* dest = new_reg_immcope(codegen->virtual_reg_id);
 
     switch (srt->type) {
         case SRT_MUL_EXPR:
@@ -149,7 +149,7 @@ Vector* gen_call_expr_code(Codegen* codegen) {
         delete_vector(sub_codes, (void (*)(void* item))delete_immc);
 
         ImmcOpe* fst_src = new_imm_immcope(i);
-        ImmcOpe* snd_src = new_reg_immcope(codegen->register_name);
+        ImmcOpe* snd_src = new_reg_immcope(codegen->virtual_reg_id);
         vector_push(codes, new_inst_immc(INST_STARG, NULL, fst_src, snd_src));
     }
 
@@ -158,11 +158,11 @@ Vector* gen_call_expr_code(Codegen* codegen) {
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, (void (*)(void* item))delete_immc);
 
-    ImmcOpe* fst_src = new_ptr_immcope(codegen->register_name);
+    ImmcOpe* fst_src = new_ptr_immcope(codegen->virtual_reg_id);
     ImmcOpe* snd_src = new_imm_immcope(num_args);
 
-    codegen->register_name++;
-    ImmcOpe* dest = new_reg_immcope(codegen->register_name);
+    codegen->virtual_reg_id++;
+    ImmcOpe* dest = new_reg_immcope(codegen->virtual_reg_id);
 
     vector_push(codes, new_inst_immc(INST_CALL, dest, fst_src, snd_src));
 
@@ -212,8 +212,8 @@ Vector* gen_address_expr_code(Codegen* codegen) {
             exit(1);
     }
 
-    codegen->register_name++;
-    dest = new_reg_immcope(codegen->register_name);
+    codegen->virtual_reg_id++;
+    dest = new_reg_immcope(codegen->virtual_reg_id);
     vector_push(codes, new_inst_immc(INST_ADDR, dest, src, NULL));
 
     return codes;
@@ -248,8 +248,8 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
             exit(1);
     }
 
-    codegen->register_name++;
-    dest = new_reg_immcope(codegen->register_name);
+    codegen->virtual_reg_id++;
+    dest = new_reg_immcope(codegen->virtual_reg_id);
     vector_push(codes, new_inst_immc(INST_LOAD, dest, src, NULL));
 
     return codes;

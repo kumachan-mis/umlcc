@@ -18,6 +18,9 @@ Vector* gen_expression_stmt_code(Codegen* codegen) {
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes, (void (*)(void* item))delete_immc);
 
+    ImmcOpe* src = new_reg_immcope(codegen->virtual_reg_id);
+    vector_push(codes, new_inst_immc(INST_FREE, NULL, src, NULL));
+
     codegen->_srt = srt;
     return codes;
 }
