@@ -1,7 +1,7 @@
 int put_int(int x);
 
 int grandchild(int x, int y) {
-    x* x + y* y;
+    x * x + y * y;
 }
 
 int child(int a, int b) {

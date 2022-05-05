@@ -48,8 +48,8 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     vector_extend(codes, body_codes);
     delete_vector(body_codes, free);
 
-    memory_size = new_imm_immcope(codegen->_local_table->_memory_size);
-    vector_push(codes, new_inst_immc(INST_LEAVE, NULL, memory_size, NULL));
+    ImmcOpe* ret = new_reg_immcope(codegen->virtual_reg_id);
+    vector_push(codes, new_inst_immc(INST_LEAVE, NULL, immcope_copy(memory_size), ret));
 
     delete_symboltable(codegen->_local_table);
     codegen->_local_table = NULL;

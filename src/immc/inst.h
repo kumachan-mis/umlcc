@@ -51,8 +51,8 @@ typedef enum _ImmcInstType {
     // - enter function which needs fst_src-bytes local memory.
     // enter           fst_src(imm)
     INST_LEAVE,
-    // - leave function which needed fst_src-bytes local memory.
-    // leave           fst_src(imm)
+    // - leave function which returns snd_reg, needed fst_src-bytes local memory.
+    // leave           fst_src(imm), snd_src(reg)
 } ImmcInstType;
 
 typedef enum _ImmcOpeType {

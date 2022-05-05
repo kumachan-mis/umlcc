@@ -370,9 +370,14 @@ Vector* gen_leave_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
-    ImmcOpe* src = immc->inst->fst_src;
-    int aligned_memory_size = ((src->imm_value + 15) / 16) * 16;
+    ImmcOpe* fst_src = immc->inst->fst_src;
+    int aligned_memory_size = ((fst_src->imm_value + 15) / 16) * 16;
 
+    ImmcOpe* snd_src = immc->inst->snd_src;
+    int ret_id = regalloc_search(x64gen->regalloc, snd_src->reg_id);
+    char* ret_name = LREG_NAMES[ret_id];
+
+    append_code(codes, "\tmovl\t%s, %s\n", ret_name, LREG_NAMES[AX_REG_ID]);
     append_code(codes, "\taddq\t$%d, %s\n", aligned_memory_size, QREG_NAMES[SP_REG_ID]);
     append_code(codes, "\tpopq\t%s\n", QREG_NAMES[BP_REG_ID]);
     append_code(codes, "\tret\n");
