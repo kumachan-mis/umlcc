@@ -72,8 +72,8 @@ Vector* gen_function_x64code(X64gen* x64gen) {
         append_code(head_codes, "\tpushq\t%s\n", callee_saved_reg(quad_regs, i));
     }
     if (callee_saved_count % 2 == 1) {
-        append_code(head_codes, "\tsubq\t$%d, %s", 8, stkptr_reg(quad_regs));
-        append_code(tail_codes, "\taddq\t$%d, %s", 8, stkptr_reg(quad_regs));
+        append_code(head_codes, "\tsubq\t$%d, %s", 8, stackptr_reg(quad_regs));
+        append_code(tail_codes, "\taddq\t$%d, %s", 8, stackptr_reg(quad_regs));
     }
     for (int i = callee_saved_count - 1; i >= 0; i--) {
         append_code(tail_codes, "\tpopq\t%s\n", callee_saved_reg(quad_regs, i));

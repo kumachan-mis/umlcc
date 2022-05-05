@@ -17,7 +17,7 @@ char* double_regs[16] = {"%eax", "%ebx", "%ecx",  "%edx",  "%esp",  "%ebp",  "%e
 
 int num_arg_regs = 6;
 
-char* stkptr_reg(char* regs[16]) {
+char* stackptr_reg(char* regs[16]) {
     return regs[4];
 }
 

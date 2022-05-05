@@ -221,7 +221,7 @@ Vector* gen_enter_x64code(X64gen* x64gen) {
     int aligned_memory_size = ((src->imm_value + 15) / 16) * 16;
 
     append_code(codes, "\tpushq\t%s\n", baseptr_reg(quad_regs));
-    append_code(codes, "\tsubq\t%d, %s\n", aligned_memory_size, stkptr_reg(quad_regs));
+    append_code(codes, "\tsubq\t%d, %s\n", aligned_memory_size, stackptr_reg(quad_regs));
 
     return codes;
 }
@@ -234,7 +234,7 @@ Vector* gen_leave_x64code(X64gen* x64gen) {
     ImmcOpe* src = immc->inst->fst_src;
     int aligned_memory_size = ((src->imm_value + 15) / 16) * 16;
 
-    append_code(codes, "\taddq\t%d, %s\n", aligned_memory_size, stkptr_reg(quad_regs));
+    append_code(codes, "\taddq\t%d, %s\n", aligned_memory_size, stackptr_reg(quad_regs));
     append_code(codes, "\tpopq\t%s\n", baseptr_reg(quad_regs));
 
     return codes;
