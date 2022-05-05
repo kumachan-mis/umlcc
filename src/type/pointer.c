@@ -18,7 +18,7 @@ CPointer* new_socket_cpointer() {
 CPointer* cpointer_copy(CPointer* cpointer) {
     CPointer* copied_cpointer = malloc(sizeof(CPointer));
     copied_cpointer->to_ctype = NULL;
-    if (cpointer->to_ctype != NULL) { copied_cpointer->to_ctype = ctype_copy(cpointer->to_ctype); }
+    if (cpointer->to_ctype != NULL) copied_cpointer->to_ctype = ctype_copy(cpointer->to_ctype);
     return copied_cpointer;
 }
 
@@ -32,6 +32,6 @@ CPointer* cpointer_connect(CPointer* socket, struct _CType* plug) {
 }
 
 void delete_cpointer(CPointer* cpointer) {
-    if (cpointer->to_ctype != NULL) { delete_ctype(cpointer->to_ctype); }
+    if (cpointer->to_ctype != NULL) delete_ctype(cpointer->to_ctype);
     free(cpointer);
 }

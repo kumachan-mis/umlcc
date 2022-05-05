@@ -12,13 +12,16 @@ Codegen* new_codegen(Srt* srt) {
     codegen->_srt = srt;
     codegen->_global_table = new_symboltable();
     codegen->_local_table = NULL;
+    codegen->virtual_reg_id = 0;
+    codegen->return_label = NULL;
     return codegen;
 }
 
 void delete_codegen(Codegen* codegen) {
     delete_srt(codegen->_srt);
     delete_symboltable(codegen->_global_table);
-    if (codegen->_local_table != NULL) { delete_symboltable(codegen->_local_table); }
+    if (codegen->_local_table != NULL) delete_symboltable(codegen->_local_table);
+    if (codegen->return_label != NULL) free(codegen->return_label);
     free(codegen);
 }
 
@@ -46,6 +49,9 @@ Vector* codegen_generate_code(Codegen* codegen) {
             codegen->_local_table = symboltable_enter_scope(codegen->_local_table);
             codes = gen_compound_stmt_code(codegen);
             codegen->_local_table = symboltable_exit_scope(codegen->_local_table);
+            break;
+        case SRT_RET_STMT:
+            codes = gen_return_stmt_code(codegen);
             break;
         case SRT_EXPR_STMT:
             codes = gen_expression_stmt_code(codegen);
@@ -75,7 +81,6 @@ Vector* codegen_generate_code(Codegen* codegen) {
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);
-            ;
     }
 
     return codes;

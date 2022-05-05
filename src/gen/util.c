@@ -1,4 +1,5 @@
 #include "./util.h"
+#include "../immc/immc.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -15,21 +16,9 @@ Vector* gen_children_code(Codegen* codegen) {
         codegen->_srt = vector_at(srt->children, i);
         sub_codes = codegen_generate_code(codegen);
         vector_extend(codes, sub_codes);
-        delete_vector(sub_codes, free);
+        delete_vector(sub_codes, (void (*)(void* item))delete_immc);
     }
 
     codegen->_srt = srt;
     return codes;
-}
-
-void append_code(Vector* codes, char* format, ...) {
-    va_list arg_ptr;
-    va_start(arg_ptr, format);
-
-    char* code = malloc((100 + 1) * sizeof(char));
-    vsprintf(code, format, arg_ptr);
-    code = realloc(code, (strlen(code) + 1) * sizeof(char));
-    vector_push(codes, code);
-
-    va_end(arg_ptr);
 }

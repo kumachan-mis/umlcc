@@ -91,7 +91,7 @@ void map_set(Map* map, char* key, void* value, void delete_value(void* value)) {
     map->size++;
 
     int std_capacity = 2 * (map->size + 1) - 1;
-    if (2 * map->capacity <= std_capacity) { map_update_capacity(map, std_capacity, delete_value); }
+    if (2 * map->capacity <= std_capacity) map_update_capacity(map, std_capacity, delete_value);
 }
 
 void map_erase(Map* map, char* key, void delete_value(void* value)) {
@@ -114,7 +114,7 @@ void map_erase(Map* map, char* key, void delete_value(void* value)) {
     map->size--;
 
     int std_capacity = 2 * (map->size + 1) - 1;
-    if (2 * std_capacity < map->capacity) { map_update_capacity(map, std_capacity, delete_value); }
+    if (2 * std_capacity < map->capacity) map_update_capacity(map, std_capacity, delete_value);
 }
 
 void map_update_capacity(Map* map, int new_capacity, void delete_value(void* value)) {
@@ -167,8 +167,8 @@ MapCell* new_mapcell(char* key, void* value) {
 }
 
 void delete_mapcell(MapCell* cell, void delete_value(void* value)) {
-    if (cell->key != NULL) { free(cell->key); }
-    if (cell->value != NULL) { delete_value(cell->value); }
+    if (cell->key != NULL) free(cell->key);
+    if (cell->value != NULL) delete_value(cell->value);
     free(cell);
 }
 

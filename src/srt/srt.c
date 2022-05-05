@@ -62,8 +62,8 @@ Srt* new_integer_srt(SrtType type, int value) {
 }
 
 void delete_srt(Srt* srt) {
-    if (srt->ctype != NULL) { delete_ctype(srt->ctype); }
-    if (srt->ident_name != NULL) { free(srt->ident_name); }
+    if (srt->ctype != NULL) delete_ctype(srt->ctype);
+    if (srt->ident_name != NULL) free(srt->ident_name);
     delete_vector(srt->children, (void (*)(void* item))delete_srt);
     free(srt);
 }

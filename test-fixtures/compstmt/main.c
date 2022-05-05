@@ -17,4 +17,5 @@ int main() {
     }
     put_int(x);
     put_int(y);
+    return 0;
 }

@@ -7,6 +7,7 @@ TARGET=${BASE_DIR}/bin/umlcc
 TESTLIB=${BASE_DIR}/scripts/testlib.c
 
 INPUT=main.c
+IMMEDIATE=main.i
 OUTPUT=main.s
 BINARY=main.out
 EXPECTED=expected.txt
@@ -33,18 +34,19 @@ do
     fi
 
     input=${fixture_dir}/${INPUT}
+    immediate=${fixture_dir}/${IMMEDIATE}
     output=${fixture_dir}/${OUTPUT}
     binary=${fixture_dir}/${BINARY}
     expected=${fixture_dir}/${EXPECTED}
     actual=${fixture_dir}/${ACTUAL}
 
-    rm -f ${output} ${binary} ${actual}
+    rm -f ${immediate} ${output} ${binary} ${actual}
 
-    ${TARGET} ${input} ${output}
+    ${TARGET} ${input} ${immediate} ${output}
     gcc -o ${binary} ${output} ${TESTLIB}
     ${binary} > ${actual}
-    test_diff=$(diff -u ${expected} ${actual})
 
+    test_diff=$(diff -u ${expected} ${actual})
     if [ "${test_diff}" = "" ]
     then
         printf "\033[0;32mPASS\033[0m\n"

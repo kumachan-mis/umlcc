@@ -19,6 +19,7 @@ CFunction* cfunction_copy(CFunction* cfunction);
 struct _CType* cfunction_next(CFunction* cfunction);
 CFunction* cfunction_connect(CFunction* socket, struct _CType* plug);
 void delete_cfunction(CFunction* cfunction);
+
 CParam* new_cparam(char* ident_name, struct _CType* ctype);
 CParam* cparam_copy(CParam* cparam);
 void delete_cparam(CParam* cparam);

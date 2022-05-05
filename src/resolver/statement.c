@@ -14,6 +14,9 @@ Srt* resolve_stmt(Resolver* resolver) {
             srt = resolve_compound_stmt(resolver);
             resolver->_local_table = symboltable_exit_scope(resolver->_local_table);
             break;
+         case AST_RET_STMT:
+            srt = resolve_return_stmt(resolver);
+            break;
         case AST_EXPR_STMT:
             srt = resolve_expression_stmt(resolver);
             break;
@@ -37,6 +40,16 @@ Srt* resolve_compound_stmt(Resolver* resolver) {
             vector_push(srt->children, resolve_stmt(resolver));
         }
     }
+
+    resolver->_ast = ast;
+    return srt;
+}
+
+Srt* resolve_return_stmt(Resolver* resolver) {
+    Ast* ast = resolver->_ast;
+
+    resolver->_ast = vector_at(ast->children, 0);
+    Srt* srt = new_srt(SRT_RET_STMT, 1, resolve_expr(resolver));
 
     resolver->_ast = ast;
     return srt;
