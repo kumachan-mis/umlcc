@@ -110,7 +110,6 @@ Vector* gen_function_body_x64code(X64gen* x64gen) {
                 sub_codes = gen_label_x64code(x64gen);
                 break;
         }
-
         vector_extend(codes, sub_codes);
         delete_vector(sub_codes, free);
     }
