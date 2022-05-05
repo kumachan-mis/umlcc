@@ -64,18 +64,15 @@ Vector* gen_load_x64code(X64gen* x64gen) {
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* src = immc->inst->fst_src;
 
-    int dest_name = caller_saved_map_allocate(x64gen->caller_saved_map, dest->reg_name);
-    char* dest_reg = caller_saved_reg(double_regs, dest_name);
-
     switch (src->type) {
         case OPERAND_IMM:
-            append_code(codes, "\tmovl\t$%d, %s\n", src->imm_value, dest_reg);
+            append_code(codes, "\tmovl\t$%d, %s\n", src->imm_value, dest_name);
             break;
         case OPERAND_MEM:
-            append_code(codes, "\tmovl\t-%d(%s), %s\n", src->mem_offset, base_ptr, dest_reg);
+            append_code(codes, "\tmovl\t-%d(%s), %s\n", src->mem_offset, base_ptr, dest_name);
             break;
         case OPERAND_LABEL:
-            append_code(codes, "\tmovl\t%s(%s), %s\n", src->label_name, prog_counter, dest_reg);
+            append_code(codes, "\tmovl\t%s(%s), %s\n", src->label_name, pc_name, dest_name);
             break;
         default:
             fprintf(stderr, "Error: unexpected operand %d\n", src->type);
@@ -94,15 +91,12 @@ Vector* gen_addr_x64code(X64gen* x64gen) {
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* src = immc->inst->fst_src;
 
-    int dest_name = caller_saved_map_allocate(x64gen->caller_saved_map, dest->reg_name);
-    char* dest_reg = caller_saved_reg(quad_regs, dest_name);
-
     switch (src->type) {
         case OPERAND_MEM:
-            append_code(codes, "\tleaq\t-%d(%s), %s\n", src->mem_offset, base_ptr, dest_reg);
+            append_code(codes, "\tleaq\t-%d(%s), %s\n", src->mem_offset, base_ptr, dest_name);
             break;
         case OPERAND_LABEL:
-            append_code(codes, "\tleaq\t%s(%s), %s\n", src->label_name, prog_counter, dest_reg);
+            append_code(codes, "\tleaq\t%s(%s), %s\n", src->label_name, pc_name, dest_name);
             break;
         default:
             fprintf(stderr, "Error: unexpected operand %d\n", src->type);
@@ -120,22 +114,13 @@ Vector* gen_store_x64code(X64gen* x64gen) {
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* src = immc->inst->fst_src;
 
-    int src_name = caller_saved_map_search(x64gen->caller_saved_map, src->reg_name);
-    char* src_reg = caller_saved_reg(double_regs, src_name);
-    caller_saved_map_free(x64gen->caller_saved_map, src->reg_name);
-
     switch (dest->type) {
         case OPERAND_REG: {
-            int dest_name = caller_saved_map_allocate(x64gen->caller_saved_map, dest->reg_name);
-            char* dest_reg = caller_saved_reg(double_regs, dest_name);
-            append_code(codes, "\tmovl\t%s, %s\n", src_reg, dest_reg);
+            append_code(codes, "\tmovl\t%s, %s\n", src_name, dest_name);
             break;
         }
         case OPERAND_PTR: {
-            int dest_name = caller_saved_map_search(x64gen->caller_saved_map, dest->reg_name);
-            char* dest_reg = caller_saved_reg(quad_regs, dest_name);
-            caller_saved_map_free(x64gen->caller_saved_map, dest->reg_name);
-            append_code(codes, "\tmovl\t%s, (%s)\n", src_reg, dest_reg);
+            append_code(codes, "\tmovl\t%s, (%s)\n", src_name, dest_name);
             break;
         }
         default:
@@ -170,15 +155,7 @@ Vector* gen_add_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int fst_src_name = caller_saved_map_search(x64gen->caller_saved_map, fst_src->reg_name);
-    char* fst_src_reg = caller_saved_reg(double_regs, fst_src_name);
-    caller_saved_map_force_allocate(x64gen->caller_saved_map, fst_src_name, dest->reg_name);
-
-    int snd_src_name = caller_saved_map_search(x64gen->caller_saved_map, snd_src->reg_name);
-    char* snd_src_reg = caller_saved_reg(double_regs, snd_src_name);
-    caller_saved_map_free(x64gen->caller_saved_map, snd_src->reg_name);
-
-    append_code(codes, "\taddl\t%s, %s\n", snd_src_reg, fst_src_reg);
+    append_code(codes, "\taddl\t%s, %s\n", snd_src_name, fst_src_name);
 
     return codes;
 }
@@ -192,15 +169,7 @@ Vector* gen_sub_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int fst_src_name = caller_saved_map_search(x64gen->caller_saved_map, fst_src->reg_name);
-    char* fst_src_reg = caller_saved_reg(double_regs, fst_src_name);
-    caller_saved_map_force_allocate(x64gen->caller_saved_map, fst_src_name, dest->reg_name);
-
-    int snd_src_name = caller_saved_map_search(x64gen->caller_saved_map, snd_src->reg_name);
-    char* snd_src_reg = caller_saved_reg(double_regs, snd_src_name);
-    caller_saved_map_free(x64gen->caller_saved_map, snd_src->reg_name);
-
-    append_code(codes, "\tsubl\t%s, %s\n", snd_src_reg, fst_src_reg);
+    append_code(codes, "\tsubl\t%s, %s\n", snd_src_name, fst_src_name);
 
     return codes;
 }
@@ -234,15 +203,11 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
-    // ImmcOpe* dest = immc->inst->dest;
+    ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* fst_src = immc->inst->fst_src;
-    // ImmcOpe* snd_src = immc->inst->snd_src;
+    ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int fst_src_name = caller_saved_map_search(x64gen->caller_saved_map, fst_src->reg_name);
-    char* fst_src_reg = caller_saved_reg(quad_regs, fst_src_name);
-    caller_saved_map_free(x64gen->caller_saved_map, fst_src->reg_name);
-
-    append_code(codes, "\tcall\t*%s\n", fst_src_reg);
+    append_code(codes, "\tcall\t*%s\n", fst_src_name);
 
     return codes;
 }

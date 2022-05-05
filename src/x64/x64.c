@@ -15,14 +15,12 @@ X64gen* new_x64gen(Vector* immcs) {
     X64gen* x64gen = malloc(sizeof(X64gen));
     x64gen->_immcs = immcs;
     x64gen->index = 0;
-    x64gen->caller_saved_map = NULL;
     x64gen->callee_saved_count = 0;
     return x64gen;
 }
 
 void delete_x64gen(X64gen* x64gen) {
     delete_vector(x64gen->_immcs, (void (*)(void* item))delete_immc);
-    if (x64gen->caller_saved_map != NULL) delete_caller_saved_map(x64gen->caller_saved_map);
     free(x64gen);
 }
 
@@ -57,7 +55,6 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     Vector* tail_codes = new_vector();
     Vector* sub_codes = NULL;
 
-    x64gen->caller_saved_map = new_caller_saved_map();
     x64gen->callee_saved_count = 0;
 
     sub_codes = gen_label_x64code(x64gen);
@@ -94,8 +91,6 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     delete_vector(tail_codes, free);
 
     x64gen->callee_saved_count = 0;
-    delete_caller_saved_map(x64gen->caller_saved_map);
-    x64gen->caller_saved_map = NULL;
     return codes;
 }
 

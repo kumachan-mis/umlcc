@@ -65,27 +65,27 @@ ImmcOpe* new_imm_immcope(int imm_value) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = OPERAND_IMM;
     immcope->imm_value = imm_value;
-    immcope->reg_name = -1;
+    immcope->reg_id = -1;
     immcope->mem_offset = -1;
     immcope->label_name = NULL;
     return immcope;
 }
 
-ImmcOpe* new_reg_immcope(int reg_name) {
+ImmcOpe* new_reg_immcope(int reg_id) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = OPERAND_REG;
     immcope->imm_value = -1;
-    immcope->reg_name = reg_name;
+    immcope->reg_id = reg_id;
     immcope->mem_offset = -1;
     immcope->label_name = NULL;
     return immcope;
 }
 
-ImmcOpe* new_ptr_immcope(int reg_name) {
+ImmcOpe* new_ptr_immcope(int reg_id) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = OPERAND_PTR;
     immcope->imm_value = -1;
-    immcope->reg_name = reg_name;
+    immcope->reg_id = reg_id;
     immcope->mem_offset = -1;
     immcope->label_name = NULL;
     return immcope;
@@ -95,7 +95,7 @@ ImmcOpe* new_mem_immcope(int mem_offset) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = OPERAND_MEM;
     immcope->imm_value = -1;
-    immcope->reg_name = -1;
+    immcope->reg_id = -1;
     immcope->mem_offset = mem_offset;
     immcope->label_name = NULL;
     return immcope;
@@ -105,7 +105,7 @@ ImmcOpe* new_label_immcope(char* label_name) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = OPERAND_LABEL;
     immcope->imm_value = -1;
-    immcope->reg_name = -1;
+    immcope->reg_id = -1;
     immcope->mem_offset = -1;
     immcope->label_name = label_name;
     return immcope;
@@ -115,7 +115,7 @@ ImmcOpe* immcope_copy(ImmcOpe* immcope) {
     ImmcOpe* copied_immcope = malloc(sizeof(ImmcOpe));
     copied_immcope->type = immcope->type;
     copied_immcope->imm_value = immcope->imm_value;
-    copied_immcope->reg_name = immcope->reg_name;
+    copied_immcope->reg_id = immcope->reg_id;
     copied_immcope->mem_offset = immcope->mem_offset;
     copied_immcope->label_name = NULL;
     if (immcope->label_name != NULL) {
@@ -132,10 +132,10 @@ char* immcope_tostring(ImmcOpe* immcope) {
             sprintf(ope_str, "%d", immcope->imm_value);
             break;
         case OPERAND_REG:
-            sprintf(ope_str, "r%d", immcope->reg_name);
+            sprintf(ope_str, "r%d", immcope->reg_id);
             break;
         case OPERAND_PTR:
-            sprintf(ope_str, "(r%d)", immcope->reg_name);
+            sprintf(ope_str, "(r%d)", immcope->reg_id);
             break;
         case OPERAND_MEM:
             sprintf(ope_str, "M[%d]", immcope->mem_offset);
