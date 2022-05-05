@@ -2,7 +2,7 @@
 #include "../immc/immc.h"
 #include "./inst.h"
 #include "./label.h"
-#include "./register.h"
+#include "./consts.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -69,14 +69,14 @@ Vector* gen_function_x64code(X64gen* x64gen) {
 
     int callee_saved_count = x64gen->callee_saved_count;
     for (int i = 0; i < callee_saved_count; i++) {
-        append_code(head_codes, "\tpushq\t%s\n", callee_saved_reg(quad_regs, i));
+        append_code(head_codes, "\tpushq\t%s\n", callee_reg_name(QREG_NAMES, i));
     }
     if (callee_saved_count % 2 == 1) {
-        append_code(head_codes, "\tsubq\t$%d, %s", 8, stackptr_reg(quad_regs));
-        append_code(tail_codes, "\taddq\t$%d, %s", 8, stackptr_reg(quad_regs));
+        append_code(head_codes, "\tsubq\t$%d, %s", 8, stackptr_reg(QREG_NAMES));
+        append_code(tail_codes, "\taddq\t$%d, %s", 8, stackptr_reg(QREG_NAMES));
     }
     for (int i = callee_saved_count - 1; i >= 0; i--) {
-        append_code(tail_codes, "\tpopq\t%s\n", callee_saved_reg(quad_regs, i));
+        append_code(tail_codes, "\tpopq\t%s\n", callee_reg_name(QREG_NAMES, i));
     }
 
     sub_codes = gen_inst_x64code(x64gen);

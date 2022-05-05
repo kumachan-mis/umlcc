@@ -1,6 +1,6 @@
 #include "./inst.h"
 #include "../immc/immc.h"
-#include "./register.h"
+#include "./consts.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -60,7 +60,7 @@ Vector* gen_load_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
-    char* base_ptr = baseptr_reg(quad_regs);
+    char* base_ptr = baseptr_reg(QREG_NAMES);
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* src = immc->inst->fst_src;
 
@@ -72,7 +72,7 @@ Vector* gen_load_x64code(X64gen* x64gen) {
             append_code(codes, "\tmovl\t-%d(%s), %s\n", src->mem_offset, base_ptr, dest_name);
             break;
         case OPERAND_LABEL:
-            append_code(codes, "\tmovl\t%s(%s), %s\n", src->label_name, pc_name, dest_name);
+            append_code(codes, "\tmovl\t%s(%s), %s\n", src->label_name, PC_NAME, dest_name);
             break;
         default:
             fprintf(stderr, "Error: unexpected operand %d\n", src->type);
@@ -87,7 +87,7 @@ Vector* gen_addr_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
-    char* base_ptr = baseptr_reg(quad_regs);
+    char* base_ptr = baseptr_reg(QREG_NAMES);
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* src = immc->inst->fst_src;
 
@@ -96,7 +96,7 @@ Vector* gen_addr_x64code(X64gen* x64gen) {
             append_code(codes, "\tleaq\t-%d(%s), %s\n", src->mem_offset, base_ptr, dest_name);
             break;
         case OPERAND_LABEL:
-            append_code(codes, "\tleaq\t%s(%s), %s\n", src->label_name, pc_name, dest_name);
+            append_code(codes, "\tleaq\t%s(%s), %s\n", src->label_name, PC_NAME, dest_name);
             break;
         default:
             fprintf(stderr, "Error: unexpected operand %d\n", src->type);
@@ -220,8 +220,8 @@ Vector* gen_enter_x64code(X64gen* x64gen) {
     ImmcOpe* src = immc->inst->fst_src;
     int aligned_memory_size = ((src->imm_value + 15) / 16) * 16;
 
-    append_code(codes, "\tpushq\t%s\n", baseptr_reg(quad_regs));
-    append_code(codes, "\tsubq\t%d, %s\n", aligned_memory_size, stackptr_reg(quad_regs));
+    append_code(codes, "\tpushq\t%s\n", baseptr_reg(QREG_NAMES));
+    append_code(codes, "\tsubq\t%d, %s\n", aligned_memory_size, stackptr_reg(QREG_NAMES));
 
     return codes;
 }
@@ -234,8 +234,8 @@ Vector* gen_leave_x64code(X64gen* x64gen) {
     ImmcOpe* src = immc->inst->fst_src;
     int aligned_memory_size = ((src->imm_value + 15) / 16) * 16;
 
-    append_code(codes, "\taddq\t%d, %s\n", aligned_memory_size, stackptr_reg(quad_regs));
-    append_code(codes, "\tpopq\t%s\n", baseptr_reg(quad_regs));
+    append_code(codes, "\taddq\t%d, %s\n", aligned_memory_size, stackptr_reg(QREG_NAMES));
+    append_code(codes, "\tpopq\t%s\n", baseptr_reg(QREG_NAMES));
 
     return codes;
 }
