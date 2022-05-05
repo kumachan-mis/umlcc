@@ -1,8 +1,8 @@
 #include "./inst.h"
 #include "../immc/immc.h"
 #include "./consts.h"
-#include "./util.h"
 #include "./regalloc.h"
+#include "./util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -127,9 +127,7 @@ Vector* gen_store_x64code(X64gen* x64gen) {
 
     switch (dest->type) {
         case OPERAND_REG: {
-            int dest_id = regalloc_allocate_caller_saved(x64gen->regalloc, dest->reg_id);
-            char* dest_name = LREG_NAMES[dest_id];
-            append_code(codes, "\tmovl\t%s, %s\n", src_name, dest_name);
+            regalloc_force_allocate(x64gen->regalloc, dest->reg_id, src_id);
             break;
         }
         case OPERAND_PTR: {
@@ -158,7 +156,7 @@ Vector* gen_ldarg_x64code(X64gen* x64gen) {
     if (src->imm_value < NUM_ARG_REGS) {
         int src_id = ARG_REG_IDS[src->imm_value];
         char* src_name = LREG_NAMES[src_id];
-        append_code(codes, "\tmov\t%s, -%d(%s)\n", src_name, dest->mem_offset, BP_NAME);
+        append_code(codes, "\tmovl\t%s, -%d(%s)\n", src_name, dest->mem_offset, BP_NAME);
         return codes;
     }
 
@@ -167,8 +165,8 @@ Vector* gen_ldarg_x64code(X64gen* x64gen) {
     int mem_arg_offset = (src->imm_value - NUM_ARG_REGS + 1) * 8 + 8;
     // (1-indexed non-register param no.) * (bytes of memory address) + (offset for pushq %rbp)
 
-    append_code(codes, "\tmov\t-%d(%s), %s\n", dest->mem_offset, BP_NAME, reg_name);
-    append_code(codes, "\tmov\t%s, -%d(%s)\n", reg_name, mem_arg_offset, BP_NAME);
+    append_code(codes, "\tmovl\t-%d(%s), %s\n", dest->mem_offset, BP_NAME, reg_name);
+    append_code(codes, "\tmovl\t%s, -%d(%s)\n", reg_name, mem_arg_offset, BP_NAME);
     regalloc_free(x64gen->regalloc, 0);
 
     return codes;
@@ -200,13 +198,12 @@ Vector* gen_add_x64code(X64gen* x64gen) {
     ImmcOpe* snd_src = immc->inst->snd_src;
 
     int fst_src_id = regalloc_search(x64gen->regalloc, fst_src->reg_id);
-    regalloc_free(x64gen->regalloc, fst_src->reg_id);
-
     int snd_src_id = regalloc_search(x64gen->regalloc, snd_src->reg_id);
+    regalloc_free(x64gen->regalloc, fst_src->reg_id);
     regalloc_free(x64gen->regalloc, snd_src->reg_id);
 
     int dest_id = regalloc_force_allocate(x64gen->regalloc, dest->reg_id, fst_src_id);
-    
+
     char* src_name = LREG_NAMES[snd_src_id];
     char* dest_name = LREG_NAMES[dest_id];
     append_code(codes, "\taddl\t%s, %s\n", src_name, dest_name);
@@ -224,13 +221,12 @@ Vector* gen_sub_x64code(X64gen* x64gen) {
     ImmcOpe* snd_src = immc->inst->snd_src;
 
     int fst_src_id = regalloc_search(x64gen->regalloc, fst_src->reg_id);
-    regalloc_free(x64gen->regalloc, fst_src->reg_id);
-
     int snd_src_id = regalloc_search(x64gen->regalloc, snd_src->reg_id);
+    regalloc_free(x64gen->regalloc, fst_src->reg_id);
     regalloc_free(x64gen->regalloc, snd_src->reg_id);
 
     int dest_id = regalloc_force_allocate(x64gen->regalloc, dest->reg_id, fst_src_id);
-    
+
     char* src_name = LREG_NAMES[snd_src_id];
     char* dest_name = LREG_NAMES[dest_id];
     append_code(codes, "\tsubl\t%s, %s\n", src_name, dest_name);
@@ -240,24 +236,91 @@ Vector* gen_sub_x64code(X64gen* x64gen) {
 
 Vector* gen_mul_x64code(X64gen* x64gen) {
     Vector* codes = new_vector();
-    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
+
+    ImmcOpe* dest = immc->inst->dest;
+    ImmcOpe* fst_src = immc->inst->fst_src;
+    ImmcOpe* snd_src = immc->inst->snd_src;
+
+    int fst_src_id = regalloc_search(x64gen->regalloc, fst_src->reg_id);
+    int snd_src_id = regalloc_search(x64gen->regalloc, snd_src->reg_id);
+    regalloc_free(x64gen->regalloc, fst_src->reg_id);
+    regalloc_free(x64gen->regalloc, snd_src->reg_id);
+
+    int dest_id = regalloc_force_allocate(x64gen->regalloc, dest->reg_id, fst_src_id);
+
+    char* src_name = LREG_NAMES[snd_src_id];
+    char* dest_name = LREG_NAMES[dest_id];
+    append_code(codes, "\timull\t%s, %s\n", src_name, dest_name);
 
     return codes;
 }
 
 Vector* gen_div_x64code(X64gen* x64gen) {
     Vector* codes = new_vector();
-    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
+
+    ImmcOpe* dest = immc->inst->dest;
+    ImmcOpe* fst_src = immc->inst->fst_src;
+    ImmcOpe* snd_src = immc->inst->snd_src;
+
+    int fst_src_id = regalloc_search(x64gen->regalloc, fst_src->reg_id);
+    int snd_src_id = regalloc_search(x64gen->regalloc, snd_src->reg_id);
+
+    if (snd_src_id == DX_REG_ID) {
+        snd_src_id = regalloc_change_caller_saved_allocation(x64gen->regalloc, snd_src->reg_id);
+        append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[DX_REG_ID], LREG_NAMES[snd_src_id]);
+    }
+
+    regalloc_free(x64gen->regalloc, snd_src->reg_id);
+    regalloc_free(x64gen->regalloc, fst_src->reg_id);
+
+    int dest_id = regalloc_force_allocate(x64gen->regalloc, dest->reg_id, fst_src_id);
+
+    char* fst_src_name = LREG_NAMES[fst_src_id];
+    char* snd_src_name = LREG_NAMES[snd_src_id];
+    char* dest_name = LREG_NAMES[dest_id];
+
+    append_code(codes, "\tmovl\t%s, %s\n", fst_src_name, LREG_NAMES[AX_REG_ID]);
+    append_code(codes, "\tcltd\n");
+    append_code(codes, "\tidivl\t%s\n", snd_src_name);
+    append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[AX_REG_ID], dest_name);
 
     return codes;
 }
 
 Vector* gen_mod_x64code(X64gen* x64gen) {
     Vector* codes = new_vector();
-    // Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
+
+    ImmcOpe* dest = immc->inst->dest;
+    ImmcOpe* fst_src = immc->inst->fst_src;
+    ImmcOpe* snd_src = immc->inst->snd_src;
+
+    int fst_src_id = regalloc_search(x64gen->regalloc, fst_src->reg_id);
+    int snd_src_id = regalloc_search(x64gen->regalloc, snd_src->reg_id);
+
+    if (snd_src_id == DX_REG_ID) {
+        snd_src_id = regalloc_change_caller_saved_allocation(x64gen->regalloc, snd_src->reg_id);
+        append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[DX_REG_ID], LREG_NAMES[snd_src_id]);
+    }
+
+    regalloc_free(x64gen->regalloc, fst_src->reg_id);
+    regalloc_free(x64gen->regalloc, snd_src->reg_id);
+
+    int dest_id = regalloc_force_allocate(x64gen->regalloc, dest->reg_id, fst_src_id);
+
+    char* fst_src_name = LREG_NAMES[fst_src_id];
+    char* snd_src_name = LREG_NAMES[snd_src_id];
+    char* dest_name = LREG_NAMES[dest_id];
+
+    append_code(codes, "\tmovl\t%s, %s\n", fst_src_name, LREG_NAMES[AX_REG_ID]);
+    append_code(codes, " cltd\n");
+    append_code(codes, "\tidivl\t%s\n", snd_src_name);
+    append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[DX_REG_ID], dest_name);
 
     return codes;
 }
