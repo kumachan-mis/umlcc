@@ -1,47 +1,47 @@
 
-#Created by https: // www.toptal.com/developers/gitignore/api/c
-#Edit at https:    // www.toptal.com/developers/gitignore?templates=c
+# Created by https://www.toptal.com/developers/gitignore/api/c
+# Edit at https://www.toptal.com/developers/gitignore?templates=c
 
 ### Project Specific Settings ###
 build/
 bin/
 sample-out/
-test-fixtures/**/*.i
 test-fixtures/**/*.s
+test-fixtures/**/*.i
 test-fixtures/**/actual.txt
 
 ### C ###
-#Prerequisites
+# Prerequisites
 *.d
 
-#Object files
+# Object files
 *.o
 *.ko
 *.obj
 *.elf
 
-#Linker output
+# Linker output
 *.ilk
 *.map
 *.exp
 
-#Precompiled Headers
+# Precompiled Headers
 *.gch
 *.pch
 
-#Libraries
+# Libraries
 *.lib
 *.a
 *.la
 *.lo
 
-#Shared objects(inc.Windows DLLs)
+# Shared objects (inc. Windows DLLs)
 *.dll
 *.so
 *.so.*
 *.dylib
 
-#Executables
+# Executables
 *.exe
 *.out
 *.app
@@ -49,13 +49,13 @@ test-fixtures/**/actual.txt
 *.x86_64
 *.hex
 
-#Debug files
+# Debug files
 *.dSYM/
 *.su
 *.idb
 *.pdb
 
-#Kernel Module Compile Results
+# Kernel Module Compile Results
 *.mod*
 *.cmd
 .tmp_versions/
@@ -64,4 +64,4 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-#End of https: // www.toptal.com/developers/gitignore/api/c
+# End of https://www.toptal.com/developers/gitignore/api/c
