@@ -205,7 +205,6 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
 
     char* arg_name = LREG_NAMES[arg_id];
     char* src_name = LREG_NAMES[src_id];
-    regalloc_free(x64gen->regalloc, snd_src->reg_id);
 
     int evaluated_id = regalloc_usedby(x64gen->regalloc, arg_id);
     if (evaluated_id != -1) {
@@ -215,6 +214,7 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
     }
     append_code(codes, "\tmovl\t%s, %s\n", src_name, arg_name);
     regalloc_force_lock(x64gen->regalloc, arg_id);
+    regalloc_free(x64gen->regalloc, snd_src->reg_id);
 
     return codes;
 }
