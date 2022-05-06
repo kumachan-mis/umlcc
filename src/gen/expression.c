@@ -135,16 +135,18 @@ Vector* gen_call_expr_code(Codegen* codegen) {
 
     Srt* params_srt = vector_at(srt->children, 1);
     int num_args = vector_size(params_srt->children);
+
+    vector_push(codes, new_inst_immc(INST_PREP, NULL, new_imm_immcope(num_args), NULL));
+
     for (int i = num_args - 1; i >= 0; i--) {
         codegen->_srt = vector_at(params_srt->children, i);
         sub_codes = codegen_generate_code(codegen);
         vector_extend(codes, sub_codes);
         delete_vector(sub_codes, (void (*)(void* item))delete_immc);
 
-        ImmcOpe* dest = new_imm_immcope(num_args);
         ImmcOpe* fst_src = new_imm_immcope(i);
         ImmcOpe* snd_src = new_reg_immcope(codegen->virtual_reg_id);
-        vector_push(codes, new_inst_immc(INST_STARG, dest, fst_src, snd_src));
+        vector_push(codes, new_inst_immc(INST_STARG, NULL, fst_src, snd_src));
     }
 
     codegen->_srt = vector_at(srt->children, 0);
@@ -159,6 +161,7 @@ Vector* gen_call_expr_code(Codegen* codegen) {
     ImmcOpe* dest = new_reg_immcope(codegen->virtual_reg_id);
 
     vector_push(codes, new_inst_immc(INST_CALL, dest, fst_src, snd_src));
+    vector_push(codes, new_inst_immc(INST_CLEAN, NULL, new_imm_immcope(num_args), NULL));
 
     return codes;
 }

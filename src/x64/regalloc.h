@@ -1,14 +1,32 @@
 #ifndef _UMLCC_X64_REGALLOC_H_
 #define _UMLCC_X64_REGALLOC_H_
 
-int* new_regalloc();
-void delete_regalloc(int* regalloc);
-int regalloc_allocate_caller_saved(int* regalloc, int virtual_reg_id);
-int regalloc_allocate_callee_saved(int* regalloc, int virtual_reg_id);
-int regalloc_force_allocate(int* regalloc, int virtual_reg_id, int real_reg_id);
-int regalloc_change_caller_saved_allocation(int* regalloc, int virtual_reg_id);
-void regalloc_free(int* regalloc, int virtual_reg_id);
-int regalloc_search(int* regalloc, int virtual_reg_id);
-int regalloc_is_allocated(int* regalloc, int real_reg_id);
+#include "../vector/vector.h"
+
+typedef struct _RegAlloc {
+    int* _allocation;
+} RegAlloc;
+
+typedef struct _RegEvacuationEntry {
+    int caller_saved_index;
+    int callee_saved_index;
+} RegEvacuationEntry;
+
+RegAlloc* new_regalloc();
+void delete_regalloc(RegAlloc* regalloc);
+
+int regalloc_allocate(RegAlloc* regalloc, int virtual_reg_id);
+int regalloc_force_allocate(RegAlloc* regalloc, int virtual_reg_id, int real_reg_id);
+int regalloc_realloc(RegAlloc* regalloc, int virtual_reg_id);
+int regalloc_resolve(RegAlloc* regalloc, int virtual_reg_id);
+void regalloc_free(RegAlloc* regalloc, int virtual_reg_id);
+
+int regalloc_lock(RegAlloc* regalloc);
+int regalloc_force_lock(RegAlloc* regalloc, int real_reg_id);
+int regalloc_usedby(RegAlloc* regalloc, int real_reg_id);
+void regalloc_unlock(RegAlloc* regalloc, int real_reg_id);
+
+Vector* regalloc_evacuate(RegAlloc* regalloc);
+void regalloc_restore(RegAlloc* regalloc, Vector* evacuation_table);
 
 #endif

@@ -19,6 +19,7 @@ int main() {
     put_blank_line();
 
     put_int(add_2ints(6, 7));
+    put_int(add_2ints(add_2ints(1, 2), add_2ints(3, 4)));
     put_int(addsub_8ints(1, 2, 3, 4, 5, 6, 7, 8));
 
     return 0;

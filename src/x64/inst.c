@@ -23,6 +23,8 @@ Vector* gen_call_x64code(X64gen* x64gen);
 Vector* gen_enter_x64code(X64gen* x64gen);
 Vector* gen_leave_x64code(X64gen* x64gen);
 Vector* gen_free_x64code(X64gen* x64gen);
+Vector* gen_prep_x64code(X64gen* x64gen);
+Vector* gen_clean_x64code(X64gen* x64gen);
 
 Vector* gen_inst_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
@@ -37,7 +39,7 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
             return gen_ldarg_x64code(x64gen);
         case INST_STARG:
             return gen_starg_x64code(x64gen);
-         case INST_STRET:
+        case INST_STRET:
             return gen_stret_x64code(x64gen);
         case INST_ADD:
             return gen_add_x64code(x64gen);
@@ -59,6 +61,10 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
             return gen_leave_x64code(x64gen);
         case INST_FREE:
             return gen_free_x64code(x64gen);
+        case INST_PREP:
+            return gen_prep_x64code(x64gen);
+        case INST_CLEAN:
+            return gen_clean_x64code(x64gen);
         default:
             fprintf(stderr, "Error: unexpected imcc inst %d\n", immc->inst->type);
             exit(1);
@@ -74,7 +80,7 @@ Vector* gen_load_x64code(X64gen* x64gen) {
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* src = immc->inst->fst_src;
 
-    int dest_id = regalloc_allocate_caller_saved(x64gen->regalloc, dest->reg_id);
+    int dest_id = regalloc_allocate(x64gen->regalloc, dest->reg_id);
     char* dest_name = LREG_NAMES[dest_id];
 
     switch (src->type) {
@@ -104,7 +110,7 @@ Vector* gen_addr_x64code(X64gen* x64gen) {
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* src = immc->inst->fst_src;
 
-    int dest_id = regalloc_allocate_caller_saved(x64gen->regalloc, dest->reg_id);
+    int dest_id = regalloc_allocate(x64gen->regalloc, dest->reg_id);
     char* dest_name = QREG_NAMES[dest_id];
 
     switch (src->type) {
@@ -130,13 +136,13 @@ Vector* gen_store_x64code(X64gen* x64gen) {
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* src = immc->inst->fst_src;
 
-    int src_id = regalloc_search(x64gen->regalloc, src->reg_id);
+    int src_id = regalloc_resolve(x64gen->regalloc, src->reg_id);
     char* src_name = LREG_NAMES[src_id];
     regalloc_free(x64gen->regalloc, src->reg_id);
 
     switch (dest->type) {
         case OPERAND_PTR: {
-            int dest_id = regalloc_search(x64gen->regalloc, dest->reg_id);
+            int dest_id = regalloc_resolve(x64gen->regalloc, dest->reg_id);
             char* dest_name = QREG_NAMES[dest_id];
             regalloc_free(x64gen->regalloc, dest->reg_id);
             append_code(codes, "\tmovl\t%s, (%s)\n", src_name, dest_name);
@@ -165,14 +171,14 @@ Vector* gen_ldarg_x64code(X64gen* x64gen) {
         return codes;
     }
 
-    int reg_id = regalloc_allocate_caller_saved(x64gen->regalloc, 0);
+    int reg_id = regalloc_lock(x64gen->regalloc);
     char* reg_name = LREG_NAMES[reg_id];
     int mem_arg_offset = (src->imm_value - NUM_ARG_REGS + 1) * 8 + 8;
     // (1-indexed non-register param no.) * (bytes of memory address) + (offset for pushq %rbp)
 
     append_code(codes, "\tmovl\t%d(%s), %s\n", mem_arg_offset, BP_NAME, reg_name);
-    append_code(codes, "\tmov\t%s, -%d(%s)\n",reg_name, dest->mem_offset, BP_NAME);
-    regalloc_free(x64gen->regalloc, 0);
+    append_code(codes, "\tmov\t%s, -%d(%s)\n", reg_name, dest->mem_offset, BP_NAME);
+    regalloc_unlock(x64gen->regalloc, reg_id);
 
     return codes;
 }
@@ -182,20 +188,13 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
-    ImmcOpe* dest = immc->inst->dest;
-    ImmcOpe* fst_src = immc->inst->fst_src;
-    ImmcOpe* snd_src = immc->inst->snd_src;
+    ImmcOpe* src = immc->inst->snd_src;
 
-    if (dest->imm_value > NUM_ARG_REGS && dest->imm_value % 2 == 1 && fst_src->imm_value + 1 == dest->imm_value) {
-        append_code(codes, "\tsubq\t$%d, %s\n", 8, QREG_NAMES[SP_REG_ID]);
-    }
-
-    int src_id = regalloc_search(x64gen->regalloc, snd_src->reg_id);
-    regalloc_free(x64gen->regalloc, snd_src->reg_id);
-
+    int src_id = regalloc_resolve(x64gen->regalloc, src->reg_id);
     char* src_name = QREG_NAMES[src_id];
     append_code(codes, "\tpushq\t%s\n", src_name);
 
+    regalloc_free(x64gen->regalloc, src->reg_id);
     return codes;
 }
 
@@ -205,7 +204,7 @@ Vector* gen_stret_x64code(X64gen* x64gen) {
     x64gen->index++;
 
     ImmcOpe* src = immc->inst->fst_src;
-    int ret_id = regalloc_search(x64gen->regalloc, src->reg_id);
+    int ret_id = regalloc_resolve(x64gen->regalloc, src->reg_id);
     char* ret_name = LREG_NAMES[ret_id];
 
     append_code(codes, "\tmovl\t%s, %s\n", ret_name, LREG_NAMES[AX_REG_ID]);
@@ -222,8 +221,8 @@ Vector* gen_add_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int fst_src_id = regalloc_search(x64gen->regalloc, fst_src->reg_id);
-    int snd_src_id = regalloc_search(x64gen->regalloc, snd_src->reg_id);
+    int fst_src_id = regalloc_resolve(x64gen->regalloc, fst_src->reg_id);
+    int snd_src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
     regalloc_free(x64gen->regalloc, fst_src->reg_id);
     regalloc_free(x64gen->regalloc, snd_src->reg_id);
 
@@ -245,8 +244,8 @@ Vector* gen_sub_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int fst_src_id = regalloc_search(x64gen->regalloc, fst_src->reg_id);
-    int snd_src_id = regalloc_search(x64gen->regalloc, snd_src->reg_id);
+    int fst_src_id = regalloc_resolve(x64gen->regalloc, fst_src->reg_id);
+    int snd_src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
     regalloc_free(x64gen->regalloc, fst_src->reg_id);
     regalloc_free(x64gen->regalloc, snd_src->reg_id);
 
@@ -268,8 +267,8 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int fst_src_id = regalloc_search(x64gen->regalloc, fst_src->reg_id);
-    int snd_src_id = regalloc_search(x64gen->regalloc, snd_src->reg_id);
+    int fst_src_id = regalloc_resolve(x64gen->regalloc, fst_src->reg_id);
+    int snd_src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
     regalloc_free(x64gen->regalloc, fst_src->reg_id);
     regalloc_free(x64gen->regalloc, snd_src->reg_id);
 
@@ -291,11 +290,11 @@ Vector* gen_div_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int fst_src_id = regalloc_search(x64gen->regalloc, fst_src->reg_id);
-    int snd_src_id = regalloc_search(x64gen->regalloc, snd_src->reg_id);
+    int fst_src_id = regalloc_resolve(x64gen->regalloc, fst_src->reg_id);
+    int snd_src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
 
     if (snd_src_id == DX_REG_ID) {
-        snd_src_id = regalloc_change_caller_saved_allocation(x64gen->regalloc, snd_src->reg_id);
+        snd_src_id = regalloc_realloc(x64gen->regalloc, snd_src->reg_id);
         append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[DX_REG_ID], LREG_NAMES[snd_src_id]);
     }
 
@@ -325,11 +324,11 @@ Vector* gen_mod_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int fst_src_id = regalloc_search(x64gen->regalloc, fst_src->reg_id);
-    int snd_src_id = regalloc_search(x64gen->regalloc, snd_src->reg_id);
+    int fst_src_id = regalloc_resolve(x64gen->regalloc, fst_src->reg_id);
+    int snd_src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
 
     if (snd_src_id == DX_REG_ID) {
-        snd_src_id = regalloc_change_caller_saved_allocation(x64gen->regalloc, snd_src->reg_id);
+        snd_src_id = regalloc_realloc(x64gen->regalloc, snd_src->reg_id);
         append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[DX_REG_ID], LREG_NAMES[snd_src_id]);
     }
 
@@ -371,53 +370,53 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int src_id = regalloc_search(x64gen->regalloc, fst_src->reg_id);
-    char* src_name = QREG_NAMES[src_id];
-    regalloc_free(x64gen->regalloc, fst_src->reg_id);
-    append_code(codes, "\tmovq\t%s, %s\n", src_name, QREG_NAMES[R11_REG_ID]);
-
-    Vector* reg_saving = new_vector();
-    int callee = 0;
-    for (int caller = 0; caller < NUM_CALLER_SAVED_REGS; caller++) {
-        int real_reg_id = CALLER_SAVED_REG_IDS[caller];
-        if (!regalloc_is_allocated(x64gen->regalloc, real_reg_id)) continue;
-        int* caller_ref = malloc(sizeof(int));
-        *caller_ref = caller;
-        vector_push(reg_saving, caller_ref);
-
-        char* caller_saved_name = QREG_NAMES[CALLER_SAVED_REG_IDS[caller]];
-        char* callee_saved_name = QREG_NAMES[CALLEE_SAVED_REG_IDS[callee]];
-        append_code(codes, "\tmovq\t%s, %s\n", caller_saved_name, callee_saved_name);
-        callee++;
-    }
-
-    for (int i = 0; i < NUM_ARG_REGS && i < snd_src->imm_value; i++) {
+    for (int i = 0; i < snd_src->imm_value && i < NUM_ARG_REGS; i++) {
         int arg_id = ARG_REG_IDS[i];
         char* arg_name = QREG_NAMES[arg_id];
+
+        int using_virtual_id = regalloc_usedby(x64gen->regalloc, arg_id);
+        if (using_virtual_id != -1) {
+            int evacuation_id = regalloc_realloc(x64gen->regalloc, using_virtual_id);
+            char* evacuation_name = QREG_NAMES[evacuation_id];
+            append_code(codes, "\tmovq\t%s, %s\n", arg_name, evacuation_name);
+        }
+
+        regalloc_force_lock(x64gen->regalloc, arg_id);
         append_code(codes, "\tpopq\t%s\n", arg_name);
     }
 
-    append_code(codes, "\tmovl\t$%d, %s\n", 0, LREG_NAMES[AX_REG_ID]);
-    append_code(codes, "\tcall\t*%s\n", QREG_NAMES[R11_REG_ID]);
-    
-    int dest_id = regalloc_allocate_caller_saved(x64gen->regalloc, dest->reg_id);
-    char* dest_name = LREG_NAMES[dest_id];
-    append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[AX_REG_ID], dest_name);
+    int src_id = regalloc_resolve(x64gen->regalloc, fst_src->reg_id);
+    char* src_name = QREG_NAMES[src_id];
+    regalloc_free(x64gen->regalloc, fst_src->reg_id);
 
-    if (snd_src->imm_value > NUM_ARG_REGS) {
-        int mem_param_offset = ((snd_src->imm_value - NUM_ARG_REGS + 1) / 2) * 16;
-        append_code(codes, "\taddq\t$%d, %s\n", mem_param_offset, QREG_NAMES[SP_REG_ID]);
+    for (int i = 0; i < snd_src->imm_value && i < NUM_ARG_REGS; i++) {
+        regalloc_unlock(x64gen->regalloc, ARG_REG_IDS[i]);
     }
-    
-    int num_saved_regs = vector_size(reg_saving);
-    for (int callee = 0; callee < num_saved_regs; callee++) {
-        int* caller_ref = vector_at(reg_saving, callee);
-        char* caller_saved_name = QREG_NAMES[CALLER_SAVED_REG_IDS[*caller_ref]];
-        char* callee_saved_name = QREG_NAMES[CALLEE_SAVED_REG_IDS[callee]];
+
+    Vector* evacuation_table = regalloc_evacuate(x64gen->regalloc);
+    int evaluation_count = vector_size(evacuation_table);
+    for (int i = 0; i < evaluation_count; i++) {
+        RegEvacuationEntry* entry = vector_at(evacuation_table, i);
+        char* caller_saved_name = QREG_NAMES[CALLER_SAVED_REG_IDS[entry->caller_saved_index]];
+        char* callee_saved_name = QREG_NAMES[CALLEE_SAVED_REG_IDS[entry->callee_saved_index]];
+        append_code(codes, "\tmovq\t%s, %s\n", caller_saved_name, callee_saved_name);
+    }
+
+    append_code(codes, "\tmovl\t$%d, %s\n", 0, LREG_NAMES[AX_REG_ID]);
+    append_code(codes, "\tcall\t*%s\n", src_name);
+
+    for (int i = 0; i < evaluation_count; i++) {
+        RegEvacuationEntry* entry = vector_at(evacuation_table, i);
+        char* caller_saved_name = QREG_NAMES[CALLER_SAVED_REG_IDS[entry->caller_saved_index]];
+        char* callee_saved_name = QREG_NAMES[CALLEE_SAVED_REG_IDS[entry->callee_saved_index]];
         append_code(codes, "\tmovq\t%s, %s\n", callee_saved_name, caller_saved_name);
     }
-    if (x64gen->callee_saved_count < num_saved_regs) x64gen->callee_saved_count = num_saved_regs;
-    delete_vector(reg_saving, free);
+    if (x64gen->evaluation_count < evaluation_count) x64gen->evaluation_count = evaluation_count;
+    regalloc_restore(x64gen->regalloc, evacuation_table);
+
+    int dest_id = regalloc_allocate(x64gen->regalloc, dest->reg_id);
+    char* dest_name = LREG_NAMES[dest_id];
+    append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[AX_REG_ID], dest_name);
 
     return codes;
 }
@@ -432,7 +431,9 @@ Vector* gen_enter_x64code(X64gen* x64gen) {
 
     append_code(codes, "\tpushq\t%s\n", QREG_NAMES[BP_REG_ID]);
     append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[SP_REG_ID], QREG_NAMES[BP_REG_ID]);
-    append_code(codes, "\tsubq\t$%d, %s\n", aligned_memory_size, QREG_NAMES[SP_REG_ID]);
+    if (aligned_memory_size > 0) {
+        append_code(codes, "\tsubq\t$%d, %s\n", aligned_memory_size, QREG_NAMES[SP_REG_ID]);
+    }
 
     return codes;
 }
@@ -445,9 +446,40 @@ Vector* gen_leave_x64code(X64gen* x64gen) {
     ImmcOpe* src = immc->inst->fst_src;
     int aligned_memory_size = ((src->imm_value + 15) / 16) * 16;
 
-    append_code(codes, "\taddq\t$%d, %s\n", aligned_memory_size, QREG_NAMES[SP_REG_ID]);
+    if (aligned_memory_size) {
+        append_code(codes, "\taddq\t$%d, %s\n", aligned_memory_size, QREG_NAMES[SP_REG_ID]);
+    }
     append_code(codes, "\tpopq\t%s\n", QREG_NAMES[BP_REG_ID]);
     append_code(codes, "\tret\n");
+
+    return codes;
+}
+
+Vector* gen_prep_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    ImmcOpe* fst_src = immc->inst->fst_src;
+
+    if (fst_src->imm_value > NUM_ARG_REGS && fst_src->imm_value % 2 == 1) {
+        append_code(codes, "\tsubq\t$%d, %s\n", 8, QREG_NAMES[SP_REG_ID]);
+    }
+
+    return codes;
+}
+
+Vector* gen_clean_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    ImmcOpe* fst_src = immc->inst->fst_src;
+
+    if (fst_src->imm_value > NUM_ARG_REGS) {
+        int mem_param_offset = ((fst_src->imm_value - NUM_ARG_REGS + 1) / 2) * 16;
+        append_code(codes, "\taddq\t$%d, %s\n", mem_param_offset, QREG_NAMES[SP_REG_ID]);
+    }
 
     return codes;
 }
