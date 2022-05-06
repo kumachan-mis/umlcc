@@ -39,5 +39,5 @@ int regalloc_unlock(RegAlloc* regalloc, int real_reg_id) {
 Vector* regalloc_evacuate(RegAlloc* regalloc) {
 }
 
-void regalloc_restore(RegAlloc* regalloc, Vector* evaluation_table) {
+void regalloc_restore(RegAlloc* regalloc, Vector* evacuation_table) {
 }

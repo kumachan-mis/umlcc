@@ -8,7 +8,7 @@ typedef struct _X64gen {
     Vector* _immcs;
     int index;
     RegAlloc* regalloc;
-    int callee_saved_count;
+    int evaluation_count;
 } X64gen;
 
 X64gen* new_x64gen(Vector* immcs);
