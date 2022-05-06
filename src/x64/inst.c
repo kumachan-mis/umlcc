@@ -199,12 +199,13 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
         return codes;
     }
 
+    int arg_id = ARG_REG_IDS[fst_src->imm_value];
     int src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
+    if (src_id == arg_id) return codes;
+
+    char* arg_name = LREG_NAMES[arg_id];
     char* src_name = LREG_NAMES[src_id];
     regalloc_free(x64gen->regalloc, snd_src->reg_id);
-
-    int arg_id = ARG_REG_IDS[fst_src->imm_value];
-    char* arg_name = LREG_NAMES[arg_id];
 
     int evaluated_id = regalloc_usedby(x64gen->regalloc, arg_id);
     if (evaluated_id != -1) {
@@ -394,11 +395,6 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     char* src_name = QREG_NAMES[src_id];
     regalloc_free(x64gen->regalloc, fst_src->reg_id);
 
-    int function_id = regalloc_lock(x64gen->regalloc);
-    char* function_name = QREG_NAMES[function_id];
-    regalloc_unlock(x64gen->regalloc, function_id);
-    append_code(codes, "\tmovq\t%s, %s\n", src_name, function_name);
-
     for (int i = 0; i < snd_src->imm_value && i < NUM_ARG_REGS; i++) {
         regalloc_unlock(x64gen->regalloc, ARG_REG_IDS[i]);
     }
@@ -413,7 +409,7 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     }
 
     append_code(codes, "\tmovl\t$%d, %s\n", 0, LREG_NAMES[AX_REG_ID]);
-    append_code(codes, "\tcall\t*%s\n", function_name);
+    append_code(codes, "\tcall\t*%s\n", src_name);
 
     for (int i = 0; i < evaluation_count; i++) {
         RegEvacuationEntry* entry = vector_at(evacuation_table, i);
