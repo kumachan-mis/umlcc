@@ -188,34 +188,13 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
-    ImmcOpe* fst_src = immc->inst->fst_src;
-    ImmcOpe* snd_src = immc->inst->snd_src;
+    ImmcOpe* src = immc->inst->snd_src;
 
-    if (fst_src->imm_value >= NUM_ARG_REGS) {
-        int src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
-        char* src_name = QREG_NAMES[src_id];
-        regalloc_free(x64gen->regalloc, snd_src->reg_id);
-        append_code(codes, "\tpushq\t%s\n", src_name);
-        return codes;
-    }
+    int src_id = regalloc_resolve(x64gen->regalloc, src->reg_id);
+    char* src_name = QREG_NAMES[src_id];
+    append_code(codes, "\tpushq\t%s\n", src_name);
 
-    int arg_id = ARG_REG_IDS[fst_src->imm_value];
-    int src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
-    if (src_id == arg_id) return codes;
-
-    char* arg_name = LREG_NAMES[arg_id];
-    char* src_name = LREG_NAMES[src_id];
-
-    int evaluated_id = regalloc_usedby(x64gen->regalloc, arg_id);
-    if (evaluated_id != -1) {
-        int evacuation_id = regalloc_realloc(x64gen->regalloc, evaluated_id);
-        char* evacuation_name = LREG_NAMES[evacuation_id];
-        append_code(codes, "\tmovl\t%s, %s\n", arg_name, evacuation_name);
-    }
-    append_code(codes, "\tmovl\t%s, %s\n", src_name, arg_name);
-    regalloc_force_lock(x64gen->regalloc, arg_id);
-    regalloc_free(x64gen->regalloc, snd_src->reg_id);
-
+    regalloc_free(x64gen->regalloc, src->reg_id);
     return codes;
 }
 
@@ -390,6 +369,21 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
+
+    for (int i = 0; i < snd_src->imm_value && i < NUM_ARG_REGS; i++) {
+        int arg_id = ARG_REG_IDS[i];
+        char* arg_name = QREG_NAMES[arg_id];
+
+        int using_virtual_id = regalloc_usedby(x64gen->regalloc, arg_id);
+        if (using_virtual_id != -1) {
+            int evacuation_id = regalloc_realloc(x64gen->regalloc, using_virtual_id);
+            char* evacuation_name = QREG_NAMES[evacuation_id];
+            append_code(codes, "\tmovq\t%s, %s\n", arg_name, evacuation_name);
+        }
+
+        regalloc_force_lock(x64gen->regalloc, arg_id);
+        append_code(codes, "\tpopq\t%s\n", arg_name);
+    }
 
     int src_id = regalloc_resolve(x64gen->regalloc, fst_src->reg_id);
     char* src_name = QREG_NAMES[src_id];
