@@ -401,10 +401,6 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     append_code(codes, "\tmovl\t$%d, %s\n", 0, LREG_NAMES[AX_REG_ID]);
     append_code(codes, "\tcall\t*%s\n", QREG_NAMES[R11_REG_ID]);
 
-    int dest_id = regalloc_allocate(x64gen->regalloc, dest->reg_id);
-    char* dest_name = LREG_NAMES[dest_id];
-    append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[AX_REG_ID], dest_name);
-
     if (snd_src->imm_value > NUM_ARG_REGS) {
         int mem_param_offset = ((snd_src->imm_value - NUM_ARG_REGS + 1) / 2) * 16;
         append_code(codes, "\taddq\t$%d, %s\n", mem_param_offset, QREG_NAMES[SP_REG_ID]);
@@ -418,6 +414,10 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     }
     if (x64gen->evaluation_count < evaluation_count) x64gen->evaluation_count = evaluation_count;
     regalloc_restore(x64gen->regalloc, evacuation_table);
+
+    int dest_id = regalloc_allocate(x64gen->regalloc, dest->reg_id);
+    char* dest_name = LREG_NAMES[dest_id];
+    append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[AX_REG_ID], dest_name);
 
     return codes;
 }
