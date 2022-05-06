@@ -76,11 +76,11 @@ int regalloc_lock(RegAlloc* regalloc) {
 }
 
 int regalloc_force_lock(RegAlloc* regalloc, int real_reg_id) {
-    return regalloc_force_allocate(regalloc, real_reg_id, 0);
+    return regalloc_force_allocate(regalloc, 0, real_reg_id);
 }
 
-int regalloc_inuse(RegAlloc* regalloc, int real_reg_id) {
-    return regalloc->_allocation[real_reg_id] != -1;
+int regalloc_usedby(RegAlloc* regalloc, int real_reg_id) {
+    return regalloc->_allocation[real_reg_id];
 }
 
 void regalloc_unlock(RegAlloc* regalloc, int real_reg_id) {
