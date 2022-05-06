@@ -23,6 +23,8 @@ Vector* gen_call_x64code(X64gen* x64gen);
 Vector* gen_enter_x64code(X64gen* x64gen);
 Vector* gen_leave_x64code(X64gen* x64gen);
 Vector* gen_free_x64code(X64gen* x64gen);
+Vector* gen_prep_x64code(X64gen* x64gen);
+Vector* gen_clean_x64code(X64gen* x64gen);
 
 Vector* gen_inst_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
@@ -59,6 +61,10 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
             return gen_leave_x64code(x64gen);
         case INST_FREE:
             return gen_free_x64code(x64gen);
+        case INST_PREP:
+            return gen_prep_x64code(x64gen);
+         case INST_CLEAN:
+            return gen_clean_x64code(x64gen);
         default:
             fprintf(stderr, "Error: unexpected imcc inst %d\n", immc->inst->type);
             exit(1);
@@ -182,21 +188,15 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
-    ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int num_args = dest->imm_value, arg_index = fst_src->imm_value;
-    if (num_args > NUM_ARG_REGS && num_args % 2 == 1 && arg_index == num_args - 1) {
-        append_code(codes, "\tsubq\t$%d, %s\n", 8, QREG_NAMES[SP_REG_ID]);
-    }
-
-    if (arg_index < NUM_ARG_REGS) {
+    if (fst_src->imm_value < NUM_ARG_REGS) {
         int src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
         char* src_name = LREG_NAMES[src_id];
         regalloc_free(x64gen->regalloc, snd_src->reg_id);
 
-        int arg_id = ARG_REG_IDS[arg_index];
+        int arg_id = ARG_REG_IDS[fst_src->imm_value];
         char* arg_name = LREG_NAMES[arg_id];
 
         append_code(codes, "\tmovl\t%s, %s\n", src_name, arg_name);
@@ -382,7 +382,6 @@ Vector* gen_call_x64code(X64gen* x64gen) {
 
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* fst_src = immc->inst->fst_src;
-    ImmcOpe* snd_src = immc->inst->snd_src;
 
     int src_id = regalloc_resolve(x64gen->regalloc, fst_src->reg_id);
     char* src_name = QREG_NAMES[src_id];
@@ -400,11 +399,6 @@ Vector* gen_call_x64code(X64gen* x64gen) {
 
     append_code(codes, "\tmovl\t$%d, %s\n", 0, LREG_NAMES[AX_REG_ID]);
     append_code(codes, "\tcall\t*%s\n", QREG_NAMES[R11_REG_ID]);
-
-    if (snd_src->imm_value > NUM_ARG_REGS) {
-        int mem_param_offset = ((snd_src->imm_value - NUM_ARG_REGS + 1) / 2) * 16;
-        append_code(codes, "\taddq\t$%d, %s\n", mem_param_offset, QREG_NAMES[SP_REG_ID]);
-    }
 
     for (int i = 0; i < evaluation_count; i++) {
         RegEvacuationEntry* entry = vector_at(evacuation_table, i);
@@ -448,6 +442,35 @@ Vector* gen_leave_x64code(X64gen* x64gen) {
     append_code(codes, "\taddq\t$%d, %s\n", aligned_memory_size, QREG_NAMES[SP_REG_ID]);
     append_code(codes, "\tpopq\t%s\n", QREG_NAMES[BP_REG_ID]);
     append_code(codes, "\tret\n");
+
+    return codes;
+}
+
+Vector* gen_prep_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    ImmcOpe* fst_src = immc->inst->fst_src;
+
+    if (fst_src->imm_value > NUM_ARG_REGS && fst_src->imm_value % 2 == 1) {
+        append_code(codes, "\tsubq\t$%d, %s\n", 8, QREG_NAMES[SP_REG_ID]);
+    }
+
+    return codes;
+}
+
+Vector* gen_clean_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector();
+    Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+    x64gen->index++;
+
+    ImmcOpe* fst_src = immc->inst->fst_src;
+
+    if (fst_src->imm_value > NUM_ARG_REGS) {
+        int mem_param_offset = ((fst_src->imm_value - NUM_ARG_REGS + 1) / 2) * 16;
+        append_code(codes, "\taddq\t$%d, %s\n", mem_param_offset, QREG_NAMES[SP_REG_ID]);
+    }
 
     return codes;
 }

@@ -22,8 +22,8 @@ typedef enum _ImmcInstType {
     // - load fst_src-th argument of function to dest in memory.
     // ldarg dest(mem), fst_src(imm)
     INST_STARG,
-    // - store snd_src to fst_src-th argument of function which takes dest arguments.
-    // starg dest(imm), fst_src(imm), snd_src(reg)
+    // - store snd_src to fst_src-th argument of function.
+    // starg            fst_src(imm), snd_src(reg)
     INST_STRET,
     // - store fst_src to return value of function.
     // stret           fst_src(reg)
@@ -61,8 +61,18 @@ typedef enum _ImmcInstType {
     // leave           fst_src(imm)
 
     // misc instructions
+    INST_PREP,
+    // - prepare for function call which takes fst_src-params.
+    //   immediate code DOES NOT define what to do in this instruction.
+    //   it gives chance to do "anything" before setting argments to object code.
+    // prep           fst_src(imm)
+    INST_CLEAN,
+    // - clean up for function call which takes fst_src-params.
+    //   immediate code DOES NOT define what to do in this instruction.
+    //   it gives chance to do "anything" after calling function to object code.
+    // clean           fst_src(imm)
     INST_FREE,
-    // - force to free snd_src
+    // - force to free fst_src register.
     // free           fst_src(reg)
 } ImmcInstType;
 
