@@ -7,6 +7,11 @@ typedef struct _RegAlloc {
     int* _allocation_table;
 } RegAlloc;
 
+typedef struct _RegEvacuationEntry {
+    int caller_saved_index;
+    int callee_saved_index;
+} RegEvacuationEntry;
+
 RegAlloc* new_regalloc();
 void delete_regalloc(RegAlloc* regalloc);
 
@@ -22,6 +27,6 @@ int regalloc_inuse(RegAlloc* regalloc, int real_reg_id);
 int regalloc_unlock(RegAlloc* regalloc, int real_reg_id);
 
 Vector* regalloc_evacuate(RegAlloc* regalloc);
-void regalloc_restore(RegAlloc* regalloc, Vector* evaluation_table);
+void regalloc_restore(RegAlloc* regalloc, Vector* evacuation_table);
 
 #endif
