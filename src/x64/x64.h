@@ -1,12 +1,13 @@
 #ifndef _UMLCC_X64_H_
 #define _UMLCC_X64_H_
 
+#include "./regalloc.h"
 #include "../vector/vector.h"
 
 typedef struct _X64gen {
     Vector* _immcs;
     int index;
-    int* regalloc;
+    RegAlloc* regalloc;
     int callee_saved_count;
 } X64gen;
 
