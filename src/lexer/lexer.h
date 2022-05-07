@@ -3,11 +3,13 @@
 
 #include "../token/token.h"
 #include "../vector/vector.h"
+#include "../map/map.h"
 
 #include <stdio.h>
 
 typedef struct _Lexer {
     FILE* _file_ptr;
+    Map* _keyword_map;
 } Lexer;
 
 Lexer* new_lexer(FILE* file_ptr);

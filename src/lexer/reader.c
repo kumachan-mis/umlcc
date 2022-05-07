@@ -25,15 +25,12 @@ Token* read_keyword_or_identifier(Lexer* lexer) {
     }
 
     char* token_str = dystring_finish(dystring);
+    TokenType* keyword_ref = map_get(lexer->_keyword_map, token_str);
 
-    if (strcmp(token_str, "int") == 0) {
+    if (keyword_ref != NULL) {
         free(token_str);
-        return new_token(TOKEN_KEYWORD_INT);
-    } else if (strcmp(token_str, "return") == 0) {
-        free(token_str);
-        return new_token(TOKEN_KEYWORD_RETURN);
+        return new_token(*keyword_ref);
     }
-
     return new_identifier_token(token_str);
 }
 
