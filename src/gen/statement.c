@@ -6,12 +6,13 @@
 #include <stdlib.h>
 
 Vector* gen_compound_stmt_code(Codegen* codegen) {
-    return gen_children_code(codegen);
+    Vector* codes = new_vector();
+    append_children_code(codegen, codes);
+    return codes;
 }
 
 Vector* gen_return_stmt_code(Codegen* codegen) {
     Vector* codes = new_vector();
-    Vector* sub_codes = NULL;
     Srt* srt = codegen->_srt;
 
     append_child_code(codegen, codes, 0);
@@ -28,7 +29,6 @@ Vector* gen_return_stmt_code(Codegen* codegen) {
 
 Vector* gen_expression_stmt_code(Codegen* codegen) {
     Vector* codes = new_vector();
-    Vector* sub_codes = NULL;
     Srt* srt = codegen->_srt;
 
     append_child_code(codegen, codes, 0);

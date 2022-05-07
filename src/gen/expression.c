@@ -165,8 +165,8 @@ Vector* gen_call_expr_code(Codegen* codegen) {
 Vector* gen_unary_expr_code(Codegen* codegen) {
     Vector* codes = NULL;
     Srt* srt = codegen->_srt;
-    Vector* gen_address_expr_code(Codegen* codegen);
-    Vector* gen_not_expr_code(Codegen* codegen);
+    Vector* gen_address_expr_code(Codegen * codegen);
+    Vector* gen_not_expr_code(Codegen * codegen);
 
     switch (srt->type) {
         case SRT_ADDR_EXPR:
@@ -180,9 +180,8 @@ Vector* gen_unary_expr_code(Codegen* codegen) {
     return codes;
 }
 
-Vector* gen_not_expr_code(Codegen * codegen) {
+Vector* gen_not_expr_code(Codegen* codegen) {
     Vector* codes = new_vector();
-    Vector* sub_codes = NULL;
     Srt* srt = codegen->_srt;
 
     append_child_code(codegen, codes, 0);

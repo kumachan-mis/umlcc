@@ -4,7 +4,7 @@
 #include "../vector/vector.h"
 #include "./gen.h"
 
-Vector* append_children_code(Codegen* codegen, Vector* codes);
-Vector* append_child_code(Codegen* codegen, Vector* codes, int index);
+void append_children_code(Codegen* codegen, Vector* codes);
+void append_child_code(Codegen* codegen, Vector* codes, int index);
 
 #endif
