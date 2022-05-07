@@ -18,7 +18,6 @@ int main() {
     put_int(!!1);
     put_int(!0);
     put_int(!!0);
-    put_blank_line();
 
     return 0;
 }

@@ -28,17 +28,6 @@ typedef enum _ImmcInstType {
     // - store fst_src to return value of function.
     // stret           fst_src(reg)
 
-    // logical instructions
-    INST_LOR,
-    // - logical-OR of fst_src and snd_src.
-    // lor dest(reg), fst_src(reg), snd_src(reg)
-    INST_LAND,
-    // - logical-AND of fst_src and snd_src.
-    // lor dest(reg), fst_src(reg), snd_src(reg)
-    INST_LNOT,
-    // - logical-NOT of fst_src and snd_src.
-    // lor dest(reg), fst_src(reg)
-
     // arithmetic instructions
     INST_ADD,
     // - add fst_src and snd_src.
@@ -56,10 +45,29 @@ typedef enum _ImmcInstType {
     // - modulo fst_src by snd_src.
     // mod dest(reg), fst_src(reg), snd_src(reg)
 
+    // bit/byte instructions
+    INST_SETEQ,
+    // - set dest to 1 if fst_src equals to snd_src, 0 otherwise.
+    // seteq dest(reg), fst_src(reg), snd_src(imm)
+    // seteq dest(reg), fst_src(reg), snd_src(reg)
+
+    INST_SETNEQ,
+    // - set dest to 1 if fst_src does not equal to snd_src, 0 otherwise.
+    // setneq dest(reg), fst_src(reg), snd_src(imm)
+    // setneq dest(reg), fst_src(reg), snd_src(reg)
+
     // control transfar instructions
     INST_JMP,
-    // - jump to fst_src label
-    // jmp           fst_src(label)
+    // - jump to dest label.
+    // jmp dest(label)
+    INST_JEQ,
+    // - jump to dest label if fst_src equals to snd_src.
+    // jeq dest(label), fst_src(reg), snd_src(imm)
+    // jeq dest(label), fst_src(reg), snd_src(reg)
+    INST_JNEQ,
+    // - jump to dest label if fst_src does not equal to snd_src.
+    // jneq dest(label), fst_src(reg), snd_src(imm)
+    // jneq dest(label), fst_src(reg), snd_src(reg)
     INST_CALL,
     // - call function at address of fst_src, which takes snd_src-params.
     //   (return value is stored to dest)

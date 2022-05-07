@@ -21,7 +21,7 @@ Vector* gen_return_stmt_code(Codegen* codegen) {
     vector_push(codes, new_inst_immc(INST_STRET, NULL, ret_value, NULL));
 
     ImmcOpe* ret_label = new_label_immcope(string_copy(codegen->return_label));
-    vector_push(codes, new_inst_immc(INST_JMP, NULL, ret_label, NULL));
+    vector_push(codes, new_inst_immc(INST_JMP, ret_label, NULL, NULL));
 
     codegen->_srt = srt;
     return codes;

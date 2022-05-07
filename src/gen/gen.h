@@ -10,6 +10,7 @@ typedef struct _Codegen {
     SymbolTable* _global_table;
     SymbolTable* _local_table;
     int virtual_reg_id;
+    int label_id;
     char* return_label;
 } Codegen;
 
