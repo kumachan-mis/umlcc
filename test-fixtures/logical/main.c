@@ -18,6 +18,30 @@ int main() {
     put_int(!!1);
     put_int(!0);
     put_int(!!0);
+    put_blank_line();
+
+    put_int(7) && put_int(4);
+    put_blank_line();
+
+    put_int(0) && put_int(4);
+    put_blank_line();
+
+    put_int(7) && put_int(0);
+    put_blank_line();
+
+    put_int(0) && put_int(0);
+    put_blank_line();
+
+    put_int(7) || put_int(4);
+    put_blank_line();
+
+    put_int(0) || put_int(4);
+    put_blank_line();
+
+    put_int(7) || put_int(0);
+    put_blank_line();
+
+    put_int(0) || put_int(0);
 
     return 0;
 }
