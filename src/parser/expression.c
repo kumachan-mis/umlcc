@@ -17,7 +17,7 @@ Ast* parse_assignment_expr(Parser* parser) {
 
     while (!terminated) {
         int index = parser->_index;
-        Ast* ast = parse_postfix_expr(parser);
+        Ast* ast = parse_unary_expr(parser);
 
         Token* token = vector_at(parser->_tokens, parser->_index);
         switch (token->type) {
@@ -28,7 +28,7 @@ Ast* parse_assignment_expr(Parser* parser) {
             default:
                 delete_ast(ast);
                 parser->_index = index;
-                vector_push(stack, parse_additive_expr(parser));
+                vector_push(stack, parse_logical_or_expr(parser));
                 terminated = 1;
                 break;
         }
@@ -44,6 +44,36 @@ Ast* parse_assignment_expr(Parser* parser) {
     delete_vector(stack, (void (*)(void* item))delete_ast);
 
     return ast;
+}
+
+Ast* parse_logical_or_expr(Parser* parser) {
+    Ast* ast = parse_logical_and_expr(parser);
+    while (1) {
+        Token* token = vector_at(parser->_tokens, parser->_index);
+        switch (token->type) {
+            case TOKEN_VBAR_VBAR:
+                parser->_index++;
+                ast = new_ast(AST_LOR_EXPR, 2, ast, parse_logical_and_expr(parser));
+                break;
+            default:
+                return ast;
+        }
+    }
+}
+
+Ast* parse_logical_and_expr(Parser* parser) {
+    Ast* ast = parse_additive_expr(parser);
+    while (1) {
+        Token* token = vector_at(parser->_tokens, parser->_index);
+        switch (token->type) {
+            case TOKEN_AND_AND:
+                parser->_index++;
+                ast = new_ast(AST_LAND_EXPR, 2, ast, parse_additive_expr(parser));
+                break;
+            default:
+                return ast;
+        }
+    }
 }
 
 Ast* parse_additive_expr(Parser* parser) {
@@ -67,27 +97,56 @@ Ast* parse_additive_expr(Parser* parser) {
 }
 
 Ast* parse_multiplicative_expr(Parser* parser) {
-    Ast* ast = parse_postfix_expr(parser);
+    Ast* ast = parse_unary_expr(parser);
 
     while (1) {
         Token* token = vector_at(parser->_tokens, parser->_index);
         switch (token->type) {
             case TOKEN_ASTERISK:
                 parser->_index++;
-                ast = new_ast(AST_MUL_EXPR, 2, ast, parse_postfix_expr(parser));
+                ast = new_ast(AST_MUL_EXPR, 2, ast, parse_unary_expr(parser));
                 break;
             case TOKEN_SLASH:
                 parser->_index++;
-                ast = new_ast(AST_DIV_EXPR, 2, ast, parse_postfix_expr(parser));
+                ast = new_ast(AST_DIV_EXPR, 2, ast, parse_unary_expr(parser));
                 break;
             case TOKEN_PERCENT:
                 parser->_index++;
-                ast = new_ast(AST_MOD_EXPR, 2, ast, parse_postfix_expr(parser));
+                ast = new_ast(AST_MOD_EXPR, 2, ast, parse_unary_expr(parser));
                 break;
             default:
                 return ast;
         }
     }
+}
+
+Ast* parse_unary_expr(Parser* parser) {
+    Vector* stack = new_vector();
+    int terminated = 0;
+
+    while (!terminated) {
+        Token* token = vector_at(parser->_tokens, parser->_index);
+        switch (token->type) {
+            case TOKEN_EXCLAM:
+                parser->_index++;
+                vector_push(stack, new_ast(AST_LNOT_EXPR, 0));
+                break;
+            default:
+                terminated = 1;
+                break;
+        }
+    }
+
+    Ast* ast = parse_postfix_expr(parser);
+    while (vector_size(stack) > 0) {
+        Ast* next_ast = vector_pop(stack);
+        vector_push(next_ast->children, ast);
+        ast = next_ast;
+    }
+
+    delete_vector(stack, (void (*)(void* item))delete_ast);
+
+    return ast;
 }
 
 Ast* parse_postfix_expr(Parser* parser) {

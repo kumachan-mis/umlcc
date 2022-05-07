@@ -1,106 +1,101 @@
 #include "./reader.h"
-#include "./util.h"
+#include "./dystring.h"
 
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
-int keyword_or_identifier_startswith(char c);
-int keyword_or_identifier_consistsof(char c);
-int integer_constant_startswith(char c);
-int integer_constant_consistsof(char c);
-
 Token* read_keyword_or_identifier(Lexer* lexer) {
-    char* keyword_or_identifier_str =
-        read_token_str(lexer, keyword_or_identifier_startswith, keyword_or_identifier_consistsof);
-    if (keyword_or_identifier_str == NULL) return NULL;
+    DyString* dystring = new_dystring();
 
-    if (strcmp(keyword_or_identifier_str, "int") == 0) {
-        free(keyword_or_identifier_str);
-        return new_token(TOKEN_KEYWORD_INT);
-    } else if (strcmp(keyword_or_identifier_str, "return") == 0) {
-        free(keyword_or_identifier_str);
-        return new_token(TOKEN_KEYWORD_RETURN);
+    char c = fgetc(lexer->_file_ptr);
+    if (!isalpha(c) && c != '_') {
+        ungetc(c, lexer->_file_ptr);
+        return NULL;
     }
 
-    return new_identifier_token(keyword_or_identifier_str);
-}
+    dystring_push(dystring, c);
+    while (1) {
+        c = fgetc(lexer->_file_ptr);
+        if (!isalpha(c) && !isdigit(c) && c != '_') {
+            ungetc(c, lexer->_file_ptr);
+            break;
+        }
+        dystring_push(dystring, c);
+    }
 
-int keyword_or_identifier_startswith(char c) {
-    return isalpha(c) || c == '_';
-}
+    char* token_str = dystring_finish(dystring);
+    TokenType* keyword_ref = map_get(lexer->_keyword_map, token_str);
 
-int keyword_or_identifier_consistsof(char c) {
-    return isdigit(c) || isalpha(c) || c == '_';
+    if (keyword_ref != NULL) {
+        free(token_str);
+        return new_token(*keyword_ref);
+    }
+    return new_identifier_token(token_str);
 }
 
 Token* read_integer_constant(Lexer* lexer) {
-    char* integer_str =
-        read_token_str(lexer, integer_constant_startswith, integer_constant_consistsof);
-    if (integer_str == NULL) return NULL;
+    DyString* dystring = new_dystring();
 
-    Token* token = new_integer_token(atoi(integer_str));
-    free(integer_str);
+    char c = fgetc(lexer->_file_ptr);
+    if (!isdigit(c)) {
+        ungetc(c, lexer->_file_ptr);
+        return NULL;
+    }
+
+    dystring_push(dystring, c);
+    while (1) {
+        c = fgetc(lexer->_file_ptr);
+        if (!isdigit(c)) {
+            ungetc(c, lexer->_file_ptr);
+            break;
+        }
+        dystring_push(dystring, c);
+    }
+
+    char* token_str = dystring_finish(dystring);
+    Token* token = new_integer_token(atoi(token_str));
+    free(token_str);
+
     return token;
-}
-
-int integer_constant_startswith(char c) {
-    return isdigit(c);
-}
-
-int integer_constant_consistsof(char c) {
-    return isdigit(c);
 }
 
 Token* read_punctuator(Lexer* lexer) {
-    Token* token = NULL;
+    int MAX_LENGTH = 3;
+
+    char* token_str = malloc((MAX_LENGTH + 1) * sizeof(int));
+    int length = 0;
+    memset(token_str, 0, MAX_LENGTH + 1);
 
     int c = fgetc(lexer->_file_ptr);
-    switch (c) {
-        case '{':
-            token = new_token(TOKEN_LBRACE);
-            break;
-        case '}':
-            token = new_token(TOKEN_RBRACE);
-            break;
-        case '(':
-            token = new_token(TOKEN_LPALEN);
-            break;
-        case ')':
-            token = new_token(TOKEN_RPALEN);
-            break;
-        case '+':
-            token = new_token(TOKEN_PLUS);
-            break;
-        case '-':
-            token = new_token(TOKEN_MINUS);
-            break;
-        case '*':
-            token = new_token(TOKEN_ASTERISK);
-            break;
-        case '/':
-            token = new_token(TOKEN_SLASH);
-            break;
-        case '%':
-            token = new_token(TOKEN_PERCENT);
-            break;
-        case ';':
-            token = new_token(TOKEN_SEMICOLON);
-            break;
-        case '=':
-            token = new_token(TOKEN_EQUAL);
-            break;
-        case ',':
-            token = new_token(TOKEN_COMMA);
-            break;
-        case EOF:
-            token = new_token(TOKEN_EOF);
-            break;
-        default:
+    if (c == EOF) {
+        free(token_str);
+        return new_token(TOKEN_EOF);
+    }
+    token_str[length] = c;
+    length++;
+
+    for (int i = 0; i < MAX_LENGTH - 1; i++) {
+        c = fgetc(lexer->_file_ptr);
+        if (c == EOF) {
             ungetc(c, lexer->_file_ptr);
-            token = NULL;
             break;
+        }
+        token_str[length] = c;
+        length++;
     }
 
-    return token;
+    while (length > 0) {
+        TokenType* punctuator_ref = map_get(lexer->_punctuator_map, token_str);
+        if (punctuator_ref != NULL) {
+            free(token_str);
+            return new_token(*punctuator_ref);
+        }
+        length--;
+        ungetc(token_str[length], lexer->_file_ptr);
+        token_str[length] = '\0';
+    }
+
+    free(token_str);
+    return NULL;
 }

@@ -3,33 +3,47 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-char* read_token_str(Lexer* lexer, int startswith(char c), int consistsof(char c)) {
-    int initial_char = fgetc(lexer->_file_ptr);
-    ungetc(initial_char, lexer->_file_ptr);
+void token_map_add(Map* token_map, char* token_str, TokenType type);
 
-    if (!startswith(initial_char)) return NULL;
+Map* new_keyword_map() {
+    Map* keyword_map = new_map();
 
-    int capacity = 1, length = 0;
-    char* token_str = malloc(sizeof(char) * capacity);
+    token_map_add(keyword_map, "int", TOKEN_KEYWORD_INT);
+    token_map_add(keyword_map, "return", TOKEN_KEYWORD_RETURN);
 
-    while (1) {
-        int c = fgetc(lexer->_file_ptr);
-        if (!consistsof(c)) {
-            token_str[length] = '\0';
-            ungetc(c, lexer->_file_ptr);
-            break;
-        }
+    return keyword_map;
+}
 
-        token_str[length] = c;
-        length++;
-        if (length >= capacity) {
-            token_str = realloc(token_str, 2 * capacity * sizeof(char));
-            capacity *= 2;
-        }
-    }
+Map* new_punctuator_map() {
+    Map* punctuator_map = new_map();
 
-    token_str = realloc(token_str, (length + 1) * sizeof(char));
-    return token_str;
+    token_map_add(punctuator_map, "{", TOKEN_LBRACE);
+    token_map_add(punctuator_map, "}", TOKEN_RBRACE);
+    token_map_add(punctuator_map, "(", TOKEN_LPALEN);
+    token_map_add(punctuator_map, ")", TOKEN_RPALEN);
+    token_map_add(punctuator_map, "*", TOKEN_ASTERISK);
+    token_map_add(punctuator_map, "+", TOKEN_PLUS);
+    token_map_add(punctuator_map, "-", TOKEN_MINUS);
+    token_map_add(punctuator_map, "!", TOKEN_EXCLAM);
+    token_map_add(punctuator_map, "/", TOKEN_SLASH);
+    token_map_add(punctuator_map, "%", TOKEN_PERCENT);
+    token_map_add(punctuator_map, "&&", TOKEN_AND_AND);
+    token_map_add(punctuator_map, "||", TOKEN_VBAR_VBAR);
+    token_map_add(punctuator_map, ";", TOKEN_SEMICOLON);
+    token_map_add(punctuator_map, "=", TOKEN_EQUAL);
+    token_map_add(punctuator_map, ",", TOKEN_COMMA);
+
+    return punctuator_map;
+}
+
+void delete_token_map(Map* token_map) {
+    delete_map(token_map, free);
+}
+
+void token_map_add(Map* token_map, char* token_str, TokenType type) {
+    TokenType* token_ref = malloc(sizeof(TokenType));
+    *token_ref = type;
+    map_set(token_map, token_str, token_ref, free);
 }
 
 void skip_white_spaces(Lexer* lexer) {

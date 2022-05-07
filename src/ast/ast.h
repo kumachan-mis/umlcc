@@ -31,6 +31,10 @@ typedef enum _AstType {
     // expression
     //   assignment-expression
     AST_ASSIGN_EXPR,
+    //   logical-OR-expression
+    AST_LOR_EXPR,
+    //   logical-AND-expression
+    AST_LAND_EXPR,
     //   additive-expression
     AST_ADD_EXPR,
     AST_SUB_EXPR,
@@ -38,6 +42,8 @@ typedef enum _AstType {
     AST_MUL_EXPR,
     AST_DIV_EXPR,
     AST_MOD_EXPR,
+    //   unary-expression
+    AST_LNOT_EXPR,
     //   postfix-expression
     AST_CALL_EXPR,
     AST_ARG_LIST,

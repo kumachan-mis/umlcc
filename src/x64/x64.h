@@ -1,8 +1,8 @@
 #ifndef _UMLCC_X64_H_
 #define _UMLCC_X64_H_
 
-#include "./regalloc.h"
 #include "../vector/vector.h"
+#include "./regalloc.h"
 
 typedef struct _X64gen {
     Vector* _immcs;

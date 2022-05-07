@@ -8,20 +8,14 @@
 #include <stdlib.h>
 
 Vector* gen_decl_list_code(Codegen* codegen) {
-    return gen_children_code(codegen);
+    Vector* codes = new_vector();
+    append_children_code(codegen, codes);
+    return codes;
 }
 
 Vector* gen_init_decl_code(Codegen* codegen) {
     Vector* codes = new_vector();
-    Vector* sub_codes = NULL;
-    Srt* srt = codegen->_srt;
-
-    codegen->_srt = vector_at(srt->children, 0);
-    sub_codes = codegen_generate_code(codegen);
-    vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, (void (*)(void* item))delete_immc);
-
-    codegen->_srt = srt;
+    append_child_code(codegen, codes, 0);
     return codes;
 }
 

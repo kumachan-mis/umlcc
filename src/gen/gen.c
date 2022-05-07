@@ -13,6 +13,7 @@ Codegen* new_codegen(Srt* srt) {
     codegen->_global_table = new_symboltable();
     codegen->_local_table = NULL;
     codegen->virtual_reg_id = 0;
+    codegen->label_id = 0;
     codegen->return_label = NULL;
     return codegen;
 }
@@ -59,6 +60,12 @@ Vector* codegen_generate_code(Codegen* codegen) {
         case SRT_ASSIGN_EXPR:
             codes = gen_assignment_expr_code(codegen);
             break;
+        case SRT_LOR_EXPR:
+            codes = gen_logical_or_expr_code(codegen);
+            break;
+        case SRT_LAND_EXPR:
+            codes = gen_logical_and_expr_code(codegen);
+            break;
         case SRT_ADD_EXPR:
         case SRT_SUB_EXPR:
             codes = gen_additive_expr_code(codegen);
@@ -69,6 +76,7 @@ Vector* codegen_generate_code(Codegen* codegen) {
             codes = gen_multiplicative_expr_code(codegen);
             break;
         case SRT_ADDR_EXPR:
+        case SRT_LNOT_EXPR:
             codes = gen_unary_expr_code(codegen);
             break;
         case SRT_CALL_EXPR:

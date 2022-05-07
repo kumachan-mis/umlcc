@@ -14,7 +14,7 @@ Srt* resolve_stmt(Resolver* resolver) {
             srt = resolve_compound_stmt(resolver);
             resolver->_local_table = symboltable_exit_scope(resolver->_local_table);
             break;
-         case AST_RET_STMT:
+        case AST_RET_STMT:
             srt = resolve_return_stmt(resolver);
             break;
         case AST_EXPR_STMT:
