@@ -23,12 +23,14 @@ Vector* lexer_read_tokens(Lexer* lexer) {
         if (token == NULL) token = read_keyword_or_identifier(lexer);
         if (token == NULL) token = read_integer_constant(lexer);
         if (token == NULL) token = read_punctuator(lexer);
-
+    
         if (token == NULL) {
             int c = fgetc(lexer->_file_ptr);
             fprintf(stderr, "Error: unexpected character %c\n", c);
             exit(1);
-        } else if (token->type == TOKEN_EOF) {
+        }
+        
+        if (token->type == TOKEN_EOF) {
             vector_push(tokens, token);
             break;
         }
