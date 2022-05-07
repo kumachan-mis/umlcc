@@ -3,7 +3,9 @@
 
 #include "../lexer/lexer.h"
 
-char* read_token_str(Lexer* lexer, int startswith(char c), int consistsof(char c));
+Map* new_keyword_map();
+Map* new_punctuator_map();
+void delete_token_map(Map* token_map);
 void skip_white_spaces(Lexer* lexer);
 
 #endif

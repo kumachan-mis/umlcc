@@ -4,17 +4,19 @@
 
 #include <stdlib.h>
 
-Map* create_keyword_map();
+void token_map_add(Map* token_map, char* token_str, TokenType type);
 
 Lexer* new_lexer(FILE* file_ptr) {
     Lexer* lexer = malloc(sizeof(Lexer));
     lexer->_file_ptr = file_ptr;
-    lexer->_keyword_map = create_keyword_map();
+    lexer->_keyword_map = new_keyword_map();
+    lexer->_punctuator_map = new_punctuator_map();
     return lexer;
 }
 
 void delete_lexer(Lexer* lexer) {
-    delete_map(lexer->_keyword_map, free);
+    delete_token_map(lexer->_keyword_map);
+    delete_token_map(lexer->_punctuator_map);
     free(lexer);
 }
 
@@ -41,19 +43,4 @@ Vector* lexer_read_tokens(Lexer* lexer) {
     }
 
     return tokens;
-}
-
-Map* create_keyword_map() {
-    Map* keyword_map = new_map();
-    TokenType* keyword_ref = NULL;
-
-    keyword_ref = malloc(sizeof(TokenType));
-    *keyword_ref = TOKEN_KEYWORD_INT;
-    map_set(keyword_map, "int", keyword_ref, free);
-
-    keyword_ref = malloc(sizeof(TokenType));
-    *keyword_ref = TOKEN_KEYWORD_RETURN;
-    map_set(keyword_map, "return", keyword_ref, free);
-
-    return keyword_map;
 }
