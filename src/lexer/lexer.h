@@ -1,9 +1,9 @@
 #ifndef _UMLCC_LEXER_H_
 #define _UMLCC_LEXER_H_
 
+#include "../map/map.h"
 #include "../token/token.h"
 #include "../vector/vector.h"
-#include "../map/map.h"
 
 #include <stdio.h>
 

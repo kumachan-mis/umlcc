@@ -6,8 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-Vector* gen_children_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+Vector* append_children_code(Codegen* codegen, Vector* codes) {
     Vector* sub_codes = NULL;
     Srt* srt = codegen->_srt;
 
@@ -20,5 +19,16 @@ Vector* gen_children_code(Codegen* codegen) {
     }
 
     codegen->_srt = srt;
-    return codes;
+}
+
+Vector* append_child_code(Codegen* codegen, Vector* codes, int index) {
+    Vector* sub_codes = NULL;
+    Srt* srt = codegen->_srt;
+
+    codegen->_srt = vector_at(srt->children, index);
+    sub_codes = codegen_generate_code(codegen);
+    vector_extend(codes, sub_codes);
+    delete_vector(sub_codes, (void (*)(void* item))delete_immc);
+
+    codegen->_srt = srt;
 }

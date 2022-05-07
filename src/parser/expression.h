@@ -5,8 +5,11 @@
 
 Ast* parse_expr(Parser* parser);
 Ast* parse_assignment_expr(Parser* parser);
+Ast* parse_logical_or_expr(Parser* parser);
+Ast* parse_logical_and_expr(Parser* parser);
 Ast* parse_additive_expr(Parser* parser);
 Ast* parse_multiplicative_expr(Parser* parser);
+Ast* parse_unary_expr(Parser* parser);
 Ast* parse_postfix_expr(Parser* parser);
 Ast* parse_argument_expr_list(Parser* parser);
 Ast* parse_primary_expr(Parser* parser);

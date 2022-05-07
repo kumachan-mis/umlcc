@@ -35,7 +35,7 @@ Token* read_keyword_or_identifier(Lexer* lexer) {
 }
 
 Token* read_integer_constant(Lexer* lexer) {
-     DyString* dystring = new_dystring();
+    DyString* dystring = new_dystring();
 
     char c = fgetc(lexer->_file_ptr);
     if (!isdigit(c)) {
@@ -52,7 +52,7 @@ Token* read_integer_constant(Lexer* lexer) {
         }
         dystring_push(dystring, c);
     }
-    
+
     char* token_str = dystring_finish(dystring);
     Token* token = new_integer_token(atoi(token_str));
     free(token_str);

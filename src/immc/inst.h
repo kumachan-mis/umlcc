@@ -28,6 +28,17 @@ typedef enum _ImmcInstType {
     // - store fst_src to return value of function.
     // stret           fst_src(reg)
 
+    // logical instructions
+    INST_LOR,
+    // - logical-OR of fst_src and snd_src.
+    // lor dest(reg), fst_src(reg), snd_src(reg)
+    INST_LAND,
+    // - logical-AND of fst_src and snd_src.
+    // lor dest(reg), fst_src(reg), snd_src(reg)
+    INST_LNOT,
+    // - logical-NOT of fst_src and snd_src.
+    // lor dest(reg), fst_src(reg)
+
     // arithmetic instructions
     INST_ADD,
     // - add fst_src and snd_src.

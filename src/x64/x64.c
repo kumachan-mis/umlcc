@@ -1,10 +1,10 @@
 #include "./x64.h"
 #include "../immc/immc.h"
+#include "./consts.h"
 #include "./inst.h"
 #include "./label.h"
-#include "./consts.h"
-#include "./util.h"
 #include "./regalloc.h"
+#include "./util.h"
 
 #include <stdio.h>
 #include <stdlib.h>

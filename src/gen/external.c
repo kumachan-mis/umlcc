@@ -7,7 +7,9 @@
 #include <string.h>
 
 Vector* gen_translation_unit_code(Codegen* codegen) {
-    return gen_children_code(codegen);
+    Vector* codes = new_vector();
+    append_children_code(codegen, codes);
+    return codes;
 }
 
 Vector* gen_function_definition_code(Codegen* codegen) {
@@ -42,7 +44,8 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     }
 
     codegen->_srt = vector_at(srt->children, 1);
-    Vector* body_codes = gen_children_code(codegen);
+    Vector* body_codes = new_vector();
+    append_children_code(codegen, body_codes);
 
     char* label_name = string_copy(declarator_srt->ident_name);
     vector_push(codes, new_label_immc(LABEL_FUNCTION, VISIBILITY_GLOBAL, label_name));
