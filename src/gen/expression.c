@@ -172,6 +172,9 @@ Vector* gen_unary_expr_code(Codegen* codegen) {
         case SRT_ADDR_EXPR:
             codes = gen_address_expr_code(codegen);
             break;
+        case SRT_LNOT_EXPR:
+            codes = gen_not_expr_code(codegen);
+            break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);
