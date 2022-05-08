@@ -1,6 +1,8 @@
 #ifndef _UMLCC_IMMC_INST_H_
 #define _UMLCC_IMMC_IIST_H_
 
+#include "./ope.h"
+
 typedef enum _ImmcInstType {
     // data transfar instructions
     INST_LOAD,
@@ -92,22 +94,6 @@ typedef enum _ImmcInstType {
     // clean           fst_src(imm)
 } ImmcInstType;
 
-typedef enum _ImmcOpeType {
-    OPERAND_IMM,
-    OPERAND_REG,
-    OPERAND_PTR,
-    OPERAND_MEM,
-    OPERAND_LABEL
-} ImmcOpeType;
-
-typedef struct _ImmcOpe {
-    ImmcOpeType type;
-    int imm_value;
-    int reg_id;
-    int mem_offset;
-    char* label_name;
-} ImmcOpe;
-
 typedef struct _ImmcInst {
     ImmcInstType type;
     ImmcOpe* dest;
@@ -118,14 +104,5 @@ typedef struct _ImmcInst {
 ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcOpe* snd_src);
 char* immcinst_tostring(ImmcInst* immcinst);
 void delete_immcinst(ImmcInst* immcinst);
-
-ImmcOpe* new_imm_immcope(int imm_value);
-ImmcOpe* new_ptr_immcope(int reg_id);
-ImmcOpe* new_reg_immcope(int reg_id);
-ImmcOpe* new_mem_immcope(int mem_offset);
-ImmcOpe* new_label_immcope(char* label_name);
-ImmcOpe* immcope_copy(ImmcOpe* immcope);
-char* immcope_tostring(ImmcOpe* immcope);
-void delete_immope(ImmcOpe* immcope);
 
 #endif
