@@ -22,8 +22,9 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     symboltable_define(codegen->_global_table, table_ident_name, table_ctype);
 
     codegen->_local_table = new_symboltable();
-    codegen->label_id++;
-    codegen->return_label_id = codegen->label_id;
+    codegen->_virtual_reg_id = 0;
+    codegen->_label_id++;
+    codegen->_return_label_id = codegen->_label_id;
 
     Vector* param_codes = new_vector();
     Vector* params = declarator_srt->ctype->function->params;
@@ -54,12 +55,12 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     vector_extend(codes, body_codes);
     delete_vector(body_codes, free);
 
-    char* return_label = string_copy(codegen->return_label_id);
+    char* return_label = string_copy(codegen->_return_label_id);
     vector_push(codes, new_label_immc(LABEL_NORMAL, LABVIS_DEFAULT, return_label));
     vector_push(codes, new_inst_immc(INST_LEAVE, NULL, immcope_copy(memory_size), NULL));
 
     delete_symboltable(codegen->_local_table);
-    codegen->return_label_id = -1;
+    codegen->_return_label_id = -1;
     codegen->_local_table = NULL;
     codegen->_srt = srt;
 

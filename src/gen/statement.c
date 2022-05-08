@@ -17,10 +17,10 @@ Vector* gen_return_stmt_code(Codegen* codegen) {
 
     append_child_code(codegen, codes, 0);
 
-    ImmcOpe* ret_value = new_reg_immcope(codegen->virtual_reg_id);
+    ImmcOpe* ret_value = new_reg_immcope(codegen->_virtual_reg_id);
     vector_push(codes, new_inst_immc(INST_STRET, NULL, ret_value, NULL));
 
-    ImmcOpe* ret_label = new_label_immcope(create_label_string(codegen->return_label_id));
+    ImmcOpe* ret_label = new_label_immcope(create_label_string(codegen->_return_label_id));
     vector_push(codes, new_inst_immc(INST_JMP, ret_label, NULL, NULL));
 
     codegen->_srt = srt;
