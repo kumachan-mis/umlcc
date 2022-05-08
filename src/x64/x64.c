@@ -3,7 +3,6 @@
 #include "./consts.h"
 #include "./inst.h"
 #include "./label.h"
-#include "./regalloc.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -16,14 +15,12 @@ X64gen* new_x64gen(Vector* immcs) {
     X64gen* x64gen = malloc(sizeof(X64gen));
     x64gen->_immcs = immcs;
     x64gen->index = 0;
-    x64gen->regalloc = NULL;
     x64gen->evaluation_count = 0;
     return x64gen;
 }
 
 void delete_x64gen(X64gen* x64gen) {
     delete_vector(x64gen->_immcs, (void (*)(void* item))delete_immc);
-    if (x64gen->regalloc != NULL) delete_regalloc(x64gen->regalloc);
     free(x64gen);
 }
 
@@ -58,7 +55,6 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     Vector* tail_codes = new_vector();
     Vector* sub_codes = NULL;
 
-    x64gen->regalloc = new_regalloc();
     x64gen->evaluation_count = 0;
 
     sub_codes = gen_label_x64code(x64gen);
@@ -95,8 +91,6 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     delete_vector(tail_codes, free);
 
     x64gen->evaluation_count = 0;
-    delete_regalloc(x64gen->regalloc);
-    x64gen->regalloc = NULL;
     return codes;
 }
 
