@@ -60,13 +60,13 @@ Vector* gen_logical_or_expr_code(Codegen* codegen) {
     dest = new_label_immcope(string_copy(end_label));
     vector_push(codes, new_inst_immc(INST_JMP, dest, NULL, NULL));
 
-    vector_push(codes, new_label_immc(LABEL_NORMAL, VISIBILITY_DEFAULT, string_copy(true_label)));
+    vector_push(codes, new_label_immc(LABEL_NORMAL, LABVIS_DEFAULT, string_copy(true_label)));
 
     dest = new_reg_immcope(codegen->virtual_reg_id);
     fst_src = new_imm_immcope(1);
     vector_push(codes, new_inst_immc(INST_LOAD, dest, fst_src, NULL));
 
-    vector_push(codes, new_label_immc(LABEL_NORMAL, VISIBILITY_DEFAULT, string_copy(end_label)));
+    vector_push(codes, new_label_immc(LABEL_NORMAL, LABVIS_DEFAULT, string_copy(end_label)));
 
     free(true_label);
     free(end_label);
@@ -105,13 +105,13 @@ Vector* gen_logical_and_expr_code(Codegen* codegen) {
     dest = new_label_immcope(string_copy(end_label));
     vector_push(codes, new_inst_immc(INST_JMP, dest, NULL, NULL));
 
-    vector_push(codes, new_label_immc(LABEL_NORMAL, VISIBILITY_DEFAULT, string_copy(false_label)));
+    vector_push(codes, new_label_immc(LABEL_NORMAL, LABVIS_DEFAULT, string_copy(false_label)));
 
     dest = new_reg_immcope(codegen->virtual_reg_id);
     fst_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_LOAD, dest, fst_src, NULL));
 
-    vector_push(codes, new_label_immc(LABEL_NORMAL, VISIBILITY_DEFAULT, string_copy(end_label)));
+    vector_push(codes, new_label_immc(LABEL_NORMAL, LABVIS_DEFAULT, string_copy(end_label)));
 
     free(false_label);
     free(end_label);

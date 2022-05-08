@@ -16,10 +16,10 @@ char* immclabel_tostring(ImmcLabel* immclabel) {
     memset(label_str, 0, 100 * sizeof(char));
 
     switch (immclabel->visibility) {
-        case VISIBILITY_GLOBAL:
+        case LABVIS_GLOBAL:
             strcat(label_str, "global ");
             break;
-        case VISIBILITY_LOCAL:
+        case LABVIS_LOCAL:
             strcat(label_str, "local ");
             break;
         default:
