@@ -90,9 +90,6 @@ typedef enum _ImmcInstType {
     //   immediate code DOES NOT define what to do in this instruction.
     //   it gives chance to do "anything" after calling function to object code.
     // clean           fst_src(imm)
-    INST_FREE,
-    // - force to free fst_src register.
-    // free           fst_src(reg)
 } ImmcInstType;
 
 typedef enum _ImmcOpeType {

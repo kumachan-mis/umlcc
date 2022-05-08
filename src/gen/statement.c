@@ -33,9 +33,6 @@ Vector* gen_expression_stmt_code(Codegen* codegen) {
 
     append_child_code(codegen, codes, 0);
 
-    ImmcOpe* src = new_reg_immcope(codegen->virtual_reg_id);
-    vector_push(codes, new_inst_immc(INST_FREE, NULL, src, NULL));
-
     codegen->_srt = srt;
     return codes;
 }

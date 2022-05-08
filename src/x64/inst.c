@@ -26,7 +26,6 @@ Vector* gen_jneq_x64code(X64gen* x64gen);
 Vector* gen_call_x64code(X64gen* x64gen);
 Vector* gen_enter_x64code(X64gen* x64gen);
 Vector* gen_leave_x64code(X64gen* x64gen);
-Vector* gen_free_x64code(X64gen* x64gen);
 Vector* gen_prep_x64code(X64gen* x64gen);
 Vector* gen_clean_x64code(X64gen* x64gen);
 
@@ -71,8 +70,6 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
             return gen_enter_x64code(x64gen);
         case INST_LEAVE:
             return gen_leave_x64code(x64gen);
-        case INST_FREE:
-            return gen_free_x64code(x64gen);
         case INST_PREP:
             return gen_prep_x64code(x64gen);
         case INST_CLEAN:
@@ -633,17 +630,6 @@ Vector* gen_clean_x64code(X64gen* x64gen) {
         int mem_param_offset = ((fst_src->imm_value - NUM_ARG_REGS + 1) / 2) * 16;
         append_code(codes, "\taddq\t$%d, %s\n", mem_param_offset, QREG_NAMES[SP_REG_ID]);
     }
-
-    return codes;
-}
-
-Vector* gen_free_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
-    x64gen->index++;
-
-    ImmcOpe* src = immc->inst->fst_src;
-    regalloc_free(x64gen->regalloc, src->reg_id);
 
     return codes;
 }
