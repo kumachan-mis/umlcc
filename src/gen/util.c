@@ -33,10 +33,9 @@ void append_child_code(Codegen* codegen, Vector* codes, int index) {
     codegen->_srt = srt;
 }
 
-char* create_label(Codegen* codegen) {
+char* create_label_string(int label_id) {
     char* label_name = malloc(20 * sizeof(char));
-    codegen->label_id++;
-    sprintf(label_name, "L%d", codegen->label_id);
+    printf(label_name, "L%d", label_id);
     label_name = realloc(label_name, (strlen(label_name) + 1) * sizeof(char));
     return label_name;
 }

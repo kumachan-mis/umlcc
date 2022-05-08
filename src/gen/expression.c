@@ -35,8 +35,10 @@ Vector* gen_logical_or_expr_code(Codegen* codegen) {
     ImmcOpe* fst_src = NULL;
     ImmcOpe* snd_src = NULL;
 
-    char* true_label = create_label(codegen);
-    char* end_label = create_label(codegen);
+    codegen->label_id++;
+    char* true_label = create_label_string(codegen);
+    codegen->label_id++;
+    char* end_label = create_label_string(codegen);
 
     append_child_code(codegen, codes, 0);
 
@@ -80,8 +82,10 @@ Vector* gen_logical_and_expr_code(Codegen* codegen) {
     ImmcOpe* fst_src = NULL;
     ImmcOpe* snd_src = NULL;
 
-    char* false_label = create_label(codegen);
-    char* end_label = create_label(codegen);
+    codegen->label_id++;
+    char* false_label = create_label_string(codegen);
+    codegen->label_id++;
+    char* end_label = create_label_string(codegen);
 
     append_child_code(codegen, codes, 0);
 

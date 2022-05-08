@@ -14,7 +14,7 @@ Codegen* new_codegen(Srt* srt) {
     codegen->_local_table = NULL;
     codegen->virtual_reg_id = 0;
     codegen->label_id = 0;
-    codegen->return_label = NULL;
+    codegen->return_label_id = -1;
     return codegen;
 }
 
@@ -22,7 +22,6 @@ void delete_codegen(Codegen* codegen) {
     delete_srt(codegen->_srt);
     delete_symboltable(codegen->_global_table);
     if (codegen->_local_table != NULL) delete_symboltable(codegen->_local_table);
-    if (codegen->return_label != NULL) free(codegen->return_label);
     free(codegen);
 }
 
