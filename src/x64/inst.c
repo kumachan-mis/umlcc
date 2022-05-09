@@ -447,8 +447,8 @@ Vector* gen_call_x64code(X64gen* x64gen) {
 
     char* src_name = QREG_NAMES[src_id];
 
-    int evaluation_count = vector_size(evacuation_table);
-    for (int i = 0; i < evaluation_count; i++) {
+    int evacuation_count = vector_size(evacuation_table);
+    for (int i = 0; i < evacuation_count; i++) {
         RegEvacuationEntry* entry = vector_at(evacuation_table, i);
         char* caller_saved_name = QREG_NAMES[CALLER_SAVED_REG_IDS[entry->caller_saved_index]];
         char* callee_saved_name = QREG_NAMES[CALLEE_SAVED_REG_IDS[entry->callee_saved_index]];
@@ -458,13 +458,13 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     append_code(codes, "\tmovl\t$%d, %s\n", 0, LREG_NAMES[AX_REG_ID]);
     append_code(codes, "\tcall\t*%s\n", src_name);
 
-    for (int i = 0; i < evaluation_count; i++) {
+    for (int i = 0; i < evacuation_count; i++) {
         RegEvacuationEntry* entry = vector_at(evacuation_table, i);
         char* caller_saved_name = QREG_NAMES[CALLER_SAVED_REG_IDS[entry->caller_saved_index]];
         char* callee_saved_name = QREG_NAMES[CALLEE_SAVED_REG_IDS[entry->callee_saved_index]];
         append_code(codes, "\tmovq\t%s, %s\n", callee_saved_name, caller_saved_name);
     }
-    if (x64gen->evaluation_count < evaluation_count) x64gen->evaluation_count = evaluation_count;
+    if (x64gen->evacuation_count < evacuation_count) x64gen->evacuation_count = evacuation_count;
     regalloc_restore(x64gen->regalloc, evacuation_table);
 
     char* dest_name = LREG_NAMES[dest_id];

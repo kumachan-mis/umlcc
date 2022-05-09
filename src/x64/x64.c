@@ -14,7 +14,7 @@ X64gen* new_x64gen(Vector* immcs) {
     X64gen* x64gen = malloc(sizeof(X64gen));
     x64gen->_immcs = immcs;
     x64gen->index = 0;
-    x64gen->evaluation_count = 0;
+    x64gen->evacuation_count = 0;
     return x64gen;
 }
 
@@ -55,7 +55,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     Vector* tail_codes = new_vector();
     Vector* sub_codes = NULL;
 
-    x64gen->evaluation_count = 0;
+    x64gen->evacuation_count = 0;
 
     sub_codes = gen_label_x64code(x64gen);
     vector_extend(codes, sub_codes);
@@ -81,7 +81,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
         delete_vector(sub_codes, free);
     }
 
-    int evaluation_count = x64gen->evaluation_count;
+    int evaluation_count = x64gen->evacuation_count;
     for (int i = 0; i < evaluation_count; i++) {
         append_code(head_codes, "\tpushq\t%s\n", QREG_NAMES[CALLEE_SAVED_REG_IDS[i]]);
     }
@@ -104,6 +104,6 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     vector_extend(codes, tail_codes);
     delete_vector(tail_codes, free);
 
-    x64gen->evaluation_count = 0;
+    x64gen->evacuation_count = 0;
     return codes;
 }

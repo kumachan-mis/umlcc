@@ -6,7 +6,7 @@
 typedef struct _X64gen {
     Vector* _immcs;
     int index;
-    int evaluation_count;
+    int evacuation_count;
 } X64gen;
 
 X64gen* new_x64gen(Vector* immcs);
