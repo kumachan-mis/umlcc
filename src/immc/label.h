@@ -18,6 +18,7 @@ typedef struct _ImmcLabel {
 } ImmcLabel;
 
 ImmcLabel* new_immclabel(ImmcLabelType type, ImmcLabelVisibility visibility, char* label_name);
+ImmcLabel* immclabel_copy(ImmcLabel* immclabel);
 char* immclabel_tostring(ImmcLabel* immclabel);
 void delete_immclabel(ImmcLabel* immclabel);
 

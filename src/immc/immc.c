@@ -18,6 +18,16 @@ Immc* new_label_immc(ImmcLabelType type, ImmcLabelVisibility visibility, char* l
     return immc;
 }
 
+Immc* immc_copy(Immc* immc) {
+    Immc* copied_immc = malloc(sizeof(Immc));
+    copied_immc->type = immc->type;
+    copied_immc->inst = NULL;
+    copied_immc->label = NULL;
+    if (immc->inst != NULL) copied_immc->inst = immcinst_copy(immc->inst);
+    if (immc->label != NULL) copied_immc->label = immclabel_copy(immc->label);
+    return immc;
+}
+
 char* immc_tostring(Immc* immc) {
     switch (immc->type) {
         case IMMC_INST:
