@@ -3,10 +3,9 @@
 
 #include <stdlib.h>
 
-BasicBlock* new_basicblock(int immc_offset, Vector* immcs) {
+BasicBlock* new_basicblock(Vector* immcs) {
     BasicBlock* basicblock = malloc(sizeof(BasicBlock));
     basicblock->input_reg_ids = new_vector();
-    basicblock->immc_offset = immc_offset;
     basicblock->immcs = immcs;
     basicblock->output_reg_ids = new_vector();
     basicblock->next_block_ids = new_vector();
