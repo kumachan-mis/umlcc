@@ -12,11 +12,11 @@ Vector* gen_default_label_x64code(X64gen* x64gen);
 Vector* gen_label_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     switch (immc->label->visibility) {
-        case VISIBILITY_GLOBAL:
+        case LABELVIS_GLOBAL:
             return gen_global_label_x64code(x64gen);
-        case VISIBILITY_LOCAL:
+        case LABELVIS_LOCAL:
             return gen_local_label_x64code(x64gen);
-        case VISIBILITY_DEFAULT:
+        case LABELVIS_DEFAULT:
             return gen_default_label_x64code(x64gen);
         default:
             fprintf(stderr, "Error: unexpected label visibility %d\n", immc->label->visibility);
@@ -29,8 +29,8 @@ Vector* gen_global_label_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
-    append_code(codes, "    .globl %s\n", immc->label->label_name);
-    append_code(codes, "%s:\n", immc->label->label_name);
+    append_code(codes, "    .globl %s\n", immc->label->name);
+    append_code(codes, "%s:\n", immc->label->name);
 
     return codes;
 }
@@ -40,8 +40,8 @@ Vector* gen_local_label_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
-    append_code(codes, "    .local %s\n", immc->label->label_name);
-    append_code(codes, "%s:\n", immc->label->label_name);
+    append_code(codes, "    .local %s\n", immc->label->name);
+    append_code(codes, "%s:\n", immc->label->name);
 
     return codes;
 }
@@ -50,7 +50,7 @@ Vector* gen_default_label_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
-    append_code(codes, "%s:\n", immc->label->label_name);
+    append_code(codes, "%s:\n", immc->label->name);
 
     return codes;
 }

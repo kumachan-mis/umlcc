@@ -6,6 +6,6 @@
 
 void append_children_code(Codegen* codegen, Vector* codes);
 void append_child_code(Codegen* codegen, Vector* codes, int index);
-char* create_label(Codegen* codegen);
+char* create_label_name(int label_id);
 
 #endif
