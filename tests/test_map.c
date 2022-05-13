@@ -20,20 +20,16 @@ void test_map_set() {
     Map* map = new_map();
     int* value = NULL;
 
-    value = malloc(sizeof(int));
-    *value = 2;
+    value = new_integer(2);
     map_set(map, "two", value, free);
 
-    value = malloc(sizeof(int));
-    *value = 5;
+    value = new_integer(5);
     map_set(map, "five", value, free);
 
-    value = malloc(sizeof(int));
-    *value = 7;
+    value = new_integer(7);
     map_set(map, "seven", value, free);
 
-    value = malloc(sizeof(int));
-    *value = 8;
+    value = new_integer(8);
     map_set(map, "eight", value, free);
 
     value = map_get(map, "five");
@@ -51,8 +47,7 @@ void test_map_set() {
     value = map_get(map, "ten");
     CU_ASSERT_EQUAL(value, NULL);
 
-    value = malloc(sizeof(int));
-    *value = -1;
+    value = new_integer(-1);
     map_set(map, "eight", value, free);
 
     value = map_get(map, "eight");
@@ -66,8 +61,7 @@ void test_map_get_with_default() {
     int* value = map_get(map, "key");
     CU_ASSERT_PTR_NULL(value);
 
-    int* default_value = malloc(sizeof(int));
-    *default_value = 0;
+    int* default_value = new_integer(0);
     value = map_get_with_default(map, "key", default_value);
     CU_ASSERT_EQUAL(*value, 0);
 
@@ -78,12 +72,10 @@ void test_map_erase() {
     Map* map = new_map();
     int* value = NULL;
 
-    value = malloc(sizeof(int));
-    *value = 7;
+    value = new_integer(7);
     map_set(map, "key", value, free);
 
-    value = malloc(sizeof(int));
-    *value = -2;
+    value = new_integer(-2);
     map_set(map, "erased_key", value, free);
 
     value = map_get(map, "key");

@@ -5,7 +5,7 @@
 
 MapCell* new_mapcell(char* key, void* value) {
     MapCell* cell = malloc(sizeof(MapCell));
-    cell->key = string_copy(key);
+    cell->key = new_string(key);
     cell->value = value;
     cell->deleted = 0;
     return cell;

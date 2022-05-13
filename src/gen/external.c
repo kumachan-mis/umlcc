@@ -17,7 +17,7 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     Srt* srt = codegen->_srt;
 
     Srt* declarator_srt = vector_at(srt->children, 0);
-    char* table_ident_name = string_copy(declarator_srt->ident_name);
+    char* table_ident_name = new_string(declarator_srt->ident_name);
     CType* table_ctype = ctype_copy(declarator_srt->ctype);
     symboltable_define(codegen->_global_table, table_ident_name, table_ctype);
 
@@ -31,7 +31,7 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
         CParam* cparam = vector_at(params, i);
-        char* table_ident_name = string_copy(cparam->ident_name);
+        char* table_ident_name = new_string(cparam->ident_name);
         CType* table_ctype = ctype_copy(cparam->ctype);
 
         Symbol* symbol = symboltable_define(codegen->_local_table, table_ident_name, table_ctype);
@@ -44,7 +44,7 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     Vector* body_codes = new_vector();
     append_children_code(codegen, body_codes);
 
-    char* label_name = string_copy(declarator_srt->ident_name);
+    char* label_name = new_string(declarator_srt->ident_name);
     vector_push(codes, new_label_immc(LABEL_FUNCTION, LABELVIS_GLOBAL, label_name));
     ImmcOpe* memory_size = new_imm_immcope(codegen->_local_table->_memory_size);
     vector_push(codes, new_inst_immc(INST_ENTER, NULL, memory_size, NULL));

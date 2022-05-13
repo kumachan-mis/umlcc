@@ -191,7 +191,7 @@ Ast* parse_primary_expr(Parser* parser) {
     switch (token->type) {
         case TOKEN_IDENT:
             parser->_index++;
-            ast = new_identifier_ast(AST_IDENT_EXPR, string_copy(token->ident_name));
+            ast = new_identifier_ast(AST_IDENT_EXPR, new_string(token->ident_name));
             break;
         case TOKEN_INT:
             parser->_index++;

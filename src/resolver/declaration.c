@@ -67,7 +67,7 @@ Srt* resolve_init_declarator(Resolver* resolver) {
         fprintf(stderr, "Error: identifier '%s' is already defined\n", declarator_srt->ident_name);
         exit(1);
     }
-    char* table_ident_name = string_copy(declarator_srt->ident_name);
+    char* table_ident_name = new_string(declarator_srt->ident_name);
     CType* table_ctype = ctype_copy(declarator_srt->ctype);
     symboltable_define(table, table_ident_name, table_ctype);
 
@@ -96,7 +96,7 @@ Srt* resolve_declarator(Resolver* resolver) {
                 lookedup_ast = vector_at(lookedup_ast->children, 0);
                 break;
             case AST_IDENT_DECLOR:
-                srt = new_identifier_srt(SRT_DECL, ctype, string_copy(lookedup_ast->ident_name));
+                srt = new_identifier_srt(SRT_DECL, ctype, new_string(lookedup_ast->ident_name));
                 terminated = 1;
                 break;
             default:
@@ -134,7 +134,7 @@ CParam* resolve_parameter_decl(Resolver* resolver) {
     Srt* srt = resolve_declarator(resolver);
     srt->ctype = ctype_connect(srt->ctype, specifiers_ctype);
 
-    cparam = new_cparam(string_copy(srt->ident_name), ctype_copy(srt->ctype));
+    cparam = new_cparam(new_string(srt->ident_name), ctype_copy(srt->ctype));
     delete_srt(srt);
 
     resolver->_ast = ast;
