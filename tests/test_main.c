@@ -8,6 +8,7 @@ int main(void) {
 
     add_test_suite_vector();
     add_test_suite_map();
+    add_test_suite_set();
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
