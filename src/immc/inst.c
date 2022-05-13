@@ -27,6 +27,10 @@ ImmcInst* immcinst_copy(ImmcInst* immcinst) {
     return copied_immcinst;
 }
 
+int immcinst_isjump(ImmcInst* immcinst) {
+    return INST_JMP <= immcinst->type && immcinst->type <= INST_JNEQ;
+}
+
 char* immcinst_tostring(ImmcInst* immcinst) {
     char* code_str = malloc(100 * sizeof(char));
     memset(code_str, 0, 100 * sizeof(char));
