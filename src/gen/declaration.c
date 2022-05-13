@@ -25,7 +25,7 @@ Vector* gen_decl_code(Codegen* codegen) {
     SymbolTable* table = codegen->_global_table;
     if (codegen->_local_table != NULL) table = codegen->_local_table;
 
-    char* table_ident_name = string_copy(srt->ident_name);
+    char* table_ident_name = new_string(srt->ident_name);
     CType* table_ctype = ctype_copy(srt->ctype);
     symboltable_define(table, table_ident_name, table_ctype);
 

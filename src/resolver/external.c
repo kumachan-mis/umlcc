@@ -40,7 +40,7 @@ Srt* resolve_function_definition(Resolver* resolver) {
         fprintf(stderr, "Error: identifier '%s' is already defined\n", declarator_srt->ident_name);
         exit(1);
     }
-    char* table_ident_name = string_copy(declarator_srt->ident_name);
+    char* table_ident_name = new_string(declarator_srt->ident_name);
     CType* table_ctype = ctype_copy(declarator_srt->ctype);
     symboltable_define(resolver->_global_table, table_ident_name, table_ctype);
 
@@ -54,7 +54,7 @@ Srt* resolve_function_definition(Resolver* resolver) {
             fprintf(stderr, "Error: identifier '%s' is already defined\n", cparam->ident_name);
             exit(1);
         }
-        char* table_ident_name = string_copy(cparam->ident_name);
+        char* table_ident_name = new_string(cparam->ident_name);
         CType* table_ctype = ctype_copy(cparam->ctype);
         symboltable_define(resolver->_local_table, table_ident_name, table_ctype);
     }

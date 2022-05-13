@@ -195,7 +195,7 @@ Srt* resolve_primary_expr(Resolver* resolver) {
                 exit(1);
             }
             return new_identifier_srt(SRT_IDENT_EXPR, ctype_copy(symbol->ctype),
-                                      string_copy(ast->ident_name));
+                                      new_string(ast->ident_name));
         case AST_INT_EXPR:
             return new_integer_srt(SRT_INT_EXPR, ast->value_int);
         default:

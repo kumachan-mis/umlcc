@@ -42,14 +42,14 @@ Vector* gen_logical_or_expr_code(Codegen* codegen) {
 
     append_child_code(codegen, codes, 0);
 
-    dest = new_label_immcope(string_copy(true_label));
+    dest = new_label_immcope(new_string(true_label));
     fst_src = new_reg_immcope(codegen->_virtual_reg_id);
     snd_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_JNEQ, dest, fst_src, snd_src));
 
     append_child_code(codegen, codes, 1);
 
-    dest = new_label_immcope(string_copy(true_label));
+    dest = new_label_immcope(new_string(true_label));
     fst_src = new_reg_immcope(codegen->_virtual_reg_id);
     snd_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_JNEQ, dest, fst_src, snd_src));
@@ -59,16 +59,16 @@ Vector* gen_logical_or_expr_code(Codegen* codegen) {
     fst_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_LOAD, dest, fst_src, NULL));
 
-    dest = new_label_immcope(string_copy(end_label));
+    dest = new_label_immcope(new_string(end_label));
     vector_push(codes, new_inst_immc(INST_JMP, dest, NULL, NULL));
 
-    vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, string_copy(true_label)));
+    vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, new_string(true_label)));
 
     dest = new_reg_immcope(codegen->_virtual_reg_id);
     fst_src = new_imm_immcope(1);
     vector_push(codes, new_inst_immc(INST_LOAD, dest, fst_src, NULL));
 
-    vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, string_copy(end_label)));
+    vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, new_string(end_label)));
 
     free(true_label);
     free(end_label);
@@ -89,14 +89,14 @@ Vector* gen_logical_and_expr_code(Codegen* codegen) {
 
     append_child_code(codegen, codes, 0);
 
-    dest = new_label_immcope(string_copy(false_label));
+    dest = new_label_immcope(new_string(false_label));
     fst_src = new_reg_immcope(codegen->_virtual_reg_id);
     snd_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_JEQ, dest, fst_src, snd_src));
 
     append_child_code(codegen, codes, 1);
 
-    dest = new_label_immcope(string_copy(false_label));
+    dest = new_label_immcope(new_string(false_label));
     fst_src = new_reg_immcope(codegen->_virtual_reg_id);
     snd_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_JEQ, dest, fst_src, snd_src));
@@ -106,16 +106,16 @@ Vector* gen_logical_and_expr_code(Codegen* codegen) {
     fst_src = new_imm_immcope(1);
     vector_push(codes, new_inst_immc(INST_LOAD, dest, fst_src, NULL));
 
-    dest = new_label_immcope(string_copy(end_label));
+    dest = new_label_immcope(new_string(end_label));
     vector_push(codes, new_inst_immc(INST_JMP, dest, NULL, NULL));
 
-    vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, string_copy(false_label)));
+    vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, new_string(false_label)));
 
     dest = new_reg_immcope(codegen->_virtual_reg_id);
     fst_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_LOAD, dest, fst_src, NULL));
 
-    vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, string_copy(end_label)));
+    vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, new_string(end_label)));
 
     free(false_label);
     free(end_label);
@@ -287,7 +287,7 @@ Vector* gen_address_expr_code(Codegen* codegen) {
             }
             symbol = symboltable_search(codegen->_global_table, srt->ident_name);
             if (symbol != NULL) {
-                src = new_label_immcope(string_copy(symbol->name));
+                src = new_label_immcope(new_string(symbol->name));
                 break;
             }
             break;
@@ -320,7 +320,7 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
             }
             symbol = symboltable_search(codegen->_global_table, srt->ident_name);
             if (symbol != NULL) {
-                src = new_label_immcope(string_copy(symbol->name));
+                src = new_label_immcope(new_string(symbol->name));
                 break;
             }
             break;

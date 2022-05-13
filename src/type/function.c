@@ -60,7 +60,7 @@ CParam* new_cparam(char* ident_name, struct _CType* ctype) {
 
 CParam* cparam_copy(CParam* cparam) {
     CParam* copied_cparam = malloc(sizeof(CParam));
-    copied_cparam->ident_name = string_copy(cparam->ident_name);
+    copied_cparam->ident_name = new_string(cparam->ident_name);
     copied_cparam->ctype = ctype_copy(cparam->ctype);
     return copied_cparam;
 }

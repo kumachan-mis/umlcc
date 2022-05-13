@@ -1,5 +1,6 @@
 #include "./test_vector.h"
 #include "../src/vector/vector.h"
+#include "../src/common/common.h"
 
 #include <CUnit/Basic.h>
 #include <stdlib.h>
@@ -19,23 +20,19 @@ void test_vector_push() {
     int* item = NULL;
     CU_ASSERT_EQUAL(vector_size(vector), 0);
 
-    item = malloc(sizeof(int));
-    *item = 2;
+    item = new_integer(2);
     vector_push(vector, item);
     CU_ASSERT_EQUAL(vector_size(vector), 1);
 
-    item = malloc(sizeof(int));
-    *item = 3;
+    item = new_integer(3);
     vector_push(vector, item);
     CU_ASSERT_EQUAL(vector_size(vector), 2);
 
-    item = malloc(sizeof(int));
-    *item = 5;
+    item = new_integer(5);
     vector_push(vector, item);
     CU_ASSERT_EQUAL(vector_size(vector), 3);
 
-    item = malloc(sizeof(int));
-    *item = 6;
+    item = new_integer(6);
     vector_push(vector, item);
     CU_ASSERT_EQUAL(vector_size(vector), 4);
 
@@ -59,16 +56,13 @@ void test_vector_pop() {
     Vector* vector = new_vector();
     int* item = NULL;
 
-    item = malloc(sizeof(int));
-    *item = -3;
+    item = new_integer(-3);
     vector_push(vector, item);
 
-    item = malloc(sizeof(int));
-    *item = -2;
+    item = new_integer(-2);
     vector_push(vector, item);
 
-    item = malloc(sizeof(int));
-    *item = 0;
+    item = new_integer(0);
     vector_push(vector, item);
 
     CU_ASSERT_EQUAL(vector_size(vector), 3);

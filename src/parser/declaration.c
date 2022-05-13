@@ -61,7 +61,7 @@ Ast* parse_direct_declarator(Parser* parser) {
     switch (token->type) {
         case TOKEN_IDENT:
             parser->_index++;
-            ast = new_identifier_ast(AST_IDENT_DECLOR, string_copy(token->ident_name));
+            ast = new_identifier_ast(AST_IDENT_DECLOR, new_string(token->ident_name));
             break;
         default:
             fprintf(stderr, "Error: unexpected token type %d\n", token->type);
