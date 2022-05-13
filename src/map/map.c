@@ -1,14 +1,8 @@
 #include "./map.h"
-#include "../common/common.h"
+#include "./cell.h"
 
 #include <stdlib.h>
 #include <string.h>
-
-typedef struct _MapCell {
-    char* key;
-    void* value;
-    int deleted;
-} MapCell;
 
 struct _Map {
     MapCell** container;
@@ -19,9 +13,6 @@ struct _Map {
 void map_update_capacity(Map* map, int new_capacity, void delete_value(void* value));
 int map_calculate_hash(char* key, int capacity);
 int map_calculate_next_hash(int hash, int capacity);
-MapCell* new_mapcell(char* key, void* value);
-void delete_mapcell(MapCell* cell, void delete_value(void* value));
-void mapcell_markas_deleted(MapCell* cell, void delete_value(void* value));
 
 Map* new_map() {
     Map* map = malloc(sizeof(Map));
@@ -156,30 +147,4 @@ int map_calculate_hash(char* key, int capacity) {
 
 int map_calculate_next_hash(int hash, int capacity) {
     return (hash + 1) % capacity;
-}
-
-MapCell* new_mapcell(char* key, void* value) {
-    MapCell* cell = malloc(sizeof(MapCell));
-    cell->key = string_copy(key);
-    cell->value = value;
-    cell->deleted = 0;
-    return cell;
-}
-
-void delete_mapcell(MapCell* cell, void delete_value(void* value)) {
-    if (cell->key != NULL) free(cell->key);
-    if (cell->value != NULL) delete_value(cell->value);
-    free(cell);
-}
-
-void mapcell_markas_deleted(MapCell* cell, void delete_value(void* value)) {
-    if (cell->key != NULL) {
-        free(cell->key);
-        cell->key = NULL;
-    }
-    if (cell->value != NULL) {
-        delete_value(cell->value);
-        cell->value = NULL;
-    }
-    cell->deleted = 1;
 }

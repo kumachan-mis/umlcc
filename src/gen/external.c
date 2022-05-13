@@ -21,13 +21,10 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     CType* table_ctype = ctype_copy(declarator_srt->ctype);
     symboltable_define(codegen->_global_table, table_ident_name, table_ctype);
 
+    codegen->_virtual_reg_id = 0;
+    codegen->_label_id++;
     codegen->_local_table = new_symboltable();
-
-    int return_label_len = strlen(declarator_srt->ident_name) + 11;
-    codegen->return_label = malloc(return_label_len * sizeof(char));
-    memset(codegen->return_label, 0, return_label_len);
-    strcat(codegen->return_label, declarator_srt->ident_name);
-    strcat(codegen->return_label, "_return");
+    codegen->_return_label_id = codegen->_label_id;
 
     Vector* param_codes = new_vector();
     Vector* params = declarator_srt->ctype->function->params;
@@ -48,7 +45,7 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     append_children_code(codegen, body_codes);
 
     char* label_name = string_copy(declarator_srt->ident_name);
-    vector_push(codes, new_label_immc(LABEL_FUNCTION, VISIBILITY_GLOBAL, label_name));
+    vector_push(codes, new_label_immc(LABEL_FUNCTION, LABELVIS_GLOBAL, label_name));
     ImmcOpe* memory_size = new_imm_immcope(codegen->_local_table->_memory_size);
     vector_push(codes, new_inst_immc(INST_ENTER, NULL, memory_size, NULL));
 
@@ -58,12 +55,10 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     vector_extend(codes, body_codes);
     delete_vector(body_codes, free);
 
-    char* return_label_name = string_copy(codegen->return_label);
-    vector_push(codes, new_label_immc(LABEL_NORMAL, VISIBILITY_DEFAULT, return_label_name));
+    char* return_label_name = create_label_name(codegen->_return_label_id);
+    vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, return_label_name));
     vector_push(codes, new_inst_immc(INST_LEAVE, NULL, immcope_copy(memory_size), NULL));
 
-    free(codegen->return_label);
-    codegen->return_label = NULL;
     delete_symboltable(codegen->_local_table);
     codegen->_local_table = NULL;
     codegen->_srt = srt;

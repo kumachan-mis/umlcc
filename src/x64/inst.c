@@ -381,7 +381,7 @@ Vector* gen_seteq_x64code(X64gen* x64gen) {
             break;
         case OPERAND_REG: {
             int snd_src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
-            char*  snd_src_name = LREG_NAMES[snd_src_id];
+            char* snd_src_name = LREG_NAMES[snd_src_id];
             regalloc_free(x64gen->regalloc, snd_src->reg_id);
             append_code(codes, "\tcmpl\t%s, %s\n", snd_src_name, fst_src_name);
             break;
@@ -390,7 +390,7 @@ Vector* gen_seteq_x64code(X64gen* x64gen) {
             fprintf(stderr, "Error: unexpected operand %d\n", dest->type);
             exit(1);
     }
-    
+
     int dest_id = regalloc_allocate(x64gen->regalloc, dest->reg_id);
     append_code(codes, "\tsete\t%s\n", BREG_NAMES[dest_id]);
     append_code(codes, "\tmovsbl\t%s, %s\n", BREG_NAMES[dest_id], LREG_NAMES[dest_id]);
@@ -417,7 +417,7 @@ Vector* gen_setneq_x64code(X64gen* x64gen) {
             break;
         case OPERAND_REG: {
             int snd_src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
-            char*  snd_src_name = LREG_NAMES[snd_src_id];
+            char* snd_src_name = LREG_NAMES[snd_src_id];
             regalloc_free(x64gen->regalloc, snd_src->reg_id);
             append_code(codes, "\tcmpl\t%s, %s\n", snd_src_name, fst_src_name);
             break;
@@ -426,14 +426,13 @@ Vector* gen_setneq_x64code(X64gen* x64gen) {
             fprintf(stderr, "Error: unexpected operand %d\n", dest->type);
             exit(1);
     }
-    
+
     int dest_id = regalloc_allocate(x64gen->regalloc, dest->reg_id);
     append_code(codes, "\tsetne\t%s\n", BREG_NAMES[dest_id]);
     append_code(codes, "\tmovsbl\t%s, %s\n", BREG_NAMES[dest_id], LREG_NAMES[dest_id]);
 
     return codes;
 }
-
 
 Vector* gen_jeq_x64code(X64gen* x64gen) {
     Vector* codes = new_vector();
@@ -454,7 +453,7 @@ Vector* gen_jeq_x64code(X64gen* x64gen) {
             break;
         case OPERAND_REG: {
             int snd_src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
-            char*  snd_src_name = LREG_NAMES[snd_src_id];
+            char* snd_src_name = LREG_NAMES[snd_src_id];
             regalloc_free(x64gen->regalloc, snd_src->reg_id);
             append_code(codes, "\tcmpl\t%s, %s\n", snd_src_name, fst_src_name);
             break;
@@ -463,14 +462,14 @@ Vector* gen_jeq_x64code(X64gen* x64gen) {
             fprintf(stderr, "Error: unexpected operand %d\n", dest->type);
             exit(1);
     }
-    
+
     append_code(codes, "\tje\t%s\n", dest->label_name);
 
     return codes;
 }
 
 Vector* gen_jneq_x64code(X64gen* x64gen) {
-     Vector* codes = new_vector();
+    Vector* codes = new_vector();
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -488,7 +487,7 @@ Vector* gen_jneq_x64code(X64gen* x64gen) {
             break;
         case OPERAND_REG: {
             int snd_src_id = regalloc_resolve(x64gen->regalloc, snd_src->reg_id);
-            char*  snd_src_name = LREG_NAMES[snd_src_id];
+            char* snd_src_name = LREG_NAMES[snd_src_id];
             regalloc_free(x64gen->regalloc, snd_src->reg_id);
             append_code(codes, "\tcmpl\t%s, %s\n", snd_src_name, fst_src_name);
             break;
@@ -497,7 +496,7 @@ Vector* gen_jneq_x64code(X64gen* x64gen) {
             fprintf(stderr, "Error: unexpected operand %d\n", dest->type);
             exit(1);
     }
-    
+
     append_code(codes, "\tjne\t%s\n", dest->label_name);
 
     return codes;
