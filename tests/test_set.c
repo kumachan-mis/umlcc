@@ -137,8 +137,196 @@ void test_set_iter() {
     delete_set(set);
 }
 
-void test_set_intersection() {}
+void test_set_intersection() {
+    Set* set = new_set(&t_hashable_integer);
+    int* item = NULL;
 
-void test_set_union() {}
+    item = new_integer(1);
+    set_add(set, item);
 
-void test_set_difference() {}
+    item = new_integer(2);
+    set_add(set, item);
+
+    item = new_integer(3);
+    set_add(set, item);
+
+    Set* other = new_set(&t_hashable_integer);
+    Set* intersection_set = set_intersection(set, other);
+    int count = 0;
+    for (SetIter* iter = set_iter_begin(intersection_set); !set_iter_end(iter, intersection_set);
+         iter = set_iter_next(iter, intersection_set)) {
+        count++;
+    }
+    CU_ASSERT_EQUAL(count, 0);
+    delete_set(intersection_set);
+
+    item = new_integer(2);
+    set_add(other, item);
+
+    item = new_integer(3);
+    set_add(other, item);
+
+    item = new_integer(4);
+    set_add(other, item);
+
+    intersection_set = set_intersection(set, other);
+    count = 0;
+    for (SetIter* iter = set_iter_begin(intersection_set); !set_iter_end(iter, intersection_set);
+         iter = set_iter_next(iter, intersection_set)) {
+        int* item = set_iter_item(iter, intersection_set);
+        CU_ASSERT(*item == 2 || *item == 3);
+        count++;
+    }
+    CU_ASSERT_EQUAL(count, 2);
+    delete_set(intersection_set);
+
+    item = new_integer(1);
+    set_add(other, item);
+
+    item = new_integer(0);
+    set_add(other, item);
+
+    intersection_set = set_intersection(set, other);
+    count = 0;
+    for (SetIter* iter = set_iter_begin(intersection_set); !set_iter_end(iter, intersection_set);
+         iter = set_iter_next(iter, intersection_set)) {
+        int* item = set_iter_item(iter, intersection_set);
+        CU_ASSERT(*item == 1 || *item == 2 || *item == 3);
+        count++;
+    }
+    CU_ASSERT_EQUAL(count, 3);
+    delete_set(intersection_set);
+
+    delete_set(other);
+    delete_set(set);
+}
+
+void test_set_union() {
+    Set* set = new_set(&t_hashable_integer);
+    int* item = NULL;
+
+    item = new_integer(1);
+    set_add(set, item);
+
+    item = new_integer(2);
+    set_add(set, item);
+
+    item = new_integer(3);
+    set_add(set, item);
+
+    Set* other = new_set(&t_hashable_integer);
+    Set* union_set = set_union(set, other);
+    int count = 0;
+    for (SetIter* iter = set_iter_begin(union_set); !set_iter_end(iter, union_set);
+         iter = set_iter_next(iter, union_set)) {
+        int* item = set_iter_item(iter, union_set);
+        CU_ASSERT(*item == 1 || *item == 2 || *item == 3);
+        count++;
+    }
+    CU_ASSERT_EQUAL(count, 3);
+    delete_set(union_set);
+
+    item = new_integer(2);
+    set_add(other, item);
+
+    item = new_integer(3);
+    set_add(other, item);
+
+    item = new_integer(4);
+    set_add(other, item);
+
+    union_set = set_union(set, other);
+    count = 0;
+    for (SetIter* iter = set_iter_begin(union_set); !set_iter_end(iter, union_set);
+         iter = set_iter_next(iter, union_set)) {
+        int* item = set_iter_item(iter, union_set);
+        CU_ASSERT(*item == 1 || *item == 2 || *item == 3 || *item == 4);
+        count++;
+    }
+    CU_ASSERT_EQUAL(count, 4);
+    delete_set(union_set);
+
+    item = new_integer(1);
+    set_add(other, item);
+
+    item = new_integer(0);
+    set_add(other, item);
+
+    union_set = set_union(set, other);
+    count = 0;
+    for (SetIter* iter = set_iter_begin(union_set); !set_iter_end(iter, union_set);
+         iter = set_iter_next(iter, union_set)) {
+        int* item = set_iter_item(iter, union_set);
+        CU_ASSERT(*item == 0 || *item == 1 || *item == 2 || *item == 3 || *item == 4);
+        count++;
+    }
+    CU_ASSERT_EQUAL(count, 5);
+    delete_set(union_set);
+
+    delete_set(other);
+    delete_set(set);
+}
+
+void test_set_difference() {
+    Set* set = new_set(&t_hashable_integer);
+    int* item = NULL;
+
+    item = new_integer(1);
+    set_add(set, item);
+
+    item = new_integer(2);
+    set_add(set, item);
+
+    item = new_integer(3);
+    set_add(set, item);
+
+    Set* other = new_set(&t_hashable_integer);
+    Set* difference_set = set_difference(set, other);
+    int count = 0;
+    for (SetIter* iter = set_iter_begin(difference_set); !set_iter_end(iter, difference_set);
+         iter = set_iter_next(iter, difference_set)) {
+        int* item = set_iter_item(iter, difference_set);
+        CU_ASSERT(*item == 1 || *item == 2 || *item == 3);
+        count++;
+    }
+    CU_ASSERT_EQUAL(count, 3);
+    delete_set(difference_set);
+
+    item = new_integer(2);
+    set_add(other, item);
+
+    item = new_integer(3);
+    set_add(other, item);
+
+    item = new_integer(4);
+    set_add(other, item);
+
+    difference_set = set_difference(set, other);
+    count = 0;
+    for (SetIter* iter = set_iter_begin(difference_set); !set_iter_end(iter, difference_set);
+         iter = set_iter_next(iter, difference_set)) {
+        int* item = set_iter_item(iter, difference_set);
+        CU_ASSERT(*item == 1);
+        count++;
+    }
+    CU_ASSERT_EQUAL(count, 1);
+    delete_set(difference_set);
+
+    item = new_integer(1);
+    set_add(other, item);
+
+    item = new_integer(0);
+    set_add(other, item);
+
+    difference_set = set_difference(set, other);
+    count = 0;
+    for (SetIter* iter = set_iter_begin(difference_set); !set_iter_end(iter, difference_set);
+         iter = set_iter_next(iter, difference_set)) {
+        count++;
+    }
+    CU_ASSERT_EQUAL(count, 0);
+    delete_set(difference_set);
+
+    delete_set(other);
+    delete_set(set);
+}
