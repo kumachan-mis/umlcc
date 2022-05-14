@@ -11,6 +11,7 @@ Token* read_keyword_or_identifier(Lexer* lexer) {
     char c = fgetc(lexer->_file_ptr);
     if (!isalpha(c) && c != '_') {
         ungetc(c, lexer->_file_ptr);
+        delete_dystring(dystring);
         return NULL;
     }
 
@@ -40,6 +41,7 @@ Token* read_integer_constant(Lexer* lexer) {
     char c = fgetc(lexer->_file_ptr);
     if (!isdigit(c)) {
         ungetc(c, lexer->_file_ptr);
+        delete_dystring(dystring);
         return NULL;
     }
 

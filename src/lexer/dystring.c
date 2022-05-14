@@ -20,6 +20,11 @@ DyString* new_dystring() {
     return dystring;
 }
 
+void delete_dystring(DyString* dystring) {
+    free(dystring->_data);
+    free(dystring);
+}
+
 void dystring_push(DyString* dystring, char c) {
     dystring->_data[dystring->_length] = c;
     dystring->_length++;

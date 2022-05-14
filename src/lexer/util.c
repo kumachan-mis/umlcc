@@ -37,10 +37,6 @@ Map* new_punctuator_map() {
     return punctuator_map;
 }
 
-void delete_token_map(Map* token_map) {
-    delete_map(token_map);
-}
-
 void token_map_add(Map* token_map, char* token_str, TokenType type) {
     char* key = new_string(token_str);
     TokenType* value = new_integer(type);

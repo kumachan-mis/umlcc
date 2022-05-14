@@ -13,8 +13,8 @@ Lexer* new_lexer(FILE* file_ptr) {
 }
 
 void delete_lexer(Lexer* lexer) {
-    delete_token_map(lexer->_keyword_map);
-    delete_token_map(lexer->_punctuator_map);
+    delete_map(lexer->_keyword_map);
+    delete_map(lexer->_punctuator_map);
     free(lexer);
 }
 
