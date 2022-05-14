@@ -1,4 +1,5 @@
 #include "./test_map.h"
+#include "./test_set.h"
 #include "./test_vector.h"
 
 #include <CUnit/Basic.h>
