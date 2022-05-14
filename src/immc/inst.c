@@ -17,6 +17,19 @@ ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcO
     return immcinst;
 }
 
+ImmcInst* immcinst_copy(ImmcInst* immcinst) {
+    ImmcInst* copied_immcinst = malloc(sizeof(ImmcInst));
+    copied_immcinst->type = immcinst->type;
+    copied_immcinst->dest = immcope_copy(copied_immcinst->dest);
+    copied_immcinst->fst_src = immcope_copy(copied_immcinst->fst_src);
+    copied_immcinst->snd_src = immcope_copy(copied_immcinst->snd_src);
+    return copied_immcinst;
+}
+
+int immcinst_isjump(ImmcInst* immcinst) {
+    return INST_JMP <= immcinst->type && immcinst->type <= INST_JNEQ;
+}
+
 char* immcinst_tostring(ImmcInst* immcinst) {
     char* code_str = malloc(100 * sizeof(char));
     memset(code_str, 0, 100 * sizeof(char));
