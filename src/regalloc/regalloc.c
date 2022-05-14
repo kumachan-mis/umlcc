@@ -140,11 +140,11 @@ Vector* connect_basic_blocks(Vector* basic_blocks) {
 
         if (tail_immc->type == IMMC_INST && immcinst_isjump(tail_immc->inst)) {
             int* block_id_ref = map_get(label_block_map, tail_immc->inst->dest->label_name);
-            set_add(basic_block->succ_block_ids, new_integer(*block_id_ref));
+            set_add(basic_block->succ, new_integer(*block_id_ref));
         }
         if (block_id < blocks_len - 1 &&
             (tail_immc->type != IMMC_INST || tail_immc->inst->type != INST_JMP)) {
-            set_add(basic_block->succ_block_ids, new_integer(block_id + 1));
+            set_add(basic_block->succ, new_integer(block_id + 1));
         }
     }
 

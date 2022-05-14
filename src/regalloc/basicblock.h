@@ -5,10 +5,12 @@
 #include "../set/set.h"
 
 typedef struct _BasicBlock {
-    Set* input_reg_ids;
     Vector* immcs;
-    Set* output_reg_ids;
-    Set* succ_block_ids;
+    Set* succ;
+    Set* used;
+    Set* defined;
+    Set* input;
+    Set* output;
 } BasicBlock;
 
 extern BaseType t_basicblock;
