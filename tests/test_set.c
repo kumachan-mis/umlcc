@@ -3,6 +3,7 @@
 #include "../src/set/set.h"
 
 #include <CUnit/Basic.h>
+#include <stdlib.h>
 
 void test_set_add();
 void test_set_remove();
