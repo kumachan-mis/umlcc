@@ -41,10 +41,11 @@ int* copy_integer(int* integer) {
 }
 
 int hash_integer(int* integer) {
-    if (*integer >= 0)
+    if (*integer >= 0) {
         return *integer * 2;
-    else
+    } else {
         return -(*integer) * 2 + 1;
+    }
 }
 
 int comp_integer(int* a, int* b) {
