@@ -10,7 +10,7 @@ char* QREG_NAMES[16] = {"%rax", "%rbx", "%rcx", "%rdx", "%rsp", "%rbp", "%rsi", 
 char* LREG_NAMES[16] = {"%eax", "%ebx", "%ecx",  "%edx",  "%esp",  "%ebp",  "%esi",  "%edi",
                         "%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d", "%r14d", "%r15d"};
 
-char* BREG_NAMES[16] = {"%al", "%bl","%cl", "%dl", "%spl", "%bpl", "%sil", "%dil",
+char* BREG_NAMES[16] = {"%al",  "%bl",  "%cl",   "%dl",   "%spl",  "%bpl",  "%sil",  "%dil",
                         "%r8b", "%r9b", "%r10b", "%r11b", "%r12b", "%r13b", "%r14b", "%r15b"};
 
 // If the class is INTEGER, the next available register of the sequence

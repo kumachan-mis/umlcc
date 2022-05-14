@@ -12,6 +12,10 @@ struct _Map {
     int capacity;
 };
 
+struct _MapIter {
+    int index;
+};
+
 void update_capacity(Map* map, int new_capacity);
 int next_hash(int hash, int capacity);
 
@@ -82,12 +86,12 @@ void map_add(Map* map, void* key, void* value) {
 }
 
 void map_remove(Map* map, void* key) {
-    int hash =  map->t_key->hash_object(key) % map->capacity;
+    int hash = map->t_key->hash_object(key) % map->capacity;
     MapCell* cell = map->container[hash];
 
     int found = 0;
     while (cell != NULL) {
-        if (!cell->deleted &&  map->t_key->compare_object(cell->key, key) == 0) {
+        if (!cell->deleted && map->t_key->compare_object(cell->key, key) == 0) {
             found = 1;
             break;
         }
@@ -102,6 +106,49 @@ void map_remove(Map* map, void* key) {
 
     int std_capacity = 2 * (map->size + 1) - 1;
     if (2 * std_capacity < map->capacity) update_capacity(map, std_capacity);
+}
+
+MapIter* map_iter_begin(Map* map) {
+    MapIter* iter = malloc(sizeof(MapIter));
+    iter->index = 0;
+    while (iter->index < map->capacity) {
+        MapCell* cell = map->container[iter->index];
+        if (cell != NULL && !cell->deleted) break;
+        iter->index++;
+    }
+    return iter;
+}
+
+MapIter* map_iter_next(MapIter* iter, Map* map) {
+    if (iter->index >= map->capacity) return iter;
+
+    iter->index++;
+    while (iter->index < map->capacity) {
+        MapCell* cell = map->container[iter->index];
+        if (cell != NULL && !cell->deleted) break;
+        iter->index++;
+    }
+    return iter;
+}
+
+int map_iter_end(MapIter* iter, Map* map) {
+    int end = iter->index >= map->capacity;
+    if (end) free(iter);
+    return end;
+}
+
+void* map_iter_key(MapIter* iter, Map* map) {
+    if (iter->index >= map->capacity) return NULL;
+    MapCell* cell = map->container[iter->index];
+    if (cell == NULL) return NULL;
+    return cell->key;
+}
+
+void* map_iter_value(MapIter* iter, Map* map) {
+    if (iter->index >= map->capacity) return NULL;
+    MapCell* cell = map->container[iter->index];
+    if (cell == NULL) return NULL;
+    return cell->value;
 }
 
 void update_capacity(Map* map, int new_capacity) {
