@@ -113,7 +113,8 @@ void test_set_iter() {
     set_add(set, item);
 
     int count = 0;
-    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set); iter = set_iter_next(iter, set)) {
+    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set);
+         iter = set_iter_next(iter, set)) {
         int* item = set_iter_item(iter, set);
         CU_ASSERT(*item == -1 || *item == 0 || *item == 1);
         count++;
@@ -125,7 +126,8 @@ void test_set_iter() {
     t_hashable_integer.delete_object(item);
 
     count = 0;
-    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set); iter = set_iter_next(iter, set)) {
+    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set);
+         iter = set_iter_next(iter, set)) {
         int* item = set_iter_item(iter, set);
         CU_ASSERT(*item == -1 || *item == 1);
         count++;
