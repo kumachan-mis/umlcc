@@ -2,6 +2,10 @@
 
 #include <stdlib.h>
 
+BaseType t_ctype = {
+    .delete_object = delete_ctype,
+};
+
 CType* new_integer_ctype() {
     CType* ctype = malloc(sizeof(CType));
     ctype->type = CTYPE_INT;

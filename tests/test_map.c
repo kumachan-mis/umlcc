@@ -18,89 +18,90 @@ CU_Suite* add_test_suite_map() {
 }
 
 void test_map_get_with_default() {
-    Map* map = new_map();
-    int* value = map_get(map, "key", str_hash, str_comp);
+    Map* map = new_map(&t_hashable_string, &t_integer);
+    int* value = map_get(map, "key");
     CU_ASSERT_PTR_NULL(value);
 
     int* default_value = new_integer(0);
-    value = map_get_with_default(map, "key", default_value, str_hash, str_comp);
+    value = map_get_with_default(map, "key", default_value);
     CU_ASSERT_EQUAL(*value, 0);
 
-    delete_map(map, delete_str, delete_integer);
+    free(default_value);
+    delete_map(map);
 }
 
 void test_map_add() {
-    Map* map = new_map();
+    Map* map = new_map(&t_hashable_string, &t_integer);
     char* key = NULL;
     int* value = NULL;
 
     key = new_string("two");
     value = new_integer(2);
-    map_add(map, key, value, str_hash, str_comp, delete_str, delete_integer);
+    map_add(map, key, value);
 
     key = new_string("five");
     value = new_integer(5);
-    map_add(map, key, value, str_hash, str_comp, delete_str, delete_integer);
+    map_add(map, key, value);
 
     key = new_string("seven");
     value = new_integer(7);
-    map_add(map, key, value, str_hash, str_comp, delete_str, delete_integer);
+    map_add(map, key, value);
 
     key = new_string("eight");
     value = new_integer(8);
-    map_add(map, key, value, str_hash, str_comp, delete_str, delete_integer);
+    map_add(map, key, value);
 
-    value = map_get(map, "five", str_hash, str_comp);
+    value = map_get(map, "five");
     CU_ASSERT_EQUAL(*value, 5);
 
-    value = map_get(map, "eight", str_hash, str_comp);
+    value = map_get(map, "eight");
     CU_ASSERT_EQUAL(*value, 8);
 
-    value = map_get(map, "seven", str_hash, str_comp);
+    value = map_get(map, "seven");
     CU_ASSERT_EQUAL(*value, 7);
 
-    value = map_get(map, "two", str_hash, str_comp);
+    value = map_get(map, "two");
     CU_ASSERT_EQUAL(*value, 2);
 
-    value = map_get(map, "ten", str_hash, str_comp);
+    value = map_get(map, "ten");
     CU_ASSERT_EQUAL(value, NULL);
 
     key = new_string("eight");
     value = new_integer(-1);
-    map_add(map, key, value, str_hash, str_comp, delete_str, delete_integer);
+    map_add(map, key, value);
 
-    value = map_get(map, "eight", str_hash, str_comp);
+    value = map_get(map, "eight");
     CU_ASSERT_EQUAL(*value, -1);
 
-    delete_map(map, delete_str, delete_integer);
+    delete_map(map);
 }
 
 void test_map_remove() {
-    Map* map = new_map();
+    Map* map = new_map(&t_hashable_string, &t_integer);
     char* key = NULL;
     int* value = NULL;
 
     key = new_string("key");
     value = new_integer(7);
-    map_add(map, key, value, str_hash, str_comp, delete_str, delete_integer);
+    map_add(map, key, value);
 
     key = new_string("erased_key");
     value = new_integer(-2);
-    map_add(map, key, value, str_hash, str_comp, delete_str, delete_integer);
+    map_add(map, key, value);
 
-    value = map_get(map, "key", str_hash, str_comp);
+    value = map_get(map, "key");
     CU_ASSERT_EQUAL(*value, 7);
 
-    value = map_get(map, "erased_key", str_hash, str_comp);
+    value = map_get(map, "erased_key");
     CU_ASSERT_EQUAL(*value, -2);
 
-    map_remove(map, "erased_key", str_hash, str_comp, delete_str, delete_integer);
+    map_remove(map, "erased_key");
 
-    value = map_get(map, "key", str_hash, str_comp);
+    value = map_get(map, "key");
     CU_ASSERT_EQUAL(*value, 7);
 
-    value = map_get(map, "erased_key", str_hash, str_comp);
+    value = map_get(map, "erased_key");
     CU_ASSERT_PTR_NULL(value);
 
-    delete_map(map, delete_str, delete_integer);
+    delete_map(map);
 }

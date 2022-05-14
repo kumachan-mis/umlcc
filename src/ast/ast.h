@@ -1,6 +1,7 @@
 #ifndef _UMLCC_AST_H_
 #define _UMLCC_AST_H_
 
+#include "../common/common.h"
 #include "../vector/vector.h"
 
 typedef enum _AstType {
@@ -58,6 +59,8 @@ typedef struct _Ast {
     int value_int;
     Vector* children;
 } Ast;
+
+extern BaseType t_ast;
 
 Ast* new_ast(AstType type, int num_children, ...);
 Ast* new_identifier_ast(AstType type, char* name);

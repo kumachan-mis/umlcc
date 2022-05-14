@@ -4,12 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-Symbol* new_symbol(char* name, CType* ctype, int memory_offset);
-void delete_symbol(Symbol* symbol);
-
 SymbolTable* new_symboltable() {
     SymbolTable* table = malloc(sizeof(SymbolTable));
-    table->_symbol_map = new_map();
+    table->_symbol_map = new_map(&t_hashable_string, &t_symbol);
     table->_memory_size = 0;
     table->_outer_scope = NULL;
     return table;
@@ -17,12 +14,12 @@ SymbolTable* new_symboltable() {
 
 void delete_symboltable(SymbolTable* table) {
     if (table->_outer_scope != NULL) delete_symboltable(table->_outer_scope);
-    delete_map(table->_symbol_map, delete_str, delete_symbol);
+    delete_map(table->_symbol_map);
     free(table);
 }
 
 int symboltable_can_define(SymbolTable* table, char* name) {
-    return map_get(table->_symbol_map, name, str_hash, str_comp) == NULL;
+    return map_get(table->_symbol_map, name) == NULL;
 }
 
 Symbol* symboltable_define(SymbolTable* table, char* name, CType* ctype) {
@@ -30,14 +27,14 @@ Symbol* symboltable_define(SymbolTable* table, char* name, CType* ctype) {
     table->_memory_size += ctype_size(ctype);
     Symbol* symbol = new_symbol(name, ctype, table->_memory_size);
     char* symbol_name = new_string(name);
-    map_add(table->_symbol_map, symbol_name, symbol, str_hash, str_comp, delete_str, delete_symbol);
+    map_add(table->_symbol_map, symbol_name, symbol);
     return symbol;
 }
 
 Symbol* symboltable_search(SymbolTable* table, char* name) {
     Symbol* symbol = NULL;
     while (table != NULL) {
-        symbol = map_get(table->_symbol_map, name, str_hash, str_comp);
+        symbol = map_get(table->_symbol_map, name);
         if (symbol != NULL) break;
         table = table->_outer_scope;
     }
@@ -56,21 +53,7 @@ SymbolTable* symboltable_enter_scope(SymbolTable* table) {
 SymbolTable* symboltable_exit_scope(SymbolTable* table) {
     SymbolTable* outer_table = table->_outer_scope;
     if (outer_table != NULL) outer_table->_memory_size = table->_memory_size;
-    delete_map(table->_symbol_map, delete_str, delete_symbol);
+    delete_map(table->_symbol_map);
     free(table);
     return outer_table;
-}
-
-Symbol* new_symbol(char* name, CType* ctype, int memory_offset) {
-    Symbol* symbol = malloc(sizeof(Symbol));
-    symbol->name = name;
-    symbol->ctype = ctype;
-    symbol->memory_offset = memory_offset;
-    return symbol;
-}
-
-void delete_symbol(Symbol* symbol) {
-    free(symbol->name);
-    delete_ctype(symbol->ctype);
-    free(symbol);
 }

@@ -3,21 +3,39 @@
 #include <stdlib.h>
 #include <string.h>
 
+int hash_integer(int* integer);
+int comp_integer(int* a, int* b);
+int hash_string(char* str);
+
+BaseType t_integer = {
+    .delete_object = free,
+};
+BaseType t_string = {
+    .delete_object = free,
+};
+
+HashableType t_hashable_integer = {
+    .hash_object = hash_integer,
+    .compare_object = comp_integer,
+    .delete_object = free,
+};
+HashableType t_hashable_string = {
+    .hash_object = hash_string,
+    .compare_object = strcmp,
+    .delete_object = free,
+};
+
 int* new_integer(int value) {
     int* integer = malloc(sizeof(int));
     *integer = value;
     return integer;
 }
 
-void delete_integer(int* integer) {
-    free(integer);
+int hash_integer(int* integer) {
+    return *integer;
 }
 
-int integer_hash(int* integer, int max) {
-    return *integer % max;
-}
-
-int integer_comp(int* a, int* b) {
+int comp_integer(int* a, int* b) {
     return *a - *b;
 }
 
@@ -27,11 +45,7 @@ char* new_string(char* str) {
     return copied_str;
 }
 
-void delete_str(char* str) {
-    free(str);
-}
-
-int str_hash(char* str, int max) {
+int hash_string(char* str) {
     int a = 151, b = 587;
     int hash = 0;
 
@@ -41,9 +55,5 @@ int str_hash(char* str, int max) {
         str_ptr++;
     }
 
-    return hash % max;
-}
-
-int str_comp(char* a, char* b) {
-    return strcmp(a, b);
+    return hash;
 }

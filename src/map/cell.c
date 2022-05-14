@@ -16,8 +16,7 @@ void delete_mapcell(MapCell* cell, void delete_key(void* key), void delete_value
     free(cell);
 }
 
-void mapcell_markas_deleted(MapCell* cell, void delete_key(void* key),
-                            void delete_value(void* value)) {
+void mapcell_deleted(MapCell* cell, void delete_key(void* key), void delete_value(void* value)) {
     if (cell->key != NULL) {
         delete_key(cell->key);
         cell->key = NULL;

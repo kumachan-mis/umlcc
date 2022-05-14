@@ -7,7 +7,7 @@
 void token_map_add(Map* token_map, char* token_str, TokenType type);
 
 Map* new_keyword_map() {
-    Map* keyword_map = new_map();
+    Map* keyword_map = new_map(&t_hashable_string, &t_integer);
 
     token_map_add(keyword_map, "int", TOKEN_KEYWORD_INT);
     token_map_add(keyword_map, "return", TOKEN_KEYWORD_RETURN);
@@ -16,7 +16,7 @@ Map* new_keyword_map() {
 }
 
 Map* new_punctuator_map() {
-    Map* punctuator_map = new_map();
+    Map* punctuator_map = new_map(&t_hashable_string, &t_integer);
 
     token_map_add(punctuator_map, "{", TOKEN_LBRACE);
     token_map_add(punctuator_map, "}", TOKEN_RBRACE);
@@ -38,13 +38,13 @@ Map* new_punctuator_map() {
 }
 
 void delete_token_map(Map* token_map) {
-    delete_map(token_map, delete_str, delete_integer);
+    delete_map(token_map);
 }
 
 void token_map_add(Map* token_map, char* token_str, TokenType type) {
     char* key = new_string(token_str);
     TokenType* value = new_integer(type);
-    map_add(token_map, key, value, str_hash, str_comp, delete_str, delete_integer);
+    map_add(token_map, key, value);
 }
 
 void skip_white_spaces(Lexer* lexer) {

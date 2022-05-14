@@ -9,7 +9,6 @@ typedef struct _MapCell {
 
 MapCell* new_mapcell(void* key, void* value);
 void delete_mapcell(MapCell* cell, void delete_key(void* key), void delete_value(void* value));
-void mapcell_markas_deleted(MapCell* cell, void delete_key(void* key),
-                            void delete_value(void* value));
+void mapcell_deleted(MapCell* cell, void delete_key(void* key), void delete_value(void* value));
 
 #endif

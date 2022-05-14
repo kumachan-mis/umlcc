@@ -2,6 +2,10 @@
 
 #include <stdlib.h>
 
+BaseType t_immc = {
+    .delete_object = delete_immc,
+};
+
 Immc* new_inst_immc(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcOpe* snd_src) {
     Immc* immc = malloc(sizeof(Immc));
     immc->type = IMMC_INST;

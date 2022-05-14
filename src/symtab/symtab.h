@@ -2,19 +2,13 @@
 #define _UMLCC_SYMTAB_H_
 
 #include "../map/map.h"
-#include "../type/type.h"
+#include "./symbol.h"
 
 typedef struct _SymbolTable {
     Map* _symbol_map;
     int _memory_size;
     struct _SymbolTable* _outer_scope;
 } SymbolTable;
-
-typedef struct _Symbol {
-    char* name;
-    CType* ctype;
-    int memory_offset;
-} Symbol;
 
 SymbolTable* new_symboltable();
 void delete_symboltable(SymbolTable* table);

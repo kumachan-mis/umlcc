@@ -7,13 +7,13 @@
 #include <string.h>
 
 Vector* gen_translation_unit_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
     append_children_code(codegen, codes);
     return codes;
 }
 
 Vector* gen_function_definition_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
 
     Srt* declarator_srt = vector_at(srt->children, 0);
@@ -26,7 +26,7 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     codegen->_local_table = new_symboltable();
     codegen->_return_label_id = codegen->_label_id;
 
-    Vector* param_codes = new_vector();
+    Vector* param_codes = new_vector(&t_immc);
     Vector* params = declarator_srt->ctype->function->params;
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
@@ -41,7 +41,7 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     }
 
     codegen->_srt = vector_at(srt->children, 1);
-    Vector* body_codes = new_vector();
+    Vector* body_codes = new_vector(&t_immc);
     append_children_code(codegen, body_codes);
 
     char* label_name = new_string(declarator_srt->ident_name);
@@ -50,10 +50,10 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     vector_push(codes, new_inst_immc(INST_ENTER, NULL, memory_size, NULL));
 
     vector_extend(codes, param_codes);
-    delete_vector(param_codes, delete_str);
+    delete_vector(param_codes);
 
     vector_extend(codes, body_codes);
-    delete_vector(body_codes, delete_str);
+    delete_vector(body_codes);
 
     char* return_label_name = create_label_name(codegen->_return_label_id);
     vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, return_label_name));

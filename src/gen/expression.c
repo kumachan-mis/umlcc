@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 Vector* gen_assignment_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
 
     append_child_code(codegen, codes, 0);
@@ -29,7 +29,7 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
 }
 
 Vector* gen_logical_or_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
 
     ImmcOpe* dest = NULL;
     ImmcOpe* fst_src = NULL;
@@ -76,7 +76,7 @@ Vector* gen_logical_or_expr_code(Codegen* codegen) {
 }
 
 Vector* gen_logical_and_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
 
     ImmcOpe* dest = NULL;
     ImmcOpe* fst_src = NULL;
@@ -123,7 +123,7 @@ Vector* gen_logical_and_expr_code(Codegen* codegen) {
 }
 
 Vector* gen_additive_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
 
     append_child_code(codegen, codes, 0);
@@ -151,7 +151,7 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
 }
 
 Vector* gen_multiplicative_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
 
     append_child_code(codegen, codes, 0);
@@ -199,7 +199,7 @@ Vector* gen_postfix_expr_code(Codegen* codegen) {
 }
 
 Vector* gen_call_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
 
     Srt* param_srt = vector_at(srt->children, 1);
@@ -250,7 +250,7 @@ Vector* gen_unary_expr_code(Codegen* codegen) {
 }
 
 Vector* gen_not_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
 
     append_child_code(codegen, codes, 0);
@@ -272,7 +272,7 @@ Vector* gen_not_expr_code(Codegen* codegen) {
 }
 
 Vector* gen_address_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
     Srt* srt = vector_at(codegen->_srt->children, 0);
 
     ImmcOpe* dest = NULL;
@@ -305,7 +305,7 @@ Vector* gen_address_expr_code(Codegen* codegen) {
 }
 
 Vector* gen_primary_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
 
     ImmcOpe* dest = NULL;

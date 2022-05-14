@@ -1,23 +1,15 @@
 #ifndef _UMLCC_MAP_H_
 #define _UMLCC_MAP_H_
 
+#include "../common/common.h"
+
 typedef struct _Map Map;
 
-Map* new_map();
-void delete_map(Map* map, void delete_key(void* key), void delete_value(void* value));
-
-void* map_get(Map* map, void* key, int hash_key(void* key, int max),
-              int comp_key(void* a, void* b));
-
-void* map_get_with_default(Map* map, void* key, void* default_value,
-                           int hash_key(void* key, int max), int comp_key(void* a, void* b));
-
-void map_add(Map* map, void* key, void* value, int hash_key(void* key, int max),
-             int comp_key(void* a, void* b), void delete_key(void* key),
-             void delete_value(void* value));
-
-void map_remove(Map* map, void* key, int hash_key(void* key, int max),
-                int comp_key(void* a, void* b), void delete_key(void* key),
-                void delete_value(void* value));
+Map* new_map(HashableType* t_key, BaseType* t_value);
+void delete_map(Map* map);
+void* map_get(Map* map, void* key);
+void* map_get_with_default(Map* map, void* key, void* default_value);
+void map_add(Map* map, void* key, void* value);
+void map_remove(Map* map, void* key);
 
 #endif

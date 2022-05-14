@@ -3,6 +3,10 @@
 
 #include <stdlib.h>
 
+BaseType t_cparam = {
+    .delete_object = delete_cparam,
+};
+
 struct _CType* ctype_copy(struct _CType* ctype);
 void delete_ctype(struct _CType* ctype);
 
@@ -20,7 +24,7 @@ CFunction* new_socket_cfunction(Vector* params) {
 CFunction* cfunction_copy(CFunction* cfunction) {
     CFunction* copied_cfunction = malloc(sizeof(CFunction));
 
-    Vector* copied_params = new_vector();
+    Vector* copied_params = new_vector(&t_cparam);
     int num_args = vector_size(cfunction->params);
     for (int i = 0; i < num_args; i++) {
         CParam* copied_param = cparam_copy(vector_at(cfunction->params, i));
@@ -46,7 +50,7 @@ CFunction* cfunction_connect(CFunction* socket, struct _CType* plug) {
 }
 
 void delete_cfunction(CFunction* cfunction) {
-    delete_vector(cfunction->params, delete_cparam);
+    delete_vector(cfunction->params);
     if (cfunction->return_ctype != NULL) delete_ctype(cfunction->return_ctype);
     free(cfunction);
 }

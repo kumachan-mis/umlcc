@@ -4,12 +4,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+BaseType t_ast = {
+    .delete_object = delete_ast,
+};
+
 Ast* new_ast(AstType type, int num_children, ...) {
     Ast* ast = malloc(sizeof(Ast));
     ast->type = type;
     ast->ident_name = NULL;
     ast->value_int = -1;
-    ast->children = new_vector();
+    ast->children = new_vector(&t_ast);
 
     va_list children;
     va_start(children, num_children);
@@ -26,7 +30,7 @@ Ast* new_identifier_ast(AstType type, char* name) {
     ast->type = type;
     ast->ident_name = name;
     ast->value_int = -1;
-    ast->children = new_vector();
+    ast->children = new_vector(&t_ast);
     return ast;
 }
 
@@ -35,12 +39,12 @@ Ast* new_integer_ast(AstType type, int value) {
     ast->type = type;
     ast->ident_name = NULL;
     ast->value_int = value;
-    ast->children = new_vector();
+    ast->children = new_vector(&t_ast);
     return ast;
 }
 
 void delete_ast(Ast* ast) {
     if (ast->ident_name != NULL) free(ast->ident_name);
-    delete_vector(ast->children, delete_ast);
+    delete_vector(ast->children);
     free(ast);
 }

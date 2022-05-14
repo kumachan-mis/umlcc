@@ -15,7 +15,7 @@ void append_children_code(Codegen* codegen, Vector* codes) {
         codegen->_srt = vector_at(srt->children, i);
         sub_codes = codegen_generate_code(codegen);
         vector_extend(codes, sub_codes);
-        delete_vector(sub_codes, delete_immc);
+        delete_vector(sub_codes);
     }
 
     codegen->_srt = srt;
@@ -28,7 +28,7 @@ void append_child_code(Codegen* codegen, Vector* codes, int index) {
     codegen->_srt = vector_at(srt->children, index);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, delete_immc);
+    delete_vector(sub_codes);
 
     codegen->_srt = srt;
 }

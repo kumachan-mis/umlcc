@@ -23,13 +23,13 @@ X64gen* new_x64gen(Vector* immcs) {
 }
 
 void delete_x64gen(X64gen* x64gen) {
-    delete_vector(x64gen->_immcs, delete_immc);
+    delete_vector(x64gen->_immcs);
     if (x64gen->regalloc != NULL) delete_regalloc(x64gen->regalloc);
     free(x64gen);
 }
 
 Vector* x64gen_generate_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Vector* sub_codes = NULL;
 
     int immcs_len = vector_size(x64gen->_immcs);
@@ -46,17 +46,17 @@ Vector* x64gen_generate_x64code(X64gen* x64gen) {
                 exit(1);
         }
         vector_extend(codes, sub_codes);
-        delete_vector(sub_codes, delete_str);
+        delete_vector(sub_codes);
     }
 
     return codes;
 }
 
 Vector* gen_function_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
 
-    Vector* head_codes = new_vector();
-    Vector* tail_codes = new_vector();
+    Vector* head_codes = new_vector(&t_string);
+    Vector* tail_codes = new_vector(&t_string);
     Vector* sub_codes = NULL;
 
     x64gen->regalloc = new_regalloc();
@@ -64,11 +64,11 @@ Vector* gen_function_x64code(X64gen* x64gen) {
 
     sub_codes = gen_label_x64code(x64gen);
     vector_extend(codes, sub_codes);
-    delete_vector(sub_codes, delete_str);
+    delete_vector(sub_codes);
 
     sub_codes = gen_inst_x64code(x64gen);
     vector_extend(head_codes, sub_codes);
-    delete_vector(sub_codes, delete_str);
+    delete_vector(sub_codes);
 
     Vector* body_codes = gen_function_body_x64code(x64gen);
 
@@ -86,14 +86,14 @@ Vector* gen_function_x64code(X64gen* x64gen) {
 
     sub_codes = gen_inst_x64code(x64gen);
     vector_extend(tail_codes, sub_codes);
-    delete_vector(sub_codes, delete_str);
+    delete_vector(sub_codes);
 
     vector_extend(codes, head_codes);
-    delete_vector(head_codes, delete_str);
+    delete_vector(head_codes);
     vector_extend(codes, body_codes);
-    delete_vector(body_codes, delete_str);
+    delete_vector(body_codes);
     vector_extend(codes, tail_codes);
-    delete_vector(tail_codes, delete_str);
+    delete_vector(tail_codes);
 
     x64gen->evaluation_count = 0;
     delete_regalloc(x64gen->regalloc);
@@ -102,7 +102,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_function_body_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Vector* sub_codes = NULL;
 
     while (1) {
@@ -118,7 +118,7 @@ Vector* gen_function_body_x64code(X64gen* x64gen) {
                 break;
         }
         vector_extend(codes, sub_codes);
-        delete_vector(sub_codes, delete_str);
+        delete_vector(sub_codes);
     }
 
     return codes;

@@ -19,7 +19,7 @@ void delete_lexer(Lexer* lexer) {
 }
 
 Vector* lexer_read_tokens(Lexer* lexer) {
-    Vector* tokens = new_vector();
+    Vector* tokens = new_vector(&t_token);
     skip_white_spaces(lexer);
 
     while (1) {

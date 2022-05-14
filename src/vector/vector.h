@@ -3,8 +3,10 @@
 
 typedef struct _Vector Vector;
 
-Vector* new_vector();
-void delete_vector(Vector* vector, void delete_item(void* item));
+#include "../common/common.h"
+
+Vector* new_vector(BaseType* t_item);
+void delete_vector(Vector* vector);
 void vector_push(Vector* vector, void* item);
 void* vector_pop(Vector* vector);
 void* vector_at(Vector* vector, int index);

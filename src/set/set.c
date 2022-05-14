@@ -9,41 +9,31 @@ struct _Set {
     Map* _inner;
 };
 
-void delete_exist(void* exist);
+void delete_exist() {}
 
-Set* new_set() {
+BaseType t_exitst = {
+    .delete_object = delete_exist,
+};
+
+Set* new_set(HashableType* t_item) {
     Set* set = malloc(sizeof(Set));
-    set->_inner = new_map();
+    set->_inner = new_map(t_item, &t_exitst);
     return set;
 }
 
-void delete_set(Set* set, void delete_item(void* item)) {
-    delete_map(set->_inner, delete_item, delete_exist);
+void delete_set(Set* set) {
+    delete_map(set->_inner);
     free(set);
 }
 
-void set_add(Set* set, void* item, int hash_item(void* item, int max),
-             int comp_item(void* a, void* b), void delete_item(void* item)) {
-    map_add(set->_inner, item, EXIST, hash_item, comp_item, delete_item, delete_exist);
+void set_add(Set* set, void* item) {
+    map_add(set->_inner, item, EXIST);
 }
 
-void set_remove(Set* set, void* item, int hash_item(void* item, int max),
-                int comp_item(void* a, void* b), void delete_item(void* item)) {
-    map_remove(set->_inner, item, hash_item, comp_item, delete_item, delete_exist);
+void set_remove(Set* set, void* item) {
+    map_remove(set->_inner, item);
 }
 
-int set_contains(Set* set, void* item, int hash_item(void* item, int max),
-                 int comp_item(void* a, void* b)) {
-    return map_get(set->_inner, item, hash_item, comp_item) == EXIST;
+int set_contains(Set* set, void* item) {
+    return map_get(set->_inner, item) == EXIST;
 }
-
-Set* set_intersection(Set* set, Set* other, int hash_item(void* item, int max),
-                      int comp_item(void* a, void* b), void delete_item(void* item)) {}
-
-Set* set_union(Set* set, Set* other, int hash_item(void* item, int max),
-               int comp_item(void* a, void* b), void delete_item(void* item)) {}
-
-Set* set_difference(Set* set, Set* other, int hash_item(void* item, int max),
-                    int comp_item(void* a, void* b), void delete_item(void* item)) {}
-
-void delete_exist(void* exist) {}

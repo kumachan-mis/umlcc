@@ -4,7 +4,6 @@
 #include "./resolver/resolver.h"
 #include "./x64/x64.h"
 
-#include "./common/common.h"
 #include "./immc/immc.h"
 
 #include <stdio.h>
@@ -51,7 +50,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < x64codes_len; i++) {
         fprintf(dest, "%s", (char*)vector_at(x64codes, i));
     }
-    delete_vector(x64codes, delete_str);
+    delete_vector(x64codes);
 
     fclose(dest);
     fclose(imm);

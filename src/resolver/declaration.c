@@ -110,7 +110,7 @@ Srt* resolve_declarator(Resolver* resolver) {
 }
 
 Vector* resolve_parameter_list(Resolver* resolver) {
-    Vector* params = new_vector();
+    Vector* params = new_vector(&t_cparam);
     Ast* ast = resolver->_ast;
 
     int num_children = vector_size(ast->children);

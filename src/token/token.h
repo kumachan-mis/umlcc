@@ -1,6 +1,8 @@
 #ifndef _UMLCC_TOKEN_H_
 #define _UMLCC_TOKEN_H_
 
+#include "../common/common.h"
+
 typedef enum _TokenType {
     // keyword
     TOKEN_KEYWORD_INT,
@@ -36,6 +38,8 @@ typedef struct _Token {
     char* ident_name;
     int value_int;
 } Token;
+
+extern BaseType t_token;
 
 Token* new_token(TokenType type);
 Token* new_identifier_token(char* name);

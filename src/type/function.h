@@ -1,6 +1,7 @@
 #ifndef _UMLCC_TYPE_FUNCTION_H_
 #define _UMLCC_TYPE_FUNCTION_H_
 
+#include "../common/common.h"
 #include "../vector/vector.h"
 
 typedef struct _CFunction {
@@ -12,6 +13,8 @@ typedef struct _CParam {
     char* ident_name;
     struct _CType* ctype;
 } CParam;
+
+extern BaseType t_cparam;
 
 CFunction* new_cfunction(Vector* params, struct _CType* return_ctype);
 CFunction* new_socket_cfunction(Vector* params);
