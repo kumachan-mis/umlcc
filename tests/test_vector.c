@@ -1,6 +1,6 @@
 #include "./test_vector.h"
-#include "../src/vector/vector.h"
 #include "../src/common/common.h"
+#include "../src/vector/vector.h"
 
 #include <CUnit/Basic.h>
 #include <stdlib.h>
@@ -49,7 +49,7 @@ void test_vector_push() {
     CU_ASSERT_EQUAL(*item, 6);
 
     CU_ASSERT_EQUAL(vector_size(vector), 4);
-    delete_vector(vector, free);
+    delete_vector(vector, delete_integer);
 }
 
 void test_vector_pop() {
@@ -82,5 +82,5 @@ void test_vector_pop() {
     CU_ASSERT_EQUAL(vector_size(vector), 0);
     free(item);
 
-    delete_vector(vector, free);
+    delete_vector(vector, delete_integer);
 }

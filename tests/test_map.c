@@ -24,55 +24,55 @@ void test_map_set() {
 
     key = new_string("two");
     value = new_integer(2);
-    map_set(map, key, value, free);
+    map_set(map, key, value, str_hash, str_comp, delete_str, delete_integer);
 
     key = new_string("five");
     value = new_integer(5);
-    map_set(map, key, value, free);
+    map_set(map, key, value, str_hash, str_comp, delete_str, delete_integer);
 
     key = new_string("seven");
     value = new_integer(7);
-    map_set(map, key, value, free);
+    map_set(map, key, value, str_hash, str_comp, delete_str, delete_integer);
 
     key = new_string("eight");
     value = new_integer(8);
-    map_set(map, key, value, free);
+    map_set(map, key, value, str_hash, str_comp, delete_str, delete_integer);
 
-    value = map_get(map, "five");
+    value = map_get(map, "five", str_hash, str_comp);
     CU_ASSERT_EQUAL(*value, 5);
 
-    value = map_get(map, "eight");
+    value = map_get(map, "eight", str_hash, str_comp);
     CU_ASSERT_EQUAL(*value, 8);
 
-    value = map_get(map, "seven");
+    value = map_get(map, "seven", str_hash, str_comp);
     CU_ASSERT_EQUAL(*value, 7);
 
-    value = map_get(map, "two");
+    value = map_get(map, "two", str_hash, str_comp);
     CU_ASSERT_EQUAL(*value, 2);
 
-    value = map_get(map, "ten");
+    value = map_get(map, "ten", str_hash, str_comp);
     CU_ASSERT_EQUAL(value, NULL);
 
     key = new_string("eight");
     value = new_integer(-1);
-    map_set(map, key, value, free);
+    map_set(map, key, value, str_hash, str_comp, delete_str, delete_integer);
 
-    value = map_get(map, "eight");
+    value = map_get(map, "eight", str_hash, str_comp);
     CU_ASSERT_EQUAL(*value, -1);
 
-    delete_map(map, free);
+    delete_map(map, delete_str, delete_integer);
 }
 
 void test_map_get_with_default() {
     Map* map = new_map();
-    int* value = map_get(map, "key");
+    int* value = map_get(map, "key", str_hash, str_comp);
     CU_ASSERT_PTR_NULL(value);
 
     int* default_value = new_integer(0);
-    value = map_get_with_default(map, "key", default_value);
+    value = map_get_with_default(map, "key", default_value, str_hash, str_comp);
     CU_ASSERT_EQUAL(*value, 0);
 
-    delete_map(map, free);
+    delete_map(map, delete_str, delete_integer);
 }
 
 void test_map_erase() {
@@ -82,23 +82,25 @@ void test_map_erase() {
 
     key = new_string("key");
     value = new_integer(7);
-    map_set(map, key, value, free);
+    map_set(map, key, value, str_hash, str_comp, delete_str, delete_integer);
 
     key = new_string("erased_key");
     value = new_integer(-2);
-    map_set(map, key, value, free);
+    map_set(map, key, value, str_hash, str_comp, delete_str, delete_integer);
 
-    value = map_get(map, "key");
+    value = map_get(map, "key", str_hash, str_comp);
     CU_ASSERT_EQUAL(*value, 7);
 
-    value = map_get(map, "erased_key");
+    value = map_get(map, "erased_key", str_hash, str_comp);
     CU_ASSERT_EQUAL(*value, -2);
 
-    map_erase(map, "erased_key", free);
+    map_erase(map, "erased_key", str_hash, str_comp, delete_str, delete_integer);
 
-    value = map_get(map, "key");
+    value = map_get(map, "key", str_hash, str_comp);
     CU_ASSERT_EQUAL(*value, 7);
 
-    value = map_get(map, "erased_key");
+    value = map_get(map, "erased_key", str_hash, str_comp);
     CU_ASSERT_PTR_NULL(value);
+
+    delete_map(map, delete_str, delete_integer);
 }

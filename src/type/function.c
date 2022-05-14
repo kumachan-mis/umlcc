@@ -46,7 +46,7 @@ CFunction* cfunction_connect(CFunction* socket, struct _CType* plug) {
 }
 
 void delete_cfunction(CFunction* cfunction) {
-    delete_vector(cfunction->params, (void (*)(void* item))delete_cparam);
+    delete_vector(cfunction->params, delete_cparam);
     if (cfunction->return_ctype != NULL) delete_ctype(cfunction->return_ctype);
     free(cfunction);
 }

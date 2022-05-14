@@ -1,4 +1,5 @@
 #include "./reader.h"
+#include "../common/common.h"
 #include "./dystring.h"
 
 #include <ctype.h>
@@ -25,11 +26,11 @@ Token* read_keyword_or_identifier(Lexer* lexer) {
     }
 
     char* token_str = dystring_finish(dystring);
-    TokenType* keyword_ref = map_get(lexer->_keyword_map, token_str);
+    TokenType* token_ref = map_get(lexer->_keyword_map, token_str, str_hash, str_comp);
 
-    if (keyword_ref != NULL) {
+    if (token_ref != NULL) {
         free(token_str);
-        return new_token(*keyword_ref);
+        return new_token(*token_ref);
     }
     return new_identifier_token(token_str);
 }
@@ -86,10 +87,10 @@ Token* read_punctuator(Lexer* lexer) {
     }
 
     while (length > 0) {
-        TokenType* punctuator_ref = map_get(lexer->_punctuator_map, token_str);
-        if (punctuator_ref != NULL) {
+        TokenType* token_ref = map_get(lexer->_punctuator_map, token_str, str_hash, str_comp);
+        if (token_ref != NULL) {
             free(token_str);
-            return new_token(*punctuator_ref);
+            return new_token(*token_ref);
         }
         length--;
         ungetc(token_str[length], lexer->_file_ptr);

@@ -50,10 +50,10 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     vector_push(codes, new_inst_immc(INST_ENTER, NULL, memory_size, NULL));
 
     vector_extend(codes, param_codes);
-    delete_vector(param_codes, free);
+    delete_vector(param_codes, delete_str);
 
     vector_extend(codes, body_codes);
-    delete_vector(body_codes, free);
+    delete_vector(body_codes, delete_str);
 
     char* return_label_name = create_label_name(codegen->_return_label_id);
     vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, return_label_name));

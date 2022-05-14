@@ -38,11 +38,13 @@ Map* new_punctuator_map() {
 }
 
 void delete_token_map(Map* token_map) {
-    delete_map(token_map, free);
+    delete_map(token_map, delete_str, delete_integer);
 }
 
 void token_map_add(Map* token_map, char* token_str, TokenType type) {
-    map_set(token_map, new_string(token_str), new_integer(type), free);
+    char* key = new_string(token_str);
+    TokenType* value = new_integer(type);
+    map_set(token_map, key, value, str_hash, str_comp, delete_str, delete_integer);
 }
 
 void skip_white_spaces(Lexer* lexer) {

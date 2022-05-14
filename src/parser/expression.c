@@ -41,7 +41,7 @@ Ast* parse_assignment_expr(Parser* parser) {
         ast = next_ast;
     }
 
-    delete_vector(stack, (void (*)(void* item))delete_ast);
+    delete_vector(stack, delete_ast);
 
     return ast;
 }
@@ -144,7 +144,7 @@ Ast* parse_unary_expr(Parser* parser) {
         ast = next_ast;
     }
 
-    delete_vector(stack, (void (*)(void* item))delete_ast);
+    delete_vector(stack, delete_ast);
 
     return ast;
 }

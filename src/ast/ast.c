@@ -41,6 +41,6 @@ Ast* new_integer_ast(AstType type, int value) {
 
 void delete_ast(Ast* ast) {
     if (ast->ident_name != NULL) free(ast->ident_name);
-    delete_vector(ast->children, (void (*)(void* item))delete_ast);
+    delete_vector(ast->children, delete_ast);
     free(ast);
 }
