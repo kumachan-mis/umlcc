@@ -1,8 +1,8 @@
 #include "./regalloc.h"
-#include "./basicblock.h"
+#include "../common/common.h"
 #include "../immc/immc.h"
 #include "../map/map.h"
-#include "../common/common.h"
+#include "./basicblock.h"
 
 #include <stdlib.h>
 
@@ -28,7 +28,7 @@ void delete_regalloc(RegAlloc* regalloc) {
     free(regalloc);
 }
 
-Vector* regalloc_allocate_physical_regs(RegAlloc* regalloc) {
+Vector* regalloc_allocate_regs(RegAlloc* regalloc) {
     Vector* immcs = new_vector(&t_immc);
 
     int immcs_len = vector_size(regalloc->_immcs);
@@ -74,13 +74,9 @@ Vector* create_control_flow_graph(Vector* external_sequence) {
     return basic_blocks;
 }
 
-Vector* determine_allocation(Vector* regs_lifetime) {
+Vector* determine_allocation(Vector* regs_lifetime) {}
 
-}
-
-Vector* gen_allocated_immcs(RegAlloc* regalloc, Vector* allocation) {
-
-}
+Vector* gen_allocated_immcs(RegAlloc* regalloc, Vector* allocation) {}
 
 Vector* create_basic_blocks(Vector* external_sequence) {
     Vector* basic_blocks = new_vector(&t_basicblock);
@@ -146,7 +142,8 @@ Vector* connect_basic_blocks(Vector* basic_blocks) {
             int* block_id_ref = map_get(label_block_map, tail_immc->inst->dest->label_name);
             set_add(basic_block->succ_block_ids, new_integer(*block_id_ref));
         }
-        if (block_id < blocks_len - 1 && (tail_immc->type != IMMC_INST || tail_immc->inst->type != INST_JMP)) {
+        if (block_id < blocks_len - 1 &&
+            (tail_immc->type != IMMC_INST || tail_immc->inst->type != INST_JMP)) {
             set_add(basic_block->succ_block_ids, new_integer(block_id + 1));
         }
     }
@@ -155,6 +152,4 @@ Vector* connect_basic_blocks(Vector* basic_blocks) {
     return basic_blocks;
 }
 
-Vector* analyze_liveness(Vector* basic_blocks) {
-
-}
+Vector* analyze_liveness(Vector* basic_blocks) {}
