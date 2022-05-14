@@ -8,13 +8,13 @@
 #include <stdlib.h>
 
 Vector* gen_decl_list_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
     append_children_code(codegen, codes);
     return codes;
 }
 
 Vector* gen_init_decl_code(Codegen* codegen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_immc);
     append_child_code(codegen, codes, 0);
     return codes;
 }
@@ -29,5 +29,5 @@ Vector* gen_decl_code(Codegen* codegen) {
     CType* table_ctype = ctype_copy(srt->ctype);
     symboltable_define(table, table_ident_name, table_ctype);
 
-    return new_vector();
+    return new_vector(&t_immc);
 }

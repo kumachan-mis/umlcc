@@ -1,6 +1,7 @@
 #ifndef _UMLCC_SRT_H_
 #define _UMLCC_SRT_H_
 
+#include "../common/common.h"
 #include "../type/type.h"
 #include "../vector/vector.h"
 
@@ -53,6 +54,8 @@ typedef struct _Srt {
     int value_int;
     Vector* children;
 } Srt;
+
+extern BaseType t_srt;
 
 Srt* new_srt(SrtType type, int num_children, ...);
 Srt* new_ctyped_srt(SrtType type, CType* ctype, int num_children, ...);

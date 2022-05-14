@@ -1,6 +1,7 @@
 #ifndef _UMLCC_IMMC_H_
 #define _UMLCC_IMMC_H_
 
+#include "../common/common.h"
 #include "./inst.h"
 #include "./label.h"
 
@@ -14,6 +15,8 @@ typedef struct _Immc {
     ImmcInst* inst;
     ImmcLabel* label;
 } Immc;
+
+extern BaseType t_immc;
 
 Immc* new_inst_immc(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcOpe* snd_src);
 Immc* new_label_immc(ImmcLabelType type, ImmcLabelVis visibility, char* name);

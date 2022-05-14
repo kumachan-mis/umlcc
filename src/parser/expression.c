@@ -12,7 +12,7 @@ Ast* parse_expr(Parser* parser) {
 }
 
 Ast* parse_assignment_expr(Parser* parser) {
-    Vector* stack = new_vector();
+    Vector* stack = new_vector(&t_ast);
     int terminated = 0;
 
     while (!terminated) {
@@ -41,7 +41,7 @@ Ast* parse_assignment_expr(Parser* parser) {
         ast = next_ast;
     }
 
-    delete_vector(stack, (void (*)(void* item))delete_ast);
+    delete_vector(stack);
 
     return ast;
 }
@@ -121,7 +121,7 @@ Ast* parse_multiplicative_expr(Parser* parser) {
 }
 
 Ast* parse_unary_expr(Parser* parser) {
-    Vector* stack = new_vector();
+    Vector* stack = new_vector(&t_ast);
     int terminated = 0;
 
     while (!terminated) {
@@ -144,7 +144,7 @@ Ast* parse_unary_expr(Parser* parser) {
         ast = next_ast;
     }
 
-    delete_vector(stack, (void (*)(void* item))delete_ast);
+    delete_vector(stack);
 
     return ast;
 }

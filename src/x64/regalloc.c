@@ -3,6 +3,10 @@
 
 #include <stdlib.h>
 
+BaseType t_entry = {
+    .delete_object = free,
+};
+
 RegAlloc* new_regalloc() {
     RegAlloc* regalloc = malloc(sizeof(RegAlloc));
     regalloc->_allocation = malloc(NUM_REGS * sizeof(int));
@@ -88,7 +92,7 @@ void regalloc_unlock(RegAlloc* regalloc, int real_reg_id) {
 }
 
 Vector* regalloc_evacuate(RegAlloc* regalloc) {
-    Vector* evacuation_table = new_vector();
+    Vector* evacuation_table = new_vector(&t_entry);
 
     int callee = 0;
     for (int caller = 0; caller < NUM_CALLER_SAVED_REGS; caller++) {
@@ -125,5 +129,5 @@ void regalloc_restore(RegAlloc* regalloc, Vector* evacuation_table) {
         regalloc->_allocation[caller_saved_id] = regalloc->_allocation[callee_saved_id];
         regalloc->_allocation[callee_saved_id] = -1;
     }
-    delete_vector(evacuation_table, free);
+    delete_vector(evacuation_table);
 }

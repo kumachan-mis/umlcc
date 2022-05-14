@@ -4,8 +4,6 @@
 
 #include <stdlib.h>
 
-void token_map_add(Map* token_map, char* token_str, TokenType type);
-
 Lexer* new_lexer(FILE* file_ptr) {
     Lexer* lexer = malloc(sizeof(Lexer));
     lexer->_file_ptr = file_ptr;
@@ -15,13 +13,13 @@ Lexer* new_lexer(FILE* file_ptr) {
 }
 
 void delete_lexer(Lexer* lexer) {
-    delete_token_map(lexer->_keyword_map);
-    delete_token_map(lexer->_punctuator_map);
+    delete_map(lexer->_keyword_map);
+    delete_map(lexer->_punctuator_map);
     free(lexer);
 }
 
 Vector* lexer_read_tokens(Lexer* lexer) {
-    Vector* tokens = new_vector();
+    Vector* tokens = new_vector(&t_token);
     skip_white_spaces(lexer);
 
     while (1) {

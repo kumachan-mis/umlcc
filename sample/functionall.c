@@ -4,8 +4,7 @@ void func_param_function(void function(void)) {
     function();
 }
 
-void zero_param_function(void) {
-}
+void zero_param_function(void) {}
 
 int six_param_function(int a, int b, int c, int d, int e, int f) {
     return a + b + c + d + e + f;

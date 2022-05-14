@@ -1,27 +1,30 @@
 #include "./vector.h"
+#include "../common/common.h"
 
 #include <memory.h>
 #include <stdlib.h>
 
 struct _Vector {
+    BaseType* t_item;
     void** container;
     int size;
     int capacity;
 };
 
-Vector* new_vector() {
+Vector* new_vector(BaseType* t_item) {
     Vector* vector = malloc(sizeof(Vector));
     int size = 0, capacity = 1;
 
+    vector->t_item = t_item;
     vector->container = malloc(capacity * sizeof(void*));
     vector->size = size;
     vector->capacity = capacity;
     return vector;
 }
 
-void delete_vector(Vector* vector, void delete_item(void* item)) {
+void delete_vector(Vector* vector) {
     for (int i = 0; i < vector->size; i++) {
-        delete_item(vector->container[i]);
+        vector->t_item->delete_object(vector->container[i]);
     }
     free(vector->container);
     free(vector);

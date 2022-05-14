@@ -1,7 +1,7 @@
 BasedOnStyle: LLVM
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortBlocksOnASingleLine: Empty
-AllowShortFunctionsOnASingleLine: None
+AllowShortFunctionsOnASingleLine: Empty
 AllowShortIfStatementsOnASingleLine: WithoutElse
 ColumnLimit: 100
 IndentCaseLabels: true

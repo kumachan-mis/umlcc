@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < x64codes_len; i++) {
         fprintf(dest, "%s", (char*)vector_at(x64codes, i));
     }
-    delete_vector(x64codes, free);
+    delete_vector(x64codes);
 
     fclose(dest);
     fclose(imm);

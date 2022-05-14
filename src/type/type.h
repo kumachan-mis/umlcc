@@ -1,6 +1,7 @@
 #ifndef _UMLCC_TYPE_H_
 #define _UMLCC_TYPE_H_
 
+#include "../common/common.h"
 #include "../vector/vector.h"
 #include "./function.h"
 #include "./pointer.h"
@@ -16,6 +17,8 @@ typedef struct _CType {
     CPointer* pointer;
     CFunction* function;
 } CType;
+
+extern BaseType t_ctype;
 
 CType* new_integer_ctype();
 CType* new_pointer_ctype(CType* to_ctype);

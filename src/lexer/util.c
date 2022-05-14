@@ -1,4 +1,5 @@
 #include "./util.h"
+#include "../common/common.h"
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -6,7 +7,7 @@
 void token_map_add(Map* token_map, char* token_str, TokenType type);
 
 Map* new_keyword_map() {
-    Map* keyword_map = new_map();
+    Map* keyword_map = new_map(&t_hashable_string, &t_integer);
 
     token_map_add(keyword_map, "int", TOKEN_KEYWORD_INT);
     token_map_add(keyword_map, "return", TOKEN_KEYWORD_RETURN);
@@ -15,7 +16,7 @@ Map* new_keyword_map() {
 }
 
 Map* new_punctuator_map() {
-    Map* punctuator_map = new_map();
+    Map* punctuator_map = new_map(&t_hashable_string, &t_integer);
 
     token_map_add(punctuator_map, "{", TOKEN_LBRACE);
     token_map_add(punctuator_map, "}", TOKEN_RBRACE);
@@ -36,14 +37,10 @@ Map* new_punctuator_map() {
     return punctuator_map;
 }
 
-void delete_token_map(Map* token_map) {
-    delete_map(token_map, free);
-}
-
 void token_map_add(Map* token_map, char* token_str, TokenType type) {
-    TokenType* token_ref = malloc(sizeof(TokenType));
-    *token_ref = type;
-    map_set(token_map, token_str, token_ref, free);
+    char* key = new_string(token_str);
+    TokenType* value = new_integer(type);
+    map_add(token_map, key, value);
 }
 
 void skip_white_spaces(Lexer* lexer) {

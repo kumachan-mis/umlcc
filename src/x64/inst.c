@@ -84,7 +84,7 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_load_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -115,7 +115,7 @@ Vector* gen_load_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_addr_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -142,7 +142,7 @@ Vector* gen_addr_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_store_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -169,7 +169,7 @@ Vector* gen_store_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_ldarg_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -197,7 +197,7 @@ Vector* gen_ldarg_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_starg_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -212,7 +212,7 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_stret_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -226,7 +226,7 @@ Vector* gen_stret_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_add_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -249,7 +249,7 @@ Vector* gen_add_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_sub_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -272,7 +272,7 @@ Vector* gen_sub_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_mul_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -295,7 +295,7 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_div_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -329,7 +329,7 @@ Vector* gen_div_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_mod_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -363,7 +363,7 @@ Vector* gen_mod_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_seteq_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -399,7 +399,7 @@ Vector* gen_seteq_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_setneq_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -435,7 +435,7 @@ Vector* gen_setneq_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_jeq_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -469,7 +469,7 @@ Vector* gen_jeq_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_jneq_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -503,7 +503,7 @@ Vector* gen_jneq_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_jmp_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -515,7 +515,7 @@ Vector* gen_jmp_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_call_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -575,7 +575,7 @@ Vector* gen_call_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_enter_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -592,7 +592,7 @@ Vector* gen_enter_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_leave_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -609,7 +609,7 @@ Vector* gen_leave_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_prep_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -623,7 +623,7 @@ Vector* gen_prep_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_clean_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 
@@ -638,7 +638,7 @@ Vector* gen_clean_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_free_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector();
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
     x64gen->index++;
 

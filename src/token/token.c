@@ -2,6 +2,10 @@
 
 #include <stdlib.h>
 
+BaseType t_token = {
+    .delete_object = delete_token,
+};
+
 Token* new_token(TokenType type) {
     Token* token = malloc(sizeof(Token));
     token->type = type;
