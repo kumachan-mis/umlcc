@@ -1,4 +1,5 @@
 #include "./util.h"
+#include "../common/common.h"
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -41,9 +42,7 @@ void delete_token_map(Map* token_map) {
 }
 
 void token_map_add(Map* token_map, char* token_str, TokenType type) {
-    TokenType* token_ref = malloc(sizeof(TokenType));
-    *token_ref = type;
-    map_set(token_map, token_str, token_ref, free);
+    map_set(token_map, new_string(token_str), new_integer(type), free);
 }
 
 void skip_white_spaces(Lexer* lexer) {

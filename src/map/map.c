@@ -61,20 +61,10 @@ void map_set(Map* map, char* key, void* value, void delete_value(void* value)) {
     int hash = map_calculate_hash(key, map->capacity);
     MapCell* cell = map->container[hash];
 
-    int found = 0;
     while (cell != NULL && !cell->deleted) {
-        if (strcmp(cell->key, key) == 0) {
-            found = 1;
-            break;
-        }
+        if (strcmp(cell->key, key) == 0) break;
         hash = map_calculate_next_hash(hash, map->capacity);
         cell = map->container[hash];
-    }
-
-    if (found) {
-        delete_value(cell->value);
-        cell->value = value;
-        return;
     }
 
     if (cell != NULL) delete_mapcell(cell, delete_value);

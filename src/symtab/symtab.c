@@ -1,4 +1,5 @@
 #include "./symtab.h"
+#include "../common/common.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -28,7 +29,8 @@ Symbol* symboltable_define(SymbolTable* table, char* name, CType* ctype) {
     if (!symboltable_can_define(table, name)) return NULL;
     table->_memory_size += ctype_size(ctype);
     Symbol* symbol = new_symbol(name, ctype, table->_memory_size);
-    map_set(table->_symbol_map, name, symbol, (void (*)(void* value))delete_symbol);
+    char* symbol_name = new_string(name);
+    map_set(table->_symbol_map, symbol_name, symbol, (void (*)(void* value))delete_symbol);
     return symbol;
 }
 

@@ -1,11 +1,10 @@
 #include "./cell.h"
-#include "../common/common.h"
 
 #include <stdlib.h>
 
 MapCell* new_mapcell(char* key, void* value) {
     MapCell* cell = malloc(sizeof(MapCell));
-    cell->key = new_string(key);
+    cell->key = key;
     cell->value = value;
     cell->deleted = 0;
     return cell;

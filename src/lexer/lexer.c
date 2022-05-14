@@ -4,8 +4,6 @@
 
 #include <stdlib.h>
 
-void token_map_add(Map* token_map, char* token_str, TokenType type);
-
 Lexer* new_lexer(FILE* file_ptr) {
     Lexer* lexer = malloc(sizeof(Lexer));
     lexer->_file_ptr = file_ptr;

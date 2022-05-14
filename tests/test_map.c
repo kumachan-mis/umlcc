@@ -19,19 +19,24 @@ CU_Suite* add_test_suite_map() {
 
 void test_map_set() {
     Map* map = new_map();
+    char* key = NULL;
     int* value = NULL;
 
+    key = new_string("two");
     value = new_integer(2);
-    map_set(map, "two", value, free);
+    map_set(map, key, value, free);
 
+    key = new_string("five");
     value = new_integer(5);
-    map_set(map, "five", value, free);
+    map_set(map, key, value, free);
 
+    key = new_string("seven");
     value = new_integer(7);
-    map_set(map, "seven", value, free);
+    map_set(map, key, value, free);
 
+    key = new_string("eight");
     value = new_integer(8);
-    map_set(map, "eight", value, free);
+    map_set(map, key, value, free);
 
     value = map_get(map, "five");
     CU_ASSERT_EQUAL(*value, 5);
@@ -48,8 +53,9 @@ void test_map_set() {
     value = map_get(map, "ten");
     CU_ASSERT_EQUAL(value, NULL);
 
+    key = new_string("eight");
     value = new_integer(-1);
-    map_set(map, "eight", value, free);
+    map_set(map, key, value, free);
 
     value = map_get(map, "eight");
     CU_ASSERT_EQUAL(*value, -1);
@@ -71,13 +77,16 @@ void test_map_get_with_default() {
 
 void test_map_erase() {
     Map* map = new_map();
+    char* key = NULL;
     int* value = NULL;
 
+    key = new_string("key");
     value = new_integer(7);
-    map_set(map, "key", value, free);
+    map_set(map, key, value, free);
 
+    key = new_string("erased_key");
     value = new_integer(-2);
-    map_set(map, "erased_key", value, free);
+    map_set(map, key, value, free);
 
     value = map_get(map, "key");
     CU_ASSERT_EQUAL(*value, 7);
