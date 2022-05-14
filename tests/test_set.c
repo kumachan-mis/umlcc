@@ -42,19 +42,19 @@ void test_set_add() {
 
     item = new_integer(1);
     CU_ASSERT(set_contains(set, item));
-    t_hashable_integer.delete_object(item);
+    free(item);
 
     item = new_integer(2);
     CU_ASSERT(set_contains(set, item));
-    t_hashable_integer.delete_object(item);
+    free(item);
 
     item = new_integer(3);
     CU_ASSERT(set_contains(set, item));
-    t_hashable_integer.delete_object(item);
+    free(item);
 
     item = new_integer(4);
     CU_ASSERT(!set_contains(set, item));
-    t_hashable_integer.delete_object(item);
+    free(item);
 
     delete_set(set);
 }
@@ -74,27 +74,27 @@ void test_set_remove() {
 
     item = new_integer(2);
     set_remove(set, item);
-    t_hashable_integer.delete_object(item);
+    free(item);
 
     item = new_integer(0);
     set_remove(set, item);
-    t_hashable_integer.delete_object(item);
+    free(item);
 
     item = new_integer(-1);
     CU_ASSERT(set_contains(set, item));
-    t_hashable_integer.delete_object(item);
+    free(item);
 
     item = new_integer(1);
     CU_ASSERT(set_contains(set, item));
-    t_hashable_integer.delete_object(item);
+    free(item);
 
     item = new_integer(2);
     CU_ASSERT(!set_contains(set, item));
-    t_hashable_integer.delete_object(item);
+    free(item);
 
     item = new_integer(3);
     CU_ASSERT(!set_contains(set, item));
-    t_hashable_integer.delete_object(item);
+    free(item);
 
     delete_set(set);
 }
@@ -123,7 +123,7 @@ void test_set_iter() {
 
     item = new_integer(0);
     set_remove(set, item);
-    t_hashable_integer.delete_object(item);
+    free(item);
 
     count = 0;
     for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set);
