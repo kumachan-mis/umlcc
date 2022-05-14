@@ -1,5 +1,5 @@
 #ifndef _UMLCC_IMMC_INST_H_
-#define _UMLCC_IMMC_IIST_H_
+#define _UMLCC_IMMC_INST_H_
 
 #include "./ope.h"
 
