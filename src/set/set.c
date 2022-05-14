@@ -106,3 +106,16 @@ Set* set_difference(Set* set, Set* other) {
     }
     return difference_set;
 }
+
+int set_issubset(Set* set, Set* other) {
+    for (SetIter* iter = set_iter_begin(other); !set_iter_end(iter, other);
+         iter = set_iter_next(iter, other)) {
+        void* item = set_iter_item(iter, other);
+        if (!set_contains(set, item)) return 0;
+    }
+    return 1;
+}
+
+int set_equals(Set* set, Set* other) {
+    return set_issubset(set, other) && set_issubset(other, set);
+}

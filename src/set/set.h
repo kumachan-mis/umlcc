@@ -19,5 +19,7 @@ Set* set_copy(Set* set);
 Set* set_intersection(Set* set, Set* other);
 Set* set_union(Set* set, Set* other);
 Set* set_difference(Set* set, Set* other);
+int set_issubset(Set* set, Set* other);
+int set_equals(Set* set, Set* other);
 
 #endif

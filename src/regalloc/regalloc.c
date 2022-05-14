@@ -69,9 +69,9 @@ Vector* dequeue_external_sequence(RegAlloc* regalloc) {
 
 Vector* create_control_flow_graph(Vector* external_sequence) {
     Vector* basic_blocks = create_basic_blocks(external_sequence);
-    basic_blocks = connect_basic_blocks(basic_blocks);
-    basic_blocks = analyze_liveness(basic_blocks);
-    return basic_blocks;
+    Vector* control_flow_graph = connect_basic_blocks(basic_blocks);
+    control_flow_graph = analyze_liveness(control_flow_graph);
+    return control_flow_graph;
 }
 
 Vector* determine_allocation(Vector* regs_lifetime) {}
@@ -152,4 +152,60 @@ Vector* connect_basic_blocks(Vector* basic_blocks) {
     return basic_blocks;
 }
 
-Vector* analyze_liveness(Vector* basic_blocks) {}
+Vector* analyze_liveness(Vector* control_flow_graph) {
+    int blocks_len = vector_size(control_flow_graph);
+    while (1) {
+        int terminated = 1;
+        for (int block_id = blocks_len - 1; block_id >= 0; block_id--) {
+            BasicBlock* basic_block = vector_at(control_flow_graph, block_id);
+            Set* input = NULL;
+            Set* output = new_set(&t_hashable_integer);
+
+            for (SetIter* iter = set_iter_begin(basic_block->succ);
+                 !set_iter_end(iter, basic_block->succ);
+                 iter = set_iter_next(iter, basic_block->succ)) {
+                int* succ_block_id_ref = set_iter_item(iter, basic_block->succ);
+                BasicBlock* succ_block = vector_at(control_flow_graph, *succ_block_id_ref);
+                Set* prev_output = output;
+                output = set_union(prev_output, succ_block->input);
+                delete_set(prev_output);
+            }
+            input = set_copy(output);
+
+            int immcs_len = vector_size(basic_block->immcs);
+            for (int i = immcs_len - 1; i >= 0; i--) {
+                Immc* immc = vector_at(basic_block->immcs, i);
+                if (immc->type != IMMC_INST) continue;
+                ImmcOpe* fst_src = immc->inst->fst_src;
+                if (fst_src != NULL &&
+                    (fst_src->type == OPERAND_REG || fst_src->type == OPERAND_PTR)) {
+                    set_add(input, new_integer(fst_src->reg_id));
+                }
+                ImmcOpe* snd_src = immc->inst->snd_src;
+                if (snd_src != NULL &&
+                    (snd_src->type == OPERAND_REG || snd_src->type == OPERAND_PTR)) {
+                    set_add(input, new_integer(snd_src->reg_id));
+                }
+                ImmcOpe* dest = immc->inst->dest;
+                if (dest != NULL) {
+                    if (dest->type == OPERAND_REG)
+                        set_remove(input, &dest->reg_id);
+                    else if (dest->type == OPERAND_PTR)
+                        set_add(input, new_integer(dest->reg_id));
+                }
+            }
+
+            if (!set_equals(input, basic_block->input) ||
+                !set_equals(output, basic_block->output)) {
+                delete_set(basic_block->input);
+                delete_set(basic_block->output);
+                basic_block->input = input;
+                basic_block->output = output;
+                terminated = 0;
+            }
+        }
+        if (terminated) break;
+    }
+
+    return control_flow_graph;
+}
