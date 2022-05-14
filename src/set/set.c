@@ -9,6 +9,10 @@ struct _Set {
     Map* _inner;
 };
 
+struct _SetIter {
+    int index;
+};
+
 void delete_exist() {}
 
 BaseType t_exitst = {
@@ -36,4 +40,20 @@ void set_remove(Set* set, void* item) {
 
 int set_contains(Set* set, void* item) {
     return map_get(set->_inner, item) == EXIST;
+}
+
+SetIter* set_iter_begin(Set* set) {
+    return map_iter_begin(set->_inner);
+}
+
+SetIter* set_iter_next(SetIter* iter, Set* set) {
+    return map_iter_next(iter, set->_inner);
+}
+
+int set_iter_end(SetIter* iter, Set* set) {
+    return map_iter_end(iter, set->_inner);
+}
+
+void* set_iter_item(SetIter* iter, Set* set) {
+    return map_iter_key(iter, set->_inner);
 }

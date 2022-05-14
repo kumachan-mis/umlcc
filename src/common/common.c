@@ -32,7 +32,10 @@ int* new_integer(int value) {
 }
 
 int hash_integer(int* integer) {
-    return *integer;
+    if (*integer >= 0)
+        return *integer * 2;
+    else
+        return -(*integer) * 2 + 1;
 }
 
 int comp_integer(int* a, int* b) {
