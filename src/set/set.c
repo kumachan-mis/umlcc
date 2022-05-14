@@ -60,6 +60,16 @@ void* set_iter_item(SetIter* iter, Set* set) {
     return map_iter_key(iter, set->inner);
 }
 
+Set* set_copy(Set* set) {
+    Set* copied_set = new_set(set->t_item);
+    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set);
+         iter = set_iter_next(iter, set)) {
+        void* item = set_iter_item(iter, set);
+        set_add(copied_set, set->t_item->copy_object(item));
+    }
+    return copied_set;
+}
+
 Set* set_intersection(Set* set, Set* other) {
     Set* intersection_set = new_set(set->t_item);
     for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set);

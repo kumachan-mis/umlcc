@@ -15,6 +15,7 @@ SetIter* set_iter_begin(Set* set);
 SetIter* set_iter_next(SetIter* iter, Set* set);
 int set_iter_end(SetIter* iter, Set* set);
 void* set_iter_item(SetIter* iter, Set* set);
+Set* set_copy(Set* set);
 Set* set_intersection(Set* set, Set* other);
 Set* set_union(Set* set, Set* other);
 Set* set_difference(Set* set, Set* other);

@@ -1,16 +1,14 @@
 #ifndef _UMLCC_REGALLOC_BASICBLOCK_H_
 #define _UMLCC_REGALLOC_BASICBLOCK_H_
 
-#include "../vector/vector.h"
 #include "../set/set.h"
+#include "../vector/vector.h"
 
 typedef struct _BasicBlock {
     Vector* immcs;
-    Set* succ;
-    Set* used;
-    Set* defined;
     Set* input;
     Set* output;
+    Set* succ;
 } BasicBlock;
 
 extern BaseType t_basicblock;
