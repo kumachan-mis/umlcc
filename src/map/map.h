@@ -12,12 +12,12 @@ void* map_get(Map* map, void* key, int hash_key(void* key, int max),
 void* map_get_with_default(Map* map, void* key, void* default_value,
                            int hash_key(void* key, int max), int comp_key(void* a, void* b));
 
-void map_set(Map* map, void* key, void* value, int hash_key(void* key, int max),
+void map_add(Map* map, void* key, void* value, int hash_key(void* key, int max),
              int comp_key(void* a, void* b), void delete_key(void* key),
              void delete_value(void* value));
 
-void map_erase(Map* map, void* key, int hash_key(void* key, int max),
-               int comp_key(void* a, void* b), void delete_key(void* key),
-               void delete_value(void* value));
+void map_remove(Map* map, void* key, int hash_key(void* key, int max),
+                int comp_key(void* a, void* b), void delete_key(void* key),
+                void delete_value(void* value));
 
 #endif

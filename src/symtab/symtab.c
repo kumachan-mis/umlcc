@@ -30,7 +30,7 @@ Symbol* symboltable_define(SymbolTable* table, char* name, CType* ctype) {
     table->_memory_size += ctype_size(ctype);
     Symbol* symbol = new_symbol(name, ctype, table->_memory_size);
     char* symbol_name = new_string(name);
-    map_set(table->_symbol_map, symbol_name, symbol, str_hash, str_comp, delete_str, delete_symbol);
+    map_add(table->_symbol_map, symbol_name, symbol, str_hash, str_comp, delete_str, delete_symbol);
     return symbol;
 }
 

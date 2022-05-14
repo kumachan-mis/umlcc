@@ -44,7 +44,7 @@ void delete_token_map(Map* token_map) {
 void token_map_add(Map* token_map, char* token_str, TokenType type) {
     char* key = new_string(token_str);
     TokenType* value = new_integer(type);
-    map_set(token_map, key, value, str_hash, str_comp, delete_str, delete_integer);
+    map_add(token_map, key, value, str_hash, str_comp, delete_str, delete_integer);
 }
 
 void skip_white_spaces(Lexer* lexer) {
