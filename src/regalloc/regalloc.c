@@ -14,7 +14,7 @@ Vector* gen_allocated_immcs(RegAlloc* regalloc, Vector* allocation);
 Vector* create_basic_blocks(Vector* external_sequence);
 Vector* connect_basic_blocks(Vector* basic_blocks);
 Vector* analyze_liveness(Vector* basic_blocks);
-int update_register_flow_of_block(Vector* control_flow_graph, BasicBlock* basic_block);
+int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block);
 
 RegAlloc* new_regalloc(Vector* immcs, int num_regs) {
     RegAlloc* regalloc = malloc(sizeof(RegAlloc));
@@ -161,7 +161,7 @@ Vector* analyze_liveness(Vector* control_flow_graph) {
         terminated = 1;
         for (int block_id = blocks_len - 1; block_id >= 0; block_id--) {
             BasicBlock* basic_block = vector_at(control_flow_graph, block_id);
-            int updated = update_register_flow_of_block(control_flow_graph, basic_block);
+            int updated = update_register_flow(control_flow_graph, basic_block);
             terminated = terminated && !updated;
         }
     }
@@ -169,7 +169,7 @@ Vector* analyze_liveness(Vector* control_flow_graph) {
     return control_flow_graph;
 }
 
-int update_register_flow_of_block(Vector* control_flow_graph, BasicBlock* basic_block) {
+int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
     Set* input = NULL;
     Set* output = new_set(&t_hashable_integer);
 
@@ -197,7 +197,7 @@ int update_register_flow_of_block(Vector* control_flow_graph, BasicBlock* basic_
         if (snd_src != NULL && (snd_src->type == OPERAND_REG || snd_src->type == OPERAND_PTR)) {
             set_add(input, new_integer(snd_src->reg_id));
         }
-    
+
         ImmcOpe* dest = immc->inst->dest;
         if (dest != NULL && dest->type == OPERAND_REG) {
             set_remove(input, &dest->reg_id);
