@@ -20,17 +20,12 @@ CU_Suite* add_test_suite_set() {
     return suite;
 }
 
-void test_set_add() {
-}
+void test_set_add() {}
 
-void test_set_remove() {
-}
+void test_set_remove() {}
 
-void test_set_intersection() {
-}
+void test_set_intersection() {}
 
-void test_set_union() {
-}
+void test_set_union() {}
 
-void test_set_difference() {
-}
+void test_set_difference() {}
