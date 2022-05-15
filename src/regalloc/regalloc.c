@@ -35,7 +35,7 @@ Vector* regalloc_allocate_regs(RegAlloc* regalloc) {
 
     int immcs_len = vector_size(regalloc->_immcs);
     while (regalloc->_index < immcs_len) {
-        Vector* external_sequence = dequeue_global_section(regalloc);
+        Vector* external_sequence = dequeue_external_sequence(regalloc);
 
         Vector* control_flow_graph = create_control_flow_graph(external_sequence);
         delete_vector(external_sequence);

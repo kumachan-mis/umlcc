@@ -4,7 +4,6 @@
 #include "./consts.h"
 #include "./inst.h"
 #include "./label.h"
-#include "./regalloc.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -17,14 +16,12 @@ X64gen* new_x64gen(Vector* immcs) {
     X64gen* x64gen = malloc(sizeof(X64gen));
     x64gen->_immcs = immcs;
     x64gen->index = 0;
-    x64gen->regalloc = NULL;
-    x64gen->evaluation_count = 0;
+    x64gen->evacuation_count = 0;
     return x64gen;
 }
 
 void delete_x64gen(X64gen* x64gen) {
     delete_vector(x64gen->_immcs);
-    if (x64gen->regalloc != NULL) delete_regalloc(x64gen->regalloc);
     free(x64gen);
 }
 
@@ -59,8 +56,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     Vector* tail_codes = new_vector(&t_string);
     Vector* sub_codes = NULL;
 
-    x64gen->regalloc = new_regalloc();
-    x64gen->evaluation_count = 0;
+    x64gen->evacuation_count = 0;
 
     sub_codes = gen_label_x64code(x64gen);
     vector_extend(codes, sub_codes);
@@ -72,15 +68,15 @@ Vector* gen_function_x64code(X64gen* x64gen) {
 
     Vector* body_codes = gen_function_body_x64code(x64gen);
 
-    int evaluation_count = x64gen->evaluation_count;
-    for (int i = 0; i < evaluation_count; i++) {
+    int evacuation_count = x64gen->evacuation_count;
+    for (int i = 0; i < evacuation_count; i++) {
         append_code(head_codes, "\tpushq\t%s\n", QREG_NAMES[CALLEE_SAVED_REG_IDS[i]]);
     }
-    if (evaluation_count % 2 == 1) {
+    if (evacuation_count % 2 == 1) {
         append_code(head_codes, "\tsubq\t$%d, %s\n", 8, QREG_NAMES[SP_REG_ID]);
         append_code(tail_codes, "\taddq\t$%d, %s\n", 8, QREG_NAMES[SP_REG_ID]);
     }
-    for (int i = evaluation_count - 1; i >= 0; i--) {
+    for (int i = evacuation_count - 1; i >= 0; i--) {
         append_code(tail_codes, "\tpopq\t%s\n", QREG_NAMES[CALLEE_SAVED_REG_IDS[i]]);
     }
 
@@ -95,9 +91,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     vector_extend(codes, tail_codes);
     delete_vector(tail_codes);
 
-    x64gen->evaluation_count = 0;
-    delete_regalloc(x64gen->regalloc);
-    x64gen->regalloc = NULL;
+    x64gen->evacuation_count = 0;
     return codes;
 }
 
