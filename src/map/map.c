@@ -44,6 +44,26 @@ void delete_map(Map* map) {
     free(map);
 }
 
+Map* map_copy(Map* map) {
+    Map* copied_map = malloc(sizeof(Map));
+    copied_map->t_key = map->t_key;
+    copied_map->t_value = map->t_value;
+    copied_map->container = malloc(map->capacity * sizeof(MapCell*));
+    copied_map->size = map->size;
+    copied_map->capacity = map->capacity;
+
+    for (int i = 0; i < map->capacity; i++) {
+        MapCell* cell = map->container[i];
+        MapCell* copied_cell = NULL;
+        if (cell != NULL) {
+           copied_cell = mapcell_copy(cell, map->t_key->copy_object,  map->t_value->copy_object);
+        }
+        copied_map->container[i] = copied_cell;
+    }
+
+    return copied_map;
+}
+
 void* map_get(Map* map, void* key) {
     return map_get_with_default(map, key, NULL);
 }

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 BaseType t_cparam = {
+    .copy_object = cparam_copy,
     .delete_object = delete_cparam,
 };
 

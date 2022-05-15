@@ -65,6 +65,7 @@ extern BaseType t_ast;
 Ast* new_ast(AstType type, int num_children, ...);
 Ast* new_identifier_ast(AstType type, char* name);
 Ast* new_integer_ast(AstType type, int value);
+Ast* ast_copy(Ast* ast);
 void delete_ast(Ast* ast);
 
 #endif

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 BaseType t_ctype = {
+    .copy_object = ctype_copy,
     .delete_object = delete_ctype,
 };
 

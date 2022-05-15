@@ -62,5 +62,6 @@ Srt* new_ctyped_srt(SrtType type, CType* ctype, int num_children, ...);
 Srt* new_identifier_srt(SrtType type, CType* ctype, char* ident_name);
 Srt* new_integer_srt(SrtType type, int value);
 void delete_srt(Srt* srt);
+Srt* srt_copy(Srt* srt);
 
 #endif

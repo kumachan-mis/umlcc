@@ -48,3 +48,13 @@ void delete_ast(Ast* ast) {
     delete_vector(ast->children);
     free(ast);
 }
+
+Ast* ast_copy(Ast* ast) {
+    Ast* copied_ast = malloc(sizeof(Ast));
+    copied_ast->type = ast->type;
+    copied_ast->ident_name = NULL;
+    if (ast->ident_name != NULL) copied_ast->ident_name = new_string(ast->ident_name);
+    copied_ast->value_int = ast->value_int;
+    copied_ast->children = vector_copy(ast->children);
+    return copied_ast;
+}

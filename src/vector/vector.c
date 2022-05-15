@@ -30,6 +30,20 @@ void delete_vector(Vector* vector) {
     free(vector);
 }
 
+Vector* vector_copy(Vector* vector) {
+    Vector* copied_vector = malloc(sizeof(Vector));
+
+    copied_vector->t_item = vector->t_item;
+    copied_vector->container = malloc(vector->capacity * sizeof(void*));
+    copied_vector->size = vector->size;
+    copied_vector->capacity = vector->capacity;
+
+    for (int i = 0; i < vector->size; i++) {
+        copied_vector->container[i] = vector->t_item->copy_object(copied_vector->container[i]);
+    }
+    return copied_vector;
+}
+
 void vector_push(Vector* vector, void* item) {
     if (vector->size >= vector->capacity) {
         vector->container = realloc(vector->container, 2 * vector->capacity * sizeof(void*));
@@ -47,6 +61,25 @@ void* vector_pop(Vector* vector) {
         vector->capacity /= 2;
     }
     return item;
+}
+
+void vector_fill(Vector* vector, int size, void* item) {
+    if (size <= vector->size) return;
+
+    if (vector->capacity < size) {
+        vector->container = realloc(vector->container, size * sizeof(void*));
+        vector->capacity = size;
+    }
+    for (int i = vector->size; i < size; i++) {
+        vector->container[i] = vector->t_item->copy_object(item);
+    }
+    vector->size = size;
+}
+
+int vector_set(Vector* vector, int index, void* item) {
+    if (0 > index || index >= vector->size) return 0;
+    vector->t_item->delete_object(vector->container[index]);
+    vector->container[index] = item;
 }
 
 void* vector_at(Vector* vector, int index) {

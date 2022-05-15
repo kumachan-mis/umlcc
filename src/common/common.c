@@ -9,23 +9,25 @@ int comp_integer(int* a, int* b);
 int hash_string(char* str);
 
 BaseType t_integer = {
+    .copy_object = copy_integer,
     .delete_object = free,
 };
 BaseType t_string = {
+    .copy_object = new_string,
     .delete_object = free,
 };
 
 HashableType t_hashable_integer = {
-    .hash_object = hash_integer,
-    .compare_object = comp_integer,
     .copy_object = copy_integer,
     .delete_object = free,
+    .hash_object = hash_integer,
+    .compare_object = comp_integer,
 };
 HashableType t_hashable_string = {
-    .hash_object = hash_string,
-    .compare_object = strcmp,
     .copy_object = new_string,
     .delete_object = free,
+    .hash_object = hash_string,
+    .compare_object = strcmp,
 };
 
 int* new_integer(int value) {

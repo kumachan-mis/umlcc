@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 BaseType t_srt = {
+    .copy_object = srt_copy,
     .delete_object = delete_srt,
 };
 
@@ -70,4 +71,14 @@ void delete_srt(Srt* srt) {
     if (srt->ident_name != NULL) free(srt->ident_name);
     delete_vector(srt->children);
     free(srt);
+}
+
+Srt* srt_copy(Srt* srt) {
+    Srt* copied_srt = malloc(sizeof(Srt));
+    copied_srt->ctype = NULL;
+    if (srt->ctype != NULL) copied_srt->ctype = ctype_copy(srt->ctype);
+    copied_srt->ident_name = NULL;
+    if (srt->ident_name != NULL) copied_srt->ident_name = new_string(srt->ident_name);
+    copied_srt->children = vector_copy(srt->children);
+    return copied_srt;
 }

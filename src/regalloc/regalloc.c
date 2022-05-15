@@ -8,7 +8,8 @@
 
 Vector* dequeue_external_sequence(RegAlloc* regalloc);
 Vector* create_control_flow_graph(Vector* external_sequence);
-Vector* determine_allocation(Vector* control_flow_graph);
+Vector* analyze_register_liveness(Vector* control_flow_graph);
+Vector* determine_allocation(Vector* register_liveness);
 Vector* gen_allocated_immcs(RegAlloc* regalloc, Vector* allocation);
 
 Vector* create_basic_blocks(Vector* external_sequence);
@@ -39,7 +40,10 @@ Vector* regalloc_allocate_regs(RegAlloc* regalloc) {
         Vector* control_flow_graph = create_control_flow_graph(external_sequence);
         delete_vector(external_sequence);
 
-        Vector* allocation = determine_allocation(control_flow_graph);
+        Vector* register_liveness = analyze_register_liveness(control_flow_graph);
+        delete_vector(control_flow_graph);
+
+        Vector* allocation = determine_allocation(register_liveness);
         delete_vector(control_flow_graph);
 
         Vector* sub_immcs = gen_allocated_immcs(regalloc, allocation);
@@ -75,7 +79,9 @@ Vector* create_control_flow_graph(Vector* external_sequence) {
     return control_flow_graph;
 }
 
-Vector* determine_allocation(Vector* regs_lifetime) {}
+Vector* analyze_register_liveness(Vector* control_flow_graph) {}
+
+Vector* determine_allocation(Vector* register_liveness) {}
 
 Vector* gen_allocated_immcs(RegAlloc* regalloc, Vector* allocation) {}
 

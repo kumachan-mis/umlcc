@@ -13,6 +13,7 @@ typedef struct _Symbol {
 extern BaseType t_symbol;
 
 Symbol* new_symbol(char* name, CType* ctype, int memory_offset);
+Symbol* symbol_copy(Symbol* symbol);
 void delete_symbol(Symbol* symbol);
 
 #endif

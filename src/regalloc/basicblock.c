@@ -3,16 +3,26 @@
 #include <stdlib.h>
 
 BaseType t_basicblock = {
+    .copy_object = basicblock_copy,
     .delete_object = delete_basicblock,
 };
 
 BasicBlock* new_basicblock(Vector* immcs) {
     BasicBlock* basicblock = malloc(sizeof(BasicBlock));
     basicblock->immcs = immcs;
-    basicblock->input = new_vector(&t_hashable_integer);
-    basicblock->output = new_vector(&t_hashable_integer);
+    basicblock->input = new_set(&t_hashable_integer);
+    basicblock->output = new_set(&t_hashable_integer);
     basicblock->succ = new_set(&t_hashable_integer);
     return basicblock;
+}
+
+BasicBlock* basicblock_copy(BasicBlock* basicblock) {
+    BasicBlock* copied_basicblock = malloc(sizeof(BasicBlock));
+    copied_basicblock->immcs = vector_copy(basicblock->immcs);
+    copied_basicblock->input = set_copy(basicblock->input);
+    copied_basicblock->output = set_copy(basicblock->output);
+    copied_basicblock->succ = set_copy(basicblock->succ);
+    return copied_basicblock;
 }
 
 void delete_basicblock(BasicBlock* basicblock) {

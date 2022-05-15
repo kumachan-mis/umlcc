@@ -8,6 +8,7 @@ typedef struct _MapIter MapIter;
 
 Map* new_map(HashableType* t_key, BaseType* t_value);
 void delete_map(Map* map);
+Map* map_copy(Map* map);
 void* map_get(Map* map, void* key);
 void* map_get_with_default(Map* map, void* key, void* default_value);
 void map_add(Map* map, void* key, void* value);

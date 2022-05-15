@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 BaseType t_immc = {
+    .copy_object = immc_copy,
     .delete_object = delete_immc,
 };
 

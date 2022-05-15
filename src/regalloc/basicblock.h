@@ -14,6 +14,7 @@ typedef struct _BasicBlock {
 extern BaseType t_basicblock;
 
 BasicBlock* new_basicblock(Vector* immcs);
+BasicBlock* basicblock_copy(BasicBlock* basicblock);
 void delete_basicblock(BasicBlock* basicblock);
 
 #endif
