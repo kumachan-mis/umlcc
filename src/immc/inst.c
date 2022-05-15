@@ -20,9 +20,12 @@ ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcO
 ImmcInst* immcinst_copy(ImmcInst* immcinst) {
     ImmcInst* copied_immcinst = malloc(sizeof(ImmcInst));
     copied_immcinst->type = immcinst->type;
-    copied_immcinst->dest = immcope_copy(copied_immcinst->dest);
-    copied_immcinst->fst_src = immcope_copy(copied_immcinst->fst_src);
-    copied_immcinst->snd_src = immcope_copy(copied_immcinst->snd_src);
+    copied_immcinst->dest = NULL;
+    copied_immcinst->fst_src = NULL;
+    copied_immcinst->snd_src = NULL;
+    if (immcinst->dest != NULL) copied_immcinst->dest = immcope_copy(immcinst->dest);
+    if (immcinst->fst_src != NULL) copied_immcinst->fst_src = immcope_copy(immcinst->fst_src);
+    if (immcinst->snd_src != NULL) copied_immcinst->snd_src = immcope_copy(immcinst->snd_src);
     return copied_immcinst;
 }
 

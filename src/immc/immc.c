@@ -30,7 +30,7 @@ Immc* immc_copy(Immc* immc) {
     copied_immc->label = NULL;
     if (immc->inst != NULL) copied_immc->inst = immcinst_copy(immc->inst);
     if (immc->label != NULL) copied_immc->label = immclabel_copy(immc->label);
-    return immc;
+    return copied_immc;
 }
 
 char* immc_tostring(Immc* immc) {

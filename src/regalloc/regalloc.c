@@ -123,7 +123,7 @@ Vector* create_basic_blocks(Vector* immcs) {
         next_block_immcs = NULL;
     }
 
-    delete_vector(block_immcs);
+    if (block_immcs != NULL) delete_vector(block_immcs);
     block_immcs = NULL;
 
     return basic_blocks;
@@ -168,8 +168,8 @@ Vector* analyze_register_flow(Vector* control_flow_graph) {
         terminated = 1;
         for (int block_id = blocks_len - 1; block_id >= 0; block_id--) {
             BasicBlock* basic_block = vector_at(control_flow_graph, block_id);
-            int updated = update_register_flow(control_flow_graph, basic_block);
-            terminated = terminated && !updated;
+            int converged = update_register_flow(control_flow_graph, basic_block);
+            terminated = terminated && converged;
         }
     }
     return control_flow_graph;
@@ -205,14 +205,15 @@ int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
         }
 
         ImmcOpe* dest = immc->inst->dest;
-        if (dest != NULL && dest->type == OPERAND_REG) { set_remove(input, &dest->reg_id); }
-
-        if (dest != NULL && dest->type == OPERAND_PTR) {
+        if (dest != NULL && dest->type == OPERAND_REG) {
+            set_remove(input, &dest->reg_id);
+        } else if (dest != NULL && dest->type == OPERAND_PTR) {
             set_add(input, new_integer(dest->reg_id));
         }
     }
 
-    int updated = set_equals(input, basic_block->input) && set_equals(output, basic_block->output);
+    int input_converged = set_equals(input, basic_block->input);
+    int output_converged = set_equals(output, basic_block->output);
 
     delete_set(basic_block->input);
     delete_set(basic_block->output);
@@ -220,7 +221,7 @@ int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
     basic_block->input = input;
     basic_block->output = output;
 
-    return updated;
+    return input_converged && output_converged;
 }
 
 Vector* analyze_register_liveness(Vector* control_flow_graph) {
@@ -251,25 +252,23 @@ void update_register_liveness(Vector* livenesses, BasicBlock* basic_block, int b
 
         ImmcOpe* snd_src = immc->inst->snd_src;
         if (snd_src != NULL && (snd_src->type == OPERAND_REG || snd_src->type == OPERAND_PTR)) {
-            RegLiveness* liveness = vector_at(livenesses, fst_src->reg_id);
+            RegLiveness* liveness = vector_at(livenesses, snd_src->reg_id);
             liveness->last_use_index = block_offset + i;
         }
 
         ImmcOpe* dest = immc->inst->dest;
         if (dest != NULL && dest->type == OPERAND_REG) {
-            vector_fill(livenesses, dest->reg_id, new_regliveness());
+            vector_fill(livenesses, dest->reg_id + 1, new_regliveness());
             RegLiveness* liveness = vector_at(livenesses, dest->reg_id);
             if (regliveness_isinit(liveness)) liveness->first_def_index = block_offset + i;
-        }
-
-        if (dest != NULL && dest->type == OPERAND_PTR) {
+        } else if (dest != NULL && dest->type == OPERAND_PTR) {
             RegLiveness* liveness = vector_at(livenesses, dest->reg_id);
             liveness->last_use_index = block_offset + i;
         }
     }
 
     Set* output = basic_block->output;
-    for (SetIter* iter = set_iter_begin(output); set_iter_end(iter, output);
+    for (SetIter* iter = set_iter_begin(output); !set_iter_end(iter, output);
          iter = set_iter_next(iter, output)) {
         int* reg_id_ref = set_iter_item(iter, output);
         RegLiveness* liveness = vector_at(livenesses, *reg_id_ref);
@@ -304,7 +303,7 @@ void free_unused_register(Vector* statuses, Vector* livenesses, int virtual_reg_
 
     for (int real_reg_id = 0; real_reg_id < num_real_regs; real_reg_id++) {
         int* alloc_virtual_reg_id_ref = vector_at(statuses, real_reg_id);
-        if (*alloc_virtual_reg_id_ref == 0) continue;
+        if (*alloc_virtual_reg_id_ref == -1) continue;
 
         RegLiveness* alloc_liveness = vector_at(livenesses, *alloc_virtual_reg_id_ref);
         if (alloc_liveness->last_use_index <= liveness->first_def_index) {
@@ -319,7 +318,7 @@ int allocate_real_register(Vector* allocations, Vector* statuses, int virtual_re
 
     for (int real_reg_id = 0; real_reg_id < num_real_regs; real_reg_id++) {
         int* alloc_virtual_reg_id_ref = vector_at(statuses, real_reg_id);
-        if (*alloc_virtual_reg_id_ref > 0) continue;
+        if (*alloc_virtual_reg_id_ref != -1) continue;
 
         vector_set(statuses, real_reg_id, new_integer(virtual_reg_id));
         vector_set(allocations, virtual_reg_id, new_integer(real_reg_id));
