@@ -64,7 +64,10 @@ void* vector_pop(Vector* vector) {
 }
 
 void vector_fill(Vector* vector, int size, void* item) {
-    if (size <= vector->size) return;
+    if (size <= vector->size) {
+        vector->t_item->delete_object(item);
+        return;
+    }
 
     if (vector->capacity < size) {
         vector->container = realloc(vector->container, size * sizeof(void*));
@@ -74,12 +77,14 @@ void vector_fill(Vector* vector, int size, void* item) {
         vector->container[i] = vector->t_item->copy_object(item);
     }
     vector->size = size;
+    vector->t_item->delete_object(item);
 }
 
 int vector_set(Vector* vector, int index, void* item) {
     if (0 > index || index >= vector->size) return 0;
     vector->t_item->delete_object(vector->container[index]);
     vector->container[index] = item;
+    return 1;
 }
 
 void* vector_at(Vector* vector, int index) {

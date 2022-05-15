@@ -100,7 +100,6 @@ void test_vector_fill_all() {
 
     int* item = new_integer(0);
     vector_fill(vector, 10, item);
-    free(item);
 
     for (int i = 0; i < 10; i++) {
         item = vector_at(vector, i);
@@ -121,7 +120,6 @@ void test_vector_fill_noeffect() {
 
     item = new_integer(7);
     vector_fill(vector, 3, item);
-    free(item);
 
     item = vector_at(vector, 0);
     CU_ASSERT_EQUAL(*item, -5);
@@ -154,7 +152,6 @@ void test_vector_fill_expand() {
 
     item = new_integer(7);
     vector_fill(vector, 5, item);
-    free(item);
 
     item = vector_at(vector, 0);
     CU_ASSERT_EQUAL(*item, -5);
@@ -183,7 +180,6 @@ void test_vector_set_success() {
 
     int* zero = new_integer(0);
     vector_fill(vector, 4, zero);
-    free(zero);
 
     item = new_integer(1);
     CU_ASSERT_TRUE(vector_set(vector, 2, item));
@@ -215,7 +211,6 @@ void test_vector_set_fail() {
 
     int* zero = new_integer(0);
     vector_fill(vector, 4, zero);
-    free(zero);
 
     item = new_integer(1);
     CU_ASSERT_FALSE(vector_set(vector, -1, item));
