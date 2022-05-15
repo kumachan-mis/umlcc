@@ -13,7 +13,7 @@ Vector* gen_allocated_immcs(RegAlloc* regalloc, Vector* allocation);
 
 Vector* create_basic_blocks(Vector* external_sequence);
 Vector* connect_basic_blocks(Vector* basic_blocks);
-Vector* analyze_liveness(Vector* basic_blocks);
+Vector* analyze_register_flow(Vector* basic_blocks);
 int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block);
 
 RegAlloc* new_regalloc(Vector* immcs, int num_regs) {
@@ -71,7 +71,7 @@ Vector* dequeue_external_sequence(RegAlloc* regalloc) {
 Vector* create_control_flow_graph(Vector* external_sequence) {
     Vector* basic_blocks = create_basic_blocks(external_sequence);
     Vector* control_flow_graph = connect_basic_blocks(basic_blocks);
-    control_flow_graph = analyze_liveness(control_flow_graph);
+    control_flow_graph = analyze_register_flow(control_flow_graph);
     return control_flow_graph;
 }
 
@@ -153,9 +153,8 @@ Vector* connect_basic_blocks(Vector* basic_blocks) {
     return basic_blocks;
 }
 
-Vector* analyze_liveness(Vector* control_flow_graph) {
+Vector* analyze_register_flow(Vector* control_flow_graph) {
     int blocks_len = vector_size(control_flow_graph);
-
     int terminated = 0;
     while (!terminated) {
         terminated = 1;
@@ -165,7 +164,6 @@ Vector* analyze_liveness(Vector* control_flow_graph) {
             terminated = terminated && !updated;
         }
     }
-
     return control_flow_graph;
 }
 
