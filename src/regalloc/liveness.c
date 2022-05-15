@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-BaseType t_reglivenes = {
+BaseType t_regliveness = {
     .copy_object = regliveness_copy,
     .delete_object = delete_regliveness,
 };
@@ -23,4 +23,8 @@ RegLiveness* regliveness_copy(RegLiveness* regliveness) {
     copied_regliveness->first_def_index = regliveness->first_def_index;
     copied_regliveness->last_use_index = regliveness->last_use_index;
     return copied_regliveness;
+}
+
+int regliveness_isinit(RegLiveness* regliveness) {
+    return regliveness->first_def_index == -1 && regliveness->last_use_index == -1;
 }

@@ -13,5 +13,6 @@ extern BaseType t_regliveness;
 RegLiveness* new_regliveness();
 void delete_regliveness(RegLiveness* regliveness);
 RegLiveness* regliveness_copy(RegLiveness* regliveness);
+int regliveness_isinit(RegLiveness* regliveness);
 
 #endif

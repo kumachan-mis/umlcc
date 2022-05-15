@@ -21,7 +21,7 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     CType* table_ctype = ctype_copy(declarator_srt->ctype);
     symboltable_define(codegen->_global_table, table_ident_name, table_ctype);
 
-    codegen->_virtual_reg_id = 0;
+    codegen->_virtual_reg_id = -1;
     codegen->_label_id++;
     codegen->_local_table = new_symboltable();
     codegen->_return_label_id = codegen->_label_id;
