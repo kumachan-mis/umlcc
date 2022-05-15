@@ -56,7 +56,7 @@ Map* map_copy(Map* map) {
         MapCell* cell = map->container[i];
         MapCell* copied_cell = NULL;
         if (cell != NULL) {
-           copied_cell = mapcell_copy(cell, map->t_key->copy_object,  map->t_value->copy_object);
+            copied_cell = mapcell_copy(cell, map->t_key->copy_object, map->t_value->copy_object);
         }
         copied_map->container[i] = copied_cell;
     }

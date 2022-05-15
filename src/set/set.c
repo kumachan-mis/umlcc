@@ -16,7 +16,7 @@ struct _SetIter {
 
 void null() {}
 
-BaseType t_exitst = { .copy_object = null, .delete_object = null };
+BaseType t_exitst = {.copy_object = null, .delete_object = null};
 
 Set* new_set(HashableType* t_item) {
     Set* set = malloc(sizeof(Set));
