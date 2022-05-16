@@ -123,9 +123,6 @@ Vector* create_basic_blocks(Vector* immcs) {
         next_block_immcs = NULL;
     }
 
-    if (block_immcs != NULL) delete_vector(block_immcs);
-    block_immcs = NULL;
-
     return basic_blocks;
 }
 
