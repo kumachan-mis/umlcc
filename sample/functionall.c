@@ -30,4 +30,6 @@ void reg_saving_function_call() {
     six_param_function(1, 2, 3, 4, create_param(5), 6);
     six_param_function(1, 2, 3, create_param(4), create_param(5), 6);
     six_param_function(1, 2, 3, 4, create_param(5), create_param(6));
+    seven_param_function(1, 2, 3, 4, 5, create_param(6), 7);
+    eight_param_function(1, 2, 3, 4, x + 5, 6, create_param(7), 8);
 }
