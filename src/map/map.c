@@ -74,7 +74,7 @@ void* map_get_with_default(Map* map, void* key, void* default_value) {
 
     int found = 0;
     while (cell != NULL) {
-        if (!cell->deleted && map->t_key->compare_object(cell->key, key) == 0) {
+        if (map->t_key->compare_object(cell->key, key) == 0) {
             found = 1;
             break;
         }
@@ -82,7 +82,7 @@ void* map_get_with_default(Map* map, void* key, void* default_value) {
         cell = map->container[hash];
     }
 
-    return found ? cell->value : default_value;
+    return found && !cell->deleted ? cell->value : default_value;
 }
 
 void map_add(Map* map, void* key, void* value) {
@@ -111,7 +111,7 @@ void map_remove(Map* map, void* key) {
 
     int found = 0;
     while (cell != NULL) {
-        if (!cell->deleted && map->t_key->compare_object(cell->key, key) == 0) {
+        if (map->t_key->compare_object(cell->key, key) == 0) {
             found = 1;
             break;
         }
@@ -119,9 +119,9 @@ void map_remove(Map* map, void* key) {
         cell = map->container[hash];
     }
 
-    if (!found) return;
+    if (!found || cell->deleted) return;
 
-    mapcell_deleted(cell, map->t_key->delete_object, map->t_value->delete_object);
+    cell->deleted = 1;
     map->size--;
 
     int std_capacity = 2 * (map->size + 1) - 1;
