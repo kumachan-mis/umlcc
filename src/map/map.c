@@ -102,7 +102,7 @@ void map_add(Map* map, void* key, void* value) {
     map->size++;
 
     int std_capacity = 2 * (map->size + 1) - 1;
-    if (2 * map->capacity <= std_capacity) update_capacity(map, std_capacity);
+    if (std_capacity >= map->capacity) update_capacity(map, 2 * (map->capacity + 1) - 1);
 }
 
 void map_remove(Map* map, void* key) {
