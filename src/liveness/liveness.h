@@ -1,5 +1,5 @@
-#ifndef _UMLCC_REGALLOC_LIVENESS_H_
-#define _UMLCC_REGALLOC_LIVENESS_H_
+#ifndef _UMLCC_LIVENESS_H_
+#define _UMLCC_LIVENESS_H_
 
 #include "../common/common.h"
 
