@@ -69,16 +69,19 @@ void* map_get(Map* map, void* key) {
 }
 
 void* map_get_with_default(Map* map, void* key, void* default_value) {
-    int hash = map->t_key->hash_object(key) % map->capacity;
-    MapCell* cell = map->container[hash];
+    int original_hash = map->t_key->hash_object(key) % map->capacity;
+    MapCell* cell = map->container[original_hash];
 
+    int hash = original_hash;
     int found = 0;
     while (cell != NULL) {
-        if (map->t_key->compare_object(cell->key, key) == 0) {
+        if (!cell->deleted && map->t_key->compare_object(cell->key, key) == 0) {
             found = 1;
             break;
         }
         hash = (hash + 1) % map->capacity;
+        if (hash == original_hash) break;
+
         cell = map->container[hash];
     }
 
@@ -106,20 +109,23 @@ void map_add(Map* map, void* key, void* value) {
 }
 
 void map_remove(Map* map, void* key) {
-    int hash = map->t_key->hash_object(key) % map->capacity;
-    MapCell* cell = map->container[hash];
+    int original_hash = map->t_key->hash_object(key) % map->capacity;
+    MapCell* cell = map->container[original_hash];
 
+    int hash = original_hash;
     int found = 0;
     while (cell != NULL) {
-        if (map->t_key->compare_object(cell->key, key) == 0) {
+        if (!cell->deleted && map->t_key->compare_object(cell->key, key) == 0) {
             found = 1;
             break;
         }
         hash = (hash + 1) % map->capacity;
+        if (hash == original_hash) break;
+
         cell = map->container[hash];
     }
 
-    if (!found || cell->deleted) return;
+    if (!found) return;
 
     cell->deleted = 1;
     map->size--;
