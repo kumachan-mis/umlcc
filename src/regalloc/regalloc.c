@@ -1,7 +1,7 @@
 #include "./regalloc.h"
 #include "../common/common.h"
 #include "../immc/immc.h"
-#include "../liveness/liveness.h"
+#include "../liveseq/liveness.h"
 #include "../map/map.h"
 #include "./basicblock.h"
 
