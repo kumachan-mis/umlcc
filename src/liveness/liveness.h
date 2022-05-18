@@ -3,16 +3,16 @@
 
 #include "../common/common.h"
 
-typedef struct _RegLiveness {
+typedef struct _Liveness {
     int first_def_index;
     int last_use_index;
-} RegLiveness;
+} Liveness;
 
-extern BaseType t_regliveness;
+extern BaseType t_liveness;
 
-RegLiveness* new_regliveness();
-void delete_regliveness(RegLiveness* regliveness);
-RegLiveness* regliveness_copy(RegLiveness* regliveness);
-int regliveness_isinit(RegLiveness* regliveness);
+Liveness* new_liveness();
+void delete_liveness(Liveness* liveness);
+Liveness* liveness_copy(Liveness* liveness);
+int liveness_isinit(Liveness* liveness);
 
 #endif

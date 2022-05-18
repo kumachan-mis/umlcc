@@ -2,29 +2,29 @@
 
 #include <stdlib.h>
 
-BaseType t_regliveness = {
-    .copy_object = regliveness_copy,
-    .delete_object = delete_regliveness,
+BaseType t_liveness = {
+    .copy_object = liveness_copy,
+    .delete_object = delete_liveness,
 };
 
-RegLiveness* new_regliveness() {
-    RegLiveness* regliveness = malloc(sizeof(RegLiveness));
-    regliveness->first_def_index = -1;
-    regliveness->last_use_index = -1;
-    return regliveness;
+Liveness* new_liveness() {
+    Liveness* liveness = malloc(sizeof(Liveness));
+    liveness->first_def_index = -1;
+    liveness->last_use_index = -1;
+    return liveness;
 }
 
-void delete_regliveness(RegLiveness* regliveness) {
-    free(regliveness);
+void delete_liveness(Liveness* liveness) {
+    free(liveness);
 }
 
-RegLiveness* regliveness_copy(RegLiveness* regliveness) {
-    RegLiveness* copied_regliveness = malloc(sizeof(RegLiveness));
-    copied_regliveness->first_def_index = regliveness->first_def_index;
-    copied_regliveness->last_use_index = regliveness->last_use_index;
-    return copied_regliveness;
+Liveness* liveness_copy(Liveness* liveness) {
+    Liveness* copied_liveness = malloc(sizeof(Liveness));
+    copied_liveness->first_def_index = liveness->first_def_index;
+    copied_liveness->last_use_index = liveness->last_use_index;
+    return copied_liveness;
 }
 
-int regliveness_isinit(RegLiveness* regliveness) {
-    return regliveness->first_def_index == -1 && regliveness->last_use_index == -1;
+int liveness_isinit(Liveness* liveness) {
+    return liveness->first_def_index == -1 && liveness->last_use_index == -1;
 }

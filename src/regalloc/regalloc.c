@@ -222,17 +222,17 @@ int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
 }
 
 Vector* analyze_register_liveness(Vector* control_flow_graph) {
-    Vector* register_liveness = new_vector(&t_regliveness);
+    Vector* livenesses = new_vector(&t_liveness);
 
     int blocks_len = vector_size(control_flow_graph);
     int block_offset = 0;
     for (int block_id = 0; block_id < blocks_len; block_id++) {
         BasicBlock* basic_block = vector_at(control_flow_graph, block_id);
-        update_register_liveness(register_liveness, basic_block, block_offset);
+        update_register_liveness(livenesses, basic_block, block_offset);
         block_offset += vector_size(basic_block->immcs);
     }
 
-    return register_liveness;
+    return livenesses;
 }
 
 void update_register_liveness(Vector* livenesses, BasicBlock* basic_block, int block_offset) {
@@ -243,23 +243,23 @@ void update_register_liveness(Vector* livenesses, BasicBlock* basic_block, int b
 
         ImmcOpe* fst_src = immc->inst->fst_src;
         if (fst_src != NULL && (fst_src->type == OPERAND_REG || fst_src->type == OPERAND_PTR)) {
-            RegLiveness* liveness = vector_at(livenesses, fst_src->reg_id);
+            Liveness* liveness = vector_at(livenesses, fst_src->reg_id);
             liveness->last_use_index = block_offset + i;
         }
 
         ImmcOpe* snd_src = immc->inst->snd_src;
         if (snd_src != NULL && (snd_src->type == OPERAND_REG || snd_src->type == OPERAND_PTR)) {
-            RegLiveness* liveness = vector_at(livenesses, snd_src->reg_id);
+            Liveness* liveness = vector_at(livenesses, snd_src->reg_id);
             liveness->last_use_index = block_offset + i;
         }
 
         ImmcOpe* dest = immc->inst->dest;
         if (dest != NULL && dest->type == OPERAND_REG) {
-            vector_fill(livenesses, dest->reg_id + 1, new_regliveness());
-            RegLiveness* liveness = vector_at(livenesses, dest->reg_id);
-            if (regliveness_isinit(liveness)) liveness->first_def_index = block_offset + i;
+            vector_fill(livenesses, dest->reg_id + 1, new_liveness());
+            Liveness* liveness = vector_at(livenesses, dest->reg_id);
+            if (liveness_isinit(liveness)) liveness->first_def_index = block_offset + i;
         } else if (dest != NULL && dest->type == OPERAND_PTR) {
-            RegLiveness* liveness = vector_at(livenesses, dest->reg_id);
+            Liveness* liveness = vector_at(livenesses, dest->reg_id);
             liveness->last_use_index = block_offset + i;
         }
     }
@@ -268,7 +268,7 @@ void update_register_liveness(Vector* livenesses, BasicBlock* basic_block, int b
     for (SetIter* iter = set_iter_begin(output); !set_iter_end(iter, output);
          iter = set_iter_next(iter, output)) {
         int* reg_id_ref = set_iter_item(iter, output);
-        RegLiveness* liveness = vector_at(livenesses, *reg_id_ref);
+        Liveness* liveness = vector_at(livenesses, *reg_id_ref);
         liveness->last_use_index = block_offset + immcs_len;
     }
 }
@@ -295,14 +295,14 @@ Vector* determine_allocation(Vector* livenesses, int num_real_regs) {
 }
 
 void free_unused_register(Vector* statuses, Vector* livenesses, int virtual_reg_id) {
-    RegLiveness* liveness = vector_at(livenesses, virtual_reg_id);
+    Liveness* liveness = vector_at(livenesses, virtual_reg_id);
     int num_real_regs = vector_size(statuses);
 
     for (int real_reg_id = 0; real_reg_id < num_real_regs; real_reg_id++) {
         int* alloc_virtual_reg_id_ref = vector_at(statuses, real_reg_id);
         if (*alloc_virtual_reg_id_ref == -1) continue;
 
-        RegLiveness* alloc_liveness = vector_at(livenesses, *alloc_virtual_reg_id_ref);
+        Liveness* alloc_liveness = vector_at(livenesses, *alloc_virtual_reg_id_ref);
         if (alloc_liveness->last_use_index <= liveness->first_def_index) {
             vector_set(statuses, real_reg_id, new_integer(-1));
         }
@@ -327,7 +327,7 @@ int allocate_real_register(Vector* allocations, Vector* statuses, int virtual_re
 }
 
 void spil_register(Vector* allocations, Vector* statuses, Vector* livenesses, int virtual_reg_id) {
-    RegLiveness* liveness = vector_at(livenesses, virtual_reg_id);
+    Liveness* liveness = vector_at(livenesses, virtual_reg_id);
     int num_real_regs = vector_size(statuses);
 
     int spilled_virtual_reg_id = virtual_reg_id;
@@ -336,7 +336,7 @@ void spil_register(Vector* allocations, Vector* statuses, Vector* livenesses, in
 
     for (int real_reg_id = 0; real_reg_id < num_real_regs; real_reg_id++) {
         int* alloc_virtual_reg_id_ref = vector_at(statuses, real_reg_id);
-        RegLiveness* alloc_liveness = vector_at(livenesses, *alloc_virtual_reg_id_ref);
+        Liveness* alloc_liveness = vector_at(livenesses, *alloc_virtual_reg_id_ref);
         int alloc_range_len = alloc_liveness->last_use_index - alloc_liveness->first_def_index;
         if (max_range_len >= alloc_range_len) continue;
 
