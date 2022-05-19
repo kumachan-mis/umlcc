@@ -9,8 +9,8 @@
 
 Vector* dequeue_external_immcs(RegAlloc* regalloc);
 
-Vector* create_control_flow_graph(Vector* immcs);
-Vector* create_basic_blocks(Vector* immcs);
+Vector* create_control_flow_graph(Vector* external_immcs);
+Vector* create_basic_blocks(Vector* external_immcs);
 Vector* connect_basic_blocks(Vector* basic_blocks);
 Vector* analyze_register_flow(Vector* basic_blocks);
 int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block);
@@ -23,7 +23,7 @@ void free_unused_register(Vector* statuses, Vector* livenesses, int virtual_reg_
 int allocate_real_register(Vector* allocations, Vector* statuses, int virtual_reg_id);
 void spil_register(Vector* allocations, Vector* statuses, Vector* livenesses, int virtual_reg_id);
 
-void convert_allocated_immcs(Vector* immcs, Vector* allocations);
+Vector* gen_allocated_immcs(Vector* external_immcs, Vector* allocations);
 
 RegAlloc* new_regalloc(Vector* immcs, int num_real_regs) {
     RegAlloc* regalloc = malloc(sizeof(RegAlloc));
@@ -43,20 +43,21 @@ Vector* regalloc_allocate_regs(RegAlloc* regalloc) {
 
     int immcs_len = vector_size(regalloc->_immcs);
     while (regalloc->_index < immcs_len) {
-        Vector* immcs = dequeue_external_immcs(regalloc);
+        Vector* external_immcs = dequeue_external_immcs(regalloc);
 
-        Vector* control_flow_graph = create_control_flow_graph(immcs);
+        Vector* control_flow_graph = create_control_flow_graph(external_immcs);
         Vector* livenesses = analyze_register_liveness(control_flow_graph);
         delete_vector(control_flow_graph);
 
         Vector* allocations = determine_allocation(livenesses, regalloc->_num_real_regs);
         delete_vector(livenesses);
 
-        convert_allocated_immcs(immcs, allocations);
+        Vector* sub_allocated_immcs = gen_allocated_immcs(external_immcs, allocations);
         delete_vector(allocations);
+        delete_vector(external_immcs);
 
-        vector_extend(allocated_immcs, immcs);
-        delete_vector(immcs);
+        vector_extend(allocated_immcs, sub_allocated_immcs);
+        delete_vector(sub_allocated_immcs);
     }
 
     return allocated_immcs;
@@ -80,24 +81,24 @@ Vector* dequeue_external_immcs(RegAlloc* regalloc) {
     return sequence;
 }
 
-Vector* create_control_flow_graph(Vector* immcs) {
-    Vector* basic_blocks = create_basic_blocks(immcs);
+Vector* create_control_flow_graph(Vector* external_immcs) {
+    Vector* basic_blocks = create_basic_blocks(external_immcs);
     Vector* control_flow_graph = connect_basic_blocks(basic_blocks);
     control_flow_graph = analyze_register_flow(control_flow_graph);
     return control_flow_graph;
 }
 
-Vector* create_basic_blocks(Vector* immcs) {
+Vector* create_basic_blocks(Vector* external_immcs) {
     Vector* basic_blocks = new_vector(&t_basicblock);
 
     Vector* block_immcs = new_vector(&t_immc);
     Vector* next_block_immcs = NULL;
 
-    int sequence_len = vector_size(immcs);
+    int immcs_len = vector_size(external_immcs);
     int i = 0;
-    while (i < sequence_len) {
-        while (i < sequence_len) {
-            Immc* immc = vector_at(immcs, i);
+    while (i < immcs_len) {
+        while (i < immcs_len) {
+            Immc* immc = vector_at(external_immcs, i);
             if (immc->type == IMMC_INST && immcinst_isjump(immc->inst)) {
                 vector_push(block_immcs, immc_copy(immc));
                 i++;
@@ -355,11 +356,16 @@ void spil_register(Vector* allocations, Vector* statuses, Vector* livenesses, in
     vector_set(statuses, spilled_real_reg_id, new_integer(virtual_reg_id));
 }
 
-void convert_allocated_immcs(Vector* immcs, Vector* allocations) {
-    int immcs_len = vector_size(immcs);
+Vector* gen_allocated_immcs(Vector* external_immcs, Vector* allocations) {
+    Vector* allocated_immcs = new_vector(&t_immc);
+
+    int immcs_len = vector_size(external_immcs);
     for (int i = 0; i < immcs_len; i++) {
-        Immc* immc = vector_at(immcs, i);
-        if (immc->type != IMMC_INST) continue;
+        Immc* immc = immc_copy(vector_at(external_immcs, i));
+        if (immc->type != IMMC_INST) {
+            vector_push(allocated_immcs, immc);
+            continue;
+        }
 
         ImmcOpe* fst_src = immc->inst->fst_src;
         if (fst_src != NULL && (fst_src->type == OPERAND_REG || fst_src->type == OPERAND_PTR)) {
@@ -378,5 +384,8 @@ void convert_allocated_immcs(Vector* immcs, Vector* allocations) {
             int* allocation = vector_at(allocations, dest->reg_id);
             dest->reg_id = *allocation;
         }
+        vector_push(allocated_immcs, immc);
     }
+
+    return allocated_immcs;
 }
