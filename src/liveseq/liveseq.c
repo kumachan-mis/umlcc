@@ -3,6 +3,11 @@
 
 #include <stdlib.h>
 
+BaseType t_liveseq = {
+    .copy_object = liveseq_copy,
+    .delete_object = delete_liveseq,
+};
+
 Liveseq* new_liveseq() {
     Liveseq* liveseq = malloc(sizeof(Liveseq));
     liveseq->livenesses = new_vector(&t_liveness);
@@ -14,6 +19,14 @@ Liveseq* new_liveseq() {
 void delete_liveseq(Liveseq* liveseq) {
     delete_vector(liveseq->livenesses);
     free(liveseq);
+}
+
+Liveseq* liveseq_copy(Liveseq* liveseq) {
+    Liveseq* copied_liveseq = malloc(sizeof(Liveseq));
+    copied_liveseq->livenesses = vector_copy(liveseq->livenesses);
+    copied_liveseq->index = liveseq->index;
+    copied_liveseq->liveness_index = liveseq->liveness_index;
+    return copied_liveseq;
 }
 
 int liveseq_need_evacuation(Liveseq* liveseq) {
