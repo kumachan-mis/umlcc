@@ -3,9 +3,9 @@
 
 #include <stdlib.h>
 
-Liveseq* new_liveseq(Vector* livenesses) {
+Liveseq* new_liveseq() {
     Liveseq* liveseq = malloc(sizeof(Liveseq));
-    liveseq->livenesses = livenesses;
+    liveseq->livenesses = new_vector(&t_liveness);
     liveseq->index = 0;
     liveseq->liveness_index = -1;
     return liveseq;

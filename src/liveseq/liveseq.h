@@ -9,7 +9,7 @@ typedef struct _Liveseq {
     int index;
 } Liveseq;
 
-Liveseq* new_liveseq(Vector* livenesses);
+Liveseq* new_liveseq();
 void delete_liveseq(Liveseq* liveseq);
 int liveseq_need_evacuation(Liveseq* liveseq);
 void liveseq_goto_next(Liveseq* liveseq);
