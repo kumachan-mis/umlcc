@@ -32,6 +32,7 @@ Vector* gen_global_label_x64code(X64gen* x64gen) {
     append_code(codes, "    .globl %s\n", immc->label->name);
     append_code(codes, "%s:\n", immc->label->name);
 
+    liveseqs_next(x64gen->_liveseqs);
     return codes;
 }
 
@@ -43,6 +44,7 @@ Vector* gen_local_label_x64code(X64gen* x64gen) {
     append_code(codes, "    .local %s\n", immc->label->name);
     append_code(codes, "%s:\n", immc->label->name);
 
+    liveseqs_next(x64gen->_liveseqs);
     return codes;
 }
 Vector* gen_default_label_x64code(X64gen* x64gen) {
@@ -52,5 +54,6 @@ Vector* gen_default_label_x64code(X64gen* x64gen) {
 
     append_code(codes, "%s:\n", immc->label->name);
 
+    liveseqs_next(x64gen->_liveseqs);
     return codes;
 }

@@ -4,5 +4,6 @@
 #include "../vector/vector.h"
 
 void append_code(Vector* codes, char* format, ...);
+void liveseqs_next(Vector* liveseqs);
 
 #endif
