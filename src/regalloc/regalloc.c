@@ -2,6 +2,7 @@
 #include "../common/common.h"
 #include "../immc/immc.h"
 #include "../liveseq/liveness.h"
+#include "../liveseq/liveseq.h"
 #include "../map/map.h"
 #include "./basicblock.h"
 
@@ -25,6 +26,8 @@ void spil_register(Vector* allocations, Vector* statuses, Vector* livenesses, in
 
 Vector* gen_allocated_immcs(Vector* external_immcs, Vector* allocations);
 
+void update_liveseqs(Vector* liveseqs, Vector* livenesses, Vector* allocations);
+
 RegAlloc* new_regalloc(Vector* immcs, int num_real_regs) {
     RegAlloc* regalloc = malloc(sizeof(RegAlloc));
     regalloc->_immcs = immcs;
@@ -38,8 +41,11 @@ void delete_regalloc(RegAlloc* regalloc) {
     free(regalloc);
 }
 
-Vector* regalloc_allocate_regs(RegAlloc* regalloc) {
+AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc) {
     Vector* allocated_immcs = new_vector(&t_immc);
+    Vector* liveseqs = new_vector(&t_liveseq);
+
+    vector_fill(liveseqs, regalloc->_num_real_regs, new_liveseq());
 
     int immcs_len = vector_size(regalloc->_immcs);
     while (regalloc->_index < immcs_len) {
@@ -50,17 +56,18 @@ Vector* regalloc_allocate_regs(RegAlloc* regalloc) {
         delete_vector(control_flow_graph);
 
         Vector* allocations = determine_allocation(livenesses, regalloc->_num_real_regs);
-        delete_vector(livenesses);
-
         Vector* sub_allocated_immcs = gen_allocated_immcs(external_immcs, allocations);
-        delete_vector(allocations);
         delete_vector(external_immcs);
+
+        update_liveseqs(liveseqs, livenesses, allocations);
+        delete_vector(livenesses);
+        delete_vector(allocations);
 
         vector_extend(allocated_immcs, sub_allocated_immcs);
         delete_vector(sub_allocated_immcs);
     }
 
-    return allocated_immcs;
+    return new_allocimmcs(allocated_immcs, liveseqs);
 }
 
 Vector* dequeue_external_immcs(RegAlloc* regalloc) {
@@ -388,4 +395,14 @@ Vector* gen_allocated_immcs(Vector* external_immcs, Vector* allocations) {
     }
 
     return allocated_immcs;
+}
+
+void update_liveseqs(Vector* liveseqs, Vector* livenesses, Vector* allocations) {
+    int num_virtual_regs = vector_size(livenesses);
+    for (int virtual_reg_id = 0; virtual_reg_id < num_virtual_regs; virtual_reg_id++) {
+        Liveness* liveness = vector_at(livenesses, virtual_reg_id);
+        int* real_reg_id_ref = vector_at(allocations, virtual_reg_id);
+        Liveseq* liveseq = vector_at(liveseqs, *real_reg_id_ref);
+        vector_push(liveseq->livenesses, liveness_copy(liveness));
+    }
 }

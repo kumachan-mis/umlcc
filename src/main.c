@@ -5,8 +5,6 @@
 #include "./resolver/resolver.h"
 #include "./x64/x64.h"
 
-#include "./immc/immc.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -37,7 +35,10 @@ int main(int argc, char* argv[]) {
     delete_codegen(codegen);
 
     RegAlloc* regalloc = new_regalloc(immcs, 8);
-    Vector* allocated_immcs = regalloc_allocate_regs(regalloc);
+    AllocImmcs* allocimmcs = regalloc_allocate_regs(regalloc);
+    Vector* allocated_immcs = NULL;
+    Vector* liveseqs = NULL;
+    allocimmcs_move(allocimmcs, &allocated_immcs, &liveseqs);
     delete_regalloc(regalloc);
 
     int immcs_len = vector_size(allocated_immcs);
@@ -47,7 +48,7 @@ int main(int argc, char* argv[]) {
         free(immc_str);
     }
 
-    // X64gen* x64gen = new_x64gen(allocated_immcs);
+    // X64gen* x64gen = new_x64gen(allocated_immcs, liveseqs);
     // Vector* x64codes = x64gen_generate_x64code(x64gen);
     // delete_x64gen(x64gen);
 

@@ -1,6 +1,7 @@
 #ifndef _UMLCC_GEN_H_
 #define _UMLCC_GEN_H_
 
+#include "../immc/immc.h"
 #include "../srt/srt.h"
 #include "../symtab/symtab.h"
 #include "../vector/vector.h"
