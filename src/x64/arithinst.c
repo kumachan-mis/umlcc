@@ -97,6 +97,11 @@ Vector* gen_div_x64code(X64gen* x64gen) {
     char* dest_name = LREG_NAMES[dest_id];
 
     append_code(codes, "\tmovl\t%s, %s\n", fst_src_name, LREG_NAMES[AX_REG_ID]);
+    if (snd_src_id == DX_REG_ID) {
+        append_code(codes, "\tmovl\t%s, %s\n", snd_src_name, fst_src_name);
+        snd_src_name = fst_src_name;
+    }
+
     append_code(codes, "\tcltd\n");
     append_code(codes, "\tidivl\t%s\n", snd_src_name);
     append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[AX_REG_ID], dest_name);
@@ -123,6 +128,11 @@ Vector* gen_mod_x64code(X64gen* x64gen) {
     char* dest_name = LREG_NAMES[dest_id];
 
     append_code(codes, "\tmovl\t%s, %s\n", fst_src_name, LREG_NAMES[AX_REG_ID]);
+    if (snd_src_id == DX_REG_ID) {
+        append_code(codes, "\tmovl\t%s, %s\n", snd_src_name, fst_src_name);
+        snd_src_name = fst_src_name;
+    }
+
     append_code(codes, " cltd\n");
     append_code(codes, "\tidivl\t%s\n", snd_src_name);
     append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[DX_REG_ID], dest_name);

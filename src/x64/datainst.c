@@ -114,7 +114,7 @@ Vector* gen_ldarg_x64code(X64gen* x64gen) {
     // (1-indexed non-register param no.) * (bytes of memory address) + (offset for pushq %rbp)
 
     append_code(codes, "\tmovl\t%d(%s), %s\n", mem_arg_offset, BP_NAME, reg_name);
-    append_code(codes, "\tmov\t%s, -%d(%s)\n", reg_name, dest->mem_offset, BP_NAME);
+    append_code(codes, "\tmovl\t%s, -%d(%s)\n", reg_name, dest->mem_offset, BP_NAME);
 
     liveseqs_next(x64gen->_liveseqs);
     return codes;
