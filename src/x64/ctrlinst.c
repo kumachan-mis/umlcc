@@ -1,6 +1,6 @@
 #include "./ctrlinst.h"
 #include "../immc/immc.h"
-#include "./consts.h"
+#include "./register.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -15,7 +15,7 @@ Vector* gen_jeq_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int fst_src_id = -1;
+    int fst_src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
     char* fst_src_name = LREG_NAMES[fst_src_id];
 
     switch (snd_src->type) {
@@ -23,7 +23,7 @@ Vector* gen_jeq_x64code(X64gen* x64gen) {
             append_code(codes, "\tcmpl\t$%d, %s\n", snd_src->imm_value, fst_src_name);
             break;
         case OPERAND_REG: {
-            int snd_src_id = -1;
+            int snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
             char* snd_src_name = LREG_NAMES[snd_src_id];
             append_code(codes, "\tcmpl\t%s, %s\n", snd_src_name, fst_src_name);
             break;
@@ -48,7 +48,7 @@ Vector* gen_jneq_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int fst_src_id = -1;
+    int fst_src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
     char* fst_src_name = LREG_NAMES[fst_src_id];
 
     switch (snd_src->type) {
@@ -56,7 +56,7 @@ Vector* gen_jneq_x64code(X64gen* x64gen) {
             append_code(codes, "\tcmpl\t$%d, %s\n", snd_src->imm_value, fst_src_name);
             break;
         case OPERAND_REG: {
-            int snd_src_id = -1;
+            int snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
             char* snd_src_name = LREG_NAMES[snd_src_id];
             append_code(codes, "\tcmpl\t%s, %s\n", snd_src_name, fst_src_name);
             break;
@@ -94,13 +94,13 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    int src_id = -1;
+    int src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
     char* src_name = QREG_NAMES[src_id];
 
     append_code(codes, "\tmovl\t$%d, %s\n", 0, LREG_NAMES[AX_REG_ID]);
     append_code(codes, "\tcall\t*%s\n", src_name);
 
-    int dest_id = -1;
+    int dest_id = CALLER_SAVED_REG_IDS[dest->reg_id];
     char* dest_name = LREG_NAMES[dest_id];
     append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[AX_REG_ID], dest_name);
 

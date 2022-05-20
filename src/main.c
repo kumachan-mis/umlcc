@@ -3,6 +3,7 @@
 #include "./parser/parser.h"
 #include "./regalloc/regalloc.h"
 #include "./resolver/resolver.h"
+#include "./x64/register.h"
 #include "./x64/x64.h"
 
 #include <stdio.h>
@@ -34,7 +35,7 @@ int main(int argc, char* argv[]) {
     Vector* immcs = codegen_generate_code(codegen);
     delete_codegen(codegen);
 
-    RegAlloc* regalloc = new_regalloc(immcs, 8);
+    RegAlloc* regalloc = new_regalloc(immcs, NUM_CALLER_SAVED_REGS);
     AllocImmcs* allocimmcs = regalloc_allocate_regs(regalloc);
     Vector* allocated_immcs = NULL;
     Vector* liveseqs = NULL;

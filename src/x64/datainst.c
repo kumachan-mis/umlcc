@@ -1,6 +1,6 @@
 #include "./datainst.h"
 #include "../immc/immc.h"
-#include "./consts.h"
+#include "./register.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -15,7 +15,7 @@ Vector* gen_load_x64code(X64gen* x64gen) {
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* src = immc->inst->fst_src;
 
-    int dest_id = -1;
+    int dest_id = CALLER_SAVED_REG_IDS[dest->reg_id];
     char* dest_name = LREG_NAMES[dest_id];
 
     switch (src->type) {
@@ -46,7 +46,7 @@ Vector* gen_addr_x64code(X64gen* x64gen) {
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* src = immc->inst->fst_src;
 
-    int dest_id = -1;
+    int dest_id = CALLER_SAVED_REG_IDS[dest->reg_id];
     char* dest_name = QREG_NAMES[dest_id];
 
     switch (src->type) {
@@ -73,12 +73,12 @@ Vector* gen_store_x64code(X64gen* x64gen) {
     ImmcOpe* dest = immc->inst->dest;
     ImmcOpe* src = immc->inst->fst_src;
 
-    int src_id = -1;
+    int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
     char* src_name = LREG_NAMES[src_id];
 
     switch (dest->type) {
         case OPERAND_PTR: {
-            int dest_id = -1;
+            int dest_id = CALLER_SAVED_REG_IDS[dest->reg_id];
             char* dest_name = QREG_NAMES[dest_id];
             append_code(codes, "\tmovl\t%s, (%s)\n", src_name, dest_name);
             break;
@@ -108,7 +108,7 @@ Vector* gen_ldarg_x64code(X64gen* x64gen) {
         return codes;
     }
 
-    int reg_id = -1;
+    int reg_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
     char* reg_name = LREG_NAMES[reg_id];
     int mem_arg_offset = (src->imm_value - NUM_ARG_REGS + 1) * 8 + 8;
     // (1-indexed non-register param no.) * (bytes of memory address) + (offset for pushq %rbp)
@@ -127,7 +127,7 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
 
     ImmcOpe* src = immc->inst->snd_src;
 
-    int src_id = -1;
+    int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
     char* src_name = QREG_NAMES[src_id];
     append_code(codes, "\tpushq\t%s\n", src_name);
 
@@ -141,7 +141,7 @@ Vector* gen_stret_x64code(X64gen* x64gen) {
     x64gen->_index++;
 
     ImmcOpe* src = immc->inst->fst_src;
-    int ret_id = -1;
+    int ret_id = CALLER_SAVED_REG_IDS[src->reg_id];
     char* ret_name = LREG_NAMES[ret_id];
 
     append_code(codes, "\tmovl\t%s, %s\n", ret_name, LREG_NAMES[AX_REG_ID]);

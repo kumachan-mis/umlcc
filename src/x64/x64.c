@@ -1,9 +1,9 @@
 #include "./x64.h"
 #include "../common/common.h"
 #include "../immc/immc.h"
-#include "./consts.h"
 #include "./inst.h"
 #include "./label.h"
+#include "./register.h"
 #include "./util.h"
 
 #include <stdio.h>

@@ -1,5 +1,5 @@
-#ifndef _UMLCC_X64_CONSTS_H_
-#define _UMLCC_X64_CONSTS_H_
+#ifndef _UMLCC_X64_REGISTER_H_
+#define _UMLCC_X64_REGISTER_H_
 
 extern char* PC_NAME;
 extern char* QREG_NAMES[16];
