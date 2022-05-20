@@ -48,15 +48,15 @@ int main(int argc, char* argv[]) {
         free(immc_str);
     }
 
-    // X64gen* x64gen = new_x64gen(allocated_immcs, liveseqs);
-    // Vector* x64codes = x64gen_generate_x64code(x64gen);
-    // delete_x64gen(x64gen);
+    X64gen* x64gen = new_x64gen(allocated_immcs, liveseqs);
+    Vector* x64codes = x64gen_generate_x64code(x64gen);
+    delete_x64gen(x64gen);
 
-    // int x64codes_len = vector_size(x64codes);
-    // for (int i = 0; i < x64codes_len; i++) {
-    //     fprintf(dest, "%s", (char*)vector_at(x64codes, i));
-    // }
-    // delete_vector(x64codes);
+    int x64codes_len = vector_size(x64codes);
+    for (int i = 0; i < x64codes_len; i++) {
+        fprintf(dest, "%s", (char*)vector_at(x64codes, i));
+    }
+    delete_vector(x64codes);
 
     fclose(dest);
     fclose(imm);

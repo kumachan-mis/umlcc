@@ -12,11 +12,12 @@
 Vector* gen_function_x64code(X64gen* x64gen);
 Vector* gen_function_body_x64code(X64gen* x64gen);
 
-X64gen* new_x64gen(Vector* immcs) {
+X64gen* new_x64gen(Vector* immcs, Vector* liveseqs) {
     X64gen* x64gen = malloc(sizeof(X64gen));
     x64gen->_immcs = immcs;
-    x64gen->index = 0;
-    x64gen->evacuation_count = 0;
+    x64gen->_immcs = liveseqs;
+    x64gen->_index = 0;
+    x64gen->_evacuation_count = 0;
     return x64gen;
 }
 
@@ -31,9 +32,9 @@ Vector* x64gen_generate_x64code(X64gen* x64gen) {
 
     int immcs_len = vector_size(x64gen->_immcs);
     while (1) {
-        if (x64gen->index >= immcs_len) break;
+        if (x64gen->_index >= immcs_len) break;
 
-        Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+        Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
         switch (immc->label->type) {
             case LABEL_FUNCTION:
                 sub_codes = gen_function_x64code(x64gen);
@@ -56,7 +57,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     Vector* tail_codes = new_vector(&t_string);
     Vector* sub_codes = NULL;
 
-    x64gen->evacuation_count = 0;
+    x64gen->_evacuation_count = 0;
 
     sub_codes = gen_label_x64code(x64gen);
     vector_extend(codes, sub_codes);
@@ -68,7 +69,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
 
     Vector* body_codes = gen_function_body_x64code(x64gen);
 
-    int evacuation_count = x64gen->evacuation_count;
+    int evacuation_count = x64gen->_evacuation_count;
     for (int i = 0; i < evacuation_count; i++) {
         append_code(head_codes, "\tpushq\t%s\n", QREG_NAMES[CALLEE_SAVED_REG_IDS[i]]);
     }
@@ -91,7 +92,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     vector_extend(codes, tail_codes);
     delete_vector(tail_codes);
 
-    x64gen->evacuation_count = 0;
+    x64gen->_evacuation_count = 0;
     return codes;
 }
 
@@ -100,7 +101,7 @@ Vector* gen_function_body_x64code(X64gen* x64gen) {
     Vector* sub_codes = NULL;
 
     while (1) {
-        Immc* immc = vector_at(x64gen->_immcs, x64gen->index);
+        Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
         if (immc->type == IMMC_INST && immc->inst->type == INST_LEAVE) break;
 
         switch (immc->type) {
