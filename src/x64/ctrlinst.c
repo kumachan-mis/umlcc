@@ -94,6 +94,12 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
+    for (int i = 0; i < snd_src->imm_value && i < NUM_ARG_REGS; i++) {
+        int arg_id = ARG_REG_IDS[i];
+        char* arg_name = QREG_NAMES[arg_id];
+        append_code(codes, "\tpopq\t%s\n", arg_name);
+    }
+
     int src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
     char* src_name = QREG_NAMES[src_id];
 
