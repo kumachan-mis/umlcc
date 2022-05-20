@@ -14,7 +14,7 @@ Vector* gen_function_x64code(X64gen* x64gen);
 X64gen* new_x64gen(Vector* immcs, Vector* liveseqs) {
     X64gen* x64gen = malloc(sizeof(X64gen));
     x64gen->_immcs = immcs;
-    x64gen->_immcs = liveseqs;
+    x64gen->_liveseqs = liveseqs;
     x64gen->_index = 0;
     x64gen->_evacuation_count = 0;
     return x64gen;
