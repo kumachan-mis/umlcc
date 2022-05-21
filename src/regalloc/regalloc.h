@@ -6,7 +6,7 @@
 
 typedef struct _RegAlloc {
     Vector* _immcs;
-    int _index;
+    int _immc_offset;
     int _num_real_regs;
 } RegAlloc;
 

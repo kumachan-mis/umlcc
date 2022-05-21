@@ -16,8 +16,8 @@ Vector* connect_basic_blocks(Vector* basic_blocks);
 Vector* analyze_register_flow(Vector* basic_blocks);
 int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block);
 
-Vector* analyze_register_liveness(Vector* control_flow_graph);
-void update_register_liveness(Vector* livenesses, BasicBlock* basic_block, int block_offset);
+Vector* analyze_register_liveness(RegAlloc* regalloc, Vector* control_flow_graph);
+void update_register_liveness(RegAlloc* regalloc, Vector* livenesses, BasicBlock* basic_block);
 
 Vector* determine_allocation(Vector* livenesses, int num_real_regs);
 void free_unused_register(Vector* statuses, Vector* livenesses, int virtual_reg_id);
@@ -31,7 +31,7 @@ void update_liveseqs(Vector* liveseqs, Vector* livenesses, Vector* allocations);
 RegAlloc* new_regalloc(Vector* immcs, int num_real_regs) {
     RegAlloc* regalloc = malloc(sizeof(RegAlloc));
     regalloc->_immcs = immcs;
-    regalloc->_index = 0;
+    regalloc->_immc_offset = 0;
     regalloc->_num_real_regs = num_real_regs;
     return regalloc;
 }
@@ -48,11 +48,12 @@ AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc) {
     vector_fill(liveseqs, regalloc->_num_real_regs, new_liveseq());
 
     int immcs_len = vector_size(regalloc->_immcs);
-    while (regalloc->_index < immcs_len) {
+    while (regalloc->_immc_offset < immcs_len) {
         Vector* external_immcs = dequeue_external_immcs(regalloc);
+        int external_immcs_len = vector_size(external_immcs);
 
         Vector* control_flow_graph = create_control_flow_graph(external_immcs);
-        Vector* livenesses = analyze_register_liveness(control_flow_graph);
+        Vector* livenesses = analyze_register_liveness(regalloc, control_flow_graph);
         delete_vector(control_flow_graph);
 
         Vector* allocations = determine_allocation(livenesses, regalloc->_num_real_regs);
@@ -65,6 +66,7 @@ AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc) {
 
         vector_extend(allocated_immcs, sub_allocated_immcs);
         delete_vector(sub_allocated_immcs);
+        regalloc->_immc_offset += external_immcs_len;
     }
 
     return new_allocimmcs(allocated_immcs, liveseqs);
@@ -72,16 +74,17 @@ AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc) {
 
 Vector* dequeue_external_immcs(RegAlloc* regalloc) {
     Vector* sequence = new_vector(&t_immc);
+    int index = 0;
 
-    Immc* label = vector_at(regalloc->_immcs, regalloc->_index);
-    regalloc->_index++;
+    Immc* label = vector_at(regalloc->_immcs, regalloc->_immc_offset + index);
+    index++;
     vector_push(sequence, immc_copy(label));
 
     int immcs_len = vector_size(regalloc->_immcs);
-    while (regalloc->_index < immcs_len) {
-        Immc* immc = vector_at(regalloc->_immcs, regalloc->_index);
+    while (regalloc->_immc_offset + index < immcs_len) {
+        Immc* immc = vector_at(regalloc->_immcs, regalloc->_immc_offset + index);
         if (immc->type == IMMC_LABEL && immc->label->type == LABEL_FUNCTION) break;
-        regalloc->_index++;
+        index++;
         vector_push(sequence, immc_copy(immc));
     }
 
@@ -102,24 +105,24 @@ Vector* create_basic_blocks(Vector* external_immcs) {
     Vector* next_block_immcs = NULL;
 
     int immcs_len = vector_size(external_immcs);
-    int i = 0;
-    while (i < immcs_len) {
-        while (i < immcs_len) {
-            Immc* immc = vector_at(external_immcs, i);
+    int index = 0;
+    while (index < immcs_len) {
+        while (index < immcs_len) {
+            Immc* immc = vector_at(external_immcs, index);
             if (immc->type == IMMC_INST && immcinst_isjump(immc->inst)) {
                 vector_push(block_immcs, immc_copy(immc));
-                i++;
+                index++;
                 next_block_immcs = new_vector(&t_immc);
                 break;
             }
             if (immc->type == IMMC_LABEL) {
                 next_block_immcs = new_vector(&t_immc);
                 vector_push(next_block_immcs, immc_copy(immc));
-                i++;
+                index++;
                 break;
             }
             vector_push(block_immcs, immc_copy(immc));
-            i++;
+            index++;
         }
 
         if (vector_size(block_immcs) == 0) {
@@ -195,8 +198,8 @@ int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
     input = set_copy(output);
 
     int immcs_len = vector_size(basic_block->immcs);
-    for (int i = immcs_len - 1; i >= 0; i--) {
-        Immc* immc = vector_at(basic_block->immcs, i);
+    for (int index = immcs_len - 1; index >= 0; index--) {
+        Immc* immc = vector_at(basic_block->immcs, index);
         if (immc->type != IMMC_INST) continue;
 
         ImmcOpe* fst_src = immc->inst->fst_src;
@@ -229,46 +232,50 @@ int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
     return input_converged && output_converged;
 }
 
-Vector* analyze_register_liveness(Vector* control_flow_graph) {
+Vector* analyze_register_liveness(RegAlloc* regalloc, Vector* control_flow_graph) {
     Vector* livenesses = new_vector(&t_liveness);
+    int immc_offset = regalloc->_immc_offset;
 
     int blocks_len = vector_size(control_flow_graph);
-    int block_offset = 0;
     for (int block_id = 0; block_id < blocks_len; block_id++) {
         BasicBlock* basic_block = vector_at(control_flow_graph, block_id);
-        update_register_liveness(livenesses, basic_block, block_offset);
-        block_offset += vector_size(basic_block->immcs);
+        update_register_liveness(regalloc, livenesses, basic_block);
+        regalloc->_immc_offset += vector_size(basic_block->immcs);
     }
 
+    regalloc->_immc_offset = immc_offset;
     return livenesses;
 }
 
-void update_register_liveness(Vector* livenesses, BasicBlock* basic_block, int block_offset) {
+void update_register_liveness(RegAlloc* regalloc, Vector* livenesses, BasicBlock* basic_block) {
     int immcs_len = vector_size(basic_block->immcs);
-    for (int i = 0; i < immcs_len; i++) {
-        Immc* immc = vector_at(basic_block->immcs, i);
+    for (int index = 0; index < immcs_len; index++) {
+        Immc* immc = vector_at(basic_block->immcs, index);
         if (immc->type != IMMC_INST) continue;
 
         ImmcOpe* fst_src = immc->inst->fst_src;
         if (fst_src != NULL && (fst_src->type == OPERAND_REG || fst_src->type == OPERAND_PTR)) {
             Liveness* liveness = vector_at(livenesses, fst_src->reg_id);
-            liveness->last_use_index = block_offset + i;
+            liveness->last_use_index = regalloc->_immc_offset + index;
         }
 
         ImmcOpe* snd_src = immc->inst->snd_src;
         if (snd_src != NULL && (snd_src->type == OPERAND_REG || snd_src->type == OPERAND_PTR)) {
             Liveness* liveness = vector_at(livenesses, snd_src->reg_id);
-            liveness->last_use_index = block_offset + i;
+            liveness->last_use_index = regalloc->_immc_offset + index;
         }
 
         ImmcOpe* dest = immc->inst->dest;
         if (dest != NULL && dest->type == OPERAND_REG) {
             vector_fill(livenesses, dest->reg_id + 1, new_liveness());
             Liveness* liveness = vector_at(livenesses, dest->reg_id);
-            if (liveness_isinit(liveness)) liveness->first_def_index = block_offset + i;
+            if (liveness_isinit(liveness)) {
+                liveness->first_def_index = regalloc->_immc_offset + index;
+                liveness->last_use_index = regalloc->_immc_offset + index;
+            }
         } else if (dest != NULL && dest->type == OPERAND_PTR) {
             Liveness* liveness = vector_at(livenesses, dest->reg_id);
-            liveness->last_use_index = block_offset + i;
+            liveness->last_use_index = regalloc->_immc_offset + index;
         }
     }
 
@@ -277,7 +284,7 @@ void update_register_liveness(Vector* livenesses, BasicBlock* basic_block, int b
          iter = set_iter_next(iter, output)) {
         int* reg_id_ref = set_iter_item(iter, output);
         Liveness* liveness = vector_at(livenesses, *reg_id_ref);
-        liveness->last_use_index = block_offset + immcs_len;
+        liveness->last_use_index = regalloc->_immc_offset + immcs_len;
     }
 }
 

@@ -45,7 +45,7 @@ int liveseq_is_alive(Liveseq* liveseq) {
     }
 
     Liveness* liveness = vector_at(liveseq->livenesses, liveseq->liveness_index);
-    return liveness->first_def_index = index && index < liveness->last_use_index;
+    return liveness->first_def_index < index && index < liveness->last_use_index;
 }
 
 void liveseq_goto_next(Liveseq* liveseq) {

@@ -94,17 +94,47 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
+    Set* alive_regs_set = create_alive_regs_set(x64gen->_liveseqs);
+    int evacuation_count = 0;
+    // TODO: consider case that evacuation_count is greater than NUM_CALLEE_SAVED_REG
+    for (SetIter* iter = set_iter_begin(alive_regs_set); !set_iter_end(iter, alive_regs_set);
+         iter = set_iter_next(iter, alive_regs_set)) {
+        int* caller_ref = set_iter_item(iter, alive_regs_set);
+        int caller_id = CALLER_SAVED_REG_IDS[*caller_ref];
+        int callee_id = CALLEE_SAVED_REG_IDS[evacuation_count];
+        append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[caller_id], QREG_NAMES[callee_id]);
+        evacuation_count++;
+    }
+
+    int src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
+    int evacuation_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
+    if (snd_src->imm_value < NUM_ARG_REGS) evacuation_id = ARG_REG_IDS[snd_src->imm_value];
+    if (src_id != evacuation_id) {
+        append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[src_id], QREG_NAMES[evacuation_id]);
+        src_id = evacuation_id;
+    }
+
     for (int i = 0; i < snd_src->imm_value && i < NUM_ARG_REGS; i++) {
         int arg_id = ARG_REG_IDS[i];
         char* arg_name = QREG_NAMES[arg_id];
         append_code(codes, "\tpopq\t%s\n", arg_name);
     }
 
-    int src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
     char* src_name = QREG_NAMES[src_id];
-
     append_code(codes, "\tmovl\t$%d, %s\n", 0, LREG_NAMES[AX_REG_ID]);
     append_code(codes, "\tcall\t*%s\n", src_name);
+
+    evacuation_count = 0;
+    for (SetIter* iter = set_iter_begin(alive_regs_set); !set_iter_end(iter, alive_regs_set);
+         iter = set_iter_next(iter, alive_regs_set)) {
+        int* caller_ref = set_iter_item(iter, alive_regs_set);
+        int caller_id = CALLER_SAVED_REG_IDS[*caller_ref];
+        int callee_id = CALLEE_SAVED_REG_IDS[evacuation_count];
+        append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[callee_id], QREG_NAMES[caller_id]);
+        evacuation_count++;
+    }
+    if (x64gen->_evacuation_count < evacuation_count) x64gen->_evacuation_count = evacuation_count;
+    delete_set(alive_regs_set);
 
     int dest_id = CALLER_SAVED_REG_IDS[dest->reg_id];
     char* dest_name = LREG_NAMES[dest_id];

@@ -27,7 +27,7 @@ void liveseqs_next(Vector* liveseqs) {
 }
 
 Set* create_alive_regs_set(Vector* liveseqs) {
-    Set* alive_regs_set = new_set(&t_integer);
+    Set* alive_regs_set = new_set(&t_hashable_integer);
     int liveseqs_len = vector_size(liveseqs);
     for (int reg_id = 0; reg_id < liveseqs_len; reg_id++) {
         Liveseq* liveseq = vector_at(liveseqs, reg_id);
