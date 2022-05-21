@@ -29,8 +29,8 @@ Liveseq* liveseq_copy(Liveseq* liveseq) {
     return copied_liveseq;
 }
 
-int liveseq_need_evacuation(Liveseq* liveseq) {
-    // following registers don't need to evacuate:
+int liveseq_is_alive(Liveseq* liveseq) {
+    // following registers are NOT alive:
     // - registers to be first-defined at current index
     // - registers which are last-used at current index
 

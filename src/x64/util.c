@@ -20,8 +20,18 @@ void append_code(Vector* codes, char* format, ...) {
 
 void liveseqs_next(Vector* liveseqs) {
     int liveseqs_len = vector_size(liveseqs);
-    for (int i = 0; i < liveseqs_len; i++) {
-        Liveseq* liveseq = vector_at(liveseqs, i);
+    for (int reg_id = 0; reg_id < liveseqs_len; reg_id++) {
+        Liveseq* liveseq = vector_at(liveseqs, reg_id);
         liveseq_goto_next(liveseq);
     }
+}
+
+Set* create_alive_regs_set(Vector* liveseqs) {
+    Set* alive_regs_set = new_set(&t_integer);
+    int liveseqs_len = vector_size(liveseqs);
+    for (int reg_id = 0; reg_id < liveseqs_len; reg_id++) {
+        Liveseq* liveseq = vector_at(liveseqs, reg_id);
+        if (liveseq_is_alive(liveseq)) { set_add(alive_regs_set, new_integer(reg_id)); }
+    }
+    return alive_regs_set;
 }

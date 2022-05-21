@@ -364,6 +364,7 @@ void spil_register(Vector* allocations, Vector* statuses, Vector* livenesses, in
 }
 
 Vector* gen_allocated_immcs(Vector* external_immcs, Vector* allocations) {
+    // TODO: implement spiling
     Vector* allocated_immcs = new_vector(&t_immc);
 
     int immcs_len = vector_size(external_immcs);
