@@ -95,6 +95,12 @@ Srt* resolve_declarator(Resolver* resolver) {
                 ctype = socket_ctype;
                 lookedup_ast = vector_at(lookedup_ast->children, 0);
                 break;
+            case AST_PTR_DECLOR:
+                socket_ctype = new_socket_pointer_ctype();
+                ctype_connect(socket_ctype, ctype);
+                ctype = socket_ctype;
+                lookedup_ast = vector_at(lookedup_ast->children, 0);
+                break;
             case AST_IDENT_DECLOR:
                 srt = new_identifier_srt(SRT_DECL, ctype, new_string(lookedup_ast->ident_name));
                 terminated = 1;

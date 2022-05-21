@@ -20,6 +20,7 @@ typedef enum _AstType {
     AST_TYPE_INT,
     //   declarators
     AST_IDENT_DECLOR,
+    AST_PTR_DECLOR,
     AST_FUNC_DECLOR,
     AST_PARAM_LIST,
     AST_PARAM_DECL,
