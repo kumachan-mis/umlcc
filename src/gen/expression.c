@@ -122,6 +122,34 @@ Vector* gen_logical_and_expr_code(Codegen* codegen) {
     return codes;
 }
 
+Vector* gen_equality_expr_code(Codegen* codegen) {
+    Vector* codes = new_vector(&t_immc);
+    Srt* srt = codegen->_srt;
+
+    append_child_code(codegen, codes, 0);
+    ImmcOpe* fst_src = new_reg_immcope(codegen->_virtual_reg_id);
+
+    append_child_code(codegen, codes, 1);
+    ImmcOpe* snd_src = new_reg_immcope(codegen->_virtual_reg_id);
+
+    codegen->_virtual_reg_id++;
+    ImmcOpe* dst = new_reg_immcope(codegen->_virtual_reg_id);
+
+    switch (srt->type) {
+        case SRT_EQUAL_EXPR:
+            vector_push(codes, new_inst_immc(INST_SETEQ, dst, fst_src, snd_src));
+            break;
+        case SRT_NEQUAL_EXPR:
+            vector_push(codes, new_inst_immc(INST_SETNEQ, dst, fst_src, snd_src));
+            break;
+        default:
+            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            exit(1);
+    }
+
+    return codes;
+}
+
 Vector* gen_additive_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;

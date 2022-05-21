@@ -65,6 +65,10 @@ Vector* codegen_generate_code(Codegen* codegen) {
         case SRT_LAND_EXPR:
             codes = gen_logical_and_expr_code(codegen);
             break;
+        case SRT_EQUAL_EXPR:
+        case SRT_NEQUAL_EXPR:
+            codes = gen_equality_expr_code(codegen);
+            break;
         case SRT_ADD_EXPR:
         case SRT_SUB_EXPR:
             codes = gen_additive_expr_code(codegen);

@@ -7,6 +7,7 @@ Ast* parse_expr(Parser* parser);
 Ast* parse_assignment_expr(Parser* parser);
 Ast* parse_logical_or_expr(Parser* parser);
 Ast* parse_logical_and_expr(Parser* parser);
+Ast* parse_equality_expr(Parser* parser);
 Ast* parse_additive_expr(Parser* parser);
 Ast* parse_multiplicative_expr(Parser* parser);
 Ast* parse_unary_expr(Parser* parser);

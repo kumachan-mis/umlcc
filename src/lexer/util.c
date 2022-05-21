@@ -28,6 +28,8 @@ Map* new_punctuator_map() {
     token_map_add(punctuator_map, "!", TOKEN_EXCLAM);
     token_map_add(punctuator_map, "/", TOKEN_SLASH);
     token_map_add(punctuator_map, "%", TOKEN_PERCENT);
+    token_map_add(punctuator_map, "==", TOKEN_EQUAL_EQUAL);
+    token_map_add(punctuator_map, "!=", TOKEN_EXCLAM_EQUAL);
     token_map_add(punctuator_map, "&&", TOKEN_AND_AND);
     token_map_add(punctuator_map, "||", TOKEN_VBAR_VBAR);
     token_map_add(punctuator_map, ";", TOKEN_SEMICOLON);
