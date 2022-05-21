@@ -105,6 +105,24 @@ void test_map_remove() {
     value = map_get(map, "erased_key");
     CU_ASSERT_PTR_NULL(value);
 
+    map_remove(map, "erased_key");
+
+    value = map_get(map, "key");
+    CU_ASSERT_EQUAL(*value, 7);
+
+    value = map_get(map, "erased_key");
+    CU_ASSERT_PTR_NULL(value);
+
+    key = new_string("erased_key");
+    value = new_integer(1);
+    map_add(map, key, value);
+
+    value = map_get(map, "key");
+    CU_ASSERT_EQUAL(*value, 7);
+
+    value = map_get(map, "erased_key");
+    CU_ASSERT_EQUAL(*value, 1);
+
     delete_map(map);
 }
 

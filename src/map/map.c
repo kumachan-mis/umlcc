@@ -44,14 +44,35 @@ void delete_map(Map* map) {
     free(map);
 }
 
+Map* map_copy(Map* map) {
+    Map* copied_map = malloc(sizeof(Map));
+    copied_map->t_key = map->t_key;
+    copied_map->t_value = map->t_value;
+    copied_map->container = malloc(map->capacity * sizeof(MapCell*));
+    copied_map->size = map->size;
+    copied_map->capacity = map->capacity;
+
+    for (int i = 0; i < map->capacity; i++) {
+        MapCell* cell = map->container[i];
+        MapCell* copied_cell = NULL;
+        if (cell != NULL) {
+            copied_cell = mapcell_copy(cell, map->t_key->copy_object, map->t_value->copy_object);
+        }
+        copied_map->container[i] = copied_cell;
+    }
+
+    return copied_map;
+}
+
 void* map_get(Map* map, void* key) {
     return map_get_with_default(map, key, NULL);
 }
 
 void* map_get_with_default(Map* map, void* key, void* default_value) {
-    int hash = map->t_key->hash_object(key) % map->capacity;
-    MapCell* cell = map->container[hash];
+    int original_hash = map->t_key->hash_object(key) % map->capacity;
+    MapCell* cell = map->container[original_hash];
 
+    int hash = original_hash;
     int found = 0;
     while (cell != NULL) {
         if (!cell->deleted && map->t_key->compare_object(cell->key, key) == 0) {
@@ -59,10 +80,12 @@ void* map_get_with_default(Map* map, void* key, void* default_value) {
             break;
         }
         hash = (hash + 1) % map->capacity;
+        if (hash == original_hash) break;
+
         cell = map->container[hash];
     }
 
-    return found ? cell->value : default_value;
+    return found && !cell->deleted ? cell->value : default_value;
 }
 
 void map_add(Map* map, void* key, void* value) {
@@ -82,13 +105,14 @@ void map_add(Map* map, void* key, void* value) {
     map->size++;
 
     int std_capacity = 2 * (map->size + 1) - 1;
-    if (2 * map->capacity <= std_capacity) update_capacity(map, std_capacity);
+    if (std_capacity >= map->capacity) update_capacity(map, 2 * (map->capacity + 1) - 1);
 }
 
 void map_remove(Map* map, void* key) {
-    int hash = map->t_key->hash_object(key) % map->capacity;
-    MapCell* cell = map->container[hash];
+    int original_hash = map->t_key->hash_object(key) % map->capacity;
+    MapCell* cell = map->container[original_hash];
 
+    int hash = original_hash;
     int found = 0;
     while (cell != NULL) {
         if (!cell->deleted && map->t_key->compare_object(cell->key, key) == 0) {
@@ -96,12 +120,14 @@ void map_remove(Map* map, void* key) {
             break;
         }
         hash = (hash + 1) % map->capacity;
+        if (hash == original_hash) break;
+
         cell = map->container[hash];
     }
 
     if (!found) return;
 
-    mapcell_deleted(cell, map->t_key->delete_object, map->t_value->delete_object);
+    cell->deleted = 1;
     map->size--;
 
     int std_capacity = 2 * (map->size + 1) - 1;

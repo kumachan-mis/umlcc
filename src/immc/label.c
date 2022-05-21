@@ -1,4 +1,5 @@
 #include "./label.h"
+#include "../common/common.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +10,14 @@ ImmcLabel* new_immclabel(ImmcLabelType type, ImmcLabelVis visibility, char* name
     immclabel->visibility = visibility;
     immclabel->name = name;
     return immclabel;
+}
+
+ImmcLabel* immclabel_copy(ImmcLabel* immclabel) {
+    ImmcLabel* copied_immclabel = malloc(sizeof(ImmcLabel));
+    copied_immclabel->type = immclabel->type;
+    copied_immclabel->visibility = immclabel->visibility;
+    copied_immclabel->name = new_string(immclabel->name);
+    return copied_immclabel;
 }
 
 char* immclabel_tostring(ImmcLabel* immclabel) {

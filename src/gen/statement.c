@@ -30,13 +30,6 @@ Vector* gen_return_stmt_code(Codegen* codegen) {
 
 Vector* gen_expression_stmt_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
-    Srt* srt = codegen->_srt;
-
     append_child_code(codegen, codes, 0);
-
-    ImmcOpe* src = new_reg_immcope(codegen->_virtual_reg_id);
-    vector_push(codes, new_inst_immc(INST_FREE, NULL, src, NULL));
-
-    codegen->_srt = srt;
     return codes;
 }

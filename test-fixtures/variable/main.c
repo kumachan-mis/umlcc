@@ -1,4 +1,5 @@
 int put_int(int x);
+int put_blank_line();
 
 int main() {
     int first, second, third;
@@ -10,6 +11,12 @@ int main() {
     put_int(second);
     put_int(third);
     put_int(third - (first - second));
+    put_blank_line();
+
+    third = (first = 9) - (second = 1);
+    put_int(first);
+    put_int(second);
+    put_int(third);
 
     return 0;
 }

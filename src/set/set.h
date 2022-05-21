@@ -8,6 +8,7 @@ typedef struct _SetIter SetIter;
 
 Set* new_set(HashableType* t_item);
 void delete_set(Set* set);
+Set* set_copy(Set* set);
 void set_add(Set* set, void* item);
 void set_remove(Set* set, void* item);
 int set_contains(Set* set, void* item);
@@ -18,5 +19,7 @@ void* set_iter_item(SetIter* iter, Set* set);
 Set* set_intersection(Set* set, Set* other);
 Set* set_union(Set* set, Set* other);
 Set* set_difference(Set* set, Set* other);
+int set_issubset(Set* set, Set* other);
+int set_equals(Set* set, Set* other);
 
 #endif

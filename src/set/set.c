@@ -14,11 +14,9 @@ struct _SetIter {
     int index;
 };
 
-void delete_exist() {}
+void null() {}
 
-BaseType t_exitst = {
-    .delete_object = delete_exist,
-};
+BaseType t_exitst = {.copy_object = null, .delete_object = null};
 
 Set* new_set(HashableType* t_item) {
     Set* set = malloc(sizeof(Set));
@@ -30,6 +28,13 @@ Set* new_set(HashableType* t_item) {
 void delete_set(Set* set) {
     delete_map(set->inner);
     free(set);
+}
+
+Set* set_copy(Set* set) {
+    Set* copied_set = malloc(sizeof(Set));
+    copied_set->t_item = set->t_item;
+    copied_set->inner = map_copy(set->inner);
+    return copied_set;
 }
 
 void set_add(Set* set, void* item) {
@@ -95,4 +100,17 @@ Set* set_difference(Set* set, Set* other) {
         set_add(difference_set, set->t_item->copy_object(item));
     }
     return difference_set;
+}
+
+int set_issubset(Set* set, Set* other) {
+    for (SetIter* iter = set_iter_begin(other); !set_iter_end(iter, other);
+         iter = set_iter_next(iter, other)) {
+        void* item = set_iter_item(iter, other);
+        if (!set_contains(set, item)) return 0;
+    }
+    return 1;
+}
+
+int set_equals(Set* set, Set* other) {
+    return set_issubset(set, other) && set_issubset(other, set);
 }

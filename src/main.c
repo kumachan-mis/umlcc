@@ -1,10 +1,9 @@
 #include "./gen/gen.h"
 #include "./lexer/lexer.h"
 #include "./parser/parser.h"
+#include "./regalloc/regalloc.h"
 #include "./resolver/resolver.h"
 #include "./x64/x64.h"
-
-#include "./immc/immc.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,14 +34,21 @@ int main(int argc, char* argv[]) {
     Vector* immcs = codegen_generate_code(codegen);
     delete_codegen(codegen);
 
-    int immcs_len = vector_size(immcs);
+    RegAlloc* regalloc = new_regalloc(immcs, NUM_CALLER_SAVED_REGS);
+    AllocImmcs* allocimmcs = regalloc_allocate_regs(regalloc);
+    Vector* allocated_immcs = NULL;
+    Vector* liveseqs = NULL;
+    allocimmcs_move(allocimmcs, &allocated_immcs, &liveseqs);
+    delete_regalloc(regalloc);
+
+    int immcs_len = vector_size(allocated_immcs);
     for (int i = 0; i < immcs_len; i++) {
-        char* immc_str = immc_tostring(vector_at(immcs, i));
+        char* immc_str = immc_tostring(vector_at(allocated_immcs, i));
         fprintf(imm, "%s", immc_str);
         free(immc_str);
     }
 
-    X64gen* x64gen = new_x64gen(immcs);
+    X64gen* x64gen = new_x64gen(allocated_immcs, liveseqs);
     Vector* x64codes = x64gen_generate_x64code(x64gen);
     delete_x64gen(x64gen);
 

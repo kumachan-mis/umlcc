@@ -45,5 +45,6 @@ Token* new_token(TokenType type);
 Token* new_identifier_token(char* name);
 Token* new_integer_token(int value);
 void delete_token(Token* token);
+Token* token_copy(Token* token);
 
 #endif

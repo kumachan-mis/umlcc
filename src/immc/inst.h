@@ -92,9 +92,6 @@ typedef enum _ImmcInstType {
     //   immediate code DOES NOT define what to do in this instruction.
     //   it gives chance to do "anything" after calling function to object code.
     // clean           fst_src(imm)
-    INST_FREE,
-    // - force to free fst_src register.
-    // free           fst_src(reg)
 } ImmcInstType;
 
 typedef struct _ImmcInst {
@@ -105,6 +102,8 @@ typedef struct _ImmcInst {
 } ImmcInst;
 
 ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcOpe* snd_src);
+ImmcInst* immcinst_copy(ImmcInst* immcinst);
+int immcinst_isjump(ImmcInst* immcinst);
 char* immcinst_tostring(ImmcInst* immcinst);
 void delete_immcinst(ImmcInst* immcinst);
 
