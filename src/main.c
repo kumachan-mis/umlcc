@@ -7,16 +7,39 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int main(int argc, char* argv[]) {
-    if (argc != 4) {
-        fprintf(stderr, "Usage: umlcc [src] [imm] [dest]\n");
+    if (argc != 2) {
+        fprintf(stderr, "Error: no input file\n");
         exit(1);
     }
 
     FILE* src = fopen(argv[1], "r");
-    FILE* imm = fopen(argv[2], "w");
-    FILE* dest = fopen(argv[3], "w");
+    if (src == NULL) {
+        fprintf(stderr, "Error: %s: no such file or directory\n", argv[1]);
+        exit(1);
+    }
+
+    char* ext = strrchr(argv[1], '.');
+    if (ext == NULL || strcmp(ext, ".c") != 0) {
+        fprintf(stderr, "Error: file format is not .c\n");
+        exit(1);
+    }
+
+    int src_filename_len = strlen(argv[1]);
+
+    char* imm_filename = new_string(argv[1]);
+    imm_filename[src_filename_len - 1] = 'i';
+
+    char* dst_filename = new_string(argv[1]);
+    dst_filename[src_filename_len - 1] = 's';
+
+    FILE* imm = fopen(imm_filename, "w");
+    FILE* dst = fopen(dst_filename, "w");
+
+    free(dst_filename);
+    free(imm_filename);
 
     Lexer* lexer = new_lexer(src);
     Vector* tokens = lexer_read_tokens(lexer);
@@ -54,11 +77,11 @@ int main(int argc, char* argv[]) {
 
     int x64codes_len = vector_size(x64codes);
     for (int i = 0; i < x64codes_len; i++) {
-        fprintf(dest, "%s", (char*)vector_at(x64codes, i));
+        fprintf(dst, "%s", (char*)vector_at(x64codes, i));
     }
     delete_vector(x64codes);
 
-    fclose(dest);
+    fclose(dst);
     fclose(imm);
     fclose(src);
 

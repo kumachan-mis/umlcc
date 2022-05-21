@@ -1,5 +1,8 @@
 {
     "C_Cpp.intelliSenseCacheSize": 0,
-    "files.associations": { "*.d": "makefile" },
+    "files.associations": {
+        "*.d": "makefile",
+        "*.i": "asm-intel-x86-generic"
+    },
     "githubPullRequests.defaultMergeMethod": "squash",
 }

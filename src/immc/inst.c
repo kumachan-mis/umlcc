@@ -8,10 +8,10 @@ char* inst_strings[] = {"load  ", "addr  ", "store ", "ldarg ", "starg ", "stret
                         "setneq", "jmp   ", "jeq   ", "jneq  ", "call  ", "enter ",
                         "leave ", "prep  ", "clean ", "free  "};
 
-ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcOpe* snd_src) {
+ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* snd_src) {
     ImmcInst* immcinst = malloc(sizeof(ImmcInst));
     immcinst->type = type;
-    immcinst->dest = dest;
+    immcinst->dst = dst;
     immcinst->fst_src = fst_src;
     immcinst->snd_src = snd_src;
     return immcinst;
@@ -20,10 +20,10 @@ ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcO
 ImmcInst* immcinst_copy(ImmcInst* immcinst) {
     ImmcInst* copied_immcinst = malloc(sizeof(ImmcInst));
     copied_immcinst->type = immcinst->type;
-    copied_immcinst->dest = NULL;
+    copied_immcinst->dst = NULL;
     copied_immcinst->fst_src = NULL;
     copied_immcinst->snd_src = NULL;
-    if (immcinst->dest != NULL) copied_immcinst->dest = immcope_copy(immcinst->dest);
+    if (immcinst->dst != NULL) copied_immcinst->dst = immcope_copy(immcinst->dst);
     if (immcinst->fst_src != NULL) copied_immcinst->fst_src = immcope_copy(immcinst->fst_src);
     if (immcinst->snd_src != NULL) copied_immcinst->snd_src = immcope_copy(immcinst->snd_src);
     return copied_immcinst;
@@ -41,11 +41,11 @@ char* immcinst_tostring(ImmcInst* immcinst) {
     strcat(code_str, inst_strings[immcinst->type]);
 
     int operand_appears = 0;
-    if (immcinst->dest != NULL) {
-        char* dest_string = immcope_tostring(immcinst->dest);
+    if (immcinst->dst != NULL) {
+        char* dst_string = immcope_tostring(immcinst->dst);
         strcat(code_str, "\t");
-        strcat(code_str, dest_string);
-        free(dest_string);
+        strcat(code_str, dst_string);
+        free(dst_string);
         operand_appears = 1;
     }
 
@@ -71,7 +71,7 @@ char* immcinst_tostring(ImmcInst* immcinst) {
 }
 
 void delete_immcinst(ImmcInst* immcinst) {
-    if (immcinst->dest != NULL) delete_immope(immcinst->dest);
+    if (immcinst->dst != NULL) delete_immope(immcinst->dst);
     if (immcinst->fst_src != NULL) delete_immope(immcinst->fst_src);
     if (immcinst->snd_src != NULL) delete_immope(immcinst->snd_src);
     free(immcinst);

@@ -42,7 +42,7 @@ do
 
     rm -f ${immediate} ${output} ${binary} ${actual}
 
-    ${TARGET} ${input} ${immediate} ${output}
+    ${TARGET} ${input}
     gcc -o ${binary} ${output} ${TESTLIB}
     ${binary} > ${actual}
 

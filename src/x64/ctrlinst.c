@@ -11,7 +11,7 @@ Vector* gen_jeq_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
     x64gen->_index++;
 
-    ImmcOpe* dest = immc->inst->dest;
+    ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
@@ -29,11 +29,11 @@ Vector* gen_jeq_x64code(X64gen* x64gen) {
             break;
         }
         default:
-            fprintf(stderr, "Error: unexpected operand %d\n", dest->type);
+            fprintf(stderr, "Error: unexpected operand %d\n", dst->type);
             exit(1);
     }
 
-    append_code(codes, "\tje\t%s\n", dest->label_name);
+    append_code(codes, "\tje\t%s\n", dst->label_name);
 
     liveseqs_next(x64gen->_liveseqs);
     return codes;
@@ -44,7 +44,7 @@ Vector* gen_jneq_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
     x64gen->_index++;
 
-    ImmcOpe* dest = immc->inst->dest;
+    ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
@@ -62,11 +62,11 @@ Vector* gen_jneq_x64code(X64gen* x64gen) {
             break;
         }
         default:
-            fprintf(stderr, "Error: unexpected operand %d\n", dest->type);
+            fprintf(stderr, "Error: unexpected operand %d\n", dst->type);
             exit(1);
     }
 
-    append_code(codes, "\tjne\t%s\n", dest->label_name);
+    append_code(codes, "\tjne\t%s\n", dst->label_name);
 
     liveseqs_next(x64gen->_liveseqs);
     return codes;
@@ -77,9 +77,9 @@ Vector* gen_jmp_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
     x64gen->_index++;
 
-    ImmcOpe* dest = immc->inst->dest;
+    ImmcOpe* dst = immc->inst->dst;
 
-    append_code(codes, "\tjmp\t%s\n", dest->label_name);
+    append_code(codes, "\tjmp\t%s\n", dst->label_name);
 
     liveseqs_next(x64gen->_liveseqs);
     return codes;
@@ -90,7 +90,7 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
     x64gen->_index++;
 
-    ImmcOpe* dest = immc->inst->dest;
+    ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
@@ -136,9 +136,9 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     if (x64gen->_evacuation_count < evacuation_count) x64gen->_evacuation_count = evacuation_count;
     delete_set(alive_regs_set);
 
-    int dest_id = CALLER_SAVED_REG_IDS[dest->reg_id];
-    char* dest_name = LREG_NAMES[dest_id];
-    append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[AX_REG_ID], dest_name);
+    int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
+    char* dst_name = LREG_NAMES[dst_id];
+    append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[AX_REG_ID], dst_name);
 
     liveseqs_next(x64gen->_liveseqs);
     return codes;

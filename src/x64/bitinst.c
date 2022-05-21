@@ -11,7 +11,7 @@ Vector* gen_seteq_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
     x64gen->_index++;
 
-    ImmcOpe* dest = immc->inst->dest;
+    ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
@@ -29,13 +29,13 @@ Vector* gen_seteq_x64code(X64gen* x64gen) {
             break;
         }
         default:
-            fprintf(stderr, "Error: unexpected operand %d\n", dest->type);
+            fprintf(stderr, "Error: unexpected operand %d\n", dst->type);
             exit(1);
     }
 
-    int dest_id = CALLER_SAVED_REG_IDS[dest->reg_id];
-    append_code(codes, "\tsete\t%s\n", BREG_NAMES[dest_id]);
-    append_code(codes, "\tmovsbl\t%s, %s\n", BREG_NAMES[dest_id], LREG_NAMES[dest_id]);
+    int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
+    append_code(codes, "\tsete\t%s\n", BREG_NAMES[dst_id]);
+    append_code(codes, "\tmovsbl\t%s, %s\n", BREG_NAMES[dst_id], LREG_NAMES[dst_id]);
 
     liveseqs_next(x64gen->_liveseqs);
     return codes;
@@ -46,7 +46,7 @@ Vector* gen_setneq_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
     x64gen->_index++;
 
-    ImmcOpe* dest = immc->inst->dest;
+    ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
@@ -64,13 +64,13 @@ Vector* gen_setneq_x64code(X64gen* x64gen) {
             break;
         }
         default:
-            fprintf(stderr, "Error: unexpected operand %d\n", dest->type);
+            fprintf(stderr, "Error: unexpected operand %d\n", dst->type);
             exit(1);
     }
 
-    int dest_id = CALLER_SAVED_REG_IDS[dest->reg_id];
-    append_code(codes, "\tsetne\t%s\n", BREG_NAMES[dest_id]);
-    append_code(codes, "\tmovsbl\t%s, %s\n", BREG_NAMES[dest_id], LREG_NAMES[dest_id]);
+    int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
+    append_code(codes, "\tsetne\t%s\n", BREG_NAMES[dst_id]);
+    append_code(codes, "\tmovsbl\t%s, %s\n", BREG_NAMES[dst_id], LREG_NAMES[dst_id]);
 
     liveseqs_next(x64gen->_liveseqs);
     return codes;
