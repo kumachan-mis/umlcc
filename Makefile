@@ -46,6 +46,7 @@ TEST_DEPS := $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_DEP_DIR)/%$(DEP_EXT),$(T
 SAMPLES     := $(wildcard $(SAMPLE_DIR)/*$(SRC_EXT))
 SAMPLE_ASMS := $(patsubst $(SAMPLE_DIR)/%$(SRC_EXT),$(SAMPLE_OUT)/%$(ASM_EXT),$(SAMPLES))
 
+.PRECIOUS: $(OBJS) $(DEPS) $(TEST_OBJS) $(TEST_DEPS)
 .PHONY: all unittest e2etest sample format clean clean-sample install-pre-commit
 
 all: $(BIN_DIR)/$(UMLCC)
