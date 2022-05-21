@@ -7,10 +7,10 @@ BaseType t_liveness = {
     .delete_object = delete_liveness,
 };
 
-Liveness* new_liveness() {
+Liveness* new_liveness(int immc_index) {
     Liveness* liveness = malloc(sizeof(Liveness));
-    liveness->first_def_index = -1;
-    liveness->last_use_index = -1;
+    liveness->first_def_index = immc_index;
+    liveness->last_use_index = immc_index;
     return liveness;
 }
 
