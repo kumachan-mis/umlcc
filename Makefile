@@ -110,6 +110,10 @@ ifeq ($(MAKECMDGOALS),all)
 -include $(DEPS)
 endif
 
+ifeq ($(MAKECMDGOALS),e2etest)
+-include $(DEPS)
+endif
+
 ifeq ($(MAKECMDGOALS),unittest)
 -include $(DEPS) $(TEST_DEPS)
 endif

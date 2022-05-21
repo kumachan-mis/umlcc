@@ -14,6 +14,9 @@ Srt* resolve_expr(Resolver* resolver) {
         case AST_LOR_EXPR:
         case AST_LAND_EXPR:
             return resolve_logical_expr(resolver);
+        case AST_EQUAL_EXPR:
+        case AST_NEQUAL_EXPR:
+            return resolve_equality_expr(resolver);
         case AST_ADD_EXPR:
         case AST_SUB_EXPR:
             return resolve_additive_expr(resolver);
@@ -73,6 +76,29 @@ Srt* resolve_logical_expr(Resolver* resolver) {
     }
 }
 
+Srt* resolve_equality_expr(Resolver* resolver) {
+    Ast* ast = resolver->_ast;
+
+    resolver->_ast = vector_at(ast->children, 0);
+    Srt* lhs_srt = resolve_expr(resolver);
+
+    resolver->_ast = vector_at(ast->children, 1);
+    Srt* rhs_srt = resolve_expr(resolver);
+
+    CType* ctype = new_integer_ctype();
+    resolver->_ast = ast;
+
+    switch (ast->type) {
+        case AST_EQUAL_EXPR:
+            return new_ctyped_srt(SRT_EQUAL_EXPR, ctype, 2, lhs_srt, rhs_srt);
+        case AST_NEQUAL_EXPR:
+            return new_ctyped_srt(SRT_NEQUAL_EXPR, ctype, 2, lhs_srt, rhs_srt);
+        default:
+            fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
+            exit(1);
+    }
+}
+
 Srt* resolve_additive_expr(Resolver* resolver) {
     Ast* ast = resolver->_ast;
 
@@ -87,7 +113,6 @@ Srt* resolve_additive_expr(Resolver* resolver) {
 
     switch (ast->type) {
         case AST_ADD_EXPR:
-            resolver->_ast = ast;
             return new_ctyped_srt(SRT_ADD_EXPR, ctype, 2, lhs_srt, rhs_srt);
         case AST_SUB_EXPR:
             return new_ctyped_srt(SRT_SUB_EXPR, ctype, 2, lhs_srt, rhs_srt);

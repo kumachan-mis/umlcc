@@ -6,6 +6,7 @@
 Srt* resolve_expr(Resolver* resolver);
 Srt* resolve_assignment_expr(Resolver* resolver);
 Srt* resolve_logical_expr(Resolver* resolver);
+Srt* resolve_equality_expr(Resolver* resolver);
 Srt* resolve_additive_expr(Resolver* resolver);
 Srt* resolve_multiplicative_expr(Resolver* resolver);
 Srt* resolve_unary_expr(Resolver* resolver);

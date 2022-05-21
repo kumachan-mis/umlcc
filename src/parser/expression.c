@@ -48,6 +48,7 @@ Ast* parse_assignment_expr(Parser* parser) {
 
 Ast* parse_logical_or_expr(Parser* parser) {
     Ast* ast = parse_logical_and_expr(parser);
+
     while (1) {
         Token* token = vector_at(parser->_tokens, parser->_index);
         switch (token->type) {
@@ -62,13 +63,34 @@ Ast* parse_logical_or_expr(Parser* parser) {
 }
 
 Ast* parse_logical_and_expr(Parser* parser) {
-    Ast* ast = parse_additive_expr(parser);
+    Ast* ast = parse_equality_expr(parser);
+
     while (1) {
         Token* token = vector_at(parser->_tokens, parser->_index);
         switch (token->type) {
             case TOKEN_AND_AND:
                 parser->_index++;
-                ast = new_ast(AST_LAND_EXPR, 2, ast, parse_additive_expr(parser));
+                ast = new_ast(AST_LAND_EXPR, 2, ast, parse_equality_expr(parser));
+                break;
+            default:
+                return ast;
+        }
+    }
+}
+
+Ast* parse_equality_expr(Parser* parser) {
+    Ast* ast = parse_additive_expr(parser);
+
+    while (1) {
+        Token* token = vector_at(parser->_tokens, parser->_index);
+        switch (token->type) {
+            case TOKEN_EQUAL_EQUAL:
+                parser->_index++;
+                ast = new_ast(AST_EQUAL_EXPR, 2, ast, parse_additive_expr(parser));
+                break;
+            case TOKEN_EXCLAM_EQUAL:
+                parser->_index++;
+                ast = new_ast(AST_NEQUAL_EXPR, 2, ast, parse_additive_expr(parser));
                 break;
             default:
                 return ast;

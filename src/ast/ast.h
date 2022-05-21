@@ -36,6 +36,9 @@ typedef enum _AstType {
     AST_LOR_EXPR,
     //   logical-AND-expression
     AST_LAND_EXPR,
+    //   equality-expression
+    AST_EQUAL_EXPR,
+    AST_NEQUAL_EXPR,
     //   additive-expression
     AST_ADD_EXPR,
     AST_SUB_EXPR,

@@ -10,7 +10,7 @@ typedef struct _Liveness {
 
 extern BaseType t_liveness;
 
-Liveness* new_liveness();
+Liveness* new_liveness(int immc_index);
 void delete_liveness(Liveness* liveness);
 Liveness* liveness_copy(Liveness* liveness);
 int liveness_isinit(Liveness* liveness);

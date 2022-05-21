@@ -25,10 +25,13 @@ typedef enum _SrtType {
     // expression
     //   assignment-expression
     SRT_ASSIGN_EXPR,
-    //  logical-OR-expression
+    //   logical-OR-expression
     SRT_LOR_EXPR,
     //   logical-AND-expression
     SRT_LAND_EXPR,
+    //   equality-expression
+    SRT_EQUAL_EXPR,
+    SRT_NEQUAL_EXPR,
     //   additive-expression
     SRT_ADD_EXPR,
     SRT_SUB_EXPR,
