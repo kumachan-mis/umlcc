@@ -268,7 +268,6 @@ void update_register_liveness(RegAlloc* regalloc, Vector* livenesses, BasicBlock
         ImmcOpe* dst = immc->inst->dst;
         if (dst != NULL && dst->type == OPERAND_REG) {
             vector_fill(livenesses, dst->reg_id + 1, new_liveness(regalloc->_immc_offset + index));
-            Liveness* liveness = vector_at(livenesses, dst->reg_id);
         } else if (dst != NULL && dst->type == OPERAND_PTR) {
             Liveness* liveness = vector_at(livenesses, dst->reg_id);
             liveness->last_use_index = regalloc->_immc_offset + index;
