@@ -11,14 +11,14 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
     Srt* srt = codegen->_srt;
 
     append_child_code(codegen, codes, 0);
-    ImmcOpe* dest = new_ptr_immcope(codegen->_virtual_reg_id);
+    ImmcOpe* dst = new_ptr_immcope(codegen->_virtual_reg_id);
 
     append_child_code(codegen, codes, 1);
     ImmcOpe* src = new_reg_immcope(codegen->_virtual_reg_id);
 
     switch (srt->type) {
         case SRT_ASSIGN_EXPR:
-            vector_push(codes, new_inst_immc(INST_STORE, dest, src, NULL));
+            vector_push(codes, new_inst_immc(INST_STORE, dst, src, NULL));
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
@@ -31,7 +31,7 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
 Vector* gen_logical_or_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
 
-    ImmcOpe* dest = NULL;
+    ImmcOpe* dst = NULL;
     ImmcOpe* fst_src = NULL;
     ImmcOpe* snd_src = NULL;
 
@@ -42,31 +42,31 @@ Vector* gen_logical_or_expr_code(Codegen* codegen) {
 
     append_child_code(codegen, codes, 0);
 
-    dest = new_label_immcope(new_string(true_label));
+    dst = new_label_immcope(new_string(true_label));
     fst_src = new_reg_immcope(codegen->_virtual_reg_id);
     snd_src = new_imm_immcope(0);
-    vector_push(codes, new_inst_immc(INST_JNEQ, dest, fst_src, snd_src));
+    vector_push(codes, new_inst_immc(INST_JNEQ, dst, fst_src, snd_src));
 
     append_child_code(codegen, codes, 1);
 
-    dest = new_label_immcope(new_string(true_label));
+    dst = new_label_immcope(new_string(true_label));
     fst_src = new_reg_immcope(codegen->_virtual_reg_id);
     snd_src = new_imm_immcope(0);
-    vector_push(codes, new_inst_immc(INST_JNEQ, dest, fst_src, snd_src));
+    vector_push(codes, new_inst_immc(INST_JNEQ, dst, fst_src, snd_src));
 
     codegen->_virtual_reg_id++;
-    dest = new_reg_immcope(codegen->_virtual_reg_id);
+    dst = new_reg_immcope(codegen->_virtual_reg_id);
     fst_src = new_imm_immcope(0);
-    vector_push(codes, new_inst_immc(INST_LOAD, dest, fst_src, NULL));
+    vector_push(codes, new_inst_immc(INST_LOAD, dst, fst_src, NULL));
 
-    dest = new_label_immcope(new_string(end_label));
-    vector_push(codes, new_inst_immc(INST_JMP, dest, NULL, NULL));
+    dst = new_label_immcope(new_string(end_label));
+    vector_push(codes, new_inst_immc(INST_JMP, dst, NULL, NULL));
 
     vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, new_string(true_label)));
 
-    dest = new_reg_immcope(codegen->_virtual_reg_id);
+    dst = new_reg_immcope(codegen->_virtual_reg_id);
     fst_src = new_imm_immcope(1);
-    vector_push(codes, new_inst_immc(INST_LOAD, dest, fst_src, NULL));
+    vector_push(codes, new_inst_immc(INST_LOAD, dst, fst_src, NULL));
 
     vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, new_string(end_label)));
 
@@ -78,7 +78,7 @@ Vector* gen_logical_or_expr_code(Codegen* codegen) {
 Vector* gen_logical_and_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
 
-    ImmcOpe* dest = NULL;
+    ImmcOpe* dst = NULL;
     ImmcOpe* fst_src = NULL;
     ImmcOpe* snd_src = NULL;
 
@@ -89,31 +89,31 @@ Vector* gen_logical_and_expr_code(Codegen* codegen) {
 
     append_child_code(codegen, codes, 0);
 
-    dest = new_label_immcope(new_string(false_label));
+    dst = new_label_immcope(new_string(false_label));
     fst_src = new_reg_immcope(codegen->_virtual_reg_id);
     snd_src = new_imm_immcope(0);
-    vector_push(codes, new_inst_immc(INST_JEQ, dest, fst_src, snd_src));
+    vector_push(codes, new_inst_immc(INST_JEQ, dst, fst_src, snd_src));
 
     append_child_code(codegen, codes, 1);
 
-    dest = new_label_immcope(new_string(false_label));
+    dst = new_label_immcope(new_string(false_label));
     fst_src = new_reg_immcope(codegen->_virtual_reg_id);
     snd_src = new_imm_immcope(0);
-    vector_push(codes, new_inst_immc(INST_JEQ, dest, fst_src, snd_src));
+    vector_push(codes, new_inst_immc(INST_JEQ, dst, fst_src, snd_src));
 
     codegen->_virtual_reg_id++;
-    dest = new_reg_immcope(codegen->_virtual_reg_id);
+    dst = new_reg_immcope(codegen->_virtual_reg_id);
     fst_src = new_imm_immcope(1);
-    vector_push(codes, new_inst_immc(INST_LOAD, dest, fst_src, NULL));
+    vector_push(codes, new_inst_immc(INST_LOAD, dst, fst_src, NULL));
 
-    dest = new_label_immcope(new_string(end_label));
-    vector_push(codes, new_inst_immc(INST_JMP, dest, NULL, NULL));
+    dst = new_label_immcope(new_string(end_label));
+    vector_push(codes, new_inst_immc(INST_JMP, dst, NULL, NULL));
 
     vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, new_string(false_label)));
 
-    dest = new_reg_immcope(codegen->_virtual_reg_id);
+    dst = new_reg_immcope(codegen->_virtual_reg_id);
     fst_src = new_imm_immcope(0);
-    vector_push(codes, new_inst_immc(INST_LOAD, dest, fst_src, NULL));
+    vector_push(codes, new_inst_immc(INST_LOAD, dst, fst_src, NULL));
 
     vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, new_string(end_label)));
 
@@ -133,14 +133,14 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
     ImmcOpe* snd_src = new_reg_immcope(codegen->_virtual_reg_id);
 
     codegen->_virtual_reg_id++;
-    ImmcOpe* dest = new_reg_immcope(codegen->_virtual_reg_id);
+    ImmcOpe* dst = new_reg_immcope(codegen->_virtual_reg_id);
 
     switch (srt->type) {
         case SRT_ADD_EXPR:
-            vector_push(codes, new_inst_immc(INST_ADD, dest, fst_src, snd_src));
+            vector_push(codes, new_inst_immc(INST_ADD, dst, fst_src, snd_src));
             break;
         case SRT_SUB_EXPR:
-            vector_push(codes, new_inst_immc(INST_SUB, dest, fst_src, snd_src));
+            vector_push(codes, new_inst_immc(INST_SUB, dst, fst_src, snd_src));
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
@@ -161,17 +161,17 @@ Vector* gen_multiplicative_expr_code(Codegen* codegen) {
     ImmcOpe* snd_src = new_reg_immcope(codegen->_virtual_reg_id);
 
     codegen->_virtual_reg_id++;
-    ImmcOpe* dest = new_reg_immcope(codegen->_virtual_reg_id);
+    ImmcOpe* dst = new_reg_immcope(codegen->_virtual_reg_id);
 
     switch (srt->type) {
         case SRT_MUL_EXPR:
-            vector_push(codes, new_inst_immc(INST_MUL, dest, fst_src, snd_src));
+            vector_push(codes, new_inst_immc(INST_MUL, dst, fst_src, snd_src));
             break;
         case SRT_DIV_EXPR:
-            vector_push(codes, new_inst_immc(INST_DIV, dest, fst_src, snd_src));
+            vector_push(codes, new_inst_immc(INST_DIV, dst, fst_src, snd_src));
             break;
         case SRT_MOD_EXPR:
-            vector_push(codes, new_inst_immc(INST_MOD, dest, fst_src, snd_src));
+            vector_push(codes, new_inst_immc(INST_MOD, dst, fst_src, snd_src));
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
@@ -220,9 +220,9 @@ Vector* gen_call_expr_code(Codegen* codegen) {
     ImmcOpe* snd_src = new_imm_immcope(num_args);
 
     codegen->_virtual_reg_id++;
-    ImmcOpe* dest = new_reg_immcope(codegen->_virtual_reg_id);
+    ImmcOpe* dst = new_reg_immcope(codegen->_virtual_reg_id);
 
-    vector_push(codes, new_inst_immc(INST_CALL, dest, fst_src, snd_src));
+    vector_push(codes, new_inst_immc(INST_CALL, dst, fst_src, snd_src));
     vector_push(codes, new_inst_immc(INST_CLEAN, NULL, new_imm_immcope(num_args), NULL));
 
     return codes;
@@ -257,11 +257,11 @@ Vector* gen_not_expr_code(Codegen* codegen) {
     ImmcOpe* src = new_reg_immcope(codegen->_virtual_reg_id);
 
     codegen->_virtual_reg_id++;
-    ImmcOpe* dest = new_reg_immcope(codegen->_virtual_reg_id);
+    ImmcOpe* dst = new_reg_immcope(codegen->_virtual_reg_id);
 
     switch (srt->type) {
         case SRT_LNOT_EXPR:
-            vector_push(codes, new_inst_immc(INST_SETEQ, dest, src, new_imm_immcope(0)));
+            vector_push(codes, new_inst_immc(INST_SETEQ, dst, src, new_imm_immcope(0)));
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
@@ -275,7 +275,7 @@ Vector* gen_address_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = vector_at(codegen->_srt->children, 0);
 
-    ImmcOpe* dest = NULL;
+    ImmcOpe* dst = NULL;
     ImmcOpe* src = NULL;
 
     switch (srt->type) {
@@ -298,8 +298,8 @@ Vector* gen_address_expr_code(Codegen* codegen) {
     }
 
     codegen->_virtual_reg_id++;
-    dest = new_reg_immcope(codegen->_virtual_reg_id);
-    vector_push(codes, new_inst_immc(INST_ADDR, dest, src, NULL));
+    dst = new_reg_immcope(codegen->_virtual_reg_id);
+    vector_push(codes, new_inst_immc(INST_ADDR, dst, src, NULL));
 
     return codes;
 }
@@ -308,7 +308,7 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
 
-    ImmcOpe* dest = NULL;
+    ImmcOpe* dst = NULL;
     ImmcOpe* src = NULL;
 
     switch (srt->type) {
@@ -334,8 +334,8 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
     }
 
     codegen->_virtual_reg_id++;
-    dest = new_reg_immcope(codegen->_virtual_reg_id);
-    vector_push(codes, new_inst_immc(INST_LOAD, dest, src, NULL));
+    dst = new_reg_immcope(codegen->_virtual_reg_id);
+    vector_push(codes, new_inst_immc(INST_LOAD, dst, src, NULL));
 
     return codes;
 }

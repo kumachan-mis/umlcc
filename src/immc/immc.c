@@ -7,10 +7,10 @@ BaseType t_immc = {
     .delete_object = delete_immc,
 };
 
-Immc* new_inst_immc(ImmcInstType type, ImmcOpe* dest, ImmcOpe* fst_src, ImmcOpe* snd_src) {
+Immc* new_inst_immc(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* snd_src) {
     Immc* immc = malloc(sizeof(Immc));
     immc->type = IMMC_INST;
-    immc->inst = new_immcinst(type, dest, fst_src, snd_src);
+    immc->inst = new_immcinst(type, dst, fst_src, snd_src);
     immc->label = NULL;
     return immc;
 }

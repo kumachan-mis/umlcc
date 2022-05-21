@@ -35,9 +35,9 @@ Vector* gen_function_definition_code(Codegen* codegen) {
         CType* table_ctype = ctype_copy(cparam->ctype);
 
         Symbol* symbol = symboltable_define(codegen->_local_table, table_ident_name, table_ctype);
-        ImmcOpe* dest = new_mem_immcope(symbol->memory_offset);
+        ImmcOpe* dst = new_mem_immcope(symbol->memory_offset);
         ImmcOpe* src = new_imm_immcope(i);
-        vector_push(param_codes, new_inst_immc(INST_LDARG, dest, src, NULL));
+        vector_push(param_codes, new_inst_immc(INST_LDARG, dst, src, NULL));
     }
 
     codegen->_srt = vector_at(srt->children, 1);
