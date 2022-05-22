@@ -149,6 +149,14 @@ Ast* parse_unary_expr(Parser* parser) {
     while (!terminated) {
         Token* token = vector_at(parser->_tokens, parser->_index);
         switch (token->type) {
+            case TOKEN_AND:
+                parser->_index++;
+                vector_push(stack, new_ast(AST_ADDR_EXPR, 0));
+                break;
+            case TOKEN_ASTERISK:
+                parser->_index++;
+                vector_push(stack, new_ast(AST_INDIR_EXPR, 0));
+                break;
             case TOKEN_EXCLAM:
                 parser->_index++;
                 vector_push(stack, new_ast(AST_LNOT_EXPR, 0));

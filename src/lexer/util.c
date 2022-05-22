@@ -22,6 +22,7 @@ Map* new_punctuator_map() {
     token_map_add(punctuator_map, "}", TOKEN_RBRACE);
     token_map_add(punctuator_map, "(", TOKEN_LPALEN);
     token_map_add(punctuator_map, ")", TOKEN_RPALEN);
+    token_map_add(punctuator_map, "&", TOKEN_AND);
     token_map_add(punctuator_map, "*", TOKEN_ASTERISK);
     token_map_add(punctuator_map, "+", TOKEN_PLUS);
     token_map_add(punctuator_map, "-", TOKEN_MINUS);

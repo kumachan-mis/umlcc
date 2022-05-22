@@ -19,6 +19,7 @@ typedef enum _TokenType {
     TOKEN_RPALEN,
     TOKEN_LBRACE,
     TOKEN_RBRACE,
+    TOKEN_AND,
     TOKEN_ASTERISK,
     TOKEN_PLUS,
     TOKEN_MINUS,

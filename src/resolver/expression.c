@@ -153,12 +153,21 @@ Srt* resolve_unary_expr(Resolver* resolver) {
     resolver->_ast = vector_at(ast->children, 0);
     Srt* child_srt = resolve_expr(resolver);
 
-    CType* ctype = new_integer_ctype();
     resolver->_ast = ast;
 
     switch (ast->type) {
-        case AST_LNOT_EXPR:
+        case AST_ADDR_EXPR: {
+            CType* ctype = new_pointer_ctype(ctype_copy(child_srt->ctype));
+            return new_ctyped_srt(SRT_ADDR_EXPR, ctype, 1, child_srt);
+        }
+        case AST_INDIR_EXPR: {
+            CType* ctype = ctype_copy(child_srt->ctype->pointer->to_ctype);
+            return new_ctyped_srt(SRT_INDIR_EXPR, ctype, 1, child_srt);
+        }
+        case AST_LNOT_EXPR: {
+            CType* ctype = new_integer_ctype();
             return new_ctyped_srt(SRT_LNOT_EXPR, ctype, 1, child_srt);
+        }
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
             exit(1);

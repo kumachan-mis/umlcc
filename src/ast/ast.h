@@ -48,6 +48,8 @@ typedef enum _AstType {
     AST_DIV_EXPR,
     AST_MOD_EXPR,
     //   unary-expression
+    AST_ADDR_EXPR,
+    AST_INDIR_EXPR,
     AST_LNOT_EXPR,
     //   postfix-expression
     AST_CALL_EXPR,
