@@ -33,6 +33,12 @@ void append_child_code(Codegen* codegen, Vector* codes, int index) {
     codegen->_srt = srt;
 }
 
+ImmcOpeSuffix get_child_suffix(Codegen* codegen, int index) {
+    Srt* child = vector_at(codegen->_srt->children, index);
+    ImmcOpeSuffix suffix = immcope_suffix_get(ctype_size(child->ctype));
+    return suffix;
+}
+
 char* create_label_name(int label_id) {
     char* label_name = malloc(20 * sizeof(char));
     sprintf(label_name, "L%d", label_id);
