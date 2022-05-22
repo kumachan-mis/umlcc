@@ -111,15 +111,41 @@ Srt* resolve_additive_expr(Resolver* resolver) {
     CType* ctype = new_integer_ctype();
     resolver->_ast = ast;
 
-    switch (ast->type) {
-        case AST_ADD_EXPR:
-            return new_ctyped_srt(SRT_ADD_EXPR, ctype, 2, lhs_srt, rhs_srt);
-        case AST_SUB_EXPR:
-            return new_ctyped_srt(SRT_SUB_EXPR, ctype, 2, lhs_srt, rhs_srt);
-        default:
-            fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
-            exit(1);
+    if (ctype_isarithmetic(lhs_srt->ctype) && ctype_isarithmetic(rhs_srt->ctype)) {
+        switch (ast->type) {
+            case AST_ADD_EXPR:
+                return new_ctyped_srt(SRT_ADD_EXPR, ctype, 2, lhs_srt, rhs_srt);
+            case AST_SUB_EXPR:
+                return new_ctyped_srt(SRT_SUB_EXPR, ctype, 2, lhs_srt, rhs_srt);
+            default:
+                fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
+                exit(1);
+        }
+    } else if ((lhs_srt->ctype->type == CTYPE_POINTER && ctype_isarithmetic(rhs_srt->ctype)) ||
+               (ctype_isarithmetic(lhs_srt->ctype) && rhs_srt->ctype->type == CTYPE_POINTER)) {
+        if (rhs_srt->ctype->type == CTYPE_POINTER) swap_ptr(&lhs_srt, &rhs_srt);
+        switch (ast->type) {
+            case AST_ADD_EXPR:
+                return new_ctyped_srt(SRT_PADD_EXPR, ctype, 2, lhs_srt, rhs_srt);
+            case AST_SUB_EXPR:
+                return new_ctyped_srt(SRT_PSUB_EXPR, ctype, 2, lhs_srt, rhs_srt);
+            default:
+                fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
+                exit(1);
+        }
+    } else if (lhs_srt->ctype->type == CTYPE_POINTER && rhs_srt->ctype->type == CTYPE_POINTER) {
+        switch (ast->type) {
+            case AST_SUB_EXPR:
+                return new_ctyped_srt(SRT_PDIFF_EXPR, ctype, 2, rhs_srt, lhs_srt);
+            default:
+                fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
+                exit(1);
+        }
     }
+
+    fprintf(stderr, "Error: unexpected operand, %d and %d\n", lhs_srt->ctype->type,
+            rhs_srt->ctype->type);
+    exit(1);
 }
 
 Srt* resolve_multiplicative_expr(Resolver* resolver) {

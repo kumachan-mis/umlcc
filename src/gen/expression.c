@@ -170,6 +170,15 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
         case SRT_SUB_EXPR:
             vector_push(codes, new_inst_immc(INST_SUB, dst, fst_src, snd_src));
             break;
+        case SRT_PADD_EXPR:
+            // implement here
+            break;
+        case SRT_PSUB_EXPR:
+            // implement here
+            break;
+        case SRT_PDIFF_EXPR:
+            // implement here
+            break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);

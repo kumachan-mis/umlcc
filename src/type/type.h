@@ -27,6 +27,7 @@ CType* new_function_ctype(Vector* params, CType* return_ctype);
 CType* new_socket_function_ctype(Vector* params);
 CType* ctype_copy(CType* ctype);
 CType* ctype_connect(CType* socket, CType* plug);
+int ctype_isarithmetic(CType* ctype);
 int ctype_size(CType* ctype);
 void delete_ctype(CType* ctype);
 

@@ -13,13 +13,14 @@ typedef struct _HashableType {
     int (*compare_object)(void* a, void* b);
 } HashableType;
 
-int* new_integer(int value);
-char* new_string(char* str);
-
 extern BaseType t_integer;
 extern BaseType t_string;
 
 extern HashableType t_hashable_integer;
 extern HashableType t_hashable_string;
+
+int* new_integer(int value);
+char* new_string(char* str);
+void swap_ptr(void** a, void** b);
 
 #endif

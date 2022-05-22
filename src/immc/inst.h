@@ -49,12 +49,19 @@ typedef enum _ImmcInstType {
     // - modulo fst_src by snd_src.
     // mod dst(reg), fst_src(reg), snd_src(reg)
 
+    // shift/rotate instructions
+    INST_SAL,
+    // - arithmetic shift-left fst_src to snd_src bit positions
+    // sal dst(reg), fst_src(reg), snd_src(imm)
+    INST_SAR,
+    // - arithmetic shift-right fst_src to snd_src bit positions
+    // sar dst(reg), fst_src(reg), snd_src(imm)
+
     // bit/byte instructions
     INST_SETEQ,
     // - set dst to 1 if fst_src equals to snd_src, 0 otherwise.
     // seteq dst(reg), fst_src(reg), snd_src(imm)
     // seteq dst(reg), fst_src(reg), snd_src(reg)
-
     INST_SETNEQ,
     // - set dst to 1 if fst_src does not equal to snd_src, 0 otherwise.
     // setneq dst(reg), fst_src(reg), snd_src(imm)

@@ -47,6 +47,10 @@ CType* new_socket_function_ctype(Vector* params) {
     return ctype;
 }
 
+int ctype_isarithmetic(CType* ctype) {
+    return CTYPE_INT <= ctype->type && ctype->type <= CTYPE_INT;
+}
+
 CType* ctype_copy(CType* ctype) {
     CType* copied_ctype = malloc(sizeof(CType));
     copied_ctype->type = ctype->type;
