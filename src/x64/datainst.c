@@ -22,6 +22,12 @@ Vector* gen_load_x64code(X64gen* x64gen) {
         case OPERAND_IMM:
             append_code(codes, "\tmovl\t$%d, %s\n", src->imm_value, dst_name);
             break;
+        case OPERAND_PTR: {
+            int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
+            char* src_name = QREG_NAMES[src_id];
+            append_code(codes, "\tmovl\t(%s), %s\n", src_name, dst_name);
+            break;
+        }
         case OPERAND_MEM:
             append_code(codes, "\tmovl\t-%d(%s), %s\n", src->mem_offset, BP_NAME, dst_name);
             break;

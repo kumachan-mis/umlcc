@@ -260,11 +260,15 @@ Vector* gen_unary_expr_code(Codegen* codegen) {
     Vector* codes = NULL;
     Srt* srt = codegen->_srt;
     Vector* gen_address_expr_code(Codegen * codegen);
+    Vector* gen_indirection_expr_code(Codegen * codegen);
     Vector* gen_not_expr_code(Codegen * codegen);
 
     switch (srt->type) {
         case SRT_ADDR_EXPR:
             codes = gen_address_expr_code(codegen);
+            break;
+        case SRT_INDIR_EXPR:
+            codes = gen_indirection_expr_code(codegen);
             break;
         case SRT_LNOT_EXPR:
             codes = gen_not_expr_code(codegen);
@@ -273,6 +277,60 @@ Vector* gen_unary_expr_code(Codegen* codegen) {
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);
     }
+
+    return codes;
+}
+
+Vector* gen_indirection_expr_code(Codegen* codegen) {
+    Vector* codes = new_vector(&t_immc);
+
+    append_child_code(codegen, codes, 0);
+    ImmcOpe* src = new_ptr_immcope(codegen->_virtual_reg_id);
+
+    codegen->_virtual_reg_id++;
+    ImmcOpe* dst = new_reg_immcope(codegen->_virtual_reg_id);
+
+    vector_push(codes, new_inst_immc(INST_LOAD, dst, src, NULL));
+
+    return codes;
+}
+
+Vector* gen_address_expr_code(Codegen* codegen) {
+    Vector* codes = new_vector(&t_immc);
+    Srt* srt = codegen->_srt;
+    Srt* child = vector_at(srt->children, 0);
+
+    ImmcOpe* dst = NULL;
+    ImmcOpe* src = NULL;
+
+    switch (child->type) {
+        case SRT_IDENT_EXPR: {
+            Symbol* symbol = symboltable_search(codegen->_local_table, srt->ident_name);
+            if (symbol != NULL) {
+                src = new_mem_immcope(symbol->memory_offset);
+                break;
+            }
+            symbol = symboltable_search(codegen->_global_table, srt->ident_name);
+            if (symbol != NULL) {
+                src = new_label_immcope(new_string(symbol->name));
+                break;
+            }
+            break;
+        }
+        case SRT_INDIR_EXPR:
+            codegen->_srt = child;
+            append_child_code(codegen, codes, 0);
+            codegen->_srt = srt;
+            src = new_reg_immcope(codegen->_virtual_reg_id);
+            break;
+        default:
+            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            exit(1);
+    }
+
+    codegen->_virtual_reg_id++;
+    dst = new_reg_immcope(codegen->_virtual_reg_id);
+    vector_push(codes, new_inst_immc(INST_ADDR, dst, src, NULL));
 
     return codes;
 }
@@ -295,39 +353,6 @@ Vector* gen_not_expr_code(Codegen* codegen) {
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);
     }
-
-    return codes;
-}
-
-Vector* gen_address_expr_code(Codegen* codegen) {
-    Vector* codes = new_vector(&t_immc);
-    Srt* srt = vector_at(codegen->_srt->children, 0);
-
-    ImmcOpe* dst = NULL;
-    ImmcOpe* src = NULL;
-
-    switch (srt->type) {
-        case SRT_IDENT_EXPR: {
-            Symbol* symbol = symboltable_search(codegen->_local_table, srt->ident_name);
-            if (symbol != NULL) {
-                src = new_mem_immcope(symbol->memory_offset);
-                break;
-            }
-            symbol = symboltable_search(codegen->_global_table, srt->ident_name);
-            if (symbol != NULL) {
-                src = new_label_immcope(new_string(symbol->name));
-                break;
-            }
-            break;
-        }
-        default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
-            exit(1);
-    }
-
-    codegen->_virtual_reg_id++;
-    dst = new_reg_immcope(codegen->_virtual_reg_id);
-    vector_push(codes, new_inst_immc(INST_ADDR, dst, src, NULL));
 
     return codes;
 }
