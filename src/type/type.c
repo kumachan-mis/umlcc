@@ -98,10 +98,8 @@ int ctype_size(CType* ctype) {
             return 4;
         case CTYPE_POINTER:
             return 8;
-        case CTYPE_FUNCUCTION:
-            return 0;
         default:
-            return -1;
+            return 0;
     }
 }
 
