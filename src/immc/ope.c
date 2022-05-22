@@ -8,6 +8,7 @@
 ImmcOpe* new_imm_immcope(int imm_value) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = OPERAND_IMM;
+    immcope->suffix = SUFFIX_NONE;
     immcope->imm_value = imm_value;
     immcope->reg_id = -1;
     immcope->mem_offset = -1;
@@ -15,9 +16,10 @@ ImmcOpe* new_imm_immcope(int imm_value) {
     return immcope;
 }
 
-ImmcOpe* new_reg_immcope(int reg_id) {
+ImmcOpe* new_reg_immcope(ImmcOpeSuffix suffix, int reg_id) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = OPERAND_REG;
+    immcope->suffix = suffix;
     immcope->imm_value = -1;
     immcope->reg_id = reg_id;
     immcope->mem_offset = -1;
@@ -28,6 +30,7 @@ ImmcOpe* new_reg_immcope(int reg_id) {
 ImmcOpe* new_ptr_immcope(int reg_id) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = OPERAND_PTR;
+    immcope->suffix = SUFFIX_QUAD;
     immcope->imm_value = -1;
     immcope->reg_id = reg_id;
     immcope->mem_offset = -1;
@@ -38,6 +41,7 @@ ImmcOpe* new_ptr_immcope(int reg_id) {
 ImmcOpe* new_mem_immcope(int mem_offset) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = OPERAND_MEM;
+    immcope->suffix = SUFFIX_NONE;
     immcope->imm_value = -1;
     immcope->reg_id = -1;
     immcope->mem_offset = mem_offset;
@@ -48,6 +52,7 @@ ImmcOpe* new_mem_immcope(int mem_offset) {
 ImmcOpe* new_label_immcope(char* label_name) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = OPERAND_LABEL;
+    immcope->suffix = SUFFIX_NONE;
     immcope->imm_value = -1;
     immcope->reg_id = -1;
     immcope->mem_offset = -1;
@@ -55,9 +60,15 @@ ImmcOpe* new_label_immcope(char* label_name) {
     return immcope;
 }
 
+void delete_immope(ImmcOpe* immcope) {
+    if (immcope->label_name != NULL) free(immcope->label_name);
+    free(immcope);
+}
+
 ImmcOpe* immcope_copy(ImmcOpe* immcope) {
     ImmcOpe* copied_immcope = malloc(sizeof(ImmcOpe));
     copied_immcope->type = immcope->type;
+    copied_immcope->suffix = immcope->suffix;
     copied_immcope->imm_value = immcope->imm_value;
     copied_immcope->reg_id = immcope->reg_id;
     copied_immcope->mem_offset = immcope->mem_offset;
@@ -76,7 +87,7 @@ char* immcope_tostring(ImmcOpe* immcope) {
             sprintf(ope_str, "%d", immcope->imm_value);
             break;
         case OPERAND_REG:
-            sprintf(ope_str, "r%d", immcope->reg_id);
+            sprintf(ope_str, "r%d(%d)", immcope->reg_id, immcope_suffix_tosize(immcope->suffix));
             break;
         case OPERAND_PTR:
             sprintf(ope_str, "(r%d)", immcope->reg_id);
@@ -92,7 +103,32 @@ char* immcope_tostring(ImmcOpe* immcope) {
     return ope_str;
 }
 
-void delete_immope(ImmcOpe* immcope) {
-    if (immcope->label_name != NULL) free(immcope->label_name);
-    free(immcope);
+ImmcOpeSuffix immcope_suffix_get(int size) {
+    switch (size) {
+        case 1:
+            return SUFFIX_BYTE;
+        case 2:
+            return SUFFIX_WORD;
+        case 4:
+            return SUFFIX_LONG;
+        case 8:
+            return SUFFIX_QUAD;
+        default:
+            return SUFFIX_NONE;
+    }
+}
+
+int immcope_suffix_tosize(ImmcOpeSuffix suffix) {
+    switch (suffix) {
+        case SUFFIX_BYTE:
+            return 1;
+        case SUFFIX_WORD:
+            return 2;
+        case SUFFIX_LONG:
+            return 4;
+        case SUFFIX_QUAD:
+            return 8;
+        default:
+            return 0;
+    }
 }
