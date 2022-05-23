@@ -59,10 +59,10 @@ int main(int argc, char* argv[]) {
 
     RegAlloc* regalloc = new_regalloc(immcs, NUM_CALLER_SAVED_REGS);
     AllocImmcs* allocimmcs = regalloc_allocate_regs(regalloc);
-    Vector* allocated_immcs = NULL;
-    Vector* liveseqs = NULL;
-    allocimmcs_move(allocimmcs, &allocated_immcs, &liveseqs);
     delete_regalloc(regalloc);
+
+    Vector *allocated_immcs = NULL, *liveseqs = NULL;
+    allocimmcs_move(allocimmcs, &allocated_immcs, &liveseqs);
 
     int immcs_len = vector_size(allocated_immcs);
     for (int i = 0; i < immcs_len; i++) {
