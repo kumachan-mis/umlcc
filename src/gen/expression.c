@@ -14,8 +14,7 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
     ImmcOpe* dst = new_ptr_immcope(codegen->_virtual_reg_id);
 
     append_child_code(codegen, codes, 1);
-    ImmcOpeSuffix suffix = get_child_suffix(codegen, 1);
-    ImmcOpe* src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
     switch (srt->type) {
         case SRT_ASSIGN_EXPR:
@@ -32,7 +31,6 @@ Vector* gen_assignment_expr_code(Codegen* codegen) {
 Vector* gen_logical_or_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
-    ImmcOpeSuffix suffix = SUFFIX_NONE;
 
     ImmcOpe* dst = NULL;
     ImmcOpe* fst_src = NULL;
@@ -44,24 +42,22 @@ Vector* gen_logical_or_expr_code(Codegen* codegen) {
     char* end_label = create_label_name(codegen->_label_id);
 
     append_child_code(codegen, codes, 0);
-    suffix = get_child_suffix(codegen, 0);
 
     dst = new_label_immcope(new_string(true_label));
-    fst_src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    fst_src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
     snd_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_JNEQ, dst, fst_src, snd_src));
 
     append_child_code(codegen, codes, 1);
-    suffix = get_child_suffix(codegen, 1);
 
     dst = new_label_immcope(new_string(true_label));
-    fst_src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    fst_src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
     snd_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_JNEQ, dst, fst_src, snd_src));
 
+    codegen->_virtual_reg_suffix = immcope_suffix_get(ctype_size(srt->ctype));
     codegen->_virtual_reg_id++;
-    suffix = immcope_suffix_get(ctype_size(srt->ctype));
-    dst = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    dst = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
     fst_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_LOAD, dst, fst_src, NULL));
 
@@ -70,7 +66,7 @@ Vector* gen_logical_or_expr_code(Codegen* codegen) {
 
     vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, new_string(true_label)));
 
-    dst = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    dst = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
     fst_src = new_imm_immcope(1);
     vector_push(codes, new_inst_immc(INST_LOAD, dst, fst_src, NULL));
 
@@ -84,7 +80,6 @@ Vector* gen_logical_or_expr_code(Codegen* codegen) {
 Vector* gen_logical_and_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
-    ImmcOpeSuffix suffix = SUFFIX_NONE;
 
     ImmcOpe* dst = NULL;
     ImmcOpe* fst_src = NULL;
@@ -96,24 +91,22 @@ Vector* gen_logical_and_expr_code(Codegen* codegen) {
     char* end_label = create_label_name(codegen->_label_id);
 
     append_child_code(codegen, codes, 0);
-    suffix = get_child_suffix(codegen, 0);
 
     dst = new_label_immcope(new_string(false_label));
-    fst_src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    fst_src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
     snd_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_JEQ, dst, fst_src, snd_src));
 
     append_child_code(codegen, codes, 1);
-    suffix = get_child_suffix(codegen, 1);
 
     dst = new_label_immcope(new_string(false_label));
-    fst_src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    fst_src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
     snd_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_JEQ, dst, fst_src, snd_src));
 
+    codegen->_virtual_reg_suffix = immcope_suffix_get(ctype_size(srt->ctype));
     codegen->_virtual_reg_id++;
-    suffix = immcope_suffix_get(ctype_size(srt->ctype));
-    dst = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    dst = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
     fst_src = new_imm_immcope(1);
     vector_push(codes, new_inst_immc(INST_LOAD, dst, fst_src, NULL));
 
@@ -122,7 +115,7 @@ Vector* gen_logical_and_expr_code(Codegen* codegen) {
 
     vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, new_string(false_label)));
 
-    dst = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    dst = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
     fst_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(INST_LOAD, dst, fst_src, NULL));
 
@@ -136,19 +129,16 @@ Vector* gen_logical_and_expr_code(Codegen* codegen) {
 Vector* gen_equality_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
-    ImmcOpeSuffix suffix = SUFFIX_NONE;
 
     append_child_code(codegen, codes, 0);
-    suffix = get_child_suffix(codegen, 0);
-    ImmcOpe* fst_src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* fst_src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
     append_child_code(codegen, codes, 1);
-    suffix = get_child_suffix(codegen, 1);
-    ImmcOpe* snd_src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* snd_src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
+    codegen->_virtual_reg_suffix = immcope_suffix_get(ctype_size(srt->ctype));
     codegen->_virtual_reg_id++;
-    suffix = immcope_suffix_get(ctype_size(srt->ctype));
-    ImmcOpe* dst = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* dst = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
     switch (srt->type) {
         case SRT_EQUAL_EXPR:
@@ -168,19 +158,16 @@ Vector* gen_equality_expr_code(Codegen* codegen) {
 Vector* gen_additive_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
-    ImmcOpeSuffix suffix = SUFFIX_NONE;
 
     append_child_code(codegen, codes, 0);
-    suffix = get_child_suffix(codegen, 0);
-    ImmcOpe* fst_src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* fst_src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
     append_child_code(codegen, codes, 1);
-    suffix = get_child_suffix(codegen, 1);
-    ImmcOpe* snd_src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* snd_src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
+    codegen->_virtual_reg_suffix = immcope_suffix_get(ctype_size(srt->ctype));
     codegen->_virtual_reg_id++;
-    suffix = immcope_suffix_get(ctype_size(srt->ctype));
-    ImmcOpe* dst = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* dst = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
     switch (srt->type) {
         case SRT_ADD_EXPR:
@@ -209,19 +196,16 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
 Vector* gen_multiplicative_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
-    ImmcOpeSuffix suffix = SUFFIX_NONE;
 
     append_child_code(codegen, codes, 0);
-    suffix = get_child_suffix(codegen, 0);
-    ImmcOpe* fst_src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* fst_src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
     append_child_code(codegen, codes, 1);
-    suffix = get_child_suffix(codegen, 1);
-    ImmcOpe* snd_src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* snd_src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
+    codegen->_virtual_reg_suffix = immcope_suffix_get(ctype_size(srt->ctype));
     codegen->_virtual_reg_id++;
-    suffix = immcope_suffix_get(ctype_size(srt->ctype));
-    ImmcOpe* dst = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* dst = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
     switch (srt->type) {
         case SRT_MUL_EXPR:
@@ -269,9 +253,8 @@ Vector* gen_call_expr_code(Codegen* codegen) {
     codegen->_srt = param_srt;
     for (int i = num_args - 1; i >= 0; i--) {
         append_child_code(codegen, codes, i);
-        ImmcOpeSuffix suffix = get_child_suffix(codegen, i);
         ImmcOpe* fst_src = new_imm_immcope(i);
-        ImmcOpe* snd_src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+        ImmcOpe* snd_src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
         vector_push(codes, new_inst_immc(INST_STARG, NULL, fst_src, snd_src));
     }
     codegen->_srt = srt;
@@ -318,14 +301,13 @@ Vector* gen_unary_expr_code(Codegen* codegen) {
 Vector* gen_indirection_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
-    ImmcOpeSuffix suffix = SUFFIX_NONE;
 
     append_child_code(codegen, codes, 0);
     ImmcOpe* src = new_ptr_immcope(codegen->_virtual_reg_id);
 
+    codegen->_virtual_reg_suffix = immcope_suffix_get(ctype_size(srt->ctype));
     codegen->_virtual_reg_id++;
-    suffix = immcope_suffix_get(ctype_size(srt->ctype));
-    ImmcOpe* dst = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* dst = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
     vector_push(codes, new_inst_immc(INST_LOAD, dst, src, NULL));
 
@@ -339,7 +321,6 @@ Vector* gen_address_expr_code(Codegen* codegen) {
 
     ImmcOpe* dst = NULL;
     ImmcOpe* src = NULL;
-    ImmcOpeSuffix suffix = SUFFIX_NONE;
 
     switch (child->type) {
         case SRT_IDENT_EXPR: {
@@ -352,9 +333,9 @@ Vector* gen_address_expr_code(Codegen* codegen) {
                 symbol = symboltable_search(codegen->_global_table, child->ident_name);
                 if (symbol != NULL) src = new_label_immcope(new_string(symbol->name));
             }
+            codegen->_virtual_reg_suffix = immcope_suffix_get(ctype_size(srt->ctype));
             codegen->_virtual_reg_id++;
-            suffix = immcope_suffix_get(ctype_size(srt->ctype));
-            dst = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+            dst = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
             vector_push(codes, new_inst_immc(INST_ADDR, dst, src, NULL));
             break;
         }
@@ -374,15 +355,13 @@ Vector* gen_address_expr_code(Codegen* codegen) {
 Vector* gen_not_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->_srt;
-    ImmcOpeSuffix suffix = SUFFIX_NONE;
 
     append_child_code(codegen, codes, 0);
-    suffix = get_child_suffix(codegen, 0);
-    ImmcOpe* src = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* src = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
+    codegen->_virtual_reg_suffix = immcope_suffix_get(ctype_size(srt->ctype));
     codegen->_virtual_reg_id++;
-    suffix = immcope_suffix_get(ctype_size(srt->ctype));
-    ImmcOpe* dst = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* dst = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
     switch (srt->type) {
         case SRT_LNOT_EXPR:
@@ -402,35 +381,32 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
 
     ImmcOpe* dst = NULL;
     ImmcOpe* src = NULL;
-    ImmcOpeSuffix suffix = SUFFIX_NONE;
 
     switch (srt->type) {
         case SRT_IDENT_EXPR: {
             Symbol* symbol = symboltable_search(codegen->_local_table, srt->ident_name);
             if (symbol != NULL) {
                 src = new_mem_immcope(symbol->memory_offset);
-                suffix = immcope_suffix_get(ctype_size(srt->ctype));
                 break;
             }
             symbol = symboltable_search(codegen->_global_table, srt->ident_name);
             if (symbol != NULL) {
                 src = new_label_immcope(new_string(symbol->name));
-                suffix = immcope_suffix_get(ctype_size(srt->ctype));
                 break;
             }
             break;
         }
         case SRT_INT_EXPR:
             src = new_imm_immcope(srt->value_int);
-            suffix = immcope_suffix_get(ctype_size(srt->ctype));
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);
     }
 
+    codegen->_virtual_reg_suffix = immcope_suffix_get(ctype_size(srt->ctype));
     codegen->_virtual_reg_id++;
-    dst = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    dst = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
     vector_push(codes, new_inst_immc(INST_LOAD, dst, src, NULL));
 
     return codes;

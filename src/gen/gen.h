@@ -10,8 +10,9 @@ typedef struct _Codegen {
     Srt* _srt;
     SymbolTable* _global_table;
     SymbolTable* _local_table;
-    int _return_label_id;
+    ImmcOpeSuffix _virtual_reg_suffix;
     int _virtual_reg_id;
+    int _return_label_id;
     int _label_id;
 } Codegen;
 

@@ -12,8 +12,9 @@ Codegen* new_codegen(Srt* srt) {
     codegen->_srt = srt;
     codegen->_global_table = new_symboltable();
     codegen->_local_table = NULL;
-    codegen->_return_label_id = -1;
+    codegen->_virtual_reg_suffix = SUFFIX_NONE;
     codegen->_virtual_reg_id = -1;
+    codegen->_return_label_id = -1;
     codegen->_label_id = -1;
     return codegen;
 }
