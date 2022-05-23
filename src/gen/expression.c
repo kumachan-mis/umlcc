@@ -263,9 +263,9 @@ Vector* gen_call_expr_code(Codegen* codegen) {
     ImmcOpe* fst_src = new_ptr_immcope(codegen->_virtual_reg_id);
     ImmcOpe* snd_src = new_imm_immcope(num_args);
 
+    codegen->_virtual_reg_suffix = immcope_suffix_get(ctype_size(srt->ctype));
     codegen->_virtual_reg_id++;
-    ImmcOpeSuffix suffix = immcope_suffix_get(ctype_size(srt->ctype));
-    ImmcOpe* dst = new_reg_immcope(suffix, codegen->_virtual_reg_id);
+    ImmcOpe* dst = new_reg_immcope(codegen->_virtual_reg_suffix, codegen->_virtual_reg_id);
 
     vector_push(codes, new_inst_immc(INST_CALL, dst, fst_src, snd_src));
     vector_push(codes, new_inst_immc(INST_CLEAN, NULL, new_imm_immcope(num_args), NULL));
