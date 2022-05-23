@@ -103,6 +103,17 @@ int ctype_size(CType* ctype) {
     }
 }
 
+int ctype_log2_size(CType* ctype) {
+    switch (ctype->type) {
+        case CTYPE_INT:
+            return 2;
+        case CTYPE_POINTER:
+            return 3;
+        default:
+            return -1;
+    }
+}
+
 void delete_ctype(CType* ctype) {
     if (ctype->pointer != NULL) delete_cpointer(ctype->pointer);
     if (ctype->function != NULL) delete_cfunction(ctype->function);

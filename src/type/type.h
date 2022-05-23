@@ -29,6 +29,7 @@ CType* ctype_copy(CType* ctype);
 CType* ctype_connect(CType* socket, CType* plug);
 int ctype_isarithmetic(CType* ctype);
 int ctype_size(CType* ctype);
+int ctype_log2_size(CType* ctype);
 void delete_ctype(CType* ctype);
 
 #endif
