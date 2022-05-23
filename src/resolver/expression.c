@@ -24,6 +24,8 @@ Srt* resolve_expr(Resolver* resolver) {
         case AST_DIV_EXPR:
         case AST_MOD_EXPR:
             return resolve_multiplicative_expr(resolver);
+        case AST_ADDR_EXPR:
+        case AST_INDIR_EXPR:
         case AST_LNOT_EXPR:
             return resolve_unary_expr(resolver);
         case AST_CALL_EXPR:

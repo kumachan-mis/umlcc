@@ -178,8 +178,9 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
             break;
         case SRT_PADD_EXPR: {
             Srt* lhs = vector_at(srt->children, 0);
+            int shift_amount = ctype_log2_size(lhs->ctype->pointer->to_ctype);
             ImmcOpe* shift_fst_src = immcope_copy(snd_src);
-            ImmcOpe* shift_snd_src = new_imm_immcope(ctype_log2_size(lhs->ctype));
+            ImmcOpe* shift_snd_src = new_imm_immcope(shift_amount);
             ImmcOpe* shift_dst = immcope_copy(snd_src);
             vector_push(codes, new_inst_immc(INST_SAL, shift_dst, shift_fst_src, shift_snd_src));
             vector_push(codes, new_inst_immc(INST_ADD, dst, fst_src, snd_src));
@@ -187,8 +188,9 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
         }
         case SRT_PSUB_EXPR: {
             Srt* lhs = vector_at(srt->children, 0);
+            int shift_amount = ctype_log2_size(lhs->ctype->pointer->to_ctype);
             ImmcOpe* shift_fst_src = immcope_copy(snd_src);
-            ImmcOpe* shift_snd_src = new_imm_immcope(ctype_log2_size(lhs->ctype));
+            ImmcOpe* shift_snd_src = new_imm_immcope(shift_amount);
             ImmcOpe* shift_dst = immcope_copy(snd_src);
             vector_push(codes, new_inst_immc(INST_SAL, shift_dst, shift_fst_src, shift_snd_src));
             vector_push(codes, new_inst_immc(INST_SUB, dst, fst_src, snd_src));
@@ -196,8 +198,9 @@ Vector* gen_additive_expr_code(Codegen* codegen) {
         }
         case SRT_PDIFF_EXPR: {
             Srt* lhs = vector_at(srt->children, 0);
+            int shift_amount = ctype_log2_size(lhs->ctype->pointer->to_ctype);
             ImmcOpe* shift_fst_src = immcope_copy(dst);
-            ImmcOpe* shift_snd_src = new_imm_immcope(ctype_log2_size(lhs->ctype));
+            ImmcOpe* shift_snd_src = new_imm_immcope(shift_amount);
             ImmcOpe* shift_dst = immcope_copy(dst);
             vector_push(codes, new_inst_immc(INST_SUB, dst, fst_src, snd_src));
             vector_push(codes, new_inst_immc(INST_SAR, shift_dst, shift_fst_src, shift_snd_src));
