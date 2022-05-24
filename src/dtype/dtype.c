@@ -15,10 +15,10 @@ Dtype* new_integer_dtype() {
     return dtype;
 }
 
-Dtype* new_pointer_dtype(Dtype* ptr_to) {
+Dtype* new_pointer_dtype(Dtype* to_dtype) {
     Dtype* dtype = malloc(sizeof(Dtype));
     dtype->type = DTYPE_POINTER;
-    dtype->pointer = new_dpointer(ptr_to);
+    dtype->pointer = new_dpointer(to_dtype);
     dtype->function = NULL;
     return dtype;
 }
@@ -31,11 +31,11 @@ Dtype* new_socket_pointer_dtype() {
     return dtype;
 }
 
-Dtype* new_function_dtype(Vector* params, Dtype* func_return) {
+Dtype* new_function_dtype(Vector* params, Dtype* return_dtype) {
     Dtype* dtype = malloc(sizeof(Dtype));
     dtype->type = DTYPE_FUNCUCTION;
     dtype->pointer = NULL;
-    dtype->function = new_dfunction(params, func_return);
+    dtype->function = new_dfunction(params, return_dtype);
     return dtype;
 }
 

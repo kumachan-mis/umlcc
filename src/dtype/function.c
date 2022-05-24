@@ -11,10 +11,10 @@ BaseType t_dparam = {
 struct Dtype* dtype_copy(struct Dtype* dtype);
 void delete_dtype(struct Dtype* dtype);
 
-DFunction* new_dfunction(Vector* params, struct Dtype* func_return) {
+DFunction* new_dfunction(Vector* params, struct Dtype* return_dtype) {
     DFunction* dfunction = malloc(sizeof(DFunction));
     dfunction->params = params;
-    dfunction->func_return = func_return;
+    dfunction->return_dtype = return_dtype;
     return dfunction;
 }
 
@@ -33,26 +33,26 @@ DFunction* dfunction_copy(DFunction* dfunction) {
     }
     copied_dfunction->params = copied_params;
 
-    copied_dfunction->func_return = NULL;
-    if (dfunction->func_return != NULL) {
-        copied_dfunction->func_return = dtype_copy(dfunction->func_return);
+    copied_dfunction->return_dtype = NULL;
+    if (dfunction->return_dtype != NULL) {
+        copied_dfunction->return_dtype = dtype_copy(dfunction->return_dtype);
     }
 
     return copied_dfunction;
 }
 
 struct Dtype* dfunction_next(DFunction* dfunction) {
-    return dfunction->func_return;
+    return dfunction->return_dtype;
 }
 
 DFunction* dfunction_connect(DFunction* socket, struct Dtype* plug) {
-    socket->func_return = plug;
+    socket->return_dtype = plug;
     return socket;
 }
 
 void delete_dfunction(DFunction* dfunction) {
     delete_vector(dfunction->params);
-    if (dfunction->func_return != NULL) delete_dtype(dfunction->func_return);
+    if (dfunction->return_dtype != NULL) delete_dtype(dfunction->return_dtype);
     free(dfunction);
 }
 

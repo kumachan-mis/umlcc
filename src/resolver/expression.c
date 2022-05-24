@@ -178,7 +178,7 @@ Srt* resolve_postfix_expr(Resolver* resolver) {
             resolver->ast = vector_at(ast->children, 1);
             Srt* rhs_srt = resolve_argument_expr_list(resolver);
 
-            Dtype* dtype = dtype_copy(raw_lhs_srt->dtype->function->func_return);
+            Dtype* dtype = dtype_copy(raw_lhs_srt->dtype->function->return_dtype);
             resolver->ast = ast;
             return new_dtyped_srt(SRT_CALL_EXPR, dtype, 2, lhs_srt, rhs_srt);
         }

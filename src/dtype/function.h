@@ -6,7 +6,7 @@
 
 typedef struct DFunction {
     Vector* params;
-    struct Dtype* func_return;
+    struct Dtype* return_dtype;
 } DFunction;
 
 typedef struct DParam {
@@ -16,7 +16,7 @@ typedef struct DParam {
 
 extern BaseType t_dparam;
 
-DFunction* new_dfunction(Vector* params, struct Dtype* func_return);
+DFunction* new_dfunction(Vector* params, struct Dtype* return_dtype);
 DFunction* new_socket_dfunction(Vector* params);
 DFunction* dfunction_copy(DFunction* dfunction);
 struct Dtype* dfunction_next(DFunction* dfunction);
