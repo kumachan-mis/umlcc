@@ -35,7 +35,7 @@ void builder_push(Builder* builder, char c) {
     builder->_data[builder->_length] = '\0';
 }
 
-char* builder_finish(Builder* builder) {
+char* builder_build(Builder* builder) {
     char* data = builder->_data;
     data = realloc(data, (builder->_length + 1) * sizeof(char));
     free(builder);
