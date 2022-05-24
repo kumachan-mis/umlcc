@@ -13,7 +13,7 @@ typedef struct Resolver {
 } Resolver;
 
 Resolver* new_resolver(Ast* ast);
-void delete_resolver(Resolver* resolver);
 Srt* resolver_resolve_semantics(Resolver* resolver);
+void delete_resolver(Resolver* resolver);
 
 #endif

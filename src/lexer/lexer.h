@@ -14,7 +14,7 @@ typedef struct Lexer {
 } Lexer;
 
 Lexer* new_lexer(FILE* file_ptr);
-void delete_lexer(Lexer* lexer);
 Vector* lexer_read_ctokens(Lexer* lexer);
+void delete_lexer(Lexer* lexer);
 
 #endif

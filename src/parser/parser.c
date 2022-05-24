@@ -11,11 +11,11 @@ Parser* new_parser(Vector* ctokens) {
     return parser;
 }
 
+Ast* parser_create_ast(Parser* parser) {
+    return parse_translation_unit(parser);
+}
+
 void delete_parser(Parser* parser) {
     delete_vector(parser->ctokens);
     free(parser);
-}
-
-Ast* parser_create_ast(Parser* parser) {
-    return parse_translation_unit(parser);
 }

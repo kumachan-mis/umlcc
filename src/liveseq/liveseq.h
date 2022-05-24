@@ -13,9 +13,9 @@ typedef struct Liveseq {
 extern BaseType t_liveseq;
 
 Liveseq* new_liveseq();
-void delete_liveseq(Liveseq* liveseq);
 Liveseq* liveseq_copy(Liveseq* liveseq);
 int liveseq_is_alive(Liveseq* liveseq);
 void liveseq_goto_next(Liveseq* liveseq);
+void delete_liveseq(Liveseq* liveseq);
 
 #endif

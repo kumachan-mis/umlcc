@@ -12,12 +12,6 @@ SymbolTable* new_symboltable() {
     return table;
 }
 
-void delete_symboltable(SymbolTable* table) {
-    if (table->outer_scope != NULL) delete_symboltable(table->outer_scope);
-    delete_map(table->symbol_map);
-    free(table);
-}
-
 int symboltable_can_define(SymbolTable* table, char* name) {
     return map_get(table->symbol_map, name) == NULL;
 }
@@ -56,4 +50,10 @@ SymbolTable* symboltable_exit_scope(SymbolTable* table) {
     delete_map(table->symbol_map);
     free(table);
     return outer_table;
+}
+
+void delete_symboltable(SymbolTable* table) {
+    if (table->outer_scope != NULL) delete_symboltable(table->outer_scope);
+    delete_map(table->symbol_map);
+    free(table);
 }

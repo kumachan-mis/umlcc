@@ -11,8 +11,8 @@ typedef struct Liveness {
 extern BaseType t_liveness;
 
 Liveness* new_liveness(int immc_index);
-void delete_liveness(Liveness* liveness);
 Liveness* liveness_copy(Liveness* liveness);
 int liveness_isinit(Liveness* liveness);
+void delete_liveness(Liveness* liveness);
 
 #endif

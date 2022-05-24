@@ -18,13 +18,6 @@ Codegen* new_codegen(Srt* srt) {
     return codegen;
 }
 
-void delete_codegen(Codegen* codegen) {
-    delete_srt(codegen->srt);
-    delete_symboltable(codegen->global_table);
-    if (codegen->local_table != NULL) delete_symboltable(codegen->local_table);
-    free(codegen);
-}
-
 Vector* codegen_generate_code(Codegen* codegen) {
     Vector* codes = NULL;
     Srt* srt = codegen->srt;
@@ -95,4 +88,11 @@ Vector* codegen_generate_code(Codegen* codegen) {
     }
 
     return codes;
+}
+
+void delete_codegen(Codegen* codegen) {
+    delete_srt(codegen->srt);
+    delete_symboltable(codegen->global_table);
+    if (codegen->local_table != NULL) delete_symboltable(codegen->local_table);
+    free(codegen);
 }

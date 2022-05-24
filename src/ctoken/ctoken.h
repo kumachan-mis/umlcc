@@ -46,7 +46,7 @@ extern BaseType t_ctoken;
 CToken* new_ctoken(CTokenType type);
 CToken* new_identifier_ctoken(char* name);
 CToken* new_integer_ctoken(int value);
-void delete_ctoken(CToken* ctoken);
 CToken* ctoken_copy(CToken* ctoken);
+void delete_ctoken(CToken* ctoken);
 
 #endif

@@ -64,7 +64,7 @@ Srt* new_srt(SrtType type, int num_children, ...);
 Srt* new_dtyped_srt(SrtType type, Dtype* dtype, int num_children, ...);
 Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name);
 Srt* new_integer_srt(SrtType type, int value);
-void delete_srt(Srt* srt);
 Srt* srt_copy(Srt* srt);
+void delete_srt(Srt* srt);
 
 #endif

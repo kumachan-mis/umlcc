@@ -20,11 +20,6 @@ Builder* new_builder() {
     return builder;
 }
 
-void delete_builder(Builder* builder) {
-    free(builder->data);
-    free(builder);
-}
-
 void builder_push(Builder* builder, char c) {
     builder->data[builder->length] = c;
     builder->length++;
@@ -40,4 +35,9 @@ char* builder_build(Builder* builder) {
     data = realloc(data, (builder->length + 1) * sizeof(char));
     free(builder);
     return data;
+}
+
+void delete_builder(Builder* builder) {
+    free(builder->data);
+    free(builder);
 }

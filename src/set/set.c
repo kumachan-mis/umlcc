@@ -29,11 +29,6 @@ Set* new_set(HashableType* t_item) {
     return set;
 }
 
-void delete_set(Set* set) {
-    delete_map(set->inner);
-    free(set);
-}
-
 Set* set_copy(Set* set) {
     Set* copied_set = malloc(sizeof(Set));
     copied_set->t_item = set->t_item;
@@ -117,4 +112,9 @@ int set_issubset(Set* set, Set* other) {
 
 int set_equals(Set* set, Set* other) {
     return set_issubset(set, other) && set_issubset(other, set);
+}
+
+void delete_set(Set* set) {
+    delete_map(set->inner);
+    free(set);
 }

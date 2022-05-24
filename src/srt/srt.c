@@ -66,13 +66,6 @@ Srt* new_integer_srt(SrtType type, int value) {
     return srt;
 }
 
-void delete_srt(Srt* srt) {
-    if (srt->dtype != NULL) delete_dtype(srt->dtype);
-    if (srt->ident_name != NULL) free(srt->ident_name);
-    delete_vector(srt->children);
-    free(srt);
-}
-
 Srt* srt_copy(Srt* srt) {
     Srt* copied_srt = malloc(sizeof(Srt));
     copied_srt->dtype = NULL;
@@ -81,4 +74,11 @@ Srt* srt_copy(Srt* srt) {
     if (srt->ident_name != NULL) copied_srt->ident_name = new_string(srt->ident_name);
     copied_srt->children = vector_copy(srt->children);
     return copied_srt;
+}
+
+void delete_srt(Srt* srt) {
+    if (srt->dtype != NULL) delete_dtype(srt->dtype);
+    if (srt->ident_name != NULL) free(srt->ident_name);
+    delete_vector(srt->children);
+    free(srt);
 }

@@ -16,7 +16,7 @@ typedef struct Codegen {
 } Codegen;
 
 Codegen* new_codegen(Srt* srt);
-void delete_codegen(Codegen* codegen);
 Vector* codegen_generate_code(Codegen* codegen);
+void delete_codegen(Codegen* codegen);
 
 #endif

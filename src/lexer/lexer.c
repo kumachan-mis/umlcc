@@ -12,12 +12,6 @@ Lexer* new_lexer(FILE* file_ptr) {
     return lexer;
 }
 
-void delete_lexer(Lexer* lexer) {
-    delete_map(lexer->keyword_map);
-    delete_map(lexer->punctuator_map);
-    free(lexer);
-}
-
 Vector* lexer_read_ctokens(Lexer* lexer) {
     Vector* ctokens = new_vector(&t_ctoken);
     skip_white_spaces(lexer);
@@ -41,4 +35,10 @@ Vector* lexer_read_ctokens(Lexer* lexer) {
     }
 
     return ctokens;
+}
+
+void delete_lexer(Lexer* lexer) {
+    delete_map(lexer->keyword_map);
+    delete_map(lexer->punctuator_map);
+    free(lexer);
 }

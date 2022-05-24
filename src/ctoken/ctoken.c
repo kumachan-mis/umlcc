@@ -31,11 +31,6 @@ CToken* new_integer_ctoken(int value) {
     return ctoken;
 }
 
-void delete_ctoken(CToken* ctoken) {
-    if (ctoken->ident_name != NULL) free(ctoken->ident_name);
-    free(ctoken);
-}
-
 CToken* ctoken_copy(CToken* ctoken) {
     CToken* copied_ctoken = malloc(sizeof(CToken));
     copied_ctoken->type = ctoken->type;
@@ -43,4 +38,9 @@ CToken* ctoken_copy(CToken* ctoken) {
     if (ctoken->ident_name != NULL) copied_ctoken->ident_name = new_string(ctoken->ident_name);
     copied_ctoken->value_int = ctoken->value_int;
     return copied_ctoken;
+}
+
+void delete_ctoken(CToken* ctoken) {
+    if (ctoken->ident_name != NULL) free(ctoken->ident_name);
+    free(ctoken);
 }

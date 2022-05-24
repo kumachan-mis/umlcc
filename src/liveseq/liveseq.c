@@ -16,11 +16,6 @@ Liveseq* new_liveseq() {
     return liveseq;
 }
 
-void delete_liveseq(Liveseq* liveseq) {
-    delete_vector(liveseq->livenesses);
-    free(liveseq);
-}
-
 Liveseq* liveseq_copy(Liveseq* liveseq) {
     Liveseq* copied_liveseq = malloc(sizeof(Liveseq));
     copied_liveseq->livenesses = vector_copy(liveseq->livenesses);
@@ -69,4 +64,9 @@ void liveseq_goto_next(Liveseq* liveseq) {
 
     Liveness* next_liveness = vector_at(liveseq->livenesses, liveseq->liveness_index + 1);
     if (index >= next_liveness->first_def_index) liveseq->liveness_index++;
+}
+
+void delete_liveseq(Liveseq* liveseq) {
+    delete_vector(liveseq->livenesses);
+    free(liveseq);
 }

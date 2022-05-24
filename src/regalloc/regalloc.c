@@ -36,11 +36,6 @@ RegAlloc* new_regalloc(Vector* immcs, int num_real_regs) {
     return regalloc;
 }
 
-void delete_regalloc(RegAlloc* regalloc) {
-    delete_vector(regalloc->immcs);
-    free(regalloc);
-}
-
 AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc) {
     Vector* allocated_immcs = new_vector(&t_immc);
     Vector* liveseqs = new_vector(&t_liveseq);
@@ -409,4 +404,9 @@ void update_liveseqs(Vector* liveseqs, Vector* livenesses, Vector* allocations) 
         Liveseq* liveseq = vector_at(liveseqs, *real_reg_id_ref);
         vector_push(liveseq->livenesses, liveness_copy(liveness));
     }
+}
+
+void delete_regalloc(RegAlloc* regalloc) {
+    delete_vector(regalloc->immcs);
+    free(regalloc);
 }

@@ -10,7 +10,7 @@ typedef struct Parser {
 } Parser;
 
 Parser* new_parser(Vector* ctokens);
-void delete_parser(Parser* parser);
 Ast* parser_create_ast(Parser* parser);
+void delete_parser(Parser* parser);
 
 #endif

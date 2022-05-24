@@ -20,11 +20,6 @@ X64gen* new_x64gen(Vector* immcs, Vector* liveseqs) {
     return x64gen;
 }
 
-void delete_x64gen(X64gen* x64gen) {
-    delete_vector(x64gen->immcs);
-    free(x64gen);
-}
-
 Vector* x64gen_generate_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
     Vector* sub_codes = NULL;
@@ -108,4 +103,9 @@ Vector* gen_function_x64code(X64gen* x64gen) {
 
     x64gen->evacuation_count = 0;
     return codes;
+}
+
+void delete_x64gen(X64gen* x64gen) {
+    delete_vector(x64gen->immcs);
+    free(x64gen);
 }

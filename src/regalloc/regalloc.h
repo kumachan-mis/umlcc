@@ -11,7 +11,7 @@ typedef struct RegAlloc {
 } RegAlloc;
 
 RegAlloc* new_regalloc(Vector* immcs, int num_regs);
-void delete_regalloc(RegAlloc* regalloc);
 AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc);
+void delete_regalloc(RegAlloc* regalloc);
 
 #endif
