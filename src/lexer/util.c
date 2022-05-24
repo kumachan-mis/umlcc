@@ -1,7 +1,7 @@
 #include "./util.h"
 #include "../common/common.h"
 
-#include <dtype.h>
+#include <ctype.h>
 #include <stdlib.h>
 
 void token_map_add(Map* token_map, char* token_str, TokenType type);
