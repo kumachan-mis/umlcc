@@ -3,8 +3,8 @@
 #include "./conversion.h"
 
 Srt* convert_function_to_ptr(Srt* srt) {
-    if (srt->ctype == NULL || srt->ctype->type != CTYPE_FUNCUCTION) return srt;
+    if (srt->dtype == NULL || srt->dtype->type != DTYPE_FUNCUCTION) return srt;
 
-    CType* converted_ctype = new_pointer_ctype(ctype_copy(srt->ctype));
-    return new_ctyped_srt(SRT_ADDR_EXPR, converted_ctype, 1, srt);
+    Dtype* converted_dtype = new_pointer_dtype(dtype_copy(srt->dtype));
+    return new_dtyped_srt(SRT_ADDR_EXPR, converted_dtype, 1, srt);
 }

@@ -1,5 +1,5 @@
-#ifndef _UMLCC_X64_LABEL_H_
-#define _UMLCC_X64_LABEL_H_
+#ifndef UMLCC_X64_LABEL_H
+#define UMLCC_X64_LABEL_H
 
 #include "./x64.h"
 

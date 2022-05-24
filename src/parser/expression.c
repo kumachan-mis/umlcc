@@ -1,6 +1,6 @@
 #include "./expression.h"
 #include "../common/common.h"
-#include "../token/token.h"
+#include "../ctoken/ctoken.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -16,18 +16,18 @@ Ast* parse_assignment_expr(Parser* parser) {
     int terminated = 0;
 
     while (!terminated) {
-        int index = parser->_index;
+        int index = parser->index;
         Ast* ast = parse_unary_expr(parser);
 
-        Token* token = vector_at(parser->_tokens, parser->_index);
-        switch (token->type) {
-            case TOKEN_EQUAL:
-                parser->_index++;
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_EQUAL:
+                parser->index++;
                 vector_push(stack, new_ast(AST_ASSIGN_EXPR, 1, ast));
                 break;
             default:
                 delete_ast(ast);
-                parser->_index = index;
+                parser->index = index;
                 vector_push(stack, parse_logical_or_expr(parser));
                 terminated = 1;
                 break;
@@ -50,10 +50,10 @@ Ast* parse_logical_or_expr(Parser* parser) {
     Ast* ast = parse_logical_and_expr(parser);
 
     while (1) {
-        Token* token = vector_at(parser->_tokens, parser->_index);
-        switch (token->type) {
-            case TOKEN_VBAR_VBAR:
-                parser->_index++;
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_VBAR_VBAR:
+                parser->index++;
                 ast = new_ast(AST_LOR_EXPR, 2, ast, parse_logical_and_expr(parser));
                 break;
             default:
@@ -66,10 +66,10 @@ Ast* parse_logical_and_expr(Parser* parser) {
     Ast* ast = parse_equality_expr(parser);
 
     while (1) {
-        Token* token = vector_at(parser->_tokens, parser->_index);
-        switch (token->type) {
-            case TOKEN_AND_AND:
-                parser->_index++;
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_AND_AND:
+                parser->index++;
                 ast = new_ast(AST_LAND_EXPR, 2, ast, parse_equality_expr(parser));
                 break;
             default:
@@ -82,14 +82,14 @@ Ast* parse_equality_expr(Parser* parser) {
     Ast* ast = parse_additive_expr(parser);
 
     while (1) {
-        Token* token = vector_at(parser->_tokens, parser->_index);
-        switch (token->type) {
-            case TOKEN_EQUAL_EQUAL:
-                parser->_index++;
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_EQUAL_EQUAL:
+                parser->index++;
                 ast = new_ast(AST_EQUAL_EXPR, 2, ast, parse_additive_expr(parser));
                 break;
-            case TOKEN_EXCLAM_EQUAL:
-                parser->_index++;
+            case CTOKEN_EXCLAM_EQUAL:
+                parser->index++;
                 ast = new_ast(AST_NEQUAL_EXPR, 2, ast, parse_additive_expr(parser));
                 break;
             default:
@@ -102,14 +102,14 @@ Ast* parse_additive_expr(Parser* parser) {
     Ast* ast = parse_multiplicative_expr(parser);
 
     while (1) {
-        Token* token = vector_at(parser->_tokens, parser->_index);
-        switch (token->type) {
-            case TOKEN_PLUS:
-                parser->_index++;
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_PLUS:
+                parser->index++;
                 ast = new_ast(AST_ADD_EXPR, 2, ast, parse_multiplicative_expr(parser));
                 break;
-            case TOKEN_MINUS:
-                parser->_index++;
+            case CTOKEN_MINUS:
+                parser->index++;
                 ast = new_ast(AST_SUB_EXPR, 2, ast, parse_multiplicative_expr(parser));
                 break;
             default:
@@ -122,18 +122,18 @@ Ast* parse_multiplicative_expr(Parser* parser) {
     Ast* ast = parse_unary_expr(parser);
 
     while (1) {
-        Token* token = vector_at(parser->_tokens, parser->_index);
-        switch (token->type) {
-            case TOKEN_ASTERISK:
-                parser->_index++;
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_ASTERISK:
+                parser->index++;
                 ast = new_ast(AST_MUL_EXPR, 2, ast, parse_unary_expr(parser));
                 break;
-            case TOKEN_SLASH:
-                parser->_index++;
+            case CTOKEN_SLASH:
+                parser->index++;
                 ast = new_ast(AST_DIV_EXPR, 2, ast, parse_unary_expr(parser));
                 break;
-            case TOKEN_PERCENT:
-                parser->_index++;
+            case CTOKEN_PERCENT:
+                parser->index++;
                 ast = new_ast(AST_MOD_EXPR, 2, ast, parse_unary_expr(parser));
                 break;
             default:
@@ -147,10 +147,10 @@ Ast* parse_unary_expr(Parser* parser) {
     int terminated = 0;
 
     while (!terminated) {
-        Token* token = vector_at(parser->_tokens, parser->_index);
-        switch (token->type) {
-            case TOKEN_EXCLAM:
-                parser->_index++;
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_EXCLAM:
+                parser->index++;
                 vector_push(stack, new_ast(AST_LNOT_EXPR, 0));
                 break;
             default:
@@ -175,12 +175,12 @@ Ast* parse_postfix_expr(Parser* parser) {
     Ast* ast = parse_primary_expr(parser);
 
     while (1) {
-        Token* token = vector_at(parser->_tokens, parser->_index);
-        switch (token->type) {
-            case TOKEN_LPALEN:
-                parser->_index++;
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_LPALEN:
+                parser->index++;
                 ast = new_ast(AST_CALL_EXPR, 2, ast, parse_argument_expr_list(parser));
-                consume_token(parser, TOKEN_RPALEN);
+                consume_ctoken(parser, CTOKEN_RPALEN);
                 break;
             default:
                 return ast;
@@ -193,14 +193,14 @@ Ast* parse_postfix_expr(Parser* parser) {
 Ast* parse_argument_expr_list(Parser* parser) {
     Ast* ast = new_ast(AST_ARG_LIST, 0);
 
-    Token* token = vector_at(parser->_tokens, parser->_index);
-    if (token->type == TOKEN_RPALEN) return ast;
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type == CTOKEN_RPALEN) return ast;
 
     while (1) {
         vector_push(ast->children, parse_assignment_expr(parser));
-        token = vector_at(parser->_tokens, parser->_index);
-        if (token->type == TOKEN_RPALEN) break;
-        consume_token(parser, TOKEN_COMMA);
+        ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type == CTOKEN_RPALEN) break;
+        consume_ctoken(parser, CTOKEN_COMMA);
     }
 
     return ast;
@@ -209,23 +209,23 @@ Ast* parse_argument_expr_list(Parser* parser) {
 Ast* parse_primary_expr(Parser* parser) {
     Ast* ast = NULL;
 
-    Token* token = vector_at(parser->_tokens, parser->_index);
-    switch (token->type) {
-        case TOKEN_IDENT:
-            parser->_index++;
-            ast = new_identifier_ast(AST_IDENT_EXPR, new_string(token->ident_name));
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    switch (ctoken->type) {
+        case CTOKEN_IDENT:
+            parser->index++;
+            ast = new_identifier_ast(AST_IDENT_EXPR, new_string(ctoken->ident_name));
             break;
-        case TOKEN_INT:
-            parser->_index++;
-            ast = new_integer_ast(AST_INT_EXPR, token->value_int);
+        case CTOKEN_INT:
+            parser->index++;
+            ast = new_integer_ast(AST_INT_EXPR, ctoken->value_int);
             break;
-        case TOKEN_LPALEN:
-            parser->_index++;
+        case CTOKEN_LPALEN:
+            parser->index++;
             ast = parse_expr(parser);
-            consume_token(parser, TOKEN_RPALEN);
+            consume_ctoken(parser, CTOKEN_RPALEN);
             break;
         default:
-            fprintf(stderr, "Error: unexpected token type %d\n", token->type);
+            fprintf(stderr, "Error: unexpected ctoken type %d\n", ctoken->type);
             exit(1);
     }
 

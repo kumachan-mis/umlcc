@@ -8,8 +8,8 @@
 
 Vector* gen_jeq_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* fst_src = immc->inst->fst_src;
@@ -35,14 +35,14 @@ Vector* gen_jeq_x64code(X64gen* x64gen) {
 
     append_code(codes, "\tje\t%s\n", dst->label_name);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_jneq_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* fst_src = immc->inst->fst_src;
@@ -68,33 +68,33 @@ Vector* gen_jneq_x64code(X64gen* x64gen) {
 
     append_code(codes, "\tjne\t%s\n", dst->label_name);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_jmp_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* dst = immc->inst->dst;
 
     append_code(codes, "\tjmp\t%s\n", dst->label_name);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_call_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* fst_src = immc->inst->fst_src;
     ImmcOpe* snd_src = immc->inst->snd_src;
 
-    Set* alive_regs_set = create_alive_regs_set(x64gen->_liveseqs);
+    Set* alive_regs_set = create_alive_regs_set(x64gen->liveseqs);
     int evacuation_count = 0;
     // TODO: consider case that evacuation_count is greater than NUM_CALLEE_SAVED_REG
     for (SetIter* iter = set_iter_begin(alive_regs_set); !set_iter_end(iter, alive_regs_set);
@@ -133,21 +133,21 @@ Vector* gen_call_x64code(X64gen* x64gen) {
         append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[callee_id], QREG_NAMES[caller_id]);
         evacuation_count++;
     }
-    if (x64gen->_evacuation_count < evacuation_count) x64gen->_evacuation_count = evacuation_count;
+    if (x64gen->evacuation_count < evacuation_count) x64gen->evacuation_count = evacuation_count;
     delete_set(alive_regs_set);
 
     int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
     char* dst_name = LREG_NAMES[dst_id];
     append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[AX_REG_ID], dst_name);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_enter_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* src = immc->inst->fst_src;
     int aligned_memory_size = ((src->imm_value + 15) / 16) * 16;
@@ -158,14 +158,14 @@ Vector* gen_enter_x64code(X64gen* x64gen) {
         append_code(codes, "\tsubq\t$%d, %s\n", aligned_memory_size, QREG_NAMES[SP_REG_ID]);
     }
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_leave_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* src = immc->inst->fst_src;
     int aligned_memory_size = ((src->imm_value + 15) / 16) * 16;
@@ -176,14 +176,14 @@ Vector* gen_leave_x64code(X64gen* x64gen) {
     append_code(codes, "\tpopq\t%s\n", QREG_NAMES[BP_REG_ID]);
     append_code(codes, "\tret\n");
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_prep_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* fst_src = immc->inst->fst_src;
 
@@ -191,14 +191,14 @@ Vector* gen_prep_x64code(X64gen* x64gen) {
         append_code(codes, "\tsubq\t$%d, %s\n", 8, QREG_NAMES[SP_REG_ID]);
     }
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_clean_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* fst_src = immc->inst->fst_src;
 
@@ -207,6 +207,6 @@ Vector* gen_clean_x64code(X64gen* x64gen) {
         append_code(codes, "\taddq\t$%d, %s\n", mem_param_offset, QREG_NAMES[SP_REG_ID]);
     }
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }

@@ -9,25 +9,18 @@
 
 Codegen* new_codegen(Srt* srt) {
     Codegen* codegen = malloc(sizeof(Codegen));
-    codegen->_srt = srt;
-    codegen->_global_table = new_symboltable();
-    codegen->_local_table = NULL;
-    codegen->_return_label_id = -1;
-    codegen->_virtual_reg_id = -1;
-    codegen->_label_id = -1;
+    codegen->srt = srt;
+    codegen->global_table = new_symboltable();
+    codegen->local_table = NULL;
+    codegen->return_label_id = -1;
+    codegen->virtual_reg_id = -1;
+    codegen->label_id = -1;
     return codegen;
-}
-
-void delete_codegen(Codegen* codegen) {
-    delete_srt(codegen->_srt);
-    delete_symboltable(codegen->_global_table);
-    if (codegen->_local_table != NULL) delete_symboltable(codegen->_local_table);
-    free(codegen);
 }
 
 Vector* codegen_generate_code(Codegen* codegen) {
     Vector* codes = NULL;
-    Srt* srt = codegen->_srt;
+    Srt* srt = codegen->srt;
 
     switch (srt->type) {
         case SRT_TRAS_UNIT:
@@ -46,9 +39,9 @@ Vector* codegen_generate_code(Codegen* codegen) {
             codes = gen_decl_code(codegen);
             break;
         case SRT_CMPD_STMT:
-            codegen->_local_table = symboltable_enter_scope(codegen->_local_table);
+            codegen->local_table = symboltable_enter_scope(codegen->local_table);
             codes = gen_compound_stmt_code(codegen);
-            codegen->_local_table = symboltable_exit_scope(codegen->_local_table);
+            codegen->local_table = symboltable_exit_scope(codegen->local_table);
             break;
         case SRT_RET_STMT:
             codes = gen_return_stmt_code(codegen);
@@ -95,4 +88,11 @@ Vector* codegen_generate_code(Codegen* codegen) {
     }
 
     return codes;
+}
+
+void delete_codegen(Codegen* codegen) {
+    delete_srt(codegen->srt);
+    delete_symboltable(codegen->global_table);
+    if (codegen->local_table != NULL) delete_symboltable(codegen->local_table);
+    free(codegen);
 }

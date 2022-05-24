@@ -10,7 +10,7 @@ Vector* gen_local_label_x64code(X64gen* x64gen);
 Vector* gen_default_label_x64code(X64gen* x64gen);
 
 Vector* gen_label_x64code(X64gen* x64gen) {
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     switch (immc->label->visibility) {
         case LABELVIS_GLOBAL:
             return gen_global_label_x64code(x64gen);
@@ -26,34 +26,34 @@ Vector* gen_label_x64code(X64gen* x64gen) {
 
 Vector* gen_global_label_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     append_code(codes, "    .globl %s\n", immc->label->name);
     append_code(codes, "%s:\n", immc->label->name);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_local_label_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     append_code(codes, "    .local %s\n", immc->label->name);
     append_code(codes, "%s:\n", immc->label->name);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 Vector* gen_default_label_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     append_code(codes, "%s:\n", immc->label->name);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }

@@ -13,18 +13,18 @@ Vector* gen_compound_stmt_code(Codegen* codegen) {
 
 Vector* gen_return_stmt_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
-    Srt* srt = codegen->_srt;
+    Srt* srt = codegen->srt;
 
     append_child_code(codegen, codes, 0);
 
-    ImmcOpe* ret_value = new_reg_immcope(codegen->_virtual_reg_id);
+    ImmcOpe* ret_value = new_reg_immcope(codegen->virtual_reg_id);
     vector_push(codes, new_inst_immc(INST_STRET, NULL, ret_value, NULL));
 
-    char* label_name = create_label_name(codegen->_return_label_id);
+    char* label_name = create_label_name(codegen->return_label_id);
     ImmcOpe* ret_label = new_label_immcope(label_name);
     vector_push(codes, new_inst_immc(INST_JMP, ret_label, NULL, NULL));
 
-    codegen->_srt = srt;
+    codegen->srt = srt;
     return codes;
 }
 

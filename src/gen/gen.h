@@ -1,22 +1,22 @@
-#ifndef _UMLCC_GEN_H_
-#define _UMLCC_GEN_H_
+#ifndef UMLCC_GEN_H
+#define UMLCC_GEN_H
 
 #include "../immc/immc.h"
 #include "../srt/srt.h"
 #include "../symtab/symtab.h"
 #include "../vector/vector.h"
 
-typedef struct _Codegen {
-    Srt* _srt;
-    SymbolTable* _global_table;
-    SymbolTable* _local_table;
-    int _return_label_id;
-    int _virtual_reg_id;
-    int _label_id;
+typedef struct Codegen {
+    Srt* srt;
+    SymbolTable* global_table;
+    SymbolTable* local_table;
+    int return_label_id;
+    int virtual_reg_id;
+    int label_id;
 } Codegen;
 
 Codegen* new_codegen(Srt* srt);
-void delete_codegen(Codegen* codegen);
 Vector* codegen_generate_code(Codegen* codegen);
+void delete_codegen(Codegen* codegen);
 
 #endif

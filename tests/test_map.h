@@ -1,5 +1,5 @@
-#ifndef _UMLCC_TEST_MAP_H_
-#define _UMLCC_TEST_MAP_H_
+#ifndef UMLCC_TEST_MAP_H
+#define UMLCC_TEST_MAP_H
 
 #include <CUnit/Basic.h>
 

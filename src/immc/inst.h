@@ -1,9 +1,9 @@
-#ifndef _UMLCC_IMMC_INST_H_
-#define _UMLCC_IMMC_INST_H_
+#ifndef UMLCC_IMMC_INST_H
+#define UMLCC_IMMC_INST_H
 
 #include "./ope.h"
 
-typedef enum _ImmcInstType {
+typedef enum ImmcInstType {
     // data transfar instructions
     INST_LOAD,
     // - load fst_src value to dst.
@@ -94,7 +94,7 @@ typedef enum _ImmcInstType {
     // clean           fst_src(imm)
 } ImmcInstType;
 
-typedef struct _ImmcInst {
+typedef struct ImmcInst {
     ImmcInstType type;
     ImmcOpe* dst;
     ImmcOpe* fst_src;

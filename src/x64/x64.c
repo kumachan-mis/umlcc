@@ -13,27 +13,22 @@ Vector* gen_function_x64code(X64gen* x64gen);
 
 X64gen* new_x64gen(Vector* immcs, Vector* liveseqs) {
     X64gen* x64gen = malloc(sizeof(X64gen));
-    x64gen->_immcs = immcs;
-    x64gen->_liveseqs = liveseqs;
-    x64gen->_index = 0;
-    x64gen->_evacuation_count = 0;
+    x64gen->immcs = immcs;
+    x64gen->liveseqs = liveseqs;
+    x64gen->index = 0;
+    x64gen->evacuation_count = 0;
     return x64gen;
-}
-
-void delete_x64gen(X64gen* x64gen) {
-    delete_vector(x64gen->_immcs);
-    free(x64gen);
 }
 
 Vector* x64gen_generate_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
     Vector* sub_codes = NULL;
 
-    int immcs_len = vector_size(x64gen->_immcs);
+    int immcs_len = vector_size(x64gen->immcs);
     while (1) {
-        if (x64gen->_index >= immcs_len) break;
+        if (x64gen->index >= immcs_len) break;
 
-        Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
+        Immc* immc = vector_at(x64gen->immcs, x64gen->index);
         switch (immc->label->type) {
             case LABEL_FUNCTION:
                 sub_codes = gen_function_x64code(x64gen);
@@ -56,7 +51,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     Vector* tail_codes = new_vector(&t_string);
     Vector* sub_codes = NULL;
 
-    x64gen->_evacuation_count = 0;
+    x64gen->evacuation_count = 0;
 
     sub_codes = gen_label_x64code(x64gen);
     vector_extend(codes, sub_codes);
@@ -68,7 +63,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
 
     Vector* body_codes = new_vector(&t_string);
     while (1) {
-        Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
+        Immc* immc = vector_at(x64gen->immcs, x64gen->index);
         if (immc->type == IMMC_INST && immc->inst->type == INST_LEAVE) break;
 
         switch (immc->type) {
@@ -83,7 +78,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
         delete_vector(sub_codes);
     }
 
-    int evacuation_count = x64gen->_evacuation_count;
+    int evacuation_count = x64gen->evacuation_count;
     for (int i = 0; i < evacuation_count; i++) {
         append_code(head_codes, "\tpushq\t%s\n", QREG_NAMES[CALLEE_SAVED_REG_IDS[i]]);
     }
@@ -106,6 +101,11 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     vector_extend(codes, tail_codes);
     delete_vector(tail_codes);
 
-    x64gen->_evacuation_count = 0;
+    x64gen->evacuation_count = 0;
     return codes;
+}
+
+void delete_x64gen(X64gen* x64gen) {
+    delete_vector(x64gen->immcs);
+    free(x64gen);
 }
