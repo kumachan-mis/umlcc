@@ -1,10 +1,10 @@
-#ifndef _UMLCC_LIVESEQ_H_
-#define _UMLCC_LIVESEQ_H_
+#ifndef UMLCC_LIVESEQ_H
+#define UMLCC_LIVESEQ_H
 
 #include "../common/common.h"
 #include "../vector/vector.h"
 
-typedef struct _Liveseq {
+typedef struct Liveseq {
     Vector* livenesses;
     int liveness_index;
     int index;

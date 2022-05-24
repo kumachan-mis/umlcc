@@ -1,5 +1,5 @@
-#ifndef _UMLCC_PARSER_UTIL_H_
-#define _UMLCC_PARSER_UTIL_H_
+#ifndef UMLCC_PARSER_UTIL_H
+#define UMLCC_PARSER_UTIL_H
 
 #include "../token/token.h"
 #include "./parser.h"

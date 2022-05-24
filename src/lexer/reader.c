@@ -8,25 +8,25 @@
 Token* read_keyword_or_identifier(Lexer* lexer) {
     Builder* builder = new_builder();
 
-    char c = fgetc(lexer->_file_ptr);
+    char c = fgetc(lexer->file_ptr);
     if (!isalpha(c) && c != '_') {
-        ungetc(c, lexer->_file_ptr);
+        ungetc(c, lexer->file_ptr);
         delete_builder(builder);
         return NULL;
     }
 
     builder_push(builder, c);
     while (1) {
-        c = fgetc(lexer->_file_ptr);
+        c = fgetc(lexer->file_ptr);
         if (!isalpha(c) && !isdigit(c) && c != '_') {
-            ungetc(c, lexer->_file_ptr);
+            ungetc(c, lexer->file_ptr);
             break;
         }
         builder_push(builder, c);
     }
 
     char* token_str = builder_build(builder);
-    TokenType* token_ref = map_get(lexer->_keyword_map, token_str);
+    TokenType* token_ref = map_get(lexer->keyword_map, token_str);
 
     if (token_ref != NULL) {
         free(token_str);
@@ -38,18 +38,18 @@ Token* read_keyword_or_identifier(Lexer* lexer) {
 Token* read_integer_constant(Lexer* lexer) {
     Builder* builder = new_builder();
 
-    char c = fgetc(lexer->_file_ptr);
+    char c = fgetc(lexer->file_ptr);
     if (!isdigit(c)) {
-        ungetc(c, lexer->_file_ptr);
+        ungetc(c, lexer->file_ptr);
         delete_builder(builder);
         return NULL;
     }
 
     builder_push(builder, c);
     while (1) {
-        c = fgetc(lexer->_file_ptr);
+        c = fgetc(lexer->file_ptr);
         if (!isdigit(c)) {
-            ungetc(c, lexer->_file_ptr);
+            ungetc(c, lexer->file_ptr);
             break;
         }
         builder_push(builder, c);
@@ -69,7 +69,7 @@ Token* read_punctuator(Lexer* lexer) {
     int length = 0;
     memset(token_str, 0, MAX_PUNCUATOR_LEN + 1);
 
-    int c = fgetc(lexer->_file_ptr);
+    int c = fgetc(lexer->file_ptr);
     if (c == EOF) {
         free(token_str);
         return new_token(TOKEN_EOF);
@@ -78,9 +78,9 @@ Token* read_punctuator(Lexer* lexer) {
     length++;
 
     for (int i = 0; i < MAX_PUNCUATOR_LEN - 1; i++) {
-        c = fgetc(lexer->_file_ptr);
+        c = fgetc(lexer->file_ptr);
         if (c == EOF) {
-            ungetc(c, lexer->_file_ptr);
+            ungetc(c, lexer->file_ptr);
             break;
         }
         token_str[length] = c;
@@ -88,13 +88,13 @@ Token* read_punctuator(Lexer* lexer) {
     }
 
     while (length > 0) {
-        TokenType* token_ref = map_get(lexer->_punctuator_map, token_str);
+        TokenType* token_ref = map_get(lexer->punctuator_map, token_str);
         if (token_ref != NULL) {
             free(token_str);
             return new_token(*token_ref);
         }
         length--;
-        ungetc(token_str[length], lexer->_file_ptr);
+        ungetc(token_str[length], lexer->file_ptr);
         token_str[length] = '\0';
     }
 

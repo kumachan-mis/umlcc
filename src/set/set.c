@@ -5,12 +5,12 @@
 
 #define NOTNULL ((void*)1)
 
-struct _Set {
+struct Set {
     Map* inner;
     HashableType* t_item;
 };
 
-struct _SetIter {
+struct SetIter {
     int index;
 };
 

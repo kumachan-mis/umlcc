@@ -9,7 +9,7 @@
 Ast* parse_translation_unit(Parser* parser) {
     Ast* ast = new_ast(AST_TRAS_UNIT, 0);
     while (1) {
-        Token* token = vector_at(parser->_tokens, parser->_index);
+        Token* token = vector_at(parser->tokens, parser->index);
         if (token->type == TOKEN_EOF) break;
         if (external_may_function_definition(parser)) {
             vector_push(ast->children, parse_function_definition(parser));

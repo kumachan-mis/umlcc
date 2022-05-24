@@ -8,10 +8,10 @@ BaseType t_cparam = {
     .delete_object = delete_cparam,
 };
 
-struct _CType* ctype_copy(struct _CType* ctype);
-void delete_ctype(struct _CType* ctype);
+struct CType* ctype_copy(struct CType* ctype);
+void delete_ctype(struct CType* ctype);
 
-CFunction* new_cfunction(Vector* params, struct _CType* return_ctype) {
+CFunction* new_cfunction(Vector* params, struct CType* return_ctype) {
     CFunction* cfunction = malloc(sizeof(CFunction));
     cfunction->params = params;
     cfunction->return_ctype = return_ctype;
@@ -41,11 +41,11 @@ CFunction* cfunction_copy(CFunction* cfunction) {
     return copied_cfunction;
 }
 
-struct _CType* cfunction_next(CFunction* cfunction) {
+struct CType* cfunction_next(CFunction* cfunction) {
     return cfunction->return_ctype;
 }
 
-CFunction* cfunction_connect(CFunction* socket, struct _CType* plug) {
+CFunction* cfunction_connect(CFunction* socket, struct CType* plug) {
     socket->return_ctype = plug;
     return socket;
 }
@@ -56,7 +56,7 @@ void delete_cfunction(CFunction* cfunction) {
     free(cfunction);
 }
 
-CParam* new_cparam(char* ident_name, struct _CType* ctype) {
+CParam* new_cparam(char* ident_name, struct CType* ctype) {
     CParam* cparam = malloc(sizeof(CParam));
     cparam->ident_name = ident_name;
     cparam->ctype = ctype;

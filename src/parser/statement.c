@@ -4,7 +4,7 @@
 #include "./util.h"
 
 Ast* parse_stmt(Parser* parser) {
-    Token* token = vector_at(parser->_tokens, parser->_index);
+    Token* token = vector_at(parser->tokens, parser->index);
     switch (token->type) {
         case TOKEN_LBRACE:
             return parse_compound_stmt(parser);
@@ -20,9 +20,9 @@ Ast* parse_compound_stmt(Parser* parser) {
 
     consume_token(parser, TOKEN_LBRACE);
     while (1) {
-        Token* token = vector_at(parser->_tokens, parser->_index);
+        Token* token = vector_at(parser->tokens, parser->index);
         if (token->type == TOKEN_RBRACE) {
-            parser->_index++;
+            parser->index++;
             return ast;
         }
         if (blockitem_may_decl(parser)) {

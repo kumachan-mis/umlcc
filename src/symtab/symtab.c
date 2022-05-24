@@ -6,37 +6,37 @@
 
 SymbolTable* new_symboltable() {
     SymbolTable* table = malloc(sizeof(SymbolTable));
-    table->_symbol_map = new_map(&t_hashable_string, &t_symbol);
-    table->_memory_size = 0;
-    table->_outer_scope = NULL;
+    table->symbol_map = new_map(&t_hashable_string, &t_symbol);
+    table->memory_size = 0;
+    table->outer_scope = NULL;
     return table;
 }
 
 void delete_symboltable(SymbolTable* table) {
-    if (table->_outer_scope != NULL) delete_symboltable(table->_outer_scope);
-    delete_map(table->_symbol_map);
+    if (table->outer_scope != NULL) delete_symboltable(table->outer_scope);
+    delete_map(table->symbol_map);
     free(table);
 }
 
 int symboltable_can_define(SymbolTable* table, char* name) {
-    return map_get(table->_symbol_map, name) == NULL;
+    return map_get(table->symbol_map, name) == NULL;
 }
 
 Symbol* symboltable_define(SymbolTable* table, char* name, CType* ctype) {
     if (!symboltable_can_define(table, name)) return NULL;
-    table->_memory_size += ctype_size(ctype);
-    Symbol* symbol = new_symbol(name, ctype, table->_memory_size);
+    table->memory_size += ctype_size(ctype);
+    Symbol* symbol = new_symbol(name, ctype, table->memory_size);
     char* symbol_name = new_string(name);
-    map_add(table->_symbol_map, symbol_name, symbol);
+    map_add(table->symbol_map, symbol_name, symbol);
     return symbol;
 }
 
 Symbol* symboltable_search(SymbolTable* table, char* name) {
     Symbol* symbol = NULL;
     while (table != NULL) {
-        symbol = map_get(table->_symbol_map, name);
+        symbol = map_get(table->symbol_map, name);
         if (symbol != NULL) break;
-        table = table->_outer_scope;
+        table = table->outer_scope;
     }
     return symbol;
 }
@@ -44,16 +44,16 @@ Symbol* symboltable_search(SymbolTable* table, char* name) {
 SymbolTable* symboltable_enter_scope(SymbolTable* table) {
     SymbolTable* inner_table = new_symboltable();
     if (table != NULL) {
-        inner_table->_memory_size = table->_memory_size;
-        inner_table->_outer_scope = table;
+        inner_table->memory_size = table->memory_size;
+        inner_table->outer_scope = table;
     }
     return inner_table;
 }
 
 SymbolTable* symboltable_exit_scope(SymbolTable* table) {
-    SymbolTable* outer_table = table->_outer_scope;
-    if (outer_table != NULL) outer_table->_memory_size = table->_memory_size;
-    delete_map(table->_symbol_map);
+    SymbolTable* outer_table = table->outer_scope;
+    if (outer_table != NULL) outer_table->memory_size = table->memory_size;
+    delete_map(table->symbol_map);
     free(table);
     return outer_table;
 }

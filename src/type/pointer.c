@@ -2,10 +2,10 @@
 
 #include <stdlib.h>
 
-struct _CType* ctype_copy(struct _CType* ctype);
-void delete_ctype(struct _CType* ctype);
+struct CType* ctype_copy(struct CType* ctype);
+void delete_ctype(struct CType* ctype);
 
-CPointer* new_cpointer(struct _CType* to_ctype) {
+CPointer* new_cpointer(struct CType* to_ctype) {
     CPointer* cpointer = malloc(sizeof(CPointer));
     cpointer->to_ctype = to_ctype;
     return cpointer;
@@ -22,11 +22,11 @@ CPointer* cpointer_copy(CPointer* cpointer) {
     return copied_cpointer;
 }
 
-struct _CType* cpointer_next(CPointer* cpointer) {
+struct CType* cpointer_next(CPointer* cpointer) {
     return cpointer->to_ctype;
 }
 
-CPointer* cpointer_connect(CPointer* socket, struct _CType* plug) {
+CPointer* cpointer_connect(CPointer* socket, struct CType* plug) {
     socket->to_ctype = plug;
     return socket;
 }

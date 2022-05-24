@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 Vector* gen_inst_x64code(X64gen* x64gen) {
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     switch (immc->inst->type) {
         case INST_LOAD:
             return gen_load_x64code(x64gen);

@@ -1,7 +1,7 @@
-#ifndef _UMLCC_MAP_CELL_H_
-#define _UMLCC_MAP_CELL_H_
+#ifndef UMLCC_MAP_CELL_H
+#define UMLCC_MAP_CELL_H
 
-typedef struct _MapCell {
+typedef struct MapCell {
     void* key;
     void* value;
     int deleted;

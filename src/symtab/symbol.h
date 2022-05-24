@@ -1,10 +1,10 @@
-#ifndef _UMLCC_SYMBOL_H_
-#define _UMLCC_SYMBOL_H_
+#ifndef UMLCC_SYMBOL_H
+#define UMLCC_SYMBOL_H
 
 #include "../common/common.h"
 #include "../type/type.h"
 
-typedef struct _Symbol {
+typedef struct Symbol {
     char* name;
     CType* ctype;
     int memory_offset;

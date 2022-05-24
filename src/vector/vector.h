@@ -1,7 +1,7 @@
-#ifndef _UMLCC_VECTOR_H_
-#define _UMLCC_VECTOR_H_
+#ifndef UMLCC_VECTOR_H
+#define UMLCC_VECTOR_H
 
-typedef struct _Vector Vector;
+typedef struct Vector Vector;
 
 #include "../common/common.h"
 

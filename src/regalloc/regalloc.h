@@ -1,13 +1,13 @@
-#ifndef _UMLCC_REGALLOC_H_
-#define _UMLCC_REGALLOC_H_
+#ifndef UMLCC_REGALLOC_H
+#define UMLCC_REGALLOC_H
 
 #include "../vector/vector.h"
 #include "./allocimmcs.h"
 
-typedef struct _RegAlloc {
-    Vector* _immcs;
-    int _immc_offset;
-    int _num_real_regs;
+typedef struct RegAlloc {
+    Vector* immcs;
+    int immc_offset;
+    int num_real_regs;
 } RegAlloc;
 
 RegAlloc* new_regalloc(Vector* immcs, int num_regs);

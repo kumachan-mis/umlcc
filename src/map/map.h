@@ -1,10 +1,10 @@
-#ifndef _UMLCC_MAP_H_
-#define _UMLCC_MAP_H_
+#ifndef UMLCC_MAP_H
+#define UMLCC_MAP_H
 
 #include "../common/common.h"
 
-typedef struct _Map Map;
-typedef struct _MapIter MapIter;
+typedef struct Map Map;
+typedef struct MapIter MapIter;
 
 Map* new_map(HashableType* t_key, BaseType* t_value);
 void delete_map(Map* map);

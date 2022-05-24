@@ -1,13 +1,13 @@
-#ifndef _UMLCC_SYMTAB_H_
-#define _UMLCC_SYMTAB_H_
+#ifndef UMLCC_SYMTAB_H
+#define UMLCC_SYMTAB_H
 
 #include "../map/map.h"
 #include "./symbol.h"
 
-typedef struct _SymbolTable {
-    Map* _symbol_map;
-    int _memory_size;
-    struct _SymbolTable* _outer_scope;
+typedef struct SymbolTable {
+    Map* symbol_map;
+    int memory_size;
+    struct SymbolTable* outer_scope;
 } SymbolTable;
 
 SymbolTable* new_symboltable();

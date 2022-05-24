@@ -16,10 +16,10 @@ Ast* parse_decl(Parser* parser) {
 Ast* parse_decl_specifiers(Parser* parser) {
     Ast* ast = NULL;
 
-    Token* token = vector_at(parser->_tokens, parser->_index);
+    Token* token = vector_at(parser->tokens, parser->index);
     switch (token->type) {
         case TOKEN_KEYWORD_INT:
-            parser->_index++;
+            parser->index++;
             ast = new_ast(AST_DECL_SPECIFIERS, 1, new_ast(AST_TYPE_INT, 0));
             return ast;
         default:
@@ -31,12 +31,12 @@ Ast* parse_decl_specifiers(Parser* parser) {
 Ast* parse_init_declarator_list(Parser* parser) {
     Ast* ast = new_ast(AST_INIT_DECLOR_LIST, 0);
 
-    Token* token = vector_at(parser->_tokens, parser->_index);
+    Token* token = vector_at(parser->tokens, parser->index);
     if (token->type == TOKEN_SEMICOLON) return ast;
 
     while (1) {
         vector_push(ast->children, parse_init_declarator(parser));
-        token = vector_at(parser->_tokens, parser->_index);
+        token = vector_at(parser->tokens, parser->index);
         if (token->type == TOKEN_SEMICOLON) break;
         consume_token(parser, TOKEN_COMMA);
     }
@@ -57,10 +57,10 @@ Ast* parse_declarator(Parser* parser) {
 Ast* parse_direct_declarator(Parser* parser) {
     Ast* ast = NULL;
 
-    Token* token = vector_at(parser->_tokens, parser->_index);
+    Token* token = vector_at(parser->tokens, parser->index);
     switch (token->type) {
         case TOKEN_IDENT:
-            parser->_index++;
+            parser->index++;
             ast = new_identifier_ast(AST_IDENT_DECLOR, new_string(token->ident_name));
             break;
         default:
@@ -70,10 +70,10 @@ Ast* parse_direct_declarator(Parser* parser) {
 
     int terminated = 0;
     while (!terminated) {
-        token = vector_at(parser->_tokens, parser->_index);
+        token = vector_at(parser->tokens, parser->index);
         switch (token->type) {
             case TOKEN_LPALEN:
-                parser->_index++;
+                parser->index++;
                 ast = new_ast(AST_FUNC_DECLOR, 2, ast, parse_parameter_list(parser));
                 consume_token(parser, TOKEN_RPALEN);
                 break;
@@ -89,12 +89,12 @@ Ast* parse_direct_declarator(Parser* parser) {
 Ast* parse_parameter_list(Parser* parser) {
     Ast* ast = new_ast(AST_PARAM_LIST, 0);
 
-    Token* token = vector_at(parser->_tokens, parser->_index);
+    Token* token = vector_at(parser->tokens, parser->index);
     if (token->type == TOKEN_RPALEN) return ast;
 
     while (1) {
         vector_push(ast->children, parse_parameter_decl(parser));
-        token = vector_at(parser->_tokens, parser->_index);
+        token = vector_at(parser->tokens, parser->index);
         if (token->type == TOKEN_RPALEN) break;
         consume_token(parser, TOKEN_COMMA);
     }

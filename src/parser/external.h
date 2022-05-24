@@ -1,5 +1,5 @@
-#ifndef _UMLCC_PARSER_EXTERNAL_H_
-#define _UMLCC_PARSER_EXTERNAL_H_
+#ifndef UMLCC_PARSER_EXTERNAL_H
+#define UMLCC_PARSER_EXTERNAL_H
 
 #include "./parser.h"
 

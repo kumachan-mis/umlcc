@@ -46,9 +46,9 @@ void token_map_add(Map* token_map, char* token_str, TokenType type) {
 }
 
 void skip_white_spaces(Lexer* lexer) {
-    int c = fgetc(lexer->_file_ptr);
+    int c = fgetc(lexer->file_ptr);
     while (isspace(c)) {
-        c = fgetc(lexer->_file_ptr);
+        c = fgetc(lexer->file_ptr);
     }
-    ungetc(c, lexer->_file_ptr);
+    ungetc(c, lexer->file_ptr);
 }

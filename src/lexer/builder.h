@@ -1,7 +1,7 @@
-#ifndef _LEXER_DYSTRING_H_
-#define _LEXER_DYSTRING_H_
+#ifndef LEXER_DYSTRING_H
+#define LEXER_DYSTRING_H
 
-typedef struct _Builder Builder;
+typedef struct Builder Builder;
 
 Builder* new_builder();
 void delete_builder(Builder* builder);

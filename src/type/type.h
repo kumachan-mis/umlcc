@@ -1,18 +1,18 @@
-#ifndef _UMLCC_TYPE_H_
-#define _UMLCC_TYPE_H_
+#ifndef UMLCC_TYPE_H
+#define UMLCC_TYPE_H
 
 #include "../common/common.h"
 #include "../vector/vector.h"
 #include "./function.h"
 #include "./pointer.h"
 
-typedef enum _CTypeType {
+typedef enum CTypeType {
     CTYPE_INT,
     CTYPE_POINTER,
     CTYPE_FUNCUCTION,
 } CTypeType;
 
-typedef struct _CType {
+typedef struct CType {
     CTypeType type;
     CPointer* pointer;
     CFunction* function;

@@ -1,10 +1,10 @@
-#ifndef _UMLCC_SET_H_
-#define _UMLCC_SET_H_
+#ifndef UMLCC_SET_H
+#define UMLCC_SET_H
 
 #include "../common/common.h"
 
-typedef struct _Set Set;
-typedef struct _SetIter SetIter;
+typedef struct Set Set;
+typedef struct SetIter SetIter;
 
 Set* new_set(HashableType* t_item);
 void delete_set(Set* set);

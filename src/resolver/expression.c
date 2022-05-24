@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 Srt* resolve_expr(Resolver* resolver) {
-    Ast* ast = resolver->_ast;
+    Ast* ast = resolver->ast;
 
     switch (ast->type) {
         case AST_ASSIGN_EXPR:
@@ -38,35 +38,35 @@ Srt* resolve_expr(Resolver* resolver) {
 }
 
 Srt* resolve_assignment_expr(Resolver* resolver) {
-    Ast* ast = resolver->_ast;
+    Ast* ast = resolver->ast;
 
-    resolver->_ast = vector_at(ast->children, 0);
+    resolver->ast = vector_at(ast->children, 0);
     Srt* lhs_srt = new_srt(SRT_ADDR_EXPR, 1, resolve_expr(resolver));
 
-    resolver->_ast = vector_at(ast->children, 1);
+    resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
 
     CType* ctype = new_integer_ctype();
-    resolver->_ast = ast;
+    resolver->ast = ast;
 
     return new_ctyped_srt(SRT_ASSIGN_EXPR, ctype, 2, lhs_srt, rhs_srt);
 }
 
 Srt* resolve_logical_expr(Resolver* resolver) {
-    Ast* ast = resolver->_ast;
+    Ast* ast = resolver->ast;
 
-    resolver->_ast = vector_at(ast->children, 0);
+    resolver->ast = vector_at(ast->children, 0);
     Srt* lhs_srt = resolve_expr(resolver);
 
-    resolver->_ast = vector_at(ast->children, 1);
+    resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
 
     CType* ctype = new_integer_ctype();
-    resolver->_ast = ast;
+    resolver->ast = ast;
 
     switch (ast->type) {
         case AST_LOR_EXPR:
-            resolver->_ast = ast;
+            resolver->ast = ast;
             return new_ctyped_srt(SRT_LOR_EXPR, ctype, 2, lhs_srt, rhs_srt);
         case AST_LAND_EXPR:
             return new_ctyped_srt(SRT_LAND_EXPR, ctype, 2, lhs_srt, rhs_srt);
@@ -77,16 +77,16 @@ Srt* resolve_logical_expr(Resolver* resolver) {
 }
 
 Srt* resolve_equality_expr(Resolver* resolver) {
-    Ast* ast = resolver->_ast;
+    Ast* ast = resolver->ast;
 
-    resolver->_ast = vector_at(ast->children, 0);
+    resolver->ast = vector_at(ast->children, 0);
     Srt* lhs_srt = resolve_expr(resolver);
 
-    resolver->_ast = vector_at(ast->children, 1);
+    resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
 
     CType* ctype = new_integer_ctype();
-    resolver->_ast = ast;
+    resolver->ast = ast;
 
     switch (ast->type) {
         case AST_EQUAL_EXPR:
@@ -100,16 +100,16 @@ Srt* resolve_equality_expr(Resolver* resolver) {
 }
 
 Srt* resolve_additive_expr(Resolver* resolver) {
-    Ast* ast = resolver->_ast;
+    Ast* ast = resolver->ast;
 
-    resolver->_ast = vector_at(ast->children, 0);
+    resolver->ast = vector_at(ast->children, 0);
     Srt* lhs_srt = resolve_expr(resolver);
 
-    resolver->_ast = vector_at(ast->children, 1);
+    resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
 
     CType* ctype = new_integer_ctype();
-    resolver->_ast = ast;
+    resolver->ast = ast;
 
     switch (ast->type) {
         case AST_ADD_EXPR:
@@ -123,16 +123,16 @@ Srt* resolve_additive_expr(Resolver* resolver) {
 }
 
 Srt* resolve_multiplicative_expr(Resolver* resolver) {
-    Ast* ast = resolver->_ast;
+    Ast* ast = resolver->ast;
 
-    resolver->_ast = vector_at(ast->children, 0);
+    resolver->ast = vector_at(ast->children, 0);
     Srt* lhs_srt = resolve_expr(resolver);
 
-    resolver->_ast = vector_at(ast->children, 1);
+    resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
 
     CType* ctype = new_integer_ctype();
-    resolver->_ast = ast;
+    resolver->ast = ast;
 
     switch (ast->type) {
         case AST_MUL_EXPR:
@@ -148,13 +148,13 @@ Srt* resolve_multiplicative_expr(Resolver* resolver) {
 }
 
 Srt* resolve_unary_expr(Resolver* resolver) {
-    Ast* ast = resolver->_ast;
+    Ast* ast = resolver->ast;
 
-    resolver->_ast = vector_at(ast->children, 0);
+    resolver->ast = vector_at(ast->children, 0);
     Srt* child_srt = resolve_expr(resolver);
 
     CType* ctype = new_integer_ctype();
-    resolver->_ast = ast;
+    resolver->ast = ast;
 
     switch (ast->type) {
         case AST_LNOT_EXPR:
@@ -166,20 +166,20 @@ Srt* resolve_unary_expr(Resolver* resolver) {
 }
 
 Srt* resolve_postfix_expr(Resolver* resolver) {
-    Ast* ast = resolver->_ast;
+    Ast* ast = resolver->ast;
 
     switch (ast->type) {
         case AST_CALL_EXPR: {
-            resolver->_ast = vector_at(ast->children, 0);
+            resolver->ast = vector_at(ast->children, 0);
             Srt* raw_lhs_srt = resolve_expr(resolver);
             Srt* lhs_srt = convert_function_to_ptr(raw_lhs_srt);
             // TODO: type conversion is always performed, not only in function calls
 
-            resolver->_ast = vector_at(ast->children, 1);
+            resolver->ast = vector_at(ast->children, 1);
             Srt* rhs_srt = resolve_argument_expr_list(resolver);
 
             CType* ctype = ctype_copy(raw_lhs_srt->ctype->function->return_ctype);
-            resolver->_ast = ast;
+            resolver->ast = ast;
             return new_ctyped_srt(SRT_CALL_EXPR, ctype, 2, lhs_srt, rhs_srt);
         }
         default:
@@ -190,29 +190,29 @@ Srt* resolve_postfix_expr(Resolver* resolver) {
 
 Srt* resolve_argument_expr_list(Resolver* resolver) {
     Srt* srt = new_srt(SRT_ARG_LIST, 0);
-    Ast* ast = resolver->_ast;
+    Ast* ast = resolver->ast;
 
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
-        resolver->_ast = vector_at(ast->children, i);
+        resolver->ast = vector_at(ast->children, i);
         vector_push(srt->children, resolve_expr(resolver));
     }
 
-    resolver->_ast = ast;
+    resolver->ast = ast;
     return srt;
 }
 
 Srt* resolve_primary_expr(Resolver* resolver) {
-    Ast* ast = resolver->_ast;
+    Ast* ast = resolver->ast;
     Symbol* symbol = NULL;
 
     switch (ast->type) {
         case AST_IDENT_EXPR:
             if (symbol == NULL) {
-                symbol = symboltable_search(resolver->_local_table, ast->ident_name);
+                symbol = symboltable_search(resolver->local_table, ast->ident_name);
             }
             if (symbol == NULL) {
-                symbol = symboltable_search(resolver->_global_table, ast->ident_name);
+                symbol = symboltable_search(resolver->global_table, ast->ident_name);
             }
             if (symbol == NULL) {
                 fprintf(stderr, "Error: identifier '%s' is used before declared\n",

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct _Map {
+struct Map {
     HashableType* t_key;
     BaseType* t_value;
     MapCell** container;
@@ -12,7 +12,7 @@ struct _Map {
     int capacity;
 };
 
-struct _MapIter {
+struct MapIter {
     int index;
 };
 

@@ -8,8 +8,8 @@
 
 Vector* gen_seteq_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* fst_src = immc->inst->fst_src;
@@ -37,14 +37,14 @@ Vector* gen_seteq_x64code(X64gen* x64gen) {
     append_code(codes, "\tsete\t%s\n", BREG_NAMES[dst_id]);
     append_code(codes, "\tmovsbl\t%s, %s\n", BREG_NAMES[dst_id], LREG_NAMES[dst_id]);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_setneq_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* fst_src = immc->inst->fst_src;
@@ -72,6 +72,6 @@ Vector* gen_setneq_x64code(X64gen* x64gen) {
     append_code(codes, "\tsetne\t%s\n", BREG_NAMES[dst_id]);
     append_code(codes, "\tmovsbl\t%s, %s\n", BREG_NAMES[dst_id], LREG_NAMES[dst_id]);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }

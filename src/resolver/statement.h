@@ -1,5 +1,5 @@
-#ifndef _UMLCC_RESOLVER_STATEMENT_H_
-#define _UMLCC_RESOLVER_STATEMENT_H_
+#ifndef UMLCC_RESOLVER_STATEMENT_H
+#define UMLCC_RESOLVER_STATEMENT_H
 
 #include "./resolver.h"
 

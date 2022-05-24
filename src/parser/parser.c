@@ -6,13 +6,13 @@
 
 Parser* new_parser(Vector* tokens) {
     Parser* parser = malloc(sizeof(Parser));
-    parser->_tokens = tokens;
-    parser->_index = 0;
+    parser->tokens = tokens;
+    parser->index = 0;
     return parser;
 }
 
 void delete_parser(Parser* parser) {
-    delete_vector(parser->_tokens);
+    delete_vector(parser->tokens);
     free(parser);
 }
 

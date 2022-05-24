@@ -1,11 +1,11 @@
-#ifndef _UMLCC_SRT_H_
-#define _UMLCC_SRT_H_
+#ifndef UMLCC_SRT_H
+#define UMLCC_SRT_H
 
 #include "../common/common.h"
 #include "../type/type.h"
 #include "../vector/vector.h"
 
-typedef enum _SrtType {
+typedef enum SrtType {
     // translation unit
     SRT_TRAS_UNIT,
 
@@ -50,7 +50,7 @@ typedef enum _SrtType {
     SRT_INT_EXPR,
 } SrtType;
 
-typedef struct _Srt {
+typedef struct Srt {
     SrtType type;
     CType* ctype;
     char* ident_name;

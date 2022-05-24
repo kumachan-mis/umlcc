@@ -8,64 +8,64 @@
 
 Srt* resolve_transration_unit(Resolver* resolver) {
     Srt* srt = new_srt(SRT_TRAS_UNIT, 0);
-    Ast* ast = resolver->_ast;
+    Ast* ast = resolver->ast;
 
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
-        resolver->_ast = vector_at(ast->children, i);
-        if (resolver->_ast->type == AST_FUNC_DEF) {
+        resolver->ast = vector_at(ast->children, i);
+        if (resolver->ast->type == AST_FUNC_DEF) {
             vector_push(srt->children, resolve_function_definition(resolver));
         } else {
             vector_push(srt->children, resolve_decl(resolver));
         }
     }
 
-    resolver->_ast = ast;
+    resolver->ast = ast;
     return srt;
 }
 
 Srt* resolve_function_definition(Resolver* resolver) {
     Srt* srt = new_srt(SRT_FUNC_DEF, 0);
-    Ast* ast = resolver->_ast;
+    Ast* ast = resolver->ast;
 
-    resolver->_ast = vector_at(ast->children, 0);
-    resolver->_shared_ctype = resolve_decl_specifiers(resolver);
+    resolver->ast = vector_at(ast->children, 0);
+    resolver->shared_ctype = resolve_decl_specifiers(resolver);
 
-    resolver->_ast = vector_at(ast->children, 1);
+    resolver->ast = vector_at(ast->children, 1);
     Srt* declarator_srt = resolve_declarator(resolver);
-    declarator_srt->ctype = ctype_connect(declarator_srt->ctype, resolver->_shared_ctype);
+    declarator_srt->ctype = ctype_connect(declarator_srt->ctype, resolver->shared_ctype);
     vector_push(srt->children, declarator_srt);
 
-    if (!symboltable_can_define(resolver->_global_table, declarator_srt->ident_name)) {
+    if (!symboltable_can_define(resolver->global_table, declarator_srt->ident_name)) {
         fprintf(stderr, "Error: identifier '%s' is already defined\n", declarator_srt->ident_name);
         exit(1);
     }
     char* table_ident_name = new_string(declarator_srt->ident_name);
     CType* table_ctype = ctype_copy(declarator_srt->ctype);
-    symboltable_define(resolver->_global_table, table_ident_name, table_ctype);
+    symboltable_define(resolver->global_table, table_ident_name, table_ctype);
 
-    resolver->_local_table = new_symboltable();
+    resolver->local_table = new_symboltable();
 
     Vector* params = declarator_srt->ctype->function->params;
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
         CParam* cparam = vector_at(params, i);
-        if (!symboltable_can_define(resolver->_local_table, cparam->ident_name)) {
+        if (!symboltable_can_define(resolver->local_table, cparam->ident_name)) {
             fprintf(stderr, "Error: identifier '%s' is already defined\n", cparam->ident_name);
             exit(1);
         }
         char* table_ident_name = new_string(cparam->ident_name);
         CType* table_ctype = ctype_copy(cparam->ctype);
-        symboltable_define(resolver->_local_table, table_ident_name, table_ctype);
+        symboltable_define(resolver->local_table, table_ident_name, table_ctype);
     }
 
-    resolver->_ast = vector_at(ast->children, 2);
+    resolver->ast = vector_at(ast->children, 2);
     vector_push(srt->children, resolve_compound_stmt(resolver));
 
-    delete_symboltable(resolver->_local_table);
-    resolver->_local_table = NULL;
+    delete_symboltable(resolver->local_table);
+    resolver->local_table = NULL;
 
-    resolver->_shared_ctype = NULL;
-    resolver->_ast = ast;
+    resolver->shared_ctype = NULL;
+    resolver->ast = ast;
     return srt;
 }

@@ -1,9 +1,9 @@
-#ifndef _UMLCC_LIVENESS_H_
-#define _UMLCC_LIVENESS_H_
+#ifndef UMLCC_LIVENESS_H
+#define UMLCC_LIVENESS_H
 
 #include "../common/common.h"
 
-typedef struct _Liveness {
+typedef struct Liveness {
     int first_def_index;
     int last_use_index;
 } Liveness;

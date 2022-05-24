@@ -1,16 +1,16 @@
-#ifndef _UMLCC_IMMC_H_
-#define _UMLCC_IMMC_H_
+#ifndef UMLCC_IMMC_H
+#define UMLCC_IMMC_H
 
 #include "../common/common.h"
 #include "./inst.h"
 #include "./label.h"
 
-typedef enum _ImmcType {
+typedef enum ImmcType {
     IMMC_INST,
     IMMC_LABEL,
 } ImmcType;
 
-typedef struct _Immc {
+typedef struct Immc {
     ImmcType type;
     ImmcInst* inst;
     ImmcLabel* label;

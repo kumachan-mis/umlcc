@@ -1,5 +1,5 @@
-#ifndef _UMLCC_LEXER_UTIL_H_
-#define _UMLCC_LEXER_UTIL_H_
+#ifndef UMLCC_LEXER_UTIL_H
+#define UMLCC_LEXER_UTIL_H
 
 #include "../lexer/lexer.h"
 

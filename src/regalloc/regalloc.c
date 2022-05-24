@@ -30,14 +30,14 @@ void update_liveseqs(Vector* liveseqs, Vector* livenesses, Vector* allocations);
 
 RegAlloc* new_regalloc(Vector* immcs, int num_real_regs) {
     RegAlloc* regalloc = malloc(sizeof(RegAlloc));
-    regalloc->_immcs = immcs;
-    regalloc->_immc_offset = 0;
-    regalloc->_num_real_regs = num_real_regs;
+    regalloc->immcs = immcs;
+    regalloc->immc_offset = 0;
+    regalloc->num_real_regs = num_real_regs;
     return regalloc;
 }
 
 void delete_regalloc(RegAlloc* regalloc) {
-    delete_vector(regalloc->_immcs);
+    delete_vector(regalloc->immcs);
     free(regalloc);
 }
 
@@ -45,10 +45,10 @@ AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc) {
     Vector* allocated_immcs = new_vector(&t_immc);
     Vector* liveseqs = new_vector(&t_liveseq);
 
-    vector_fill(liveseqs, regalloc->_num_real_regs, new_liveseq());
+    vector_fill(liveseqs, regalloc->num_real_regs, new_liveseq());
 
-    int immcs_len = vector_size(regalloc->_immcs);
-    while (regalloc->_immc_offset < immcs_len) {
+    int immcs_len = vector_size(regalloc->immcs);
+    while (regalloc->immc_offset < immcs_len) {
         Vector* external_immcs = dequeue_external_immcs(regalloc);
         int external_immcs_len = vector_size(external_immcs);
 
@@ -56,7 +56,7 @@ AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc) {
         Vector* livenesses = analyze_register_liveness(regalloc, control_flow_graph);
         delete_vector(control_flow_graph);
 
-        Vector* allocations = determine_allocation(livenesses, regalloc->_num_real_regs);
+        Vector* allocations = determine_allocation(livenesses, regalloc->num_real_regs);
         Vector* sub_allocated_immcs = gen_allocated_immcs(external_immcs, allocations);
         delete_vector(external_immcs);
 
@@ -66,7 +66,7 @@ AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc) {
 
         vector_extend(allocated_immcs, sub_allocated_immcs);
         delete_vector(sub_allocated_immcs);
-        regalloc->_immc_offset += external_immcs_len;
+        regalloc->immc_offset += external_immcs_len;
     }
 
     return new_allocimmcs(allocated_immcs, liveseqs);
@@ -76,13 +76,13 @@ Vector* dequeue_external_immcs(RegAlloc* regalloc) {
     Vector* sequence = new_vector(&t_immc);
     int index = 0;
 
-    Immc* label = vector_at(regalloc->_immcs, regalloc->_immc_offset + index);
+    Immc* label = vector_at(regalloc->immcs, regalloc->immc_offset + index);
     index++;
     vector_push(sequence, immc_copy(label));
 
-    int immcs_len = vector_size(regalloc->_immcs);
-    while (regalloc->_immc_offset + index < immcs_len) {
-        Immc* immc = vector_at(regalloc->_immcs, regalloc->_immc_offset + index);
+    int immcs_len = vector_size(regalloc->immcs);
+    while (regalloc->immc_offset + index < immcs_len) {
+        Immc* immc = vector_at(regalloc->immcs, regalloc->immc_offset + index);
         if (immc->type == IMMC_LABEL && immc->label->type == LABEL_FUNCTION) break;
         index++;
         vector_push(sequence, immc_copy(immc));
@@ -234,16 +234,16 @@ int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
 
 Vector* analyze_register_liveness(RegAlloc* regalloc, Vector* control_flow_graph) {
     Vector* livenesses = new_vector(&t_liveness);
-    int immc_offset = regalloc->_immc_offset;
+    int immc_offset = regalloc->immc_offset;
 
     int blocks_len = vector_size(control_flow_graph);
     for (int block_id = 0; block_id < blocks_len; block_id++) {
         BasicBlock* basic_block = vector_at(control_flow_graph, block_id);
         update_register_liveness(regalloc, livenesses, basic_block);
-        regalloc->_immc_offset += vector_size(basic_block->immcs);
+        regalloc->immc_offset += vector_size(basic_block->immcs);
     }
 
-    regalloc->_immc_offset = immc_offset;
+    regalloc->immc_offset = immc_offset;
     return livenesses;
 }
 
@@ -256,22 +256,22 @@ void update_register_liveness(RegAlloc* regalloc, Vector* livenesses, BasicBlock
         ImmcOpe* fst_src = immc->inst->fst_src;
         if (fst_src != NULL && (fst_src->type == OPERAND_REG || fst_src->type == OPERAND_PTR)) {
             Liveness* liveness = vector_at(livenesses, fst_src->reg_id);
-            liveness->last_use_index = regalloc->_immc_offset + index;
+            liveness->last_use_index = regalloc->immc_offset + index;
         }
 
         ImmcOpe* snd_src = immc->inst->snd_src;
         if (snd_src != NULL && (snd_src->type == OPERAND_REG || snd_src->type == OPERAND_PTR)) {
             Liveness* liveness = vector_at(livenesses, snd_src->reg_id);
-            liveness->last_use_index = regalloc->_immc_offset + index;
+            liveness->last_use_index = regalloc->immc_offset + index;
         }
 
         ImmcOpe* dst = immc->inst->dst;
         if (dst != NULL && dst->type == OPERAND_REG) {
-            Liveness* liveness = new_liveness(regalloc->_immc_offset + index);
+            Liveness* liveness = new_liveness(regalloc->immc_offset + index);
             vector_fill(livenesses, dst->reg_id + 1, liveness);
         } else if (dst != NULL && dst->type == OPERAND_PTR) {
             Liveness* liveness = vector_at(livenesses, dst->reg_id);
-            liveness->last_use_index = regalloc->_immc_offset + index;
+            liveness->last_use_index = regalloc->immc_offset + index;
         }
     }
 
@@ -280,7 +280,7 @@ void update_register_liveness(RegAlloc* regalloc, Vector* livenesses, BasicBlock
          iter = set_iter_next(iter, output)) {
         int* reg_id_ref = set_iter_item(iter, output);
         Liveness* liveness = vector_at(livenesses, *reg_id_ref);
-        liveness->last_use_index = regalloc->_immc_offset + immcs_len;
+        liveness->last_use_index = regalloc->immc_offset + immcs_len;
     }
 }
 

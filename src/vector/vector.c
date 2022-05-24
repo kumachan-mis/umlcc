@@ -4,7 +4,7 @@
 #include <memory.h>
 #include <stdlib.h>
 
-struct _Vector {
+struct Vector {
     BaseType* t_item;
     void** container;
     int size;

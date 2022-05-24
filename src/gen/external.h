@@ -1,5 +1,5 @@
-#ifndef _UMLCC_GEN_EXTERNAL_H_
-#define _UMLCC_GEN_EXTERNAL_H_
+#ifndef UMLCC_GEN_EXTERNAL_H
+#define UMLCC_GEN_EXTERNAL_H
 
 #include "./gen.h"
 
