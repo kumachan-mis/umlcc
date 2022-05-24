@@ -1,31 +1,31 @@
 #include "./reader.h"
-#include "./dystring.h"
+#include "./builder.h"
 
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
 Token* read_keyword_or_identifier(Lexer* lexer) {
-    DyString* dystring = new_dystring();
+    Builder* builder = new_builder();
 
     char c = fgetc(lexer->_file_ptr);
     if (!isalpha(c) && c != '_') {
         ungetc(c, lexer->_file_ptr);
-        delete_dystring(dystring);
+        delete_builder(builder);
         return NULL;
     }
 
-    dystring_push(dystring, c);
+    builder_push(builder, c);
     while (1) {
         c = fgetc(lexer->_file_ptr);
         if (!isalpha(c) && !isdigit(c) && c != '_') {
             ungetc(c, lexer->_file_ptr);
             break;
         }
-        dystring_push(dystring, c);
+        builder_push(builder, c);
     }
 
-    char* token_str = dystring_finish(dystring);
+    char* token_str = builder_finish(builder);
     TokenType* token_ref = map_get(lexer->_keyword_map, token_str);
 
     if (token_ref != NULL) {
@@ -36,26 +36,26 @@ Token* read_keyword_or_identifier(Lexer* lexer) {
 }
 
 Token* read_integer_constant(Lexer* lexer) {
-    DyString* dystring = new_dystring();
+    Builder* builder = new_builder();
 
     char c = fgetc(lexer->_file_ptr);
     if (!isdigit(c)) {
         ungetc(c, lexer->_file_ptr);
-        delete_dystring(dystring);
+        delete_builder(builder);
         return NULL;
     }
 
-    dystring_push(dystring, c);
+    builder_push(builder, c);
     while (1) {
         c = fgetc(lexer->_file_ptr);
         if (!isdigit(c)) {
             ungetc(c, lexer->_file_ptr);
             break;
         }
-        dystring_push(dystring, c);
+        builder_push(builder, c);
     }
 
-    char* token_str = dystring_finish(dystring);
+    char* token_str = builder_finish(builder);
     Token* token = new_integer_token(atoi(token_str));
     free(token_str);
 
