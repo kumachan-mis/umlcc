@@ -11,7 +11,7 @@ BaseType t_srt = {
 Srt* new_srt(SrtType type, int num_children, ...) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
-    srt->ctype = NULL;
+    srt->dtype = NULL;
     srt->ident_name = NULL;
     srt->value_int = -1;
     srt->children = new_vector(&t_srt);
@@ -26,10 +26,10 @@ Srt* new_srt(SrtType type, int num_children, ...) {
     return srt;
 }
 
-Srt* new_ctyped_srt(SrtType type, CType* ctype, int num_children, ...) {
+Srt* new_dtyped_srt(SrtType type, Dtype* dtype, int num_children, ...) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
-    srt->ctype = ctype;
+    srt->dtype = dtype;
     srt->ident_name = NULL;
     srt->value_int = -1;
     srt->children = new_vector(&t_srt);
@@ -44,10 +44,10 @@ Srt* new_ctyped_srt(SrtType type, CType* ctype, int num_children, ...) {
     return srt;
 }
 
-Srt* new_identifier_srt(SrtType type, CType* ctype, char* ident_name) {
+Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
-    srt->ctype = ctype;
+    srt->dtype = dtype;
     srt->ident_name = ident_name;
     srt->value_int = -1;
     srt->children = new_vector(&t_srt);
@@ -58,7 +58,7 @@ Srt* new_identifier_srt(SrtType type, CType* ctype, char* ident_name) {
 Srt* new_integer_srt(SrtType type, int value) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
-    srt->ctype = new_integer_ctype();
+    srt->dtype = new_integer_dtype();
     srt->ident_name = NULL;
     srt->value_int = value;
     srt->children = new_vector(&t_srt);
@@ -67,7 +67,7 @@ Srt* new_integer_srt(SrtType type, int value) {
 }
 
 void delete_srt(Srt* srt) {
-    if (srt->ctype != NULL) delete_ctype(srt->ctype);
+    if (srt->dtype != NULL) delete_dtype(srt->dtype);
     if (srt->ident_name != NULL) free(srt->ident_name);
     delete_vector(srt->children);
     free(srt);
@@ -75,8 +75,8 @@ void delete_srt(Srt* srt) {
 
 Srt* srt_copy(Srt* srt) {
     Srt* copied_srt = malloc(sizeof(Srt));
-    copied_srt->ctype = NULL;
-    if (srt->ctype != NULL) copied_srt->ctype = ctype_copy(srt->ctype);
+    copied_srt->dtype = NULL;
+    if (srt->dtype != NULL) copied_srt->dtype = dtype_copy(srt->dtype);
     copied_srt->ident_name = NULL;
     if (srt->ident_name != NULL) copied_srt->ident_name = new_string(srt->ident_name);
     copied_srt->children = vector_copy(srt->children);

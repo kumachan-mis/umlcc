@@ -1,7 +1,7 @@
 #include "./reader.h"
 #include "./builder.h"
 
-#include <ctype.h>
+#include <dtype.h>
 #include <stdlib.h>
 #include <string.h>
 

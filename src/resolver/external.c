@@ -29,11 +29,11 @@ Srt* resolve_function_definition(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    resolver->shared_ctype = resolve_decl_specifiers(resolver);
+    resolver->shared_dtype = resolve_decl_specifiers(resolver);
 
     resolver->ast = vector_at(ast->children, 1);
     Srt* declarator_srt = resolve_declarator(resolver);
-    declarator_srt->ctype = ctype_connect(declarator_srt->ctype, resolver->shared_ctype);
+    declarator_srt->dtype = dtype_connect(declarator_srt->dtype, resolver->shared_dtype);
     vector_push(srt->children, declarator_srt);
 
     if (!symboltable_can_define(resolver->global_table, declarator_srt->ident_name)) {
@@ -41,22 +41,22 @@ Srt* resolve_function_definition(Resolver* resolver) {
         exit(1);
     }
     char* table_ident_name = new_string(declarator_srt->ident_name);
-    CType* table_ctype = ctype_copy(declarator_srt->ctype);
-    symboltable_define(resolver->global_table, table_ident_name, table_ctype);
+    Dtype* table_dtype = dtype_copy(declarator_srt->dtype);
+    symboltable_define(resolver->global_table, table_ident_name, table_dtype);
 
     resolver->local_table = new_symboltable();
 
-    Vector* params = declarator_srt->ctype->function->params;
+    Vector* params = declarator_srt->dtype->function->params;
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
-        CParam* cparam = vector_at(params, i);
-        if (!symboltable_can_define(resolver->local_table, cparam->ident_name)) {
-            fprintf(stderr, "Error: identifier '%s' is already defined\n", cparam->ident_name);
+        DParam* dparam = vector_at(params, i);
+        if (!symboltable_can_define(resolver->local_table, dparam->ident_name)) {
+            fprintf(stderr, "Error: identifier '%s' is already defined\n", dparam->ident_name);
             exit(1);
         }
-        char* table_ident_name = new_string(cparam->ident_name);
-        CType* table_ctype = ctype_copy(cparam->ctype);
-        symboltable_define(resolver->local_table, table_ident_name, table_ctype);
+        char* table_ident_name = new_string(dparam->ident_name);
+        Dtype* table_dtype = dtype_copy(dparam->dtype);
+        symboltable_define(resolver->local_table, table_ident_name, table_dtype);
     }
 
     resolver->ast = vector_at(ast->children, 2);
@@ -65,7 +65,7 @@ Srt* resolve_function_definition(Resolver* resolver) {
     delete_symboltable(resolver->local_table);
     resolver->local_table = NULL;
 
-    resolver->shared_ctype = NULL;
+    resolver->shared_dtype = NULL;
     resolver->ast = ast;
     return srt;
 }

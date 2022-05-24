@@ -18,8 +18,8 @@ Vector* gen_function_definition_code(Codegen* codegen) {
 
     Srt* declarator_srt = vector_at(srt->children, 0);
     char* table_ident_name = new_string(declarator_srt->ident_name);
-    CType* table_ctype = ctype_copy(declarator_srt->ctype);
-    symboltable_define(codegen->global_table, table_ident_name, table_ctype);
+    Dtype* table_dtype = dtype_copy(declarator_srt->dtype);
+    symboltable_define(codegen->global_table, table_ident_name, table_dtype);
 
     codegen->virtual_reg_id = -1;
     codegen->label_id++;
@@ -27,14 +27,14 @@ Vector* gen_function_definition_code(Codegen* codegen) {
     codegen->return_label_id = codegen->label_id;
 
     Vector* param_codes = new_vector(&t_immc);
-    Vector* params = declarator_srt->ctype->function->params;
+    Vector* params = declarator_srt->dtype->function->params;
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
-        CParam* cparam = vector_at(params, i);
-        char* table_ident_name = new_string(cparam->ident_name);
-        CType* table_ctype = ctype_copy(cparam->ctype);
+        DParam* dparam = vector_at(params, i);
+        char* table_ident_name = new_string(dparam->ident_name);
+        Dtype* table_dtype = dtype_copy(dparam->dtype);
 
-        Symbol* symbol = symboltable_define(codegen->local_table, table_ident_name, table_ctype);
+        Symbol* symbol = symboltable_define(codegen->local_table, table_ident_name, table_dtype);
         ImmcOpe* dst = new_mem_immcope(symbol->memory_offset);
         ImmcOpe* src = new_imm_immcope(i);
         vector_push(param_codes, new_inst_immc(INST_LDARG, dst, src, NULL));

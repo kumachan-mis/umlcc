@@ -2,7 +2,7 @@
 #define UMLCC_SRT_H
 
 #include "../common/common.h"
-#include "../type/type.h"
+#include "../dtype/dtype.h"
 #include "../vector/vector.h"
 
 typedef enum SrtType {
@@ -52,7 +52,7 @@ typedef enum SrtType {
 
 typedef struct Srt {
     SrtType type;
-    CType* ctype;
+    Dtype* dtype;
     char* ident_name;
     int value_int;
     Vector* children;
@@ -61,8 +61,8 @@ typedef struct Srt {
 extern BaseType t_srt;
 
 Srt* new_srt(SrtType type, int num_children, ...);
-Srt* new_ctyped_srt(SrtType type, CType* ctype, int num_children, ...);
-Srt* new_identifier_srt(SrtType type, CType* ctype, char* ident_name);
+Srt* new_dtyped_srt(SrtType type, Dtype* dtype, int num_children, ...);
+Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name);
 Srt* new_integer_srt(SrtType type, int value);
 void delete_srt(Srt* srt);
 Srt* srt_copy(Srt* srt);
