@@ -42,10 +42,10 @@ int main(int argc, char* argv[]) {
     free(imm_filename);
 
     Lexer* lexer = new_lexer(src);
-    Vector* tokens = lexer_read_tokens(lexer);
+    Vector* ctokens = lexer_read_ctokens(lexer);
     delete_lexer(lexer);
 
-    Parser* parser = new_parser(tokens);
+    Parser* parser = new_parser(ctokens);
     Ast* ast = parser_create_ast(parser);
     delete_parser(parser);
 

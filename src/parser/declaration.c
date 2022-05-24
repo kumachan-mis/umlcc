@@ -1,6 +1,6 @@
 #include "./declaration.h"
 #include "../common/common.h"
-#include "../token/token.h"
+#include "../ctoken/ctoken.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -9,21 +9,21 @@
 Ast* parse_decl(Parser* parser) {
     Ast* specifiers_ast = parse_decl_specifiers(parser);
     Ast* init_list_ast = parse_init_declarator_list(parser);
-    consume_token(parser, TOKEN_SEMICOLON);
+    consume_ctoken(parser, CTOKEN_SEMICOLON);
     return new_ast(AST_DECL, 2, specifiers_ast, init_list_ast);
 }
 
 Ast* parse_decl_specifiers(Parser* parser) {
     Ast* ast = NULL;
 
-    Token* token = vector_at(parser->_tokens, parser->_index);
-    switch (token->type) {
-        case TOKEN_KEYWORD_INT:
-            parser->_index++;
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    switch (ctoken->type) {
+        case CTOKEN_KEYWORD_INT:
+            parser->index++;
             ast = new_ast(AST_DECL_SPECIFIERS, 1, new_ast(AST_TYPE_INT, 0));
             return ast;
         default:
-            fprintf(stderr, "Error: unexpected token type %d\n", token->type);
+            fprintf(stderr, "Error: unexpected ctoken type %d\n", ctoken->type);
             exit(1);
     }
 }
@@ -31,14 +31,14 @@ Ast* parse_decl_specifiers(Parser* parser) {
 Ast* parse_init_declarator_list(Parser* parser) {
     Ast* ast = new_ast(AST_INIT_DECLOR_LIST, 0);
 
-    Token* token = vector_at(parser->_tokens, parser->_index);
-    if (token->type == TOKEN_SEMICOLON) return ast;
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type == CTOKEN_SEMICOLON) return ast;
 
     while (1) {
         vector_push(ast->children, parse_init_declarator(parser));
-        token = vector_at(parser->_tokens, parser->_index);
-        if (token->type == TOKEN_SEMICOLON) break;
-        consume_token(parser, TOKEN_COMMA);
+        ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type == CTOKEN_SEMICOLON) break;
+        consume_ctoken(parser, CTOKEN_COMMA);
     }
 
     return ast;
@@ -80,9 +80,9 @@ Ast* parse_declarator(Parser* parser) {
 Ast* parse_pointer(Parser* parser) {
     Ast* ast = NULL;
     while (1) {
-        Token* token = vector_at(parser->_tokens, parser->_index);
-        if (token->type != TOKEN_ASTERISK) break;
-        parser->_index++;
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type != CTOKEN_ASTERISK) break;
+        parser->index++;
         if (ast == NULL) {
             ast = new_ast(AST_PTR_DECLOR, 0);
         } else {
@@ -95,25 +95,25 @@ Ast* parse_pointer(Parser* parser) {
 Ast* parse_direct_declarator(Parser* parser) {
     Ast* ast = NULL;
 
-    Token* token = vector_at(parser->_tokens, parser->_index);
-    switch (token->type) {
-        case TOKEN_IDENT:
-            parser->_index++;
-            ast = new_identifier_ast(AST_IDENT_DECLOR, new_string(token->ident_name));
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    switch (ctoken->type) {
+        case CTOKEN_IDENT:
+            parser->index++;
+            ast = new_identifier_ast(AST_IDENT_DECLOR, new_string(ctoken->ident_name));
             break;
         default:
-            fprintf(stderr, "Error: unexpected token type %d\n", token->type);
+            fprintf(stderr, "Error: unexpected ctoken type %d\n", ctoken->type);
             exit(1);
     }
 
     int terminated = 0;
     while (!terminated) {
-        token = vector_at(parser->_tokens, parser->_index);
-        switch (token->type) {
-            case TOKEN_LPALEN:
-                parser->_index++;
+        ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_LPALEN:
+                parser->index++;
                 ast = new_ast(AST_FUNC_DECLOR, 2, ast, parse_parameter_list(parser));
-                consume_token(parser, TOKEN_RPALEN);
+                consume_ctoken(parser, CTOKEN_RPALEN);
                 break;
             default:
                 terminated = 1;
@@ -127,14 +127,14 @@ Ast* parse_direct_declarator(Parser* parser) {
 Ast* parse_parameter_list(Parser* parser) {
     Ast* ast = new_ast(AST_PARAM_LIST, 0);
 
-    Token* token = vector_at(parser->_tokens, parser->_index);
-    if (token->type == TOKEN_RPALEN) return ast;
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type == CTOKEN_RPALEN) return ast;
 
     while (1) {
         vector_push(ast->children, parse_parameter_decl(parser));
-        token = vector_at(parser->_tokens, parser->_index);
-        if (token->type == TOKEN_RPALEN) break;
-        consume_token(parser, TOKEN_COMMA);
+        ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type == CTOKEN_RPALEN) break;
+        consume_ctoken(parser, CTOKEN_COMMA);
     }
 
     return ast;

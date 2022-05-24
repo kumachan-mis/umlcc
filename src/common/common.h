@@ -1,12 +1,12 @@
-#ifndef _UMLCC_COMMON_H_
-#define _UMLCC_COMMON_H_
+#ifndef UMLCC_COMMON_H
+#define UMLCC_COMMON_H
 
-typedef struct _BaseType {
+typedef struct BaseType {
     void* (*copy_object)(void* object);
     void (*delete_object)(void* object);
 } BaseType;
 
-typedef struct _HashableType {
+typedef struct HashableType {
     void* (*copy_object)(void* object);
     void (*delete_object)(void* object);
     int (*hash_object)(void* object);

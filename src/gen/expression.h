@@ -1,5 +1,5 @@
-#ifndef _UMLCC_GEN_EXPRESSION_H_
-#define _UMLCC_GEN_EXPRESSION_H_
+#ifndef UMLCC_GEN_EXPRESSION_H
+#define UMLCC_GEN_EXPRESSION_H
 
 #include "./gen.h"
 

@@ -1,5 +1,5 @@
-#ifndef _UMLCC_X64_UTIL_H_
-#define _UMLCC_X64_UTIL_H_
+#ifndef UMLCC_X64_UTIL_H
+#define UMLCC_X64_UTIL_H
 
 #include "../set/set.h"
 #include "../vector/vector.h"

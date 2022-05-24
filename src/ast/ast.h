@@ -1,10 +1,10 @@
-#ifndef _UMLCC_AST_H_
-#define _UMLCC_AST_H_
+#ifndef UMLCC_AST_H
+#define UMLCC_AST_H
 
 #include "../common/common.h"
 #include "../vector/vector.h"
 
-typedef enum _AstType {
+typedef enum AstType {
     // translation unit
     AST_TRAS_UNIT,
 
@@ -59,7 +59,7 @@ typedef enum _AstType {
     AST_INT_EXPR,
 } AstType;
 
-typedef struct _Ast {
+typedef struct Ast {
     AstType type;
     char* ident_name;
     int value_int;

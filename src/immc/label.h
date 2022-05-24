@@ -1,18 +1,18 @@
-#ifndef _UMLCC_IMMC_LABEL_H_
-#define _UMLCC_IMMC_LABEL_H_
+#ifndef UMLCC_IMMC_LABEL_H
+#define UMLCC_IMMC_LABEL_H
 
-typedef enum _ImmcLabelType {
+typedef enum ImmcLabelType {
     LABEL_FUNCTION,
     LABEL_VARIABLE,
     LABEL_NORMAL,
 } ImmcLabelType;
-typedef enum _ImmcLabelVis {
+typedef enum ImmcLabelVis {
     LABELVIS_GLOBAL,
     LABELVIS_LOCAL,
     LABELVIS_DEFAULT,
 } ImmcLabelVis;
 
-typedef struct _ImmcLabel {
+typedef struct ImmcLabel {
     ImmcLabelType type;
     ImmcLabelVis visibility;
     char* name;

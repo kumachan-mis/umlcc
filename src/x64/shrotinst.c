@@ -8,8 +8,8 @@
 
 Vector* gen_sal_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* fst_src = immc->inst->fst_src;
@@ -32,14 +32,14 @@ Vector* gen_sal_x64code(X64gen* x64gen) {
 
     if (dst_id != fst_src_id) append_code(codes, "\tmovl\t%s, %s\n", fst_src_name, dst_name);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_sar_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* fst_src = immc->inst->fst_src;
@@ -62,6 +62,6 @@ Vector* gen_sar_x64code(X64gen* x64gen) {
 
     if (dst_id != fst_src_id) append_code(codes, "\tmovl\t%s, %s\n", fst_src_name, dst_name);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }

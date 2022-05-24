@@ -6,39 +6,39 @@
 
 Lexer* new_lexer(FILE* file_ptr) {
     Lexer* lexer = malloc(sizeof(Lexer));
-    lexer->_file_ptr = file_ptr;
-    lexer->_keyword_map = new_keyword_map();
-    lexer->_punctuator_map = new_punctuator_map();
+    lexer->file_ptr = file_ptr;
+    lexer->keyword_map = new_keyword_map();
+    lexer->punctuator_map = new_punctuator_map();
     return lexer;
 }
 
-void delete_lexer(Lexer* lexer) {
-    delete_map(lexer->_keyword_map);
-    delete_map(lexer->_punctuator_map);
-    free(lexer);
-}
-
-Vector* lexer_read_tokens(Lexer* lexer) {
-    Vector* tokens = new_vector(&t_token);
+Vector* lexer_read_ctokens(Lexer* lexer) {
+    Vector* ctokens = new_vector(&t_ctoken);
     skip_white_spaces(lexer);
 
     while (1) {
-        Token* token = NULL;
-        if (token == NULL) token = read_keyword_or_identifier(lexer);
-        if (token == NULL) token = read_integer_constant(lexer);
-        if (token == NULL) token = read_punctuator(lexer);
+        CToken* ctoken = NULL;
+        if (ctoken == NULL) ctoken = read_keyword_or_identifier(lexer);
+        if (ctoken == NULL) ctoken = read_integer_constant(lexer);
+        if (ctoken == NULL) ctoken = read_punctuator(lexer);
 
-        if (token == NULL) {
-            int c = fgetc(lexer->_file_ptr);
+        if (ctoken == NULL) {
+            int c = fgetc(lexer->file_ptr);
             fprintf(stderr, "Error: unexpected character %c\n", c);
             exit(1);
         }
 
-        vector_push(tokens, token);
+        vector_push(ctokens, ctoken);
 
-        if (token->type == TOKEN_EOF) break;
+        if (ctoken->type == CTOKEN_EOF) break;
         skip_white_spaces(lexer);
     }
 
-    return tokens;
+    return ctokens;
+}
+
+void delete_lexer(Lexer* lexer) {
+    delete_map(lexer->keyword_map);
+    delete_map(lexer->punctuator_map);
+    free(lexer);
 }

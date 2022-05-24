@@ -4,7 +4,7 @@
 #include <memory.h>
 #include <stdlib.h>
 
-struct _Vector {
+struct Vector {
     BaseType* t_item;
     void** container;
     int size;
@@ -20,14 +20,6 @@ Vector* new_vector(BaseType* t_item) {
     vector->size = size;
     vector->capacity = capacity;
     return vector;
-}
-
-void delete_vector(Vector* vector) {
-    for (int i = 0; i < vector->size; i++) {
-        vector->t_item->delete_object(vector->container[i]);
-    }
-    free(vector->container);
-    free(vector);
 }
 
 Vector* vector_copy(Vector* vector) {
@@ -105,4 +97,12 @@ void vector_extend(Vector* vector, Vector* other) {
     other->container = realloc(other->container, capacity * sizeof(void*));
     other->size = size;
     other->capacity = capacity;
+}
+
+void delete_vector(Vector* vector) {
+    for (int i = 0; i < vector->size; i++) {
+        vector->t_item->delete_object(vector->container[i]);
+    }
+    free(vector->container);
+    free(vector);
 }

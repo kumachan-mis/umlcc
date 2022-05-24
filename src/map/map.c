@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct _Map {
+struct Map {
     HashableType* t_key;
     BaseType* t_value;
     MapCell** container;
@@ -12,7 +12,7 @@ struct _Map {
     int capacity;
 };
 
-struct _MapIter {
+struct MapIter {
     int index;
 };
 
@@ -32,16 +32,6 @@ Map* new_map(HashableType* t_key, BaseType* t_value) {
         map->container[i] = NULL;
     }
     return map;
-}
-
-void delete_map(Map* map) {
-    for (int i = 0; i < map->capacity; i++) {
-        MapCell* cell = map->container[i];
-        if (cell == NULL) continue;
-        delete_mapcell(cell, map->t_key->delete_object, map->t_value->delete_object);
-    }
-    free(map->container);
-    free(map);
 }
 
 Map* map_copy(Map* map) {
@@ -200,4 +190,14 @@ void update_capacity(Map* map, int new_capacity) {
     free(map->container);
     map->container = new_container;
     map->capacity = new_capacity;
+}
+
+void delete_map(Map* map) {
+    for (int i = 0; i < map->capacity; i++) {
+        MapCell* cell = map->container[i];
+        if (cell == NULL) continue;
+        delete_mapcell(cell, map->t_key->delete_object, map->t_value->delete_object);
+    }
+    free(map->container);
+    free(map);
 }

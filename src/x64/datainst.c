@@ -8,8 +8,8 @@
 
 Vector* gen_load_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     char* BP_NAME = QREG_NAMES[BP_REG_ID];
     ImmcOpe* dst = immc->inst->dst;
@@ -39,14 +39,14 @@ Vector* gen_load_x64code(X64gen* x64gen) {
             exit(1);
     }
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_addr_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     char* BP_NAME = QREG_NAMES[BP_REG_ID];
     ImmcOpe* dst = immc->inst->dst;
@@ -67,14 +67,14 @@ Vector* gen_addr_x64code(X64gen* x64gen) {
             exit(1);
     }
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_store_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* src = immc->inst->fst_src;
@@ -94,14 +94,14 @@ Vector* gen_store_x64code(X64gen* x64gen) {
             exit(1);
     }
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_ldarg_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     char* BP_NAME = QREG_NAMES[BP_REG_ID];
     ImmcOpe* dst = immc->inst->dst;
@@ -122,14 +122,14 @@ Vector* gen_ldarg_x64code(X64gen* x64gen) {
     append_code(codes, "\tmovl\t%d(%s), %s\n", mem_arg_offset, BP_NAME, reg_name);
     append_code(codes, "\tmovl\t%s, -%d(%s)\n", reg_name, dst->mem_offset, BP_NAME);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_starg_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* src = immc->inst->snd_src;
 
@@ -137,14 +137,14 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
     char* src_name = QREG_NAMES[src_id];
     append_code(codes, "\tpushq\t%s\n", src_name);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }
 
 Vector* gen_stret_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->_immcs, x64gen->_index);
-    x64gen->_index++;
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
 
     ImmcOpe* src = immc->inst->fst_src;
     int ret_id = CALLER_SAVED_REG_IDS[src->reg_id];
@@ -152,6 +152,6 @@ Vector* gen_stret_x64code(X64gen* x64gen) {
 
     append_code(codes, "\tmovl\t%s, %s\n", ret_name, LREG_NAMES[AX_REG_ID]);
 
-    liveseqs_next(x64gen->_liveseqs);
+    liveseqs_next(x64gen->liveseqs);
     return codes;
 }

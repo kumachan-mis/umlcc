@@ -1,7 +1,7 @@
-#ifndef _UMLCC_IMMC_OPE_H_
-#define _UMLCC_IMMC_OPE_H_
+#ifndef UMLCC_IMMC_OPE_H
+#define UMLCC_IMMC_OPE_H
 
-typedef enum _ImmcOpeType {
+typedef enum ImmcOpeType {
     OPERAND_IMM,
     OPERAND_REG,
     OPERAND_PTR,
@@ -9,7 +9,7 @@ typedef enum _ImmcOpeType {
     OPERAND_LABEL
 } ImmcOpeType;
 
-typedef enum _ImmcOpeSuffix {
+typedef enum ImmcOpeSuffix {
     SUFFIX_NONE,
     SUFFIX_BYTE,
     SUFFIX_WORD,
@@ -17,7 +17,7 @@ typedef enum _ImmcOpeSuffix {
     SUFFIX_QUAD
 } ImmcOpeSuffix;
 
-typedef struct _ImmcOpe {
+typedef struct ImmcOpe {
     ImmcOpeType type;
     ImmcOpeSuffix suffix;
     int imm_value;

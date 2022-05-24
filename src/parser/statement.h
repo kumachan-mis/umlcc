@@ -1,5 +1,5 @@
-#ifndef _UMLCC_PARSER_STATEMENT_H_
-#define _UMLCC_PARSER_STATEMENT_H_
+#ifndef UMLCC_PARSER_STATEMENT_H
+#define UMLCC_PARSER_STATEMENT_H
 
 #include "./parser.h"
 

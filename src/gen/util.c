@@ -8,29 +8,29 @@
 
 void append_children_code(Codegen* codegen, Vector* codes) {
     Vector* sub_codes = NULL;
-    Srt* srt = codegen->_srt;
+    Srt* srt = codegen->srt;
 
     int num_children = vector_size(srt->children);
     for (int i = 0; i < num_children; i++) {
-        codegen->_srt = vector_at(srt->children, i);
+        codegen->srt = vector_at(srt->children, i);
         sub_codes = codegen_generate_code(codegen);
         vector_extend(codes, sub_codes);
         delete_vector(sub_codes);
     }
 
-    codegen->_srt = srt;
+    codegen->srt = srt;
 }
 
 void append_child_code(Codegen* codegen, Vector* codes, int index) {
     Vector* sub_codes = NULL;
-    Srt* srt = codegen->_srt;
+    Srt* srt = codegen->srt;
 
-    codegen->_srt = vector_at(srt->children, index);
+    codegen->srt = vector_at(srt->children, index);
     sub_codes = codegen_generate_code(codegen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes);
 
-    codegen->_srt = srt;
+    codegen->srt = srt;
 }
 
 char* create_label_name(int label_id) {

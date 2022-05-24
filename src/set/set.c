@@ -3,31 +3,30 @@
 
 #include <stdlib.h>
 
-#define EXIST ((void*)1)
+#define NOTNULL ((void*)1)
 
-struct _Set {
+struct Set {
     Map* inner;
     HashableType* t_item;
 };
 
-struct _SetIter {
+struct SetIter {
     int index;
 };
 
-void null() {}
+void* copy_nnotnull() {
+    return NOTNULL;
+}
 
-BaseType t_exitst = {.copy_object = null, .delete_object = null};
+void delete_notnull() {}
+
+BaseType t_notnull = {.copy_object = copy_nnotnull, .delete_object = delete_notnull};
 
 Set* new_set(HashableType* t_item) {
     Set* set = malloc(sizeof(Set));
-    set->inner = new_map(t_item, &t_exitst);
+    set->inner = new_map(t_item, &t_notnull);
     set->t_item = t_item;
     return set;
-}
-
-void delete_set(Set* set) {
-    delete_map(set->inner);
-    free(set);
 }
 
 Set* set_copy(Set* set) {
@@ -38,7 +37,7 @@ Set* set_copy(Set* set) {
 }
 
 void set_add(Set* set, void* item) {
-    map_add(set->inner, item, EXIST);
+    map_add(set->inner, item, NOTNULL);
 }
 
 void set_remove(Set* set, void* item) {
@@ -46,7 +45,7 @@ void set_remove(Set* set, void* item) {
 }
 
 int set_contains(Set* set, void* item) {
-    return map_get(set->inner, item) == EXIST;
+    return map_get(set->inner, item) == NOTNULL;
 }
 
 SetIter* set_iter_begin(Set* set) {
@@ -113,4 +112,9 @@ int set_issubset(Set* set, Set* other) {
 
 int set_equals(Set* set, Set* other) {
     return set_issubset(set, other) && set_issubset(other, set);
+}
+
+void delete_set(Set* set) {
+    delete_map(set->inner);
+    free(set);
 }

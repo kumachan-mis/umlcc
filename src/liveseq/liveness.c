@@ -14,10 +14,6 @@ Liveness* new_liveness(int immc_index) {
     return liveness;
 }
 
-void delete_liveness(Liveness* liveness) {
-    free(liveness);
-}
-
 Liveness* liveness_copy(Liveness* liveness) {
     Liveness* copied_liveness = malloc(sizeof(Liveness));
     copied_liveness->first_def_index = liveness->first_def_index;
@@ -27,4 +23,8 @@ Liveness* liveness_copy(Liveness* liveness) {
 
 int liveness_isinit(Liveness* liveness) {
     return liveness->first_def_index == -1 && liveness->last_use_index == -1;
+}
+
+void delete_liveness(Liveness* liveness) {
+    free(liveness);
 }

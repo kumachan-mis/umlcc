@@ -1,9 +1,9 @@
-#ifndef _UMLCC_REGALLOC_ALLOCIMMCS_H_
-#define _UMLCC_REGALLOC_ALLOCIMMCS_H_
+#ifndef UMLCC_REGALLOC_ALLOCIMMCS_H
+#define UMLCC_REGALLOC_ALLOCIMMCS_H
 
 #include "../vector/vector.h"
 
-typedef struct _AllocImmcs {
+typedef struct AllocImmcs {
     Vector* immcs;
     Vector* liveseqs;
 } AllocImmcs;

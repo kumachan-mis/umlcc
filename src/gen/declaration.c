@@ -1,7 +1,7 @@
 #include "./declaration.h"
 #include "../common/common.h"
+#include "../dtype/dtype.h"
 #include "../immc/immc.h"
-#include "../type/type.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -20,14 +20,14 @@ Vector* gen_init_decl_code(Codegen* codegen) {
 }
 
 Vector* gen_decl_code(Codegen* codegen) {
-    Srt* srt = codegen->_srt;
+    Srt* srt = codegen->srt;
 
-    SymbolTable* table = codegen->_global_table;
-    if (codegen->_local_table != NULL) table = codegen->_local_table;
+    SymbolTable* table = codegen->global_table;
+    if (codegen->local_table != NULL) table = codegen->local_table;
 
     char* table_ident_name = new_string(srt->ident_name);
-    CType* table_ctype = ctype_copy(srt->ctype);
-    symboltable_define(table, table_ident_name, table_ctype);
+    Dtype* table_dtype = dtype_copy(srt->dtype);
+    symboltable_define(table, table_ident_name, table_dtype);
 
     return new_vector(&t_immc);
 }
