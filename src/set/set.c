@@ -18,9 +18,7 @@ void* copy_nnotnull() {
     return NOTNULL;
 }
 
-void delete_notnull() {
-    return NOTNULL;
-}
+void delete_notnull() {}
 
 BaseType t_notnull = {.copy_object = copy_nnotnull, .delete_object = delete_notnull};
 
