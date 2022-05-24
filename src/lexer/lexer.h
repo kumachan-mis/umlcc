@@ -1,8 +1,8 @@
 #ifndef UMLCC_LEXER_H
 #define UMLCC_LEXER_H
 
+#include "../ctoken/ctoken.h"
 #include "../map/map.h"
-#include "../token/token.h"
 #include "../vector/vector.h"
 
 #include <stdio.h>
@@ -15,6 +15,6 @@ typedef struct Lexer {
 
 Lexer* new_lexer(FILE* file_ptr);
 void delete_lexer(Lexer* lexer);
-Vector* lexer_read_tokens(Lexer* lexer);
+Vector* lexer_read_ctokens(Lexer* lexer);
 
 #endif

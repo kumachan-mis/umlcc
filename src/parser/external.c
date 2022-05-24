@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "../token/token.h"
+#include "../ctoken/ctoken.h"
 #include "./declaration.h"
 #include "./external.h"
 #include "./statement.h"
@@ -9,8 +9,8 @@
 Ast* parse_translation_unit(Parser* parser) {
     Ast* ast = new_ast(AST_TRAS_UNIT, 0);
     while (1) {
-        Token* token = vector_at(parser->tokens, parser->index);
-        if (token->type == TOKEN_EOF) break;
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type == CTOKEN_EOF) break;
         if (external_may_function_definition(parser)) {
             vector_push(ast->children, parse_function_definition(parser));
         } else {

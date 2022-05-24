@@ -18,27 +18,27 @@ void delete_lexer(Lexer* lexer) {
     free(lexer);
 }
 
-Vector* lexer_read_tokens(Lexer* lexer) {
-    Vector* tokens = new_vector(&t_token);
+Vector* lexer_read_ctokens(Lexer* lexer) {
+    Vector* ctokens = new_vector(&t_ctoken);
     skip_white_spaces(lexer);
 
     while (1) {
-        Token* token = NULL;
-        if (token == NULL) token = read_keyword_or_identifier(lexer);
-        if (token == NULL) token = read_integer_constant(lexer);
-        if (token == NULL) token = read_punctuator(lexer);
+        CToken* ctoken = NULL;
+        if (ctoken == NULL) ctoken = read_keyword_or_identifier(lexer);
+        if (ctoken == NULL) ctoken = read_integer_constant(lexer);
+        if (ctoken == NULL) ctoken = read_punctuator(lexer);
 
-        if (token == NULL) {
+        if (ctoken == NULL) {
             int c = fgetc(lexer->file_ptr);
             fprintf(stderr, "Error: unexpected character %c\n", c);
             exit(1);
         }
 
-        vector_push(tokens, token);
+        vector_push(ctokens, ctoken);
 
-        if (token->type == TOKEN_EOF) break;
+        if (ctoken->type == CTOKEN_EOF) break;
         skip_white_spaces(lexer);
     }
 
-    return tokens;
+    return ctokens;
 }

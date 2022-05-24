@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-Token* read_keyword_or_identifier(Lexer* lexer) {
+CToken* read_keyword_or_identifier(Lexer* lexer) {
     Builder* builder = new_builder();
 
     char c = fgetc(lexer->file_ptr);
@@ -25,17 +25,17 @@ Token* read_keyword_or_identifier(Lexer* lexer) {
         builder_push(builder, c);
     }
 
-    char* token_str = builder_build(builder);
-    TokenType* token_ref = map_get(lexer->keyword_map, token_str);
+    char* ctoken_str = builder_build(builder);
+    CTokenType* ctoken_ref = map_get(lexer->keyword_map, ctoken_str);
 
-    if (token_ref != NULL) {
-        free(token_str);
-        return new_token(*token_ref);
+    if (ctoken_ref != NULL) {
+        free(ctoken_str);
+        return new_ctoken(*ctoken_ref);
     }
-    return new_identifier_token(token_str);
+    return new_identifier_ctoken(ctoken_str);
 }
 
-Token* read_integer_constant(Lexer* lexer) {
+CToken* read_integer_constant(Lexer* lexer) {
     Builder* builder = new_builder();
 
     char c = fgetc(lexer->file_ptr);
@@ -55,26 +55,26 @@ Token* read_integer_constant(Lexer* lexer) {
         builder_push(builder, c);
     }
 
-    char* token_str = builder_build(builder);
-    Token* token = new_integer_token(atoi(token_str));
-    free(token_str);
+    char* ctoken_str = builder_build(builder);
+    CToken* ctoken = new_integer_ctoken(atoi(ctoken_str));
+    free(ctoken_str);
 
-    return token;
+    return ctoken;
 }
 
-Token* read_punctuator(Lexer* lexer) {
+CToken* read_punctuator(Lexer* lexer) {
     int MAX_PUNCUATOR_LEN = 3;
 
-    char* token_str = malloc((MAX_PUNCUATOR_LEN + 1) * sizeof(int));
+    char* ctoken_str = malloc((MAX_PUNCUATOR_LEN + 1) * sizeof(int));
     int length = 0;
-    memset(token_str, 0, MAX_PUNCUATOR_LEN + 1);
+    memset(ctoken_str, 0, MAX_PUNCUATOR_LEN + 1);
 
     int c = fgetc(lexer->file_ptr);
     if (c == EOF) {
-        free(token_str);
-        return new_token(TOKEN_EOF);
+        free(ctoken_str);
+        return new_ctoken(CTOKEN_EOF);
     }
-    token_str[length] = c;
+    ctoken_str[length] = c;
     length++;
 
     for (int i = 0; i < MAX_PUNCUATOR_LEN - 1; i++) {
@@ -83,21 +83,21 @@ Token* read_punctuator(Lexer* lexer) {
             ungetc(c, lexer->file_ptr);
             break;
         }
-        token_str[length] = c;
+        ctoken_str[length] = c;
         length++;
     }
 
     while (length > 0) {
-        TokenType* token_ref = map_get(lexer->punctuator_map, token_str);
-        if (token_ref != NULL) {
-            free(token_str);
-            return new_token(*token_ref);
+        CTokenType* ctoken_ref = map_get(lexer->punctuator_map, ctoken_str);
+        if (ctoken_ref != NULL) {
+            free(ctoken_str);
+            return new_ctoken(*ctoken_ref);
         }
         length--;
-        ungetc(token_str[length], lexer->file_ptr);
-        token_str[length] = '\0';
+        ungetc(ctoken_str[length], lexer->file_ptr);
+        ctoken_str[length] = '\0';
     }
 
-    free(token_str);
+    free(ctoken_str);
     return NULL;
 }

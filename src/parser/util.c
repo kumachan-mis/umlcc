@@ -13,22 +13,22 @@ int external_may_function_definition(Parser* parser) {
     ast = parse_declarator(parser);
     delete_ast(ast);
 
-    Token* token = vector_at(parser->tokens, parser->index);
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
     parser->index = index;
-    return token->type == TOKEN_LBRACE;
+    return ctoken->type == CTOKEN_LBRACE;
 }
 
 int blockitem_may_decl(Parser* parser) {
-    Token* token = vector_at(parser->tokens, parser->index);
-    return token->type == TOKEN_KEYWORD_INT;
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    return ctoken->type == CTOKEN_KEYWORD_INT;
 }
 
-void consume_token(Parser* parser, TokenType token_type) {
-    Token* token = vector_at(parser->tokens, parser->index);
-    if (token->type == token_type) {
+void consume_ctoken(Parser* parser, CTokenType ctoken_type) {
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type == ctoken_type) {
         parser->index++;
         return;
     }
-    fprintf(stderr, "Error: unexpected token type %d\n", token->type);
+    fprintf(stderr, "Error: unexpected ctoken type %d\n", ctoken->type);
     exit(1);
 }

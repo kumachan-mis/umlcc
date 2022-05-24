@@ -5,11 +5,11 @@
 #include "../vector/vector.h"
 
 typedef struct Parser {
-    Vector* tokens;
+    Vector* ctokens;
     int index;
 } Parser;
 
-Parser* new_parser(Vector* tokens);
+Parser* new_parser(Vector* ctokens);
 void delete_parser(Parser* parser);
 Ast* parser_create_ast(Parser* parser);
 

@@ -4,13 +4,13 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-void token_map_add(Map* token_map, char* token_str, TokenType type);
+void ctoken_map_add(Map* ctoken_map, char* ctoken_str, CTokenType type);
 
 Map* new_keyword_map() {
     Map* keyword_map = new_map(&t_hashable_string, &t_integer);
 
-    token_map_add(keyword_map, "int", TOKEN_KEYWORD_INT);
-    token_map_add(keyword_map, "return", TOKEN_KEYWORD_RETURN);
+    ctoken_map_add(keyword_map, "int", CTOKEN_KEYWORD_INT);
+    ctoken_map_add(keyword_map, "return", CTOKEN_KEYWORD_RETURN);
 
     return keyword_map;
 }
@@ -18,31 +18,31 @@ Map* new_keyword_map() {
 Map* new_punctuator_map() {
     Map* punctuator_map = new_map(&t_hashable_string, &t_integer);
 
-    token_map_add(punctuator_map, "{", TOKEN_LBRACE);
-    token_map_add(punctuator_map, "}", TOKEN_RBRACE);
-    token_map_add(punctuator_map, "(", TOKEN_LPALEN);
-    token_map_add(punctuator_map, ")", TOKEN_RPALEN);
-    token_map_add(punctuator_map, "*", TOKEN_ASTERISK);
-    token_map_add(punctuator_map, "+", TOKEN_PLUS);
-    token_map_add(punctuator_map, "-", TOKEN_MINUS);
-    token_map_add(punctuator_map, "!", TOKEN_EXCLAM);
-    token_map_add(punctuator_map, "/", TOKEN_SLASH);
-    token_map_add(punctuator_map, "%", TOKEN_PERCENT);
-    token_map_add(punctuator_map, "==", TOKEN_EQUAL_EQUAL);
-    token_map_add(punctuator_map, "!=", TOKEN_EXCLAM_EQUAL);
-    token_map_add(punctuator_map, "&&", TOKEN_AND_AND);
-    token_map_add(punctuator_map, "||", TOKEN_VBAR_VBAR);
-    token_map_add(punctuator_map, ";", TOKEN_SEMICOLON);
-    token_map_add(punctuator_map, "=", TOKEN_EQUAL);
-    token_map_add(punctuator_map, ",", TOKEN_COMMA);
+    ctoken_map_add(punctuator_map, "{", CTOKEN_LBRACE);
+    ctoken_map_add(punctuator_map, "}", CTOKEN_RBRACE);
+    ctoken_map_add(punctuator_map, "(", CTOKEN_LPALEN);
+    ctoken_map_add(punctuator_map, ")", CTOKEN_RPALEN);
+    ctoken_map_add(punctuator_map, "*", CTOKEN_ASTERISK);
+    ctoken_map_add(punctuator_map, "+", CTOKEN_PLUS);
+    ctoken_map_add(punctuator_map, "-", CTOKEN_MINUS);
+    ctoken_map_add(punctuator_map, "!", CTOKEN_EXCLAM);
+    ctoken_map_add(punctuator_map, "/", CTOKEN_SLASH);
+    ctoken_map_add(punctuator_map, "%", CTOKEN_PERCENT);
+    ctoken_map_add(punctuator_map, "==", CTOKEN_EQUAL_EQUAL);
+    ctoken_map_add(punctuator_map, "!=", CTOKEN_EXCLAM_EQUAL);
+    ctoken_map_add(punctuator_map, "&&", CTOKEN_AND_AND);
+    ctoken_map_add(punctuator_map, "||", CTOKEN_VBAR_VBAR);
+    ctoken_map_add(punctuator_map, ";", CTOKEN_SEMICOLON);
+    ctoken_map_add(punctuator_map, "=", CTOKEN_EQUAL);
+    ctoken_map_add(punctuator_map, ",", CTOKEN_COMMA);
 
     return punctuator_map;
 }
 
-void token_map_add(Map* token_map, char* token_str, TokenType type) {
-    char* key = new_string(token_str);
-    TokenType* value = new_integer(type);
-    map_add(token_map, key, value);
+void ctoken_map_add(Map* ctoken_map, char* ctoken_str, CTokenType type) {
+    char* key = new_string(ctoken_str);
+    CTokenType* value = new_integer(type);
+    map_add(ctoken_map, key, value);
 }
 
 void skip_white_spaces(Lexer* lexer) {
