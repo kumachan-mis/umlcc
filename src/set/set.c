@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#define EXIST ((void*)1)
+#define NOTNULL ((void*)1)
 
 struct _Set {
     Map* inner;
@@ -14,13 +14,19 @@ struct _SetIter {
     int index;
 };
 
-void null() {}
+void* copy_nnotnull() {
+    return NOTNULL;
+}
 
-BaseType t_exitst = {.copy_object = null, .delete_object = null};
+void delete_notnull() {
+    return NOTNULL;
+}
+
+BaseType t_notnull = {.copy_object = copy_nnotnull, .delete_object = delete_notnull};
 
 Set* new_set(HashableType* t_item) {
     Set* set = malloc(sizeof(Set));
-    set->inner = new_map(t_item, &t_exitst);
+    set->inner = new_map(t_item, &t_notnull);
     set->t_item = t_item;
     return set;
 }
@@ -38,7 +44,7 @@ Set* set_copy(Set* set) {
 }
 
 void set_add(Set* set, void* item) {
-    map_add(set->inner, item, EXIST);
+    map_add(set->inner, item, NOTNULL);
 }
 
 void set_remove(Set* set, void* item) {
@@ -46,7 +52,7 @@ void set_remove(Set* set, void* item) {
 }
 
 int set_contains(Set* set, void* item) {
-    return map_get(set->inner, item) == EXIST;
+    return map_get(set->inner, item) == NOTNULL;
 }
 
 SetIter* set_iter_begin(Set* set) {
