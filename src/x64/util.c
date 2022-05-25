@@ -1,5 +1,4 @@
 #include "./util.h"
-#include "../immc/immc.h"
 #include "../liveseq/liveseq.h"
 #include "./register.h"
 
@@ -20,21 +19,40 @@ void append_code(Vector* codes, char* format, ...) {
     va_end(arg_ptr);
 }
 
-void append_conversion_code(Vector* codes, int reg_id, ImmcOpeSuffix from, ImmcOpeSuffix to) {
-    if (from == SUFFIX_BYTE && to == SUFFIX_WORD) {
-        append_code(codes, "\tmovsbw\t%s, %s\n", BREG_NAMES[reg_id], WREG_NAMES[reg_id]);
-    } else if (from == SUFFIX_BYTE && to == SUFFIX_LONG) {
-        append_code(codes, "\tmovsbl\t%s, %s\n", BREG_NAMES[reg_id], LREG_NAMES[reg_id]);
-    } else if (from == SUFFIX_BYTE && to == SUFFIX_QUAD) {
-        append_code(codes, "\tmovsbq\t%s, %s\n", BREG_NAMES[reg_id], QREG_NAMES[reg_id]);
-    } else if (from == SUFFIX_WORD && to == SUFFIX_LONG) {
-        append_code(codes, "\tmovswl\t%s, %s\n", WREG_NAMES[reg_id], LREG_NAMES[reg_id]);
-    } else if (from == SUFFIX_WORD && to == SUFFIX_QUAD) {
-        append_code(codes, "\tmovswq\t%s, %s\n", WREG_NAMES[reg_id], QREG_NAMES[reg_id]);
-    } else if (from == SUFFIX_LONG && to == SUFFIX_QUAD) {
-        append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[reg_id], LREG_NAMES[AX_REG_ID]);
+void append_mov_code(Vector* codes, ImmcOpe* src, ImmcOpe* dst) {
+    if (src->reg_id == dst->reg_id && src->suffix >= dst->suffix) return;
+
+    if (src->suffix == SUFFIX_BYTE && dst->suffix == SUFFIX_BYTE) {
+        append_code(codes, "\tmovb\t%s, %s\n", BREG_NAMES[src->reg_id], BREG_NAMES[dst->reg_id]);
+    } else if (src->suffix == SUFFIX_BYTE && dst->suffix == SUFFIX_WORD) {
+        append_code(codes, "\tmovsbw\t%s, %s\n", BREG_NAMES[src->reg_id], WREG_NAMES[dst->reg_id]);
+    } else if (src->suffix == SUFFIX_BYTE && dst->suffix == SUFFIX_LONG) {
+        append_code(codes, "\tmovsbl\t%s, %s\n", BREG_NAMES[src->reg_id], LREG_NAMES[dst->reg_id]);
+    } else if (src->suffix == SUFFIX_BYTE && dst->suffix == SUFFIX_QUAD) {
+        append_code(codes, "\tmovsbq\t%s, %s\n", BREG_NAMES[src->reg_id], QREG_NAMES[dst->reg_id]);
+    }
+
+    else if (src->suffix == SUFFIX_WORD && SUFFIX_BYTE <= dst->suffix &&
+             dst->suffix <= SUFFIX_WORD) {
+        append_code(codes, "\tmovw\t%s, %s\n", WREG_NAMES[src->reg_id], WREG_NAMES[dst->reg_id]);
+    } else if (src->suffix == SUFFIX_WORD && dst->suffix == SUFFIX_LONG) {
+        append_code(codes, "\tmovswl\t%s, %s\n", WREG_NAMES[src->reg_id], LREG_NAMES[dst->reg_id]);
+    } else if (src->suffix == SUFFIX_WORD && dst->suffix == SUFFIX_QUAD) {
+        append_code(codes, "\tmovswq\t%s, %s\n", WREG_NAMES[src->reg_id], QREG_NAMES[dst->reg_id]);
+    }
+
+    else if (src->suffix == SUFFIX_LONG && SUFFIX_BYTE <= dst->suffix &&
+             dst->suffix <= SUFFIX_LONG) {
+        append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[src->reg_id], LREG_NAMES[dst->reg_id]);
+    } else if (src->suffix == SUFFIX_LONG && dst->suffix == SUFFIX_QUAD) {
+        append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[src->reg_id], LREG_NAMES[AX_REG_ID]);
         append_code(codes, "\tcltq\n");
-        append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[AX_REG_ID], QREG_NAMES[reg_id]);
+        append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[AX_REG_ID], QREG_NAMES[dst->reg_id]);
+    }
+
+    else if (src->suffix == SUFFIX_QUAD && SUFFIX_BYTE <= dst->suffix &&
+             dst->suffix <= SUFFIX_QUAD) {
+        append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[src->reg_id], QREG_NAMES[dst->reg_id]);
     }
 }
 
