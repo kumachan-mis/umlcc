@@ -10,6 +10,9 @@ char* QREG_NAMES[16] = {"%rax", "%rbx", "%rcx", "%rdx", "%rsp", "%rbp", "%rsi", 
 char* LREG_NAMES[16] = {"%eax", "%ebx", "%ecx",  "%edx",  "%esp",  "%ebp",  "%esi",  "%edi",
                         "%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d", "%r14d", "%r15d"};
 
+char* WREG_NAMES[16] = {"%ax",  "%bx",  "%cx",   "%dx",   "%sp",   "%bp",   "%si",   "%di",
+                        "%r8w", "%r9w", "%r10w", "%r11w", "%r12w", "%r13q", "%r14w", "%r15w"};
+
 char* BREG_NAMES[16] = {"%al",  "%bl",  "%cl",   "%dl",   "%spl",  "%bpl",  "%sil",  "%dil",
                         "%r8b", "%r9b", "%r10b", "%r11b", "%r12b", "%r13b", "%r14b", "%r15b"};
 

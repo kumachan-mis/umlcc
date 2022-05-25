@@ -1,5 +1,7 @@
 #include "./util.h"
+#include "../immc/immc.h"
 #include "../liveseq/liveseq.h"
+#include "./register.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -16,6 +18,24 @@ void append_code(Vector* codes, char* format, ...) {
     vector_push(codes, code);
 
     va_end(arg_ptr);
+}
+
+void append_conversion_code(Vector* codes, int reg_id, ImmcOpeSuffix from, ImmcOpeSuffix to) {
+    if (from == SUFFIX_BYTE && to == SUFFIX_WORD) {
+        append_code(codes, "\tmovsbw\t%s, %s\n", BREG_NAMES[reg_id], WREG_NAMES[reg_id]);
+    } else if (from == SUFFIX_BYTE && to == SUFFIX_LONG) {
+        append_code(codes, "\tmovsbl\t%s, %s\n", BREG_NAMES[reg_id], LREG_NAMES[reg_id]);
+    } else if (from == SUFFIX_BYTE && to == SUFFIX_QUAD) {
+        append_code(codes, "\tmovsbq\t%s, %s\n", BREG_NAMES[reg_id], QREG_NAMES[reg_id]);
+    } else if (from == SUFFIX_WORD && to == SUFFIX_LONG) {
+        append_code(codes, "\tmovswl\t%s, %s\n", WREG_NAMES[reg_id], LREG_NAMES[reg_id]);
+    } else if (from == SUFFIX_WORD && to == SUFFIX_QUAD) {
+        append_code(codes, "\tmovswq\t%s, %s\n", WREG_NAMES[reg_id], QREG_NAMES[reg_id]);
+    } else if (from == SUFFIX_LONG && to == SUFFIX_QUAD) {
+        append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[reg_id], LREG_NAMES[AX_REG_ID]);
+        append_code(codes, "\tcltq\n");
+        append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[AX_REG_ID], QREG_NAMES[reg_id]);
+    }
 }
 
 void liveseqs_next(Vector* liveseqs) {

@@ -4,6 +4,7 @@
 extern char* PC_NAME;
 extern char* QREG_NAMES[16];
 extern char* LREG_NAMES[16];
+extern char* WREG_NAMES[16];
 extern char* BREG_NAMES[16];
 
 extern int ARG_REG_IDS[6];
