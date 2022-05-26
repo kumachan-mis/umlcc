@@ -48,7 +48,7 @@ int NUM_ARG_REGS = 6;
 int NUM_CALLER_SAVED_REGS = 8;
 int NUM_CALLEE_SAVED_REGS = 5;
 
-char* REG_NAME(int reg_id, ImmcOpeSuffix suffix) {
+char* reg_name(int reg_id, ImmcOpeSuffix suffix) {
     switch (suffix) {
         case SUFFIX_BYTE:
             return BREG_NAMES[reg_id];

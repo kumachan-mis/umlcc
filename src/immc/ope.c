@@ -87,10 +87,10 @@ char* immcope_tostring(ImmcOpe* immcope) {
             sprintf(ope_str, "%d", immcope->imm_value);
             break;
         case OPERAND_REG:
-            sprintf(ope_str, "r%d(%d)", immcope->reg_id, immcope_suffix_tosize(immcope->suffix));
+            sprintf(ope_str, "%%r%d%c", immcope->reg_id, immcope_suffix_tochar(immcope->suffix));
             break;
         case OPERAND_PTR:
-            sprintf(ope_str, "(r%d)", immcope->reg_id);
+            sprintf(ope_str, "(%%r%d%c)", immcope->reg_id, immcope_suffix_tochar(immcope->suffix));
             break;
         case OPERAND_MEM:
             sprintf(ope_str, "M[%d]", immcope->mem_offset);
@@ -130,5 +130,20 @@ int immcope_suffix_tosize(ImmcOpeSuffix suffix) {
             return 8;
         default:
             return 0;
+    }
+}
+
+char immcope_suffix_tochar(ImmcOpeSuffix suffix) {
+    switch (suffix) {
+        case SUFFIX_BYTE:
+            return 'b';
+        case SUFFIX_WORD:
+            return 'w';
+        case SUFFIX_LONG:
+            return 'l';
+        case SUFFIX_QUAD:
+            return 'q';
+        default:
+            return '\0';
     }
 }

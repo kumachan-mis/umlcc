@@ -20,40 +20,28 @@ void append_code(Vector* codes, char* format, ...) {
 }
 
 void append_mov_code(Vector* codes, ImmcOpe* src, ImmcOpe* dst) {
-    if (src->reg_id == dst->reg_id && src->suffix >= dst->suffix) return;
-
-    if (src->suffix == SUFFIX_BYTE && dst->suffix == SUFFIX_BYTE) {
-        append_code(codes, "\tmovb\t%s, %s\n", BREG_NAMES[src->reg_id], BREG_NAMES[dst->reg_id]);
-    } else if (src->suffix == SUFFIX_BYTE && dst->suffix == SUFFIX_WORD) {
-        append_code(codes, "\tmovsbw\t%s, %s\n", BREG_NAMES[src->reg_id], WREG_NAMES[dst->reg_id]);
-    } else if (src->suffix == SUFFIX_BYTE && dst->suffix == SUFFIX_LONG) {
-        append_code(codes, "\tmovsbl\t%s, %s\n", BREG_NAMES[src->reg_id], LREG_NAMES[dst->reg_id]);
-    } else if (src->suffix == SUFFIX_BYTE && dst->suffix == SUFFIX_QUAD) {
-        append_code(codes, "\tmovsbq\t%s, %s\n", BREG_NAMES[src->reg_id], QREG_NAMES[dst->reg_id]);
+    if (src->suffix >= dst->suffix) {
+        if (src->reg_id == dst->reg_id) return;
+        ImmcOpeSuffix immc_suffix = src->suffix;
+        char suffix = immcope_suffix_tochar(immc_suffix);
+        char* src_name = reg_name(src->reg_id, immc_suffix);
+        char* dst_name = reg_name(dst->reg_id, immc_suffix);
+        append_code(codes, "\tmov%c\t%s, %s\n", suffix, src_name, dst_name);
+        return;
     }
 
-    else if (src->suffix == SUFFIX_WORD && SUFFIX_BYTE <= dst->suffix &&
-             dst->suffix <= SUFFIX_WORD) {
-        append_code(codes, "\tmovw\t%s, %s\n", WREG_NAMES[src->reg_id], WREG_NAMES[dst->reg_id]);
-    } else if (src->suffix == SUFFIX_WORD && dst->suffix == SUFFIX_LONG) {
-        append_code(codes, "\tmovswl\t%s, %s\n", WREG_NAMES[src->reg_id], LREG_NAMES[dst->reg_id]);
-    } else if (src->suffix == SUFFIX_WORD && dst->suffix == SUFFIX_QUAD) {
-        append_code(codes, "\tmovswq\t%s, %s\n", WREG_NAMES[src->reg_id], QREG_NAMES[dst->reg_id]);
-    }
-
-    else if (src->suffix == SUFFIX_LONG && SUFFIX_BYTE <= dst->suffix &&
-             dst->suffix <= SUFFIX_LONG) {
-        append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[src->reg_id], LREG_NAMES[dst->reg_id]);
-    } else if (src->suffix == SUFFIX_LONG && dst->suffix == SUFFIX_QUAD) {
+    if (src->suffix == SUFFIX_LONG && dst->suffix == SUFFIX_QUAD) {
         append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[src->reg_id], LREG_NAMES[AX_REG_ID]);
         append_code(codes, "\tcltq\n");
         append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[AX_REG_ID], QREG_NAMES[dst->reg_id]);
+        return;
     }
 
-    else if (src->suffix == SUFFIX_QUAD && SUFFIX_BYTE <= dst->suffix &&
-             dst->suffix <= SUFFIX_QUAD) {
-        append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[src->reg_id], QREG_NAMES[dst->reg_id]);
-    }
+    char src_suffix = immcope_suffix_tochar(src->suffix);
+    char dst_suffix = immcope_suffix_tochar(dst->suffix);
+    char* src_name = reg_name(src->reg_id, src->suffix);
+    char* dst_name = reg_name(dst->reg_id, dst->suffix);
+    append_code(codes, "\tmovs%c%c\t%s, %s\n", src_suffix, dst_suffix, src_name, dst_name);
 }
 
 void liveseqs_next(Vector* liveseqs) {
