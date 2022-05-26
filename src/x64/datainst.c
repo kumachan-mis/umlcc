@@ -16,24 +16,31 @@ Vector* gen_load_x64code(X64gen* x64gen) {
     ImmcOpe* src = immc->inst->fst_src;
 
     int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
-    char* dst_name = LREG_NAMES[dst_id];
+    char* dst_name = reg_name(dst_id, dst->suffix);
+    char suffix = immcope_suffix_tochar(dst->suffix);
 
     switch (src->type) {
-        case OPERAND_IMM:
-            append_code(codes, "\tmovl\t$%d, %s\n", src->imm_value, dst_name);
+        case OPERAND_IMM: {
+            int imm_value = src->imm_value;
+            append_code(codes, "\tmov%c\t$%d, %s\n", suffix, imm_value, dst_name);
             break;
+        }
         case OPERAND_PTR: {
             int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
             char* src_name = QREG_NAMES[src_id];
-            append_code(codes, "\tmovl\t(%s), %s\n", src_name, dst_name);
+            append_code(codes, "\tmov%c\t(%s), %s\n", suffix, src_name, dst_name);
             break;
         }
-        case OPERAND_MEM:
-            append_code(codes, "\tmovl\t-%d(%s), %s\n", src->mem_offset, BP_NAME, dst_name);
+        case OPERAND_MEM: {
+            int mem_offset = src->mem_offset;
+            append_code(codes, "\tmov%c\t-%d(%s), %s\n", suffix, mem_offset, BP_NAME, dst_name);
             break;
-        case OPERAND_LABEL:
-            append_code(codes, "\tmovl\t%s(%s), %s\n", src->label_name, PC_NAME, dst_name);
+        }
+        case OPERAND_LABEL: {
+            char* label_name = src->label_name;
+            append_code(codes, "\tmov%c\t%s(%s), %s\n", suffix, label_name, PC_NAME, dst_name);
             break;
+        }
         default:
             fprintf(stderr, "Error: unexpected operand %d\n", src->type);
             exit(1);
@@ -80,13 +87,14 @@ Vector* gen_store_x64code(X64gen* x64gen) {
     ImmcOpe* src = immc->inst->fst_src;
 
     int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
-    char* src_name = LREG_NAMES[src_id];
+    char* src_name = reg_name(src_id, src->suffix);
+    char suffix = immcope_suffix_tochar(src->suffix);
 
     switch (dst->type) {
         case OPERAND_PTR: {
             int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
             char* dst_name = QREG_NAMES[dst_id];
-            append_code(codes, "\tmovl\t%s, (%s)\n", src_name, dst_name);
+            append_code(codes, "\tmov%c\t%s, (%s)\n", suffix, src_name, dst_name);
             break;
         }
         default:

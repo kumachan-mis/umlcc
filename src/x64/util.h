@@ -6,7 +6,8 @@
 #include "../vector/vector.h"
 
 void append_code(Vector* codes, char* format, ...);
-void append_mov_code(Vector* codes, ImmcOpe* dest, ImmcOpe* src);
+void append_mov_code(Vector* codes, int src_reg_id, ImmcOpeSuffix src_immc_suffix, int dst_reg_id,
+                     ImmcOpeSuffix dst_immc_suffix);
 void liveseqs_next(Vector* liveseqs);
 Set* create_alive_regs_set(Vector* liveseqs);
 

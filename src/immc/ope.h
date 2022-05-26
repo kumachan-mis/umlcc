@@ -37,5 +37,6 @@ char* immcope_tostring(ImmcOpe* immcope);
 ImmcOpeSuffix immcope_suffix_get(int size);
 int immcope_suffix_tosize(ImmcOpeSuffix suffix);
 char immcope_suffix_tochar(ImmcOpeSuffix suffix);
+ImmcOpeSuffix immcope_suffix_max(ImmcOpeSuffix a, ImmcOpeSuffix b);
 
 #endif

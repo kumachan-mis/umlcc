@@ -147,3 +147,7 @@ char immcope_suffix_tochar(ImmcOpeSuffix suffix) {
             return '\0';
     }
 }
+
+ImmcOpeSuffix immcope_suffix_max(ImmcOpeSuffix a, ImmcOpeSuffix b) {
+    return a >= b ? a : b;
+}

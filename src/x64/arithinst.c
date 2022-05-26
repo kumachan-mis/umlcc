@@ -19,12 +19,16 @@ Vector* gen_add_x64code(X64gen* x64gen) {
     int snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
     int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
 
-    char* fst_src_name = LREG_NAMES[fst_src_id];
-    char* snd_src_name = LREG_NAMES[snd_src_id];
-    char* dst_name = LREG_NAMES[dst_id];
+    ImmcOpeSuffix immc_suffix = immcope_suffix_max(fst_src->suffix, snd_src->suffix);
+    append_mov_code(codes, fst_src_id, fst_src->suffix, fst_src_id, immc_suffix);
+    append_mov_code(codes, snd_src_id, snd_src->suffix, snd_src_id, immc_suffix);
 
-    append_code(codes, "\taddl\t%s, %s\n", snd_src_name, fst_src_name);
-    if (dst_id != fst_src_id) append_code(codes, "\tmovl\t%s, %s\n", fst_src_name, dst_name);
+    char* fst_src_name = reg_name(fst_src_id, immc_suffix);
+    char* snd_src_name = reg_name(snd_src_id, immc_suffix);
+    char suffix = immcope_suffix_tochar(immc_suffix);
+    append_code(codes, "\tadd%c\t%s, %s\n", suffix, snd_src_name, fst_src_name);
+
+    if (dst_id != fst_src_id) append_mov_code(codes, fst_src_id, immc_suffix, dst_id, dst->suffix);
 
     liveseqs_next(x64gen->liveseqs);
     return codes;
@@ -43,12 +47,16 @@ Vector* gen_sub_x64code(X64gen* x64gen) {
     int snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
     int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
 
-    char* fst_src_name = LREG_NAMES[fst_src_id];
-    char* snd_src_name = LREG_NAMES[snd_src_id];
-    char* dst_name = LREG_NAMES[dst_id];
+    ImmcOpeSuffix immc_suffix = immcope_suffix_max(fst_src->suffix, snd_src->suffix);
+    append_mov_code(codes, fst_src_id, fst_src->suffix, fst_src_id, immc_suffix);
+    append_mov_code(codes, snd_src_id, snd_src->suffix, snd_src_id, immc_suffix);
 
-    append_code(codes, "\tsubl\t%s, %s\n", snd_src_name, fst_src_name);
-    if (dst_id != fst_src_id) append_code(codes, "\tmovl\t%s, %s\n", fst_src_name, dst_name);
+    char* fst_src_name = reg_name(fst_src_id, immc_suffix);
+    char* snd_src_name = reg_name(snd_src_id, immc_suffix);
+    char suffix = immcope_suffix_tochar(immc_suffix);
+    append_code(codes, "\tsub%c\t%s, %s\n", suffix, snd_src_name, fst_src_name);
+
+    if (dst_id != fst_src_id) append_mov_code(codes, fst_src_id, immc_suffix, dst_id, dst->suffix);
 
     liveseqs_next(x64gen->liveseqs);
     return codes;
