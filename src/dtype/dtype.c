@@ -23,27 +23,11 @@ Dtype* new_pointer_dtype(Dtype* to_dtype) {
     return dtype;
 }
 
-Dtype* new_socket_pointer_dtype() {
-    Dtype* dtype = malloc(sizeof(Dtype));
-    dtype->type = DTYPE_POINTER;
-    dtype->pointer = new_socket_dpointer();
-    dtype->function = NULL;
-    return dtype;
-}
-
 Dtype* new_function_dtype(Vector* params, Dtype* return_dtype) {
     Dtype* dtype = malloc(sizeof(Dtype));
     dtype->type = DTYPE_FUNCUCTION;
     dtype->pointer = NULL;
     dtype->function = new_dfunction(params, return_dtype);
-    return dtype;
-}
-
-Dtype* new_socket_function_dtype(Vector* params) {
-    Dtype* dtype = malloc(sizeof(Dtype));
-    dtype->type = DTYPE_FUNCUCTION;
-    dtype->pointer = NULL;
-    dtype->function = new_socket_dfunction(params);
     return dtype;
 }
 
@@ -58,19 +42,35 @@ Dtype* dtype_copy(Dtype* dtype) {
     return copied_dtype;
 }
 
-Dtype* dtype_connect(Dtype* socket, Dtype* plug) {
-    if (socket == NULL) return plug;
+Dtype* new_socket_pointer_dtype() {
+    Dtype* dtype = malloc(sizeof(Dtype));
+    dtype->type = DTYPE_POINTER;
+    dtype->pointer = new_socket_dpointer();
+    dtype->function = NULL;
+    return dtype;
+}
 
-    Dtype* fragment = socket;
+Dtype* new_socket_function_dtype(Vector* params) {
+    Dtype* dtype = malloc(sizeof(Dtype));
+    dtype->type = DTYPE_FUNCUCTION;
+    dtype->pointer = NULL;
+    dtype->function = new_socket_dfunction(params);
+    return dtype;
+}
+
+Dtype* dtype_connect(Dtype* socket_dtype, Dtype* plug_dtype) {
+    if (socket_dtype == NULL) return plug_dtype;
+
+    Dtype* fragment = socket_dtype;
     while (1) {
         switch (fragment->type) {
             case DTYPE_INT:
-                return socket;
+                return socket_dtype;
             case DTYPE_POINTER: {
                 Dtype* next = dpointer_next(fragment->pointer);
                 if (next == NULL) {
-                    fragment->pointer = dpointer_connect(fragment->pointer, plug);
-                    return socket;
+                    fragment->pointer = dpointer_connect(fragment->pointer, plug_dtype);
+                    return socket_dtype;
                 }
                 fragment = next;
                 break;
@@ -78,14 +78,18 @@ Dtype* dtype_connect(Dtype* socket, Dtype* plug) {
             case DTYPE_FUNCUCTION: {
                 Dtype* next = dfunction_next(fragment->function);
                 if (next == NULL) {
-                    fragment->function = dfunction_connect(fragment->function, plug);
-                    return socket;
+                    fragment->function = dfunction_connect(fragment->function, plug_dtype);
+                    return socket_dtype;
                 }
                 fragment = next;
                 break;
             }
         }
     }
+}
+
+int dtype_isarithmetic(Dtype* dtype) {
+    return DTYPE_INT <= dtype->type && dtype->type <= DTYPE_INT;
 }
 
 int dtype_size(Dtype* dtype) {
@@ -96,6 +100,17 @@ int dtype_size(Dtype* dtype) {
             return 8;
         case DTYPE_FUNCUCTION:
             return 0;
+        default:
+            return -1;
+    }
+}
+
+int dtype_log2_size(Dtype* dtype) {
+    switch (dtype->type) {
+        case DTYPE_INT:
+            return 2;
+        case DTYPE_POINTER:
+            return 3;
         default:
             return -1;
     }

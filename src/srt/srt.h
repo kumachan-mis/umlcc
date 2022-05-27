@@ -35,12 +35,16 @@ typedef enum SrtType {
     //   additive-expression
     SRT_ADD_EXPR,
     SRT_SUB_EXPR,
+    SRT_PADD_EXPR,
+    SRT_PSUB_EXPR,
+    SRT_PDIFF_EXPR,
     //   multiplicative-expression
     SRT_MUL_EXPR,
     SRT_DIV_EXPR,
     SRT_MOD_EXPR,
     //   unary-expression
     SRT_ADDR_EXPR,
+    SRT_INDIR_EXPR,
     SRT_LNOT_EXPR,
     //   postfix-expression
     SRT_CALL_EXPR,

@@ -12,6 +12,7 @@ Codegen* new_codegen(Srt* srt) {
     codegen->srt = srt;
     codegen->global_table = new_symboltable();
     codegen->local_table = NULL;
+    codegen->virtual_reg_suffix = SUFFIX_NONE;
     codegen->return_label_id = -1;
     codegen->virtual_reg_id = -1;
     codegen->label_id = -1;
@@ -64,6 +65,9 @@ Vector* codegen_generate_code(Codegen* codegen) {
             break;
         case SRT_ADD_EXPR:
         case SRT_SUB_EXPR:
+        case SRT_PADD_EXPR:
+        case SRT_PSUB_EXPR:
+        case SRT_PDIFF_EXPR:
             codes = gen_additive_expr_code(codegen);
             break;
         case SRT_MUL_EXPR:
@@ -72,6 +76,7 @@ Vector* codegen_generate_code(Codegen* codegen) {
             codes = gen_multiplicative_expr_code(codegen);
             break;
         case SRT_ADDR_EXPR:
+        case SRT_INDIR_EXPR:
         case SRT_LNOT_EXPR:
             codes = gen_unary_expr_code(codegen);
             break;

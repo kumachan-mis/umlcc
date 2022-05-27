@@ -16,18 +16,31 @@ Vector* gen_load_x64code(X64gen* x64gen) {
     ImmcOpe* src = immc->inst->fst_src;
 
     int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
-    char* dst_name = LREG_NAMES[dst_id];
+    char* dst_name = reg_name(dst_id, dst->suffix);
+    char suffix = immcope_suffix_tochar(dst->suffix);
 
     switch (src->type) {
-        case OPERAND_IMM:
-            append_code(codes, "\tmovl\t$%d, %s\n", src->imm_value, dst_name);
+        case OPERAND_IMM: {
+            int imm_value = src->imm_value;
+            append_code(codes, "\tmov%c\t$%d, %s\n", suffix, imm_value, dst_name);
             break;
-        case OPERAND_MEM:
-            append_code(codes, "\tmovl\t-%d(%s), %s\n", src->mem_offset, BP_NAME, dst_name);
+        }
+        case OPERAND_PTR: {
+            int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
+            char* src_name = QREG_NAMES[src_id];
+            append_code(codes, "\tmov%c\t(%s), %s\n", suffix, src_name, dst_name);
             break;
-        case OPERAND_LABEL:
-            append_code(codes, "\tmovl\t%s(%s), %s\n", src->label_name, PC_NAME, dst_name);
+        }
+        case OPERAND_MEM: {
+            int mem_offset = src->mem_offset;
+            append_code(codes, "\tmov%c\t-%d(%s), %s\n", suffix, mem_offset, BP_NAME, dst_name);
             break;
+        }
+        case OPERAND_LABEL: {
+            char* label_name = src->label_name;
+            append_code(codes, "\tmov%c\t%s(%s), %s\n", suffix, label_name, PC_NAME, dst_name);
+            break;
+        }
         default:
             fprintf(stderr, "Error: unexpected operand %d\n", src->type);
             exit(1);
@@ -74,13 +87,14 @@ Vector* gen_store_x64code(X64gen* x64gen) {
     ImmcOpe* src = immc->inst->fst_src;
 
     int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
-    char* src_name = LREG_NAMES[src_id];
+    char* src_name = reg_name(src_id, src->suffix);
+    char suffix = immcope_suffix_tochar(src->suffix);
 
     switch (dst->type) {
         case OPERAND_PTR: {
             int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
             char* dst_name = QREG_NAMES[dst_id];
-            append_code(codes, "\tmovl\t%s, (%s)\n", src_name, dst_name);
+            append_code(codes, "\tmov%c\t%s, (%s)\n", suffix, src_name, dst_name);
             break;
         }
         default:
@@ -93,6 +107,8 @@ Vector* gen_store_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_ldarg_x64code(X64gen* x64gen) {
+    // TODO: consider size of argument
+
     Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
@@ -108,13 +124,13 @@ Vector* gen_ldarg_x64code(X64gen* x64gen) {
         return codes;
     }
 
-    int reg_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
-    char* reg_name = LREG_NAMES[reg_id];
+    int tmp_reg_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
+    char* tmp_reg_name = LREG_NAMES[tmp_reg_id];
     int mem_arg_offset = (src->imm_value - NUM_ARG_REGS + 1) * 8 + 8;
     // (1-indexed non-register param no.) * (bytes of memory address) + (offset for pushq %rbp)
 
-    append_code(codes, "\tmovl\t%d(%s), %s\n", mem_arg_offset, BP_NAME, reg_name);
-    append_code(codes, "\tmovl\t%s, -%d(%s)\n", reg_name, dst->mem_offset, BP_NAME);
+    append_code(codes, "\tmovl\t%d(%s), %s\n", mem_arg_offset, BP_NAME, tmp_reg_name);
+    append_code(codes, "\tmovl\t%s, -%d(%s)\n", tmp_reg_name, dst->mem_offset, BP_NAME);
 
     liveseqs_next(x64gen->liveseqs);
     return codes;
@@ -140,11 +156,9 @@ Vector* gen_stret_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
-    ImmcOpe* src = immc->inst->fst_src;
-    int ret_id = CALLER_SAVED_REG_IDS[src->reg_id];
-    char* ret_name = LREG_NAMES[ret_id];
-
-    append_code(codes, "\tmovl\t%s, %s\n", ret_name, LREG_NAMES[AX_REG_ID]);
+    ImmcOpe* ret = immc->inst->fst_src;
+    int ret_id = CALLER_SAVED_REG_IDS[ret->reg_id];
+    append_mov_code(codes, ret_id, ret->suffix, AX_REG_ID, ret->suffix);
 
     liveseqs_next(x64gen->liveseqs);
     return codes;

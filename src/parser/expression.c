@@ -149,6 +149,14 @@ Ast* parse_unary_expr(Parser* parser) {
     while (!terminated) {
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         switch (ctoken->type) {
+            case CTOKEN_AND:
+                parser->index++;
+                vector_push(stack, new_ast(AST_ADDR_EXPR, 0));
+                break;
+            case CTOKEN_ASTERISK:
+                parser->index++;
+                vector_push(stack, new_ast(AST_INDIR_EXPR, 0));
+                break;
             case CTOKEN_EXCLAM:
                 parser->index++;
                 vector_push(stack, new_ast(AST_LNOT_EXPR, 0));

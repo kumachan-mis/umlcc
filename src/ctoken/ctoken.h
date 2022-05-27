@@ -19,6 +19,7 @@ typedef enum CTokenType {
     CTOKEN_RPALEN,
     CTOKEN_LBRACE,
     CTOKEN_RBRACE,
+    CTOKEN_AND,
     CTOKEN_ASTERISK,
     CTOKEN_PLUS,
     CTOKEN_MINUS,

@@ -17,7 +17,7 @@ Vector* gen_return_stmt_code(Codegen* codegen) {
 
     append_child_code(codegen, codes, 0);
 
-    ImmcOpe* ret_value = new_reg_immcope(codegen->virtual_reg_id);
+    ImmcOpe* ret_value = new_reg_immcope(codegen->virtual_reg_suffix, codegen->virtual_reg_id);
     vector_push(codes, new_inst_immc(INST_STRET, NULL, ret_value, NULL));
 
     char* label_name = create_label_name(codegen->return_label_id);
