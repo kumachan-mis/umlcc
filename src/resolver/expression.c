@@ -218,14 +218,15 @@ Srt* resolve_postfix_expr(Resolver* resolver) {
     switch (ast->type) {
         case AST_CALL_EXPR: {
             resolver->ast = vector_at(ast->children, 0);
-            Srt* raw_lhs_srt = resolve_expr(resolver);
-            Srt* lhs_srt = convert_function_to_ptr(raw_lhs_srt);
+            Srt* lhs_srt = resolve_expr(resolver);
+
             // TODO: type conversion is always performed, not only in function calls
+            lhs_srt = convert_function_to_ptr(lhs_srt);
 
             resolver->ast = vector_at(ast->children, 1);
             Srt* rhs_srt = resolve_argument_expr_list(resolver);
 
-            Dtype* dtype = dtype_copy(raw_lhs_srt->dtype->function->return_dtype);
+            Dtype* dtype = dtype_copy(lhs_srt->dtype->pointer->to_dtype->function->return_dtype);
             resolver->ast = ast;
             return new_dtyped_srt(SRT_CALL_EXPR, dtype, 2, lhs_srt, rhs_srt);
         }

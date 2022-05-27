@@ -28,8 +28,8 @@ Vector* gen_add_x64code(X64gen* x64gen) {
     char suffix = immcope_suffix_tochar(immc_suffix);
 
     append_code(codes, "\tadd%c\t%s, %s\n", suffix, snd_src_name, fst_src_name);
+    append_mov_code(codes, fst_src_id, immc_suffix, dst_id, dst->suffix);
 
-    if (dst_id != fst_src_id) append_mov_code(codes, fst_src_id, immc_suffix, dst_id, dst->suffix);
     liveseqs_next(x64gen->liveseqs);
     return codes;
 }
@@ -56,8 +56,8 @@ Vector* gen_sub_x64code(X64gen* x64gen) {
     char suffix = immcope_suffix_tochar(immc_suffix);
 
     append_code(codes, "\tsub%c\t%s, %s\n", suffix, snd_src_name, fst_src_name);
+    append_mov_code(codes, fst_src_id, immc_suffix, dst_id, dst->suffix);
 
-    if (dst_id != fst_src_id) append_mov_code(codes, fst_src_id, immc_suffix, dst_id, dst->suffix);
     liveseqs_next(x64gen->liveseqs);
     return codes;
 }
@@ -117,8 +117,8 @@ Vector* gen_div_x64code(X64gen* x64gen) {
 
     append_code(codes, "\tc%ctd\n", suffix);
     append_code(codes, "\tidiv%c\t%s\n", suffix, snd_src_name);
-
     append_mov_code(codes, AX_REG_ID, immc_suffix, dst_id, dst->suffix);
+
     liveseqs_next(x64gen->liveseqs);
     return codes;
 }
@@ -150,8 +150,8 @@ Vector* gen_mod_x64code(X64gen* x64gen) {
 
     append_code(codes, "\tc%ctd\n", suffix);
     append_code(codes, "\tidiv%c\t%s\n", suffix, snd_src_name);
-
     append_mov_code(codes, DX_REG_ID, immc_suffix, dst_id, dst->suffix);
+
     liveseqs_next(x64gen->liveseqs);
     return codes;
 }

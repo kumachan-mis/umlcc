@@ -63,3 +63,12 @@ Set* create_alive_regs_set(Vector* liveseqs) {
     }
     return alive_regs_set;
 }
+
+Set* create_arg_regs_set(int num_args) {
+    Set* arg_regs_set = new_set(&t_hashable_integer);
+    for (int i = 0; i < num_args && i < NUM_ARG_REGS; i++) {
+        int arg_id = ARG_REG_IDS[i];
+        set_add(arg_regs_set, new_integer(arg_id));
+    }
+    return arg_regs_set;
+}

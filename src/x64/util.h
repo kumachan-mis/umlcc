@@ -10,5 +10,6 @@ void append_mov_code(Vector* codes, int src_reg_id, ImmcOpeSuffix src_immc_suffi
                      ImmcOpeSuffix dst_immc_suffix);
 void liveseqs_next(Vector* liveseqs);
 Set* create_alive_regs_set(Vector* liveseqs);
+Set* create_arg_regs_set(int num_args);
 
 #endif
