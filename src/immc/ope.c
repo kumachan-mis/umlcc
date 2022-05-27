@@ -16,6 +16,17 @@ ImmcOpe* new_imm_immcope(int imm_value) {
     return immcope;
 }
 
+ImmcOpe* new_arg_immcope(ImmcOpeSuffix suffix, int imm_value) {
+    ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
+    immcope->type = OPERAND_ARG;
+    immcope->suffix = suffix;
+    immcope->imm_value = imm_value;
+    immcope->reg_id = -1;
+    immcope->mem_offset = -1;
+    immcope->label_name = NULL;
+    return immcope;
+}
+
 ImmcOpe* new_reg_immcope(ImmcOpeSuffix suffix, int reg_id) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = OPERAND_REG;
@@ -81,16 +92,20 @@ ImmcOpe* immcope_copy(ImmcOpe* immcope) {
 
 char* immcope_tostring(ImmcOpe* immcope) {
     char* ope_str = malloc(20 * sizeof(char));
+    char suffix = immcope_suffix_tochar(immcope->suffix);
 
     switch (immcope->type) {
         case OPERAND_IMM:
             sprintf(ope_str, "%d", immcope->imm_value);
             break;
+        case OPERAND_ARG:
+            sprintf(ope_str, "%%a%d%c", immcope->imm_value, suffix);
+            break;
         case OPERAND_REG:
-            sprintf(ope_str, "%%r%d%c", immcope->reg_id, immcope_suffix_tochar(immcope->suffix));
+            sprintf(ope_str, "%%r%d%c", immcope->reg_id, suffix);
             break;
         case OPERAND_PTR:
-            sprintf(ope_str, "(%%r%d%c)", immcope->reg_id, immcope_suffix_tochar(immcope->suffix));
+            sprintf(ope_str, "(%%r%d%c)", immcope->reg_id, suffix);
             break;
         case OPERAND_MEM:
             sprintf(ope_str, "M[%d]", immcope->mem_offset);

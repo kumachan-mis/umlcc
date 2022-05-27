@@ -36,7 +36,8 @@ Vector* gen_function_definition_code(Codegen* codegen) {
 
         Symbol* symbol = symboltable_define(codegen->local_table, table_ident_name, table_dtype);
         ImmcOpe* dst = new_mem_immcope(symbol->memory_offset);
-        ImmcOpe* src = new_imm_immcope(i);
+        ImmcOpeSuffix suffix = immcope_suffix_get(dtype_size(dparam->dtype));
+        ImmcOpe* src = new_arg_immcope(suffix, i);
         vector_push(param_codes, new_inst_immc(INST_LDARG, dst, src, NULL));
     }
 

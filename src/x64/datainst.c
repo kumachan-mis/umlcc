@@ -107,8 +107,6 @@ Vector* gen_store_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_ldarg_x64code(X64gen* x64gen) {
-    // TODO: consider size of argument
-
     Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
@@ -119,18 +117,21 @@ Vector* gen_ldarg_x64code(X64gen* x64gen) {
 
     if (src->imm_value < NUM_ARG_REGS) {
         int src_id = ARG_REG_IDS[src->imm_value];
-        char* src_name = LREG_NAMES[src_id];
-        append_code(codes, "\tmovl\t%s, -%d(%s)\n", src_name, dst->mem_offset, BP_NAME);
+        char* src_name = reg_name(src_id, src->suffix);
+        char suffix = immcope_suffix_tochar(src->suffix);
+        append_code(codes, "\tmov%c\t%s, -%d(%s)\n", suffix, src_name, dst->mem_offset, BP_NAME);
         return codes;
     }
 
     int tmp_reg_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
-    char* tmp_reg_name = LREG_NAMES[tmp_reg_id];
+    char* tmp_reg_name = reg_name(tmp_reg_id, src->suffix);
+    char suffix = immcope_suffix_tochar(src->suffix);
+
     int mem_arg_offset = (src->imm_value - NUM_ARG_REGS + 1) * 8 + 8;
     // (1-indexed non-register param no.) * (bytes of memory address) + (offset for pushq %rbp)
 
-    append_code(codes, "\tmovl\t%d(%s), %s\n", mem_arg_offset, BP_NAME, tmp_reg_name);
-    append_code(codes, "\tmovl\t%s, -%d(%s)\n", tmp_reg_name, dst->mem_offset, BP_NAME);
+    append_code(codes, "\tmov%c\t%d(%s), %s\n", suffix, mem_arg_offset, BP_NAME, tmp_reg_name);
+    append_code(codes, "\tmov%c\t%s, -%d(%s)\n", suffix, tmp_reg_name, dst->mem_offset, BP_NAME);
 
     liveseqs_next(x64gen->liveseqs);
     return codes;

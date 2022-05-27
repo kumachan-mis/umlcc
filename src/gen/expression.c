@@ -274,7 +274,7 @@ Vector* gen_call_expr_code(Codegen* codegen) {
     codegen->srt = param_srt;
     for (int i = num_args - 1; i >= 0; i--) {
         append_child_code(codegen, codes, i);
-        ImmcOpe* fst_src = new_imm_immcope(i);
+        ImmcOpe* fst_src = new_arg_immcope(codegen->virtual_reg_suffix, i);
         ImmcOpe* snd_src = new_reg_immcope(codegen->virtual_reg_suffix, codegen->virtual_reg_id);
         vector_push(codes, new_inst_immc(INST_STARG, NULL, fst_src, snd_src));
     }

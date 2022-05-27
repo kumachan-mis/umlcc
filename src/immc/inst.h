@@ -24,10 +24,10 @@ typedef enum ImmcInstType {
     // store dst(ptr), fst_src(reg)
     INST_LDARG,
     // - load fst_src-th argument of function to dst in memory.
-    // ldarg dst(mem), fst_src(imm)
+    // ldarg dst(mem), fst_src(arg)
     INST_STARG,
     // - store snd_src to fst_src-th argument of function.
-    // starg            fst_src(imm), snd_src(reg)
+    // starg            fst_src(arg), snd_src(reg)
     INST_STRET,
     // - store fst_src to return value of function.
     // stret           fst_src(reg)
