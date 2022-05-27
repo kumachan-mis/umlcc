@@ -3,6 +3,7 @@
 
 typedef enum ImmcOpeType {
     OPERAND_IMM,
+    OPERAND_ARG,
     OPERAND_REG,
     OPERAND_PTR,
     OPERAND_MEM,
@@ -27,6 +28,7 @@ typedef struct ImmcOpe {
 } ImmcOpe;
 
 ImmcOpe* new_imm_immcope(int imm_value);
+ImmcOpe* new_arg_immcope(ImmcOpeSuffix suffix, int imm_value);
 ImmcOpe* new_ptr_immcope(int reg_id);
 ImmcOpe* new_reg_immcope(ImmcOpeSuffix suffix, int reg_id);
 ImmcOpe* new_mem_immcope(int mem_offset);
