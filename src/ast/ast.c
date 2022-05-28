@@ -5,7 +5,8 @@
 #include <string.h>
 
 BaseType t_ast = {
-    .delete_object = delete_ast,
+    .copy_object = (void* (*)(void*))ast_copy,
+    .delete_object = (void (*)(void*))delete_ast,
 };
 
 Ast* new_ast(AstType type, int num_children, ...) {

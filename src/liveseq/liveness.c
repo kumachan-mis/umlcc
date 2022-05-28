@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 BaseType t_liveness = {
-    .copy_object = liveness_copy,
-    .delete_object = delete_liveness,
+    .copy_object = (void* (*)(void*))liveness_copy,
+    .delete_object = (void (*)(void*))delete_liveness,
 };
 
 Liveness* new_liveness(int immc_index) {

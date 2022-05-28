@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 BaseType t_basicblock = {
-    .copy_object = basicblock_copy,
-    .delete_object = delete_basicblock,
+    .copy_object = (void* (*)(void*))basicblock_copy,
+    .delete_object = (void (*)(void*))delete_basicblock,
 };
 
 BasicBlock* new_basicblock(Vector* immcs) {

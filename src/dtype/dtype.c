@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 BaseType t_dtype = {
-    .copy_object = dtype_copy,
-    .delete_object = delete_dtype,
+    .copy_object = (void* (*)(void*))dtype_copy,
+    .delete_object = (void (*)(void*))delete_dtype,
 };
 
 Dtype* new_integer_dtype() {

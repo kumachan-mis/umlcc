@@ -145,7 +145,7 @@ Srt* resolve_additive_expr(Resolver* resolver) {
     } else if ((lhs_srt->dtype->type == DTYPE_POINTER && dtype_isarithmetic(rhs_srt->dtype)) ||
                (dtype_isarithmetic(lhs_srt->dtype) && rhs_srt->dtype->type == DTYPE_POINTER)) {
 
-        if (rhs_srt->dtype->type == DTYPE_POINTER) swap_ptr(&lhs_srt, &rhs_srt);
+        if (rhs_srt->dtype->type == DTYPE_POINTER) swap_ptr((void**)&lhs_srt, (void**)&rhs_srt);
         Dtype* dtype = dtype_copy(lhs_srt->dtype);
         switch (ast->type) {
             case AST_ADD_EXPR:

@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 BaseType t_ctoken = {
-    .copy_object = ctoken_copy,
-    .delete_object = delete_ctoken,
+    .copy_object = (void* (*)(void*))ctoken_copy,
+    .delete_object = (void (*)(void*))delete_ctoken,
 };
 
 CToken* new_ctoken(CTokenType type) {
