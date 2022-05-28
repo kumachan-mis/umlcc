@@ -21,6 +21,7 @@ typedef enum AstType {
     //   declarators
     AST_IDENT_DECLOR,
     AST_PTR_DECLOR,
+    AST_ARRAY_DECLOR,
     AST_FUNC_DECLOR,
     AST_PARAM_LIST,
     AST_PARAM_DECL,
@@ -52,6 +53,7 @@ typedef enum AstType {
     AST_INDIR_EXPR,
     AST_LNOT_EXPR,
     //   postfix-expression
+    AST_SUBSC_EXPR,
     AST_CALL_EXPR,
     AST_ARG_LIST,
     //   primary-expression

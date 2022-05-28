@@ -18,6 +18,8 @@ Map* new_keyword_map() {
 Map* new_punctuator_map() {
     Map* punctuator_map = new_map(&t_hashable_string, &t_integer);
 
+    ctoken_map_add(punctuator_map, "[", CTOKEN_LBRACKET);
+    ctoken_map_add(punctuator_map, "]", CTOKEN_RBRACKET);
     ctoken_map_add(punctuator_map, "{", CTOKEN_LBRACE);
     ctoken_map_add(punctuator_map, "}", CTOKEN_RBRACE);
     ctoken_map_add(punctuator_map, "(", CTOKEN_LPALEN);

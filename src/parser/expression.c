@@ -185,6 +185,11 @@ Ast* parse_postfix_expr(Parser* parser) {
     while (1) {
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         switch (ctoken->type) {
+            case CTOKEN_LBRACKET:
+                parser->index++;
+                ast = new_ast(AST_SUBSC_EXPR, 2, ast, parse_expr(parser));
+                consume_ctoken(parser, CTOKEN_RBRACKET);
+                break;
             case CTOKEN_LPALEN:
                 parser->index++;
                 ast = new_ast(AST_CALL_EXPR, 2, ast, parse_argument_expr_list(parser));

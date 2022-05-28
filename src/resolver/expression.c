@@ -28,6 +28,7 @@ Srt* resolve_expr(Resolver* resolver) {
         case AST_INDIR_EXPR:
         case AST_LNOT_EXPR:
             return resolve_unary_expr(resolver);
+        case AST_SUBSC_EXPR:
         case AST_CALL_EXPR:
             return resolve_postfix_expr(resolver);
         case AST_IDENT_EXPR:
@@ -44,14 +45,15 @@ Srt* resolve_assignment_expr(Resolver* resolver) {
 
     resolver->ast = vector_at(ast->children, 0);
     Srt* lhs_srt = resolve_expr(resolver);
-
     Dtype* addr_dtype = new_pointer_dtype(dtype_copy(lhs_srt->dtype));
     Srt* addr_srt = new_dtyped_srt(SRT_ADDR_EXPR, addr_dtype, 1, lhs_srt);
 
     resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
+    rhs_srt = convert_to_ptr_if_array(rhs_srt);
+    rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
-    Dtype* dtype = new_integer_dtype();
+    Dtype* dtype = dtype_copy(lhs_srt->dtype);
     resolver->ast = ast;
 
     return new_dtyped_srt(SRT_ASSIGN_EXPR, dtype, 2, addr_srt, rhs_srt);
@@ -62,9 +64,13 @@ Srt* resolve_logical_expr(Resolver* resolver) {
 
     resolver->ast = vector_at(ast->children, 0);
     Srt* lhs_srt = resolve_expr(resolver);
+    lhs_srt = convert_to_ptr_if_array(lhs_srt);
+    lhs_srt = convert_to_ptr_if_function(lhs_srt);
 
     resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
+    rhs_srt = convert_to_ptr_if_array(rhs_srt);
+    rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     Dtype* dtype = new_integer_dtype();
     resolver->ast = ast;
@@ -86,9 +92,13 @@ Srt* resolve_equality_expr(Resolver* resolver) {
 
     resolver->ast = vector_at(ast->children, 0);
     Srt* lhs_srt = resolve_expr(resolver);
+    lhs_srt = convert_to_ptr_if_array(lhs_srt);
+    lhs_srt = convert_to_ptr_if_function(lhs_srt);
 
     resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
+    rhs_srt = convert_to_ptr_if_array(rhs_srt);
+    rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     Dtype* dtype = new_integer_dtype();
     resolver->ast = ast;
@@ -109,9 +119,13 @@ Srt* resolve_additive_expr(Resolver* resolver) {
 
     resolver->ast = vector_at(ast->children, 0);
     Srt* lhs_srt = resolve_expr(resolver);
+    lhs_srt = convert_to_ptr_if_array(lhs_srt);
+    lhs_srt = convert_to_ptr_if_function(lhs_srt);
 
     resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
+    rhs_srt = convert_to_ptr_if_array(rhs_srt);
+    rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     resolver->ast = ast;
 
@@ -165,9 +179,13 @@ Srt* resolve_multiplicative_expr(Resolver* resolver) {
 
     resolver->ast = vector_at(ast->children, 0);
     Srt* lhs_srt = resolve_expr(resolver);
+    lhs_srt = convert_to_ptr_if_array(lhs_srt);
+    lhs_srt = convert_to_ptr_if_function(lhs_srt);
 
     resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
+    rhs_srt = convert_to_ptr_if_array(rhs_srt);
+    rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     Dtype* dtype = new_integer_dtype();
     resolver->ast = ast;
@@ -199,10 +217,14 @@ Srt* resolve_unary_expr(Resolver* resolver) {
             return new_dtyped_srt(SRT_ADDR_EXPR, dtype, 1, child_srt);
         }
         case AST_INDIR_EXPR: {
+            child_srt = convert_to_ptr_if_array(child_srt);
+            child_srt = convert_to_ptr_if_function(child_srt);
             Dtype* dtype = dtype_copy(child_srt->dtype->pointer->to_dtype);
             return new_dtyped_srt(SRT_INDIR_EXPR, dtype, 1, child_srt);
         }
         case AST_LNOT_EXPR: {
+            child_srt = convert_to_ptr_if_array(child_srt);
+            child_srt = convert_to_ptr_if_function(child_srt);
             Dtype* dtype = new_integer_dtype();
             return new_dtyped_srt(SRT_LNOT_EXPR, dtype, 1, child_srt);
         }
@@ -216,12 +238,21 @@ Srt* resolve_postfix_expr(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     switch (ast->type) {
+        case AST_SUBSC_EXPR: {
+            Ast* lhs_ast = ast_copy(vector_at(ast->children, 0));
+            Ast* rhs_ast = ast_copy(vector_at(ast->children, 1));
+            resolver->ast = new_ast(AST_INDIR_EXPR, 1, new_ast(AST_ADD_EXPR, 2, lhs_ast, rhs_ast));
+            Srt* srt = resolve_expr(resolver);
+
+            delete_ast(resolver->ast);
+            resolver->ast = ast;
+            return srt;
+        }
         case AST_CALL_EXPR: {
             resolver->ast = vector_at(ast->children, 0);
             Srt* lhs_srt = resolve_expr(resolver);
-
-            // TODO: type conversion is always performed, not only in function calls
-            lhs_srt = convert_function_to_ptr(lhs_srt);
+            lhs_srt = convert_to_ptr_if_array(lhs_srt);
+            lhs_srt = convert_to_ptr_if_function(lhs_srt);
 
             resolver->ast = vector_at(ast->children, 1);
             Srt* rhs_srt = resolve_argument_expr_list(resolver);
@@ -243,7 +274,10 @@ Srt* resolve_argument_expr_list(Resolver* resolver) {
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
         resolver->ast = vector_at(ast->children, i);
-        vector_push(srt->children, resolve_expr(resolver));
+        Srt* child_srt = resolve_expr(resolver);
+        child_srt = convert_to_ptr_if_array(child_srt);
+        child_srt = convert_to_ptr_if_function(child_srt);
+        vector_push(srt->children, child_srt);
     }
 
     resolver->ast = ast;
