@@ -1,6 +1,7 @@
 #include "./declaration.h"
 #include "../common/common.h"
 #include "../ctoken/ctoken.h"
+#include "./expression.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -110,6 +111,11 @@ Ast* parse_direct_declarator(Parser* parser) {
     while (!terminated) {
         ctoken = vector_at(parser->ctokens, parser->index);
         switch (ctoken->type) {
+            case CTOKEN_LBRACKET:
+                parser->index++;
+                ast = new_ast(AST_ARRAY_DECLOR, 2, ast, parse_assignment_expr(parser));
+                consume_ctoken(parser, CTOKEN_RBRACKET);
+                break;
             case CTOKEN_LPALEN:
                 parser->index++;
                 ast = new_ast(AST_FUNC_DECLOR, 2, ast, parse_parameter_list(parser));

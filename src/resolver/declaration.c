@@ -1,5 +1,6 @@
 #include "./declaration.h"
 #include "../common/common.h"
+#include "./expression.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,13 +25,13 @@ Dtype* resolve_decl_specifiers(Resolver* resolver) {
     Dtype* dtype = NULL;
     Ast* ast = resolver->ast;
 
-    Ast* lookedup_ast = vector_at(ast->children, 0);
-    switch (lookedup_ast->type) {
+    Ast* ast_ptr = vector_at(ast->children, 0);
+    switch (ast_ptr->type) {
         case AST_TYPE_INT:
             dtype = new_integer_dtype();
             break;
         default:
-            fprintf(stderr, "Error: unexpected ast type %d\n", lookedup_ast->type);
+            fprintf(stderr, "Error: unexpected ast type %d\n", ast_ptr->type);
             exit(1);
     }
 
@@ -57,8 +58,8 @@ Srt* resolve_init_declarator(Resolver* resolver) {
 
     resolver->ast = vector_at(ast->children, 0);
     Srt* declarator_srt = resolve_declarator(resolver);
-    declarator_srt->dtype =
-        dtype_connect(declarator_srt->dtype, dtype_copy(resolver->shared_dtype));
+    Dtype* shared_dtype = dtype_copy(resolver->shared_dtype);
+    declarator_srt->dtype = dtype_connect(declarator_srt->dtype, shared_dtype);
 
     SymbolTable* table = resolver->global_table;
     if (resolver->local_table != NULL) table = resolver->local_table;
@@ -78,41 +79,44 @@ Srt* resolve_init_declarator(Resolver* resolver) {
 }
 
 Srt* resolve_declarator(Resolver* resolver) {
-    Srt* srt = NULL;
     Dtype* dtype = NULL;
     Ast* ast = resolver->ast;
 
-    Ast* lookedup_ast = ast;
-    Dtype* socket_dtype = NULL;
-    int terminated = 0;
+    Ast* ast_ptr = ast;
 
-    while (!terminated) {
-        switch (lookedup_ast->type) {
-            case AST_FUNC_DECLOR:
-                resolver->ast = vector_at(lookedup_ast->children, 1);
-                socket_dtype = new_socket_function_dtype(resolve_parameter_list(resolver));
-                dtype_connect(socket_dtype, dtype);
-                dtype = socket_dtype;
-                lookedup_ast = vector_at(lookedup_ast->children, 0);
+    while (1) {
+        switch (ast_ptr->type) {
+            case AST_PTR_DECLOR: {
+                Dtype* socket_dtype = new_socket_pointer_dtype();
+                dtype = dtype_connect(socket_dtype, dtype);
+                ast_ptr = vector_at(ast_ptr->children, 0);
                 break;
-            case AST_PTR_DECLOR:
-                socket_dtype = new_socket_pointer_dtype();
-                dtype_connect(socket_dtype, dtype);
-                dtype = socket_dtype;
-                lookedup_ast = vector_at(lookedup_ast->children, 0);
+            }
+            case AST_ARRAY_DECLOR: {
+                // TODO: support expression for array size
+                resolver->ast = vector_at(ast_ptr->children, 1);
+                Srt* size_srt = resolve_expr(resolver);
+                Dtype* socket_dtype = new_socket_array_dtype(size_srt->value_int);
+                delete_srt(size_srt);
+                dtype = dtype_connect(socket_dtype, dtype);
+                ast_ptr = vector_at(ast_ptr->children, 0);
                 break;
+            }
+            case AST_FUNC_DECLOR: {
+                resolver->ast = vector_at(ast_ptr->children, 1);
+                Dtype* socket_dtype = new_socket_function_dtype(resolve_parameter_list(resolver));
+                dtype = dtype_connect(socket_dtype, dtype);
+                ast_ptr = vector_at(ast_ptr->children, 0);
+                break;
+            }
             case AST_IDENT_DECLOR:
-                srt = new_identifier_srt(SRT_DECL, dtype, new_string(lookedup_ast->ident_name));
-                terminated = 1;
-                break;
+                resolver->ast = ast;
+                return new_identifier_srt(SRT_DECL, dtype, new_string(ast_ptr->ident_name));
             default:
-                fprintf(stderr, "Error: unexpected ast type %d\n", lookedup_ast->type);
+                fprintf(stderr, "Error: unexpected ast type %d\n", ast_ptr->type);
                 exit(1);
         }
     }
-
-    resolver->ast = ast;
-    return srt;
 }
 
 Vector* resolve_parameter_list(Resolver* resolver) {
