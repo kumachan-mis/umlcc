@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 BaseType t_immc = {
-    .copy_object = immc_copy,
-    .delete_object = delete_immc,
+    .copy_object = (void* (*)(void*))immc_copy,
+    .delete_object = (void (*)(void*))delete_immc,
 };
 
 Immc* new_inst_immc(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* snd_src) {

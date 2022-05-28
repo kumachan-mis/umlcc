@@ -1,5 +1,5 @@
 CC      := gcc
-CFLAGS  := -O3 -std=c99 -pedantic -W -Wall -Wno-incompatible-pointer-types -Werror
+CFLAGS  := -O3 -std=c99 -pedantic -W -Wall -Werror
 
 BLD_DIR  := build
 BIN_DIR  := bin

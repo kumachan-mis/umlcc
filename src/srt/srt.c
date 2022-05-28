@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 BaseType t_srt = {
-    .copy_object = srt_copy,
-    .delete_object = delete_srt,
+    .copy_object = (void* (*)(void*))srt_copy,
+    .delete_object = (void (*)(void*))delete_srt,
 };
 
 Srt* new_srt(SrtType type, int num_children, ...) {

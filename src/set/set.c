@@ -11,7 +11,7 @@ struct Set {
 };
 
 struct SetIter {
-    int index;
+    MapIter* inner;
 };
 
 void* copy_nnotnull() {
@@ -20,7 +20,10 @@ void* copy_nnotnull() {
 
 void delete_notnull() {}
 
-BaseType t_notnull = {.copy_object = copy_nnotnull, .delete_object = delete_notnull};
+BaseType t_notnull = {
+    .copy_object = (void* (*)(void*))copy_nnotnull,
+    .delete_object = (void (*)(void*))delete_notnull,
+};
 
 Set* new_set(HashableType* t_item) {
     Set* set = malloc(sizeof(Set));
@@ -49,19 +52,24 @@ int set_contains(Set* set, void* item) {
 }
 
 SetIter* set_iter_begin(Set* set) {
-    return map_iter_begin(set->inner);
+    SetIter* iter = malloc(sizeof(SetIter));
+    iter->inner = map_iter_begin(set->inner);
+    return iter;
 }
 
 SetIter* set_iter_next(SetIter* iter, Set* set) {
-    return map_iter_next(iter, set->inner);
+    iter->inner = map_iter_next(iter->inner, set->inner);
+    return iter;
 }
 
 int set_iter_end(SetIter* iter, Set* set) {
-    return map_iter_end(iter, set->inner);
+    int end = map_iter_end(iter->inner, set->inner);
+    if (end) free(iter);
+    return end;
 }
 
 void* set_iter_item(SetIter* iter, Set* set) {
-    return map_iter_key(iter, set->inner);
+    return map_iter_key(iter->inner, set->inner);
 }
 
 Set* set_intersection(Set* set, Set* other) {

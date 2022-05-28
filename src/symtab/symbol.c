@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 BaseType t_symbol = {
-    .copy_object = symbol_copy,
-    .delete_object = delete_symbol,
+    .copy_object = (void* (*)(void*))symbol_copy,
+    .delete_object = (void (*)(void*))delete_symbol,
 };
 
 Symbol* new_symbol(char* name, Dtype* dtype, int memory_offset) {

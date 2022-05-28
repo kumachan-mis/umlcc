@@ -44,7 +44,8 @@ Map* new_punctuator_map() {
 
 void ctoken_map_add(Map* ctoken_map, char* ctoken_str, CTokenType type) {
     char* key = new_string(ctoken_str);
-    CTokenType* value = new_integer(type);
+    CTokenType* value = malloc(sizeof(CTokenType));
+    *value = type;
     map_add(ctoken_map, key, value);
 }
 

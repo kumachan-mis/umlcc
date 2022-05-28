@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 BaseType t_dparam = {
-    .copy_object = dparam_copy,
-    .delete_object = delete_dparam,
+    .copy_object = (void* (*)(void*))dparam_copy,
+    .delete_object = (void (*)(void*))delete_dparam,
 };
 
 struct Dtype* dtype_copy(struct Dtype* dtype);

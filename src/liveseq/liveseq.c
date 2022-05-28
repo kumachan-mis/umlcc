@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 BaseType t_liveseq = {
-    .copy_object = liveseq_copy,
-    .delete_object = delete_liveseq,
+    .copy_object = (void* (*)(void*))liveseq_copy,
+    .delete_object = (void (*)(void*))delete_liveseq,
 };
 
 Liveseq* new_liveseq() {
