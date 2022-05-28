@@ -14,5 +14,13 @@ int main() {
     put_int(a[3]);
     put_int(a[4]);
 
+    int b[3];
+    0 [b] = 10;
+    1 [b] = 11;
+    2 [b] = 12;
+    put_int(0 [b]);
+    put_int(1 [b]);
+    put_int(2 [b]);
+
     return 0;
 }
