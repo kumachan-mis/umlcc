@@ -6,31 +6,31 @@
 #include <stdlib.h>
 #include <string.h>
 
-void append_children_code(Codegen* codegen, Vector* codes) {
+void append_children_immcode(Immcgen* immcgen, Vector* codes) {
     Vector* sub_codes = NULL;
-    Srt* srt = codegen->srt;
+    Srt* srt = immcgen->srt;
 
     int num_children = vector_size(srt->children);
     for (int i = 0; i < num_children; i++) {
-        codegen->srt = vector_at(srt->children, i);
-        sub_codes = codegen_generate_code(codegen);
+        immcgen->srt = vector_at(srt->children, i);
+        sub_codes = immcgen_generate_immcode(immcgen);
         vector_extend(codes, sub_codes);
         delete_vector(sub_codes);
     }
 
-    codegen->srt = srt;
+    immcgen->srt = srt;
 }
 
-void append_child_code(Codegen* codegen, Vector* codes, int index) {
+void append_child_immcode(Immcgen* immcgen, Vector* codes, int index) {
     Vector* sub_codes = NULL;
-    Srt* srt = codegen->srt;
+    Srt* srt = immcgen->srt;
 
-    codegen->srt = vector_at(srt->children, index);
-    sub_codes = codegen_generate_code(codegen);
+    immcgen->srt = vector_at(srt->children, index);
+    sub_codes = immcgen_generate_immcode(immcgen);
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes);
 
-    codegen->srt = srt;
+    immcgen->srt = srt;
 }
 
 char* create_label_name(int label_id) {

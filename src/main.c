@@ -1,4 +1,4 @@
-#include "./gen/gen.h"
+#include "./immcgen/immcgen.h"
 #include "./lexer/lexer.h"
 #include "./parser/parser.h"
 #include "./regalloc/regalloc.h"
@@ -53,9 +53,9 @@ int main(int argc, char* argv[]) {
     Srt* srt = resolver_resolve_semantics(resolver);
     delete_resolver(resolver);
 
-    Codegen* codegen = new_codegen(srt);
-    Vector* immcs = codegen_generate_code(codegen);
-    delete_codegen(codegen);
+    Immcgen* immcgen = new_immcgen(srt);
+    Vector* immcs = immcgen_generate_immcode(immcgen);
+    delete_immcgen(immcgen);
 
     RegAlloc* regalloc = new_regalloc(immcs, NUM_CALLER_SAVED_REGS);
     AllocImmcs* allocimmcs = regalloc_allocate_regs(regalloc);
