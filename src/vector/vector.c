@@ -1,5 +1,5 @@
 #include "./vector.h"
-#include "../common/common.h"
+#include "../common/type.h"
 
 #include <memory.h>
 #include <stdlib.h>

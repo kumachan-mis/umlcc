@@ -1,4 +1,4 @@
-#include "./common.h"
+#include "./type.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -71,10 +71,4 @@ int hash_string(char* str) {
     }
 
     return hash;
-}
-
-void swap_ptr(void** a, void** b) {
-    void* tmp = *a;
-    *a = *b;
-    *b = tmp;
 }

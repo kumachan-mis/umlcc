@@ -1,5 +1,5 @@
 #include "./declaration.h"
-#include "../common/common.h"
+#include "../common/type.h"
 #include "../dtype/dtype.h"
 #include "../immc/immc.h"
 #include "./util.h"

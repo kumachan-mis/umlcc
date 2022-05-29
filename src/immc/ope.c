@@ -1,5 +1,5 @@
 #include "./ope.h"
-#include "../common/common.h"
+#include "../common/type.h"
 
 #include <stdio.h>
 #include <stdlib.h>

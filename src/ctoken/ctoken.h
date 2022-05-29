@@ -1,7 +1,7 @@
 #ifndef UMLCC_CTOKEN_H
 #define UMLCC_CTOKEN_H
 
-#include "../common/common.h"
+#include "../common/type.h"
 
 typedef enum CTokenType {
     // keyword

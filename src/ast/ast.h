@@ -1,7 +1,7 @@
 #ifndef UMLCC_AST_H
 #define UMLCC_AST_H
 
-#include "../common/common.h"
+#include "../common/type.h"
 #include "../vector/vector.h"
 
 typedef enum AstType {

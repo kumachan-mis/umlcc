@@ -1,7 +1,7 @@
 #ifndef UMLCC_LIVESEQ_H
 #define UMLCC_LIVESEQ_H
 
-#include "../common/common.h"
+#include "../common/type.h"
 #include "../vector/vector.h"
 
 typedef struct Liveseq {

@@ -3,7 +3,7 @@
 
 typedef struct Vector Vector;
 
-#include "../common/common.h"
+#include "../common/type.h"
 
 Vector* new_vector(BaseType* t_item);
 Vector* vector_copy(Vector* vector);

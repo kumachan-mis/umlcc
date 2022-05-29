@@ -1,5 +1,6 @@
 #include "./expression.h"
-#include "../common/common.h"
+#include "../common/type.h"
+#include "../common/util.h"
 #include "./conversion.h"
 
 #include <stdio.h>

@@ -1,5 +1,5 @@
 #include "./external.h"
-#include "../common/common.h"
+#include "../common/type.h"
 #include "../immc/immc.h"
 #include "./util.h"
 

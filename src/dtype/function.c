@@ -1,5 +1,5 @@
 #include "./function.h"
-#include "../common/common.h"
+#include "../common/type.h"
 
 #include <stdlib.h>
 
