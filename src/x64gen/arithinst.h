@@ -1,5 +1,5 @@
-#ifndef UMLCC_X64_ARITHINST_H
-#define UMLCC_X64_ARITHINST_H
+#ifndef UMLCC_X64GEN_ARITHINST_H
+#define UMLCC_X64GEN_ARITHINST_H
 
 #include "./x64gen.h"
 

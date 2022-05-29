@@ -1,5 +1,5 @@
-#ifndef UMLCC_X64_CTRLINST_H
-#define UMLCC_X64_CTRLINST_H
+#ifndef UMLCC_X64GEN_CTRLINST_H
+#define UMLCC_X64GEN_CTRLINST_H
 
 #include "./x64gen.h"
 

@@ -1,5 +1,5 @@
-#ifndef UMLCC_X64_DATAINST_H
-#define UMLCC_X64_DATAINST_H
+#ifndef UMLCC_X64GEN_DATAINST_H
+#define UMLCC_X64GEN_DATAINST_H
 
 #include "./x64gen.h"
 

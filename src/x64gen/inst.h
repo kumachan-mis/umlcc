@@ -1,5 +1,5 @@
-#ifndef UMLCC_X64_INST_H
-#define UMLCC_X64_INST_H
+#ifndef UMLCC_X64GEN_INST_H
+#define UMLCC_X64GEN_INST_H
 
 #include "./x64gen.h"
 

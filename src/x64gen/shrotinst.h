@@ -1,5 +1,5 @@
-#ifndef UMLCC_X64_SHROTINST_H
-#define UMLCC_X64_SHROTINST_H
+#ifndef UMLCC_X64GEN_SHROTINST_H
+#define UMLCC_X64GEN_SHROTINST_H
 
 #include "./x64gen.h"
 

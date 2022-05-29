@@ -1,5 +1,5 @@
-#ifndef UMLCC_X64_REGISTER_H
-#define UMLCC_X64_REGISTER_H
+#ifndef UMLCC_X64GEN_REGISTER_H
+#define UMLCC_X64GEN_REGISTER_H
 
 #include "../immc/immc.h"
 

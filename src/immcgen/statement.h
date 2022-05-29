@@ -1,5 +1,5 @@
-#ifndef UMLCC_GEN_STATEMENT_H
-#define UMLCC_GEN_STATEMENT_H
+#ifndef UMLCC_IMMCGEN_STATEMENT_H
+#define UMLCC_IMMCGEN_STATEMENT_H
 
 #include "./immcgen.h"
 

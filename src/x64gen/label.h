@@ -1,5 +1,5 @@
-#ifndef UMLCC_X64_LABEL_H
-#define UMLCC_X64_LABEL_H
+#ifndef UMLCC_X64GEN_LABEL_H
+#define UMLCC_X64GEN_LABEL_H
 
 #include "./x64gen.h"
 

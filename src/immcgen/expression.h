@@ -1,5 +1,5 @@
-#ifndef UMLCC_GEN_EXPRESSION_H
-#define UMLCC_GEN_EXPRESSION_H
+#ifndef UMLCC_IMMCGEN_EXPRESSION_H
+#define UMLCC_IMMCGEN_EXPRESSION_H
 
 #include "./immcgen.h"
 

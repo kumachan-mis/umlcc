@@ -1,5 +1,5 @@
-#ifndef UMLCC_GEN_UTIL_H
-#define UMLCC_GEN_UTIL_H
+#ifndef UMLCC_IMMCGEN_UTIL_H
+#define UMLCC_IMMCGEN_UTIL_H
 
 #include "../vector/vector.h"
 #include "./immcgen.h"

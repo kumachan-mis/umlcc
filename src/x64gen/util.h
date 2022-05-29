@@ -1,5 +1,5 @@
-#ifndef UMLCC_X64_UTIL_H
-#define UMLCC_X64_UTIL_H
+#ifndef UMLCC_X64GEN_UTIL_H
+#define UMLCC_X64GEN_UTIL_H
 
 #include "../immc/immc.h"
 #include "../set/set.h"
