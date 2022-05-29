@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* inst_strings[] = {"load  ", "addr  ", "store ", "ldarg ", "starg ", "stret ",
-                        "add   ", "sub   ", "mul   ", "div   ", "mod   ", "sal   ",
-                        "sar   ", "seteq ", "setneq", "jmp   ", "jeq   ", "jneq  ",
-                        "call  ", "enter ", "leave ", "prep  ", "clean ", "free  "};
+char* immc_insts[] = {"load  ", "addr  ", "store ", "ldarg ", "starg ", "stret ",
+                      "add   ", "sub   ", "mul   ", "div   ", "mod   ", "sal   ",
+                      "sar   ", "seteq ", "setneq", "jmp   ", "jeq   ", "jneq  ",
+                      "call  ", "enter ", "leave ", "prep  ", "clean ", "free  "};
 
 ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* snd_src) {
     ImmcInst* immcinst = malloc(sizeof(ImmcInst));
@@ -38,7 +38,7 @@ char* immcinst_tostring(ImmcInst* immcinst) {
     memset(code_str, 0, 100 * sizeof(char));
 
     strcat(code_str, "\t");
-    strcat(code_str, inst_strings[immcinst->type]);
+    strcat(code_str, immc_insts[immcinst->type]);
 
     int operand_appears = 0;
     if (immcinst->dst != NULL) {
