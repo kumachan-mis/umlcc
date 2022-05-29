@@ -30,7 +30,7 @@ Vector* x64gen_generate_x64code(X64gen* x64gen) {
 
         Immc* immc = vector_at(x64gen->immcs, x64gen->index);
         switch (immc->label->type) {
-            case LABEL_FUNCTION:
+            case IMMC_LABEL_FUNCTION:
                 sub_codes = gen_function_x64code(x64gen);
                 break;
             default:
@@ -64,7 +64,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     Vector* body_codes = new_vector(&t_string);
     while (1) {
         Immc* immc = vector_at(x64gen->immcs, x64gen->index);
-        if (immc->type == IMMC_INST && immc->inst->type == INST_LEAVE) break;
+        if (immc->type == IMMC_INST && immc->inst->type == IMMC_INST_LEAVE) break;
 
         switch (immc->type) {
             case IMMC_INST:

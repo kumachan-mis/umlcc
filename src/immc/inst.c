@@ -30,7 +30,7 @@ ImmcInst* immcinst_copy(ImmcInst* immcinst) {
 }
 
 int immcinst_isjump(ImmcInst* immcinst) {
-    return INST_JMP <= immcinst->type && immcinst->type <= INST_JNEQ;
+    return IMMC_INST_JMP <= immcinst->type && immcinst->type <= IMMC_INST_JNEQ;
 }
 
 char* immcinst_tostring(ImmcInst* immcinst) {

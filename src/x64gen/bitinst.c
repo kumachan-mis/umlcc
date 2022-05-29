@@ -26,7 +26,7 @@ Vector* gen_setcmp_common_x64code(X64gen* x64gen, char* inst) {
     ImmcOpe* snd_src = immc->inst->snd_src;
 
     switch (snd_src->type) {
-        case OPERAND_IMM: {
+        case IMMC_OPERAND_IMM: {
             int fst_src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
             ImmcOpeSuffix immc_suffix = fst_src->suffix;
             char* fst_src_name = reg_name(fst_src_id, immc_suffix);
@@ -34,7 +34,7 @@ Vector* gen_setcmp_common_x64code(X64gen* x64gen, char* inst) {
             append_code(codes, "\tcmp%c\t$%d, %s\n", suffix, snd_src->imm_value, fst_src_name);
             break;
         }
-        case OPERAND_REG: {
+        case IMMC_OPERAND_REG: {
             int fst_src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
             int snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
             ImmcOpeSuffix immc_suffix = immcope_suffix_max(fst_src->suffix, snd_src->suffix);
@@ -51,7 +51,7 @@ Vector* gen_setcmp_common_x64code(X64gen* x64gen, char* inst) {
 
     int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
     append_code(codes, "\t%s\t%s\n", inst, BREG_NAMES[dst_id]);
-    append_mov_code(codes, dst_id, SUFFIX_BYTE, dst_id, dst->suffix);
+    append_mov_code(codes, dst_id, IMMC_SUFFIX_BYTE, dst_id, dst->suffix);
 
     liveseqs_next(x64gen->liveseqs);
     return codes;

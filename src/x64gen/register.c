@@ -50,13 +50,13 @@ int NUM_CALLEE_SAVED_REGS = 5;
 
 char* reg_name(int reg_id, ImmcOpeSuffix suffix) {
     switch (suffix) {
-        case SUFFIX_BYTE:
+        case IMMC_SUFFIX_BYTE:
             return BREG_NAMES[reg_id];
-        case SUFFIX_WORD:
+        case IMMC_SUFFIX_WORD:
             return WREG_NAMES[reg_id];
-        case SUFFIX_LONG:
+        case IMMC_SUFFIX_LONG:
             return LREG_NAMES[reg_id];
-        case SUFFIX_QUAD:
+        case IMMC_SUFFIX_QUAD:
             return QREG_NAMES[reg_id];
         default:
             return NULL;

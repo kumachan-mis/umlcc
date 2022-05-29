@@ -39,7 +39,7 @@ Vector* gen_jcmp_common_x64code(X64gen* x64gen, char* inst) {
     ImmcOpe* snd_src = immc->inst->snd_src;
 
     switch (snd_src->type) {
-        case OPERAND_IMM: {
+        case IMMC_OPERAND_IMM: {
             int fst_src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
             ImmcOpeSuffix immc_suffix = fst_src->suffix;
             char* fst_src_name = reg_name(fst_src_id, immc_suffix);
@@ -47,7 +47,7 @@ Vector* gen_jcmp_common_x64code(X64gen* x64gen, char* inst) {
             append_code(codes, "\tcmp%c\t$%d, %s\n", suffix, snd_src->imm_value, fst_src_name);
             break;
         }
-        case OPERAND_REG: {
+        case IMMC_OPERAND_REG: {
             int fst_src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
             int snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
             ImmcOpeSuffix immc_suffix = immcope_suffix_max(fst_src->suffix, snd_src->suffix);
@@ -85,7 +85,7 @@ Vector* gen_call_x64code(X64gen* x64gen) {
         int* caller_ref = set_iter_item(iter, alive_regs_set);
         int caller_id = CALLER_SAVED_REG_IDS[*caller_ref];
         int callee_id = CALLEE_SAVED_REG_IDS[evacuation_count];
-        append_mov_code(codes, caller_id, SUFFIX_QUAD, callee_id, SUFFIX_QUAD);
+        append_mov_code(codes, caller_id, IMMC_SUFFIX_QUAD, callee_id, IMMC_SUFFIX_QUAD);
         evacuation_count++;
     }
 
@@ -93,7 +93,7 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     Set* arg_regs_set = create_arg_regs_set(snd_src->imm_value);
     if (set_contains(arg_regs_set, &src_id)) {
         int evacuation_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
-        append_mov_code(codes, src_id, SUFFIX_QUAD, evacuation_id, SUFFIX_QUAD);
+        append_mov_code(codes, src_id, IMMC_SUFFIX_QUAD, evacuation_id, IMMC_SUFFIX_QUAD);
         src_id = evacuation_id;
     }
     delete_set(arg_regs_set);
@@ -114,7 +114,7 @@ Vector* gen_call_x64code(X64gen* x64gen) {
         int* caller_ref = set_iter_item(iter, alive_regs_set);
         int caller_id = CALLER_SAVED_REG_IDS[*caller_ref];
         int callee_id = CALLEE_SAVED_REG_IDS[evacuation_count];
-        append_mov_code(codes, callee_id, SUFFIX_QUAD, caller_id, SUFFIX_QUAD);
+        append_mov_code(codes, callee_id, IMMC_SUFFIX_QUAD, caller_id, IMMC_SUFFIX_QUAD);
         evacuation_count++;
     }
     if (x64gen->evacuation_count < evacuation_count) x64gen->evacuation_count = evacuation_count;

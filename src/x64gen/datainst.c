@@ -20,23 +20,23 @@ Vector* gen_load_x64code(X64gen* x64gen) {
     char suffix = immcope_suffix_tochar(dst->suffix);
 
     switch (src->type) {
-        case OPERAND_IMM: {
+        case IMMC_OPERAND_IMM: {
             int imm_value = src->imm_value;
             append_code(codes, "\tmov%c\t$%d, %s\n", suffix, imm_value, dst_name);
             break;
         }
-        case OPERAND_PTR: {
+        case IMMC_OPERAND_PTR: {
             int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
             char* src_name = QREG_NAMES[src_id];
             append_code(codes, "\tmov%c\t(%s), %s\n", suffix, src_name, dst_name);
             break;
         }
-        case OPERAND_MEM: {
+        case IMMC_OPERAND_MEM: {
             int mem_offset = src->mem_offset;
             append_code(codes, "\tmov%c\t-%d(%s), %s\n", suffix, mem_offset, BP_NAME, dst_name);
             break;
         }
-        case OPERAND_LABEL: {
+        case IMMC_OPERAND_LABEL: {
             char* label_name = src->label_name;
             append_code(codes, "\tmov%c\t%s(%s), %s\n", suffix, label_name, PC_NAME, dst_name);
             break;
@@ -63,10 +63,10 @@ Vector* gen_addr_x64code(X64gen* x64gen) {
     char* dst_name = QREG_NAMES[dst_id];
 
     switch (src->type) {
-        case OPERAND_MEM:
+        case IMMC_OPERAND_MEM:
             append_code(codes, "\tleaq\t-%d(%s), %s\n", src->mem_offset, BP_NAME, dst_name);
             break;
-        case OPERAND_LABEL:
+        case IMMC_OPERAND_LABEL:
             append_code(codes, "\tleaq\t%s(%s), %s\n", src->label_name, PC_NAME, dst_name);
             break;
         default:
@@ -91,7 +91,7 @@ Vector* gen_store_x64code(X64gen* x64gen) {
     char suffix = immcope_suffix_tochar(src->suffix);
 
     switch (dst->type) {
-        case OPERAND_PTR: {
+        case IMMC_OPERAND_PTR: {
             int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
             char* dst_name = QREG_NAMES[dst_id];
             append_code(codes, "\tmov%c\t%s, (%s)\n", suffix, src_name, dst_name);

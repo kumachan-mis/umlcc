@@ -7,8 +7,8 @@
 
 ImmcOpe* new_imm_immcope(int imm_value) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
-    immcope->type = OPERAND_IMM;
-    immcope->suffix = SUFFIX_NONE;
+    immcope->type = IMMC_OPERAND_IMM;
+    immcope->suffix = IMMC_SUFFIX_NONE;
     immcope->imm_value = imm_value;
     immcope->reg_id = -1;
     immcope->mem_offset = -1;
@@ -18,7 +18,7 @@ ImmcOpe* new_imm_immcope(int imm_value) {
 
 ImmcOpe* new_arg_immcope(ImmcOpeSuffix suffix, int imm_value) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
-    immcope->type = OPERAND_ARG;
+    immcope->type = IMMC_OPERAND_ARG;
     immcope->suffix = suffix;
     immcope->imm_value = imm_value;
     immcope->reg_id = -1;
@@ -29,7 +29,7 @@ ImmcOpe* new_arg_immcope(ImmcOpeSuffix suffix, int imm_value) {
 
 ImmcOpe* new_reg_immcope(ImmcOpeSuffix suffix, int reg_id) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
-    immcope->type = OPERAND_REG;
+    immcope->type = IMMC_OPERAND_REG;
     immcope->suffix = suffix;
     immcope->imm_value = -1;
     immcope->reg_id = reg_id;
@@ -40,8 +40,8 @@ ImmcOpe* new_reg_immcope(ImmcOpeSuffix suffix, int reg_id) {
 
 ImmcOpe* new_ptr_immcope(int reg_id) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
-    immcope->type = OPERAND_PTR;
-    immcope->suffix = SUFFIX_QUAD;
+    immcope->type = IMMC_OPERAND_PTR;
+    immcope->suffix = IMMC_SUFFIX_QUAD;
     immcope->imm_value = -1;
     immcope->reg_id = reg_id;
     immcope->mem_offset = -1;
@@ -51,8 +51,8 @@ ImmcOpe* new_ptr_immcope(int reg_id) {
 
 ImmcOpe* new_mem_immcope(int mem_offset) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
-    immcope->type = OPERAND_MEM;
-    immcope->suffix = SUFFIX_NONE;
+    immcope->type = IMMC_OPERAND_MEM;
+    immcope->suffix = IMMC_SUFFIX_NONE;
     immcope->imm_value = -1;
     immcope->reg_id = -1;
     immcope->mem_offset = mem_offset;
@@ -62,8 +62,8 @@ ImmcOpe* new_mem_immcope(int mem_offset) {
 
 ImmcOpe* new_label_immcope(char* label_name) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
-    immcope->type = OPERAND_LABEL;
-    immcope->suffix = SUFFIX_NONE;
+    immcope->type = IMMC_OPERAND_LABEL;
+    immcope->suffix = IMMC_SUFFIX_NONE;
     immcope->imm_value = -1;
     immcope->reg_id = -1;
     immcope->mem_offset = -1;
@@ -95,22 +95,22 @@ char* immcope_tostring(ImmcOpe* immcope) {
     char suffix = immcope_suffix_tochar(immcope->suffix);
 
     switch (immcope->type) {
-        case OPERAND_IMM:
+        case IMMC_OPERAND_IMM:
             sprintf(ope_str, "%d", immcope->imm_value);
             break;
-        case OPERAND_ARG:
+        case IMMC_OPERAND_ARG:
             sprintf(ope_str, "%%a%d%c", immcope->imm_value, suffix);
             break;
-        case OPERAND_REG:
+        case IMMC_OPERAND_REG:
             sprintf(ope_str, "%%r%d%c", immcope->reg_id, suffix);
             break;
-        case OPERAND_PTR:
+        case IMMC_OPERAND_PTR:
             sprintf(ope_str, "(%%r%d%c)", immcope->reg_id, suffix);
             break;
-        case OPERAND_MEM:
+        case IMMC_OPERAND_MEM:
             sprintf(ope_str, "M[%d]", immcope->mem_offset);
             break;
-        case OPERAND_LABEL:
+        case IMMC_OPERAND_LABEL:
             sprintf(ope_str, "%s", immcope->label_name);
             break;
     }
@@ -121,27 +121,27 @@ char* immcope_tostring(ImmcOpe* immcope) {
 ImmcOpeSuffix immcope_suffix_get(int size) {
     switch (size) {
         case 1:
-            return SUFFIX_BYTE;
+            return IMMC_SUFFIX_BYTE;
         case 2:
-            return SUFFIX_WORD;
+            return IMMC_SUFFIX_WORD;
         case 4:
-            return SUFFIX_LONG;
+            return IMMC_SUFFIX_LONG;
         case 8:
-            return SUFFIX_QUAD;
+            return IMMC_SUFFIX_QUAD;
         default:
-            return SUFFIX_NONE;
+            return IMMC_SUFFIX_NONE;
     }
 }
 
 int immcope_suffix_tosize(ImmcOpeSuffix suffix) {
     switch (suffix) {
-        case SUFFIX_BYTE:
+        case IMMC_SUFFIX_BYTE:
             return 1;
-        case SUFFIX_WORD:
+        case IMMC_SUFFIX_WORD:
             return 2;
-        case SUFFIX_LONG:
+        case IMMC_SUFFIX_LONG:
             return 4;
-        case SUFFIX_QUAD:
+        case IMMC_SUFFIX_QUAD:
             return 8;
         default:
             return 0;
@@ -150,13 +150,13 @@ int immcope_suffix_tosize(ImmcOpeSuffix suffix) {
 
 char immcope_suffix_tochar(ImmcOpeSuffix suffix) {
     switch (suffix) {
-        case SUFFIX_BYTE:
+        case IMMC_SUFFIX_BYTE:
             return 'b';
-        case SUFFIX_WORD:
+        case IMMC_SUFFIX_WORD:
             return 'w';
-        case SUFFIX_LONG:
+        case IMMC_SUFFIX_LONG:
             return 'l';
-        case SUFFIX_QUAD:
+        case IMMC_SUFFIX_QUAD:
             return 'q';
         default:
             return '\0';

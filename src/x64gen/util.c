@@ -32,7 +32,7 @@ void append_mov_code(Vector* codes, int src_reg_id, ImmcOpeSuffix src_immc_suffi
         return;
     }
 
-    if (src_immc_suffix == SUFFIX_LONG && dst_immc_suffix == SUFFIX_QUAD) {
+    if (src_immc_suffix == IMMC_SUFFIX_LONG && dst_immc_suffix == IMMC_SUFFIX_QUAD) {
         append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[src_reg_id], LREG_NAMES[AX_REG_ID]);
         append_code(codes, "\tcltq\n");
         append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[AX_REG_ID], QREG_NAMES[dst_reg_id]);

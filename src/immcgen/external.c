@@ -38,7 +38,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
         ImmcOpeSuffix suffix = immcope_suffix_get(dtype_size(dparam->dtype));
         ImmcOpe* dst = new_mem_immcope(symbol->memory_offset);
         ImmcOpe* src = new_arg_immcope(suffix, i);
-        vector_push(param_codes, new_inst_immc(INST_LDARG, dst, src, NULL));
+        vector_push(param_codes, new_inst_immc(IMMC_INST_LDARG, dst, src, NULL));
     }
 
     immcgen->srt = vector_at(srt->children, 1);
@@ -46,9 +46,9 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
     append_children_immcode(immcgen, body_codes);
 
     char* label_name = new_string(declarator->ident_name);
-    vector_push(codes, new_label_immc(LABEL_FUNCTION, LABELVIS_GLOBAL, label_name));
+    vector_push(codes, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, label_name));
     ImmcOpe* memory_size = new_imm_immcope(immcgen->local_table->memory_size);
-    vector_push(codes, new_inst_immc(INST_ENTER, NULL, memory_size, NULL));
+    vector_push(codes, new_inst_immc(IMMC_INST_ENTER, NULL, memory_size, NULL));
 
     vector_extend(codes, param_codes);
     delete_vector(param_codes);
@@ -57,8 +57,8 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
     delete_vector(body_codes);
 
     char* return_label_name = create_label_name(immcgen->return_label_id);
-    vector_push(codes, new_label_immc(LABEL_NORMAL, LABELVIS_DEFAULT, return_label_name));
-    vector_push(codes, new_inst_immc(INST_LEAVE, NULL, immcope_copy(memory_size), NULL));
+    vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, return_label_name));
+    vector_push(codes, new_inst_immc(IMMC_INST_LEAVE, NULL, immcope_copy(memory_size), NULL));
 
     delete_symboltable(immcgen->local_table);
     immcgen->local_table = NULL;

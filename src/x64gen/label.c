@@ -12,11 +12,11 @@ Vector* gen_default_label_x64code(X64gen* x64gen);
 Vector* gen_label_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     switch (immc->label->visibility) {
-        case LABELVIS_GLOBAL:
+        case IMMC_VIS_GLOBAL:
             return gen_global_label_x64code(x64gen);
-        case LABELVIS_LOCAL:
+        case IMMC_VIS_LOCAL:
             return gen_local_label_x64code(x64gen);
-        case LABELVIS_DEFAULT:
+        case IMMC_VIS_NONE:
             return gen_default_label_x64code(x64gen);
         default:
             fprintf(stderr, "Error: unexpected label visibility %d\n", immc->label->visibility);

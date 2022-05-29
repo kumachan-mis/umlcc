@@ -2,20 +2,20 @@
 #define UMLCC_IMMC_OPE_H
 
 typedef enum ImmcOpeType {
-    OPERAND_IMM,
-    OPERAND_ARG,
-    OPERAND_REG,
-    OPERAND_PTR,
-    OPERAND_MEM,
-    OPERAND_LABEL
+    IMMC_OPERAND_IMM,
+    IMMC_OPERAND_ARG,
+    IMMC_OPERAND_REG,
+    IMMC_OPERAND_PTR,
+    IMMC_OPERAND_MEM,
+    IMMC_OPERAND_LABEL
 } ImmcOpeType;
 
 typedef enum ImmcOpeSuffix {
-    SUFFIX_NONE,
-    SUFFIX_BYTE,
-    SUFFIX_WORD,
-    SUFFIX_LONG,
-    SUFFIX_QUAD
+    IMMC_SUFFIX_NONE,
+    IMMC_SUFFIX_BYTE,
+    IMMC_SUFFIX_WORD,
+    IMMC_SUFFIX_LONG,
+    IMMC_SUFFIX_QUAD
 } ImmcOpeSuffix;
 
 typedef struct ImmcOpe {

@@ -2,23 +2,23 @@
 #define UMLCC_IMMC_LABEL_H
 
 typedef enum ImmcLabelType {
-    LABEL_FUNCTION,
-    LABEL_VARIABLE,
-    LABEL_NORMAL,
+    IMMC_LABEL_FUNCTION,
+    IMMC_LABEL_VARIABLE,
+    IMMC_LABEL_NORMAL,
 } ImmcLabelType;
-typedef enum ImmcLabelVis {
-    LABELVIS_GLOBAL,
-    LABELVIS_LOCAL,
-    LABELVIS_DEFAULT,
-} ImmcLabelVis;
+typedef enum ImmcVisibility {
+    IMMC_VIS_NONE,
+    IMMC_VIS_LOCAL,
+    IMMC_VIS_GLOBAL,
+} ImmcVisibility;
 
 typedef struct ImmcLabel {
     ImmcLabelType type;
-    ImmcLabelVis visibility;
+    ImmcVisibility visibility;
     char* name;
 } ImmcLabel;
 
-ImmcLabel* new_immclabel(ImmcLabelType type, ImmcLabelVis visibility, char* name);
+ImmcLabel* new_immclabel(ImmcLabelType type, ImmcVisibility visibility, char* name);
 ImmcLabel* immclabel_copy(ImmcLabel* immclabel);
 char* immclabel_tostring(ImmcLabel* immclabel);
 void delete_immclabel(ImmcLabel* immclabel);

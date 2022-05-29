@@ -26,7 +26,7 @@ Vector* gen_shrot_common_x64code(X64gen* x64gen, char* inst) {
     ImmcOpe* snd_src = immc->inst->snd_src;
 
     switch (snd_src->type) {
-        case OPERAND_IMM: {
+        case IMMC_OPERAND_IMM: {
             int src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
             ImmcOpeSuffix immc_suffix = fst_src->suffix;
             char* src_name = reg_name(src_id, immc_suffix);
