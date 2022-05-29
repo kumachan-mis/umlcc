@@ -44,32 +44,32 @@ Srt* resolve_assignment_expr(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    Srt* lhs_srt = resolve_expr(resolver);
-    lhs_srt = convert_to_ptr(lhs_srt);
+    Srt* lhs = resolve_expr(resolver);
+    lhs = convert_to_ptr(lhs);
 
     resolver->ast = vector_at(ast->children, 1);
-    Srt* rhs_srt = resolve_expr(resolver);
-    rhs_srt = convert_to_ptr_if_array(rhs_srt);
-    rhs_srt = convert_to_ptr_if_function(rhs_srt);
+    Srt* rhs = resolve_expr(resolver);
+    rhs = convert_to_ptr_if_array(rhs);
+    rhs = convert_to_ptr_if_function(rhs);
 
-    Dtype* dtype = dtype_copy(lhs_srt->dtype->pointer->to_dtype);
+    Dtype* dtype = dtype_copy(lhs->dtype->pointer->to_dtype);
     resolver->ast = ast;
 
-    return new_dtyped_srt(SRT_ASSIGN_EXPR, dtype, 2, lhs_srt, rhs_srt);
+    return new_dtyped_srt(SRT_ASSIGN_EXPR, dtype, 2, lhs, rhs);
 }
 
 Srt* resolve_logical_expr(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    Srt* lhs_srt = resolve_expr(resolver);
-    lhs_srt = convert_to_ptr_if_array(lhs_srt);
-    lhs_srt = convert_to_ptr_if_function(lhs_srt);
+    Srt* lhs = resolve_expr(resolver);
+    lhs = convert_to_ptr_if_array(lhs);
+    lhs = convert_to_ptr_if_function(lhs);
 
     resolver->ast = vector_at(ast->children, 1);
-    Srt* rhs_srt = resolve_expr(resolver);
-    rhs_srt = convert_to_ptr_if_array(rhs_srt);
-    rhs_srt = convert_to_ptr_if_function(rhs_srt);
+    Srt* rhs = resolve_expr(resolver);
+    rhs = convert_to_ptr_if_array(rhs);
+    rhs = convert_to_ptr_if_function(rhs);
 
     Dtype* dtype = new_integer_dtype();
     resolver->ast = ast;
@@ -77,9 +77,9 @@ Srt* resolve_logical_expr(Resolver* resolver) {
     switch (ast->type) {
         case AST_LOR_EXPR:
             resolver->ast = ast;
-            return new_dtyped_srt(SRT_LOR_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            return new_dtyped_srt(SRT_LOR_EXPR, dtype, 2, lhs, rhs);
         case AST_LAND_EXPR:
-            return new_dtyped_srt(SRT_LAND_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            return new_dtyped_srt(SRT_LAND_EXPR, dtype, 2, lhs, rhs);
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
             exit(1);
@@ -90,23 +90,23 @@ Srt* resolve_equality_expr(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    Srt* lhs_srt = resolve_expr(resolver);
-    lhs_srt = convert_to_ptr_if_array(lhs_srt);
-    lhs_srt = convert_to_ptr_if_function(lhs_srt);
+    Srt* lhs = resolve_expr(resolver);
+    lhs = convert_to_ptr_if_array(lhs);
+    lhs = convert_to_ptr_if_function(lhs);
 
     resolver->ast = vector_at(ast->children, 1);
-    Srt* rhs_srt = resolve_expr(resolver);
-    rhs_srt = convert_to_ptr_if_array(rhs_srt);
-    rhs_srt = convert_to_ptr_if_function(rhs_srt);
+    Srt* rhs = resolve_expr(resolver);
+    rhs = convert_to_ptr_if_array(rhs);
+    rhs = convert_to_ptr_if_function(rhs);
 
     Dtype* dtype = new_integer_dtype();
     resolver->ast = ast;
 
     switch (ast->type) {
         case AST_EQUAL_EXPR:
-            return new_dtyped_srt(SRT_EQUAL_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            return new_dtyped_srt(SRT_EQUAL_EXPR, dtype, 2, lhs, rhs);
         case AST_NEQUAL_EXPR:
-            return new_dtyped_srt(SRT_NEQUAL_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            return new_dtyped_srt(SRT_NEQUAL_EXPR, dtype, 2, lhs, rhs);
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
             exit(1);
@@ -117,59 +117,58 @@ Srt* resolve_additive_expr(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    Srt* lhs_srt = resolve_expr(resolver);
-    lhs_srt = convert_to_ptr_if_array(lhs_srt);
-    lhs_srt = convert_to_ptr_if_function(lhs_srt);
+    Srt* lhs = resolve_expr(resolver);
+    lhs = convert_to_ptr_if_array(lhs);
+    lhs = convert_to_ptr_if_function(lhs);
 
     resolver->ast = vector_at(ast->children, 1);
-    Srt* rhs_srt = resolve_expr(resolver);
-    rhs_srt = convert_to_ptr_if_array(rhs_srt);
-    rhs_srt = convert_to_ptr_if_function(rhs_srt);
+    Srt* rhs = resolve_expr(resolver);
+    rhs = convert_to_ptr_if_array(rhs);
+    rhs = convert_to_ptr_if_function(rhs);
 
     resolver->ast = ast;
 
-    if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
+    if (dtype_isarithmetic(lhs->dtype) && dtype_isarithmetic(rhs->dtype)) {
 
         Dtype* dtype = new_integer_dtype();
         switch (ast->type) {
             case AST_ADD_EXPR:
-                return new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
+                return new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, lhs, rhs);
             case AST_SUB_EXPR:
-                return new_dtyped_srt(SRT_SUB_EXPR, dtype, 2, lhs_srt, rhs_srt);
+                return new_dtyped_srt(SRT_SUB_EXPR, dtype, 2, lhs, rhs);
             default:
                 fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
                 exit(1);
         }
 
-    } else if ((lhs_srt->dtype->type == DTYPE_POINTER && dtype_isarithmetic(rhs_srt->dtype)) ||
-               (dtype_isarithmetic(lhs_srt->dtype) && rhs_srt->dtype->type == DTYPE_POINTER)) {
+    } else if ((lhs->dtype->type == DTYPE_POINTER && dtype_isarithmetic(rhs->dtype)) ||
+               (dtype_isarithmetic(lhs->dtype) && rhs->dtype->type == DTYPE_POINTER)) {
 
-        if (rhs_srt->dtype->type == DTYPE_POINTER) swap_ptr((void**)&lhs_srt, (void**)&rhs_srt);
-        Dtype* dtype = dtype_copy(lhs_srt->dtype);
+        if (rhs->dtype->type == DTYPE_POINTER) swap_ptr((void**)&lhs, (void**)&rhs);
+        Dtype* dtype = dtype_copy(lhs->dtype);
         switch (ast->type) {
             case AST_ADD_EXPR:
-                return new_dtyped_srt(SRT_PADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
+                return new_dtyped_srt(SRT_PADD_EXPR, dtype, 2, lhs, rhs);
             case AST_SUB_EXPR:
-                return new_dtyped_srt(SRT_PSUB_EXPR, dtype, 2, lhs_srt, rhs_srt);
+                return new_dtyped_srt(SRT_PSUB_EXPR, dtype, 2, lhs, rhs);
             default:
                 fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
                 exit(1);
         }
 
-    } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
+    } else if (lhs->dtype->type == DTYPE_POINTER && rhs->dtype->type == DTYPE_POINTER) {
 
         Dtype* dtype = new_integer_dtype();
         switch (ast->type) {
             case AST_SUB_EXPR:
-                return new_dtyped_srt(SRT_PDIFF_EXPR, dtype, 2, rhs_srt, lhs_srt);
+                return new_dtyped_srt(SRT_PDIFF_EXPR, dtype, 2, rhs, lhs);
             default:
                 fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
                 exit(1);
         }
     }
 
-    fprintf(stderr, "Error: unexpected operand, %d and %d\n", lhs_srt->dtype->type,
-            rhs_srt->dtype->type);
+    fprintf(stderr, "Error: unexpected operand, %d and %d\n", lhs->dtype->type, rhs->dtype->type);
     exit(1);
 }
 
@@ -177,25 +176,25 @@ Srt* resolve_multiplicative_expr(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    Srt* lhs_srt = resolve_expr(resolver);
-    lhs_srt = convert_to_ptr_if_array(lhs_srt);
-    lhs_srt = convert_to_ptr_if_function(lhs_srt);
+    Srt* lhs = resolve_expr(resolver);
+    lhs = convert_to_ptr_if_array(lhs);
+    lhs = convert_to_ptr_if_function(lhs);
 
     resolver->ast = vector_at(ast->children, 1);
-    Srt* rhs_srt = resolve_expr(resolver);
-    rhs_srt = convert_to_ptr_if_array(rhs_srt);
-    rhs_srt = convert_to_ptr_if_function(rhs_srt);
+    Srt* rhs = resolve_expr(resolver);
+    rhs = convert_to_ptr_if_array(rhs);
+    rhs = convert_to_ptr_if_function(rhs);
 
     Dtype* dtype = new_integer_dtype();
     resolver->ast = ast;
 
     switch (ast->type) {
         case AST_MUL_EXPR:
-            return new_dtyped_srt(SRT_MUL_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            return new_dtyped_srt(SRT_MUL_EXPR, dtype, 2, lhs, rhs);
         case AST_DIV_EXPR:
-            return new_dtyped_srt(SRT_DIV_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            return new_dtyped_srt(SRT_DIV_EXPR, dtype, 2, lhs, rhs);
         case AST_MOD_EXPR:
-            return new_dtyped_srt(SRT_MOD_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            return new_dtyped_srt(SRT_MOD_EXPR, dtype, 2, lhs, rhs);
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
             exit(1);
@@ -238,27 +237,26 @@ Srt* resolve_postfix_expr(Resolver* resolver) {
 
     switch (ast->type) {
         case AST_SUBSC_EXPR: {
-            Ast* lhs_ast = ast_copy(vector_at(ast->children, 0));
-            Ast* rhs_ast = ast_copy(vector_at(ast->children, 1));
-            resolver->ast = new_ast(AST_INDIR_EXPR, 1, new_ast(AST_ADD_EXPR, 2, lhs_ast, rhs_ast));
+            Ast* lhs = ast_copy(vector_at(ast->children, 0));
+            Ast* rhs = ast_copy(vector_at(ast->children, 1));
+            resolver->ast = new_ast(AST_INDIR_EXPR, 1, new_ast(AST_ADD_EXPR, 2, lhs, rhs));
             Srt* srt = resolve_expr(resolver);
-
             delete_ast(resolver->ast);
             resolver->ast = ast;
             return srt;
         }
         case AST_CALL_EXPR: {
             resolver->ast = vector_at(ast->children, 0);
-            Srt* lhs_srt = resolve_expr(resolver);
-            lhs_srt = convert_to_ptr_if_array(lhs_srt);
-            lhs_srt = convert_to_ptr_if_function(lhs_srt);
+            Srt* lhs = resolve_expr(resolver);
+            lhs = convert_to_ptr_if_array(lhs);
+            lhs = convert_to_ptr_if_function(lhs);
 
             resolver->ast = vector_at(ast->children, 1);
-            Srt* rhs_srt = resolve_argument_expr_list(resolver);
+            Srt* rhs = resolve_argument_expr_list(resolver);
 
-            Dtype* dtype = dtype_copy(lhs_srt->dtype->pointer->to_dtype->function->return_dtype);
+            Dtype* dtype = dtype_copy(lhs->dtype->pointer->to_dtype->function->return_dtype);
             resolver->ast = ast;
-            return new_dtyped_srt(SRT_CALL_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            return new_dtyped_srt(SRT_CALL_EXPR, dtype, 2, lhs, rhs);
         }
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);

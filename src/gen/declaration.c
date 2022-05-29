@@ -22,12 +22,19 @@ Vector* gen_init_decl_code(Codegen* codegen) {
 Vector* gen_decl_code(Codegen* codegen) {
     Srt* srt = codegen->srt;
 
-    SymbolTable* table = codegen->global_table;
-    if (codegen->local_table != NULL) table = codegen->local_table;
+    char* symbol_name = new_string(srt->ident_name);
+    Dtype* symbol_dtype = dtype_copy(srt->dtype);
 
-    char* table_ident_name = new_string(srt->ident_name);
-    Dtype* table_dtype = dtype_copy(srt->dtype);
-    symboltable_define(table, table_ident_name, table_dtype);
+    if (codegen->local_table == NULL) {
+        SymbolTable* table = codegen->global_table;
+        symboltable_define_label(table, symbol_name, symbol_dtype);
+    } else if (symbol_dtype->type == DTYPE_FUNCUCTION) {
+        SymbolTable* table = codegen->local_table;
+        symboltable_define_label(table, symbol_name, symbol_dtype);
+    } else {
+        SymbolTable* table = codegen->local_table;
+        symboltable_define_memory(table, symbol_name, symbol_dtype);
+    }
 
     return new_vector(&t_immc);
 }

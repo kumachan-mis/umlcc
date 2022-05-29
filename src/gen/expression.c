@@ -267,11 +267,11 @@ Vector* gen_call_expr_code(Codegen* codegen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = codegen->srt;
 
-    Srt* param_srt = vector_at(srt->children, 1);
-    int num_args = vector_size(param_srt->children);
+    Srt* param = vector_at(srt->children, 1);
+    int num_args = vector_size(param->children);
     vector_push(codes, new_inst_immc(INST_PREP, NULL, new_imm_immcope(num_args), NULL));
 
-    codegen->srt = param_srt;
+    codegen->srt = param;
     for (int i = num_args - 1; i >= 0; i--) {
         append_child_code(codegen, codes, i);
         ImmcOpe* fst_src = new_arg_immcope(codegen->virtual_reg_suffix, i);
@@ -346,13 +346,16 @@ Vector* gen_address_expr_code(Codegen* codegen) {
     switch (child->type) {
         case SRT_IDENT_EXPR: {
             Symbol* symbol = NULL;
-            if (src == NULL) {
+            if (symbol == NULL) {
                 symbol = symboltable_search(codegen->local_table, child->ident_name);
-                if (symbol != NULL) src = new_mem_immcope(symbol->memory_offset);
             }
-            if (src == NULL) {
+            if (symbol == NULL) {
                 symbol = symboltable_search(codegen->global_table, child->ident_name);
-                if (symbol != NULL) src = new_label_immcope(new_string(symbol->name));
+            }
+            if (symbol->type == SYMBOL_LABEL) {
+                src = new_label_immcope(new_string(symbol->name));
+            } else {
+                src = new_mem_immcope(symbol->memory_offset);
             }
             codegen->virtual_reg_suffix = immcope_suffix_get(dtype_size(srt->dtype));
             codegen->virtual_reg_id++;
@@ -405,15 +408,17 @@ Vector* gen_primary_expr_code(Codegen* codegen) {
 
     switch (srt->type) {
         case SRT_IDENT_EXPR: {
-            Symbol* symbol = symboltable_search(codegen->local_table, srt->ident_name);
-            if (symbol != NULL) {
-                src = new_mem_immcope(symbol->memory_offset);
-                break;
+            Symbol* symbol = NULL;
+            if (symbol == NULL) {
+                symbol = symboltable_search(codegen->local_table, srt->ident_name);
             }
-            symbol = symboltable_search(codegen->global_table, srt->ident_name);
-            if (symbol != NULL) {
+            if (symbol == NULL) {
+                symbol = symboltable_search(codegen->global_table, srt->ident_name);
+            }
+            if (symbol->type == SYMBOL_LABEL) {
                 src = new_label_immcope(new_string(symbol->name));
-                break;
+            } else {
+                src = new_mem_immcope(symbol->memory_offset);
             }
             break;
         }
