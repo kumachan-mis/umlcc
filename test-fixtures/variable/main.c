@@ -1,8 +1,9 @@
 int put_int(int x);
-int put_blank_line();
 
 int main() {
     int first, second, third;
+    int put_blank_line();
+
     first = 3;
     second = first - 1;
     third = first * second;
