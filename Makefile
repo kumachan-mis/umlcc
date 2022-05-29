@@ -20,7 +20,7 @@ TEST_DEP_DIR := $(BLD_DIR)/tests/depend
 E2E_TEST  := scripts/test.sh
 E2E_CLEAN := scripts/clean.sh
 
-SAMPLE_CFLAGS := -S -O0 -fno-asynchronous-unwind-tables
+SAMPLE_CFLAGS := -S -O0 -std=c99 -pedantic -fno-asynchronous-unwind-tables
 SAMPLE_DIR    := sample
 SAMPLE_OUT    := sample-out
 
