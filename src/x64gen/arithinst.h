@@ -1,7 +1,7 @@
 #ifndef UMLCC_X64_ARITHINST_H
 #define UMLCC_X64_ARITHINST_H
 
-#include "./x64.h"
+#include "./x64gen.h"
 
 Vector* gen_add_x64code(X64gen* x64gen);
 Vector* gen_sub_x64code(X64gen* x64gen);

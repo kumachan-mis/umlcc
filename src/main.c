@@ -3,7 +3,7 @@
 #include "./parser/parser.h"
 #include "./regalloc/regalloc.h"
 #include "./resolver/resolver.h"
-#include "./x64/x64.h"
+#include "./x64gen/x64gen.h"
 
 #include <stdio.h>
 #include <stdlib.h>

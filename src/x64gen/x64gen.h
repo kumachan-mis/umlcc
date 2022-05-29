@@ -1,5 +1,5 @@
-#ifndef UMLCC_X64_H
-#define UMLCC_X64_H
+#ifndef UMLCC_X64GEN_H
+#define UMLCC_X64GEN_H
 
 #include "../vector/vector.h"
 #include "./register.h"

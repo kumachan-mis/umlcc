@@ -1,7 +1,7 @@
 #ifndef UMLCC_X64_DATAINST_H
 #define UMLCC_X64_DATAINST_H
 
-#include "./x64.h"
+#include "./x64gen.h"
 
 Vector* gen_load_x64code(X64gen* x64gen);
 Vector* gen_addr_x64code(X64gen* x64gen);
