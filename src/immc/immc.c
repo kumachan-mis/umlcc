@@ -15,7 +15,7 @@ Immc* new_inst_immc(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* 
     return immc;
 }
 
-Immc* new_label_immc(ImmcLabelType type, ImmcLabelVis visibility, char* name) {
+Immc* new_label_immc(ImmcLabelType type, ImmcVisibility visibility, char* name) {
     Immc* immc = malloc(sizeof(Immc));
     immc->type = IMMC_LABEL;
     immc->inst = NULL;

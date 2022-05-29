@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-ImmcLabel* new_immclabel(ImmcLabelType type, ImmcLabelVis visibility, char* name) {
+ImmcLabel* new_immclabel(ImmcLabelType type, ImmcVisibility visibility, char* name) {
     ImmcLabel* immclabel = malloc(sizeof(ImmcLabel));
     immclabel->type = type;
     immclabel->visibility = visibility;
@@ -25,10 +25,10 @@ char* immclabel_tostring(ImmcLabel* immclabel) {
     memset(label_str, 0, 100 * sizeof(char));
 
     switch (immclabel->visibility) {
-        case LABELVIS_GLOBAL:
+        case IMMC_VIS_GLOBAL:
             strcat(label_str, "global ");
             break;
-        case LABELVIS_LOCAL:
+        case IMMC_VIS_LOCAL:
             strcat(label_str, "local ");
             break;
         default:
@@ -36,7 +36,7 @@ char* immclabel_tostring(ImmcLabel* immclabel) {
     }
 
     switch (immclabel->type) {
-        case LABEL_FUNCTION:
+        case IMMC_LABEL_FUNCTION:
             strcat(label_str, "function ");
             break;
         default:
