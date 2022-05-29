@@ -283,23 +283,20 @@ Srt* resolve_argument_expr_list(Resolver* resolver) {
 
 Srt* resolve_primary_expr(Resolver* resolver) {
     Ast* ast = resolver->ast;
-    Symbol* symbol = NULL;
 
     switch (ast->type) {
-        case AST_IDENT_EXPR:
+        case AST_IDENT_EXPR: {
+            Symbol* symbol = NULL;
             if (symbol == NULL) {
                 symbol = symboltable_search(resolver->local_table, ast->ident_name);
             }
             if (symbol == NULL) {
                 symbol = symboltable_search(resolver->global_table, ast->ident_name);
             }
-            if (symbol == NULL) {
-                fprintf(stderr, "Error: identifier '%s' is used before declared\n",
-                        ast->ident_name);
-                exit(1);
-            }
-            return new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(symbol->dtype),
-                                      new_string(ast->ident_name));
+            Dtype* ident_dtype = dtype_copy(symbol->dtype);
+            char* ident_name = new_string(symbol->name);
+            return new_identifier_srt(SRT_IDENT_EXPR, ident_dtype, ident_name);
+        }
         case AST_INT_EXPR:
             return new_integer_srt(SRT_INT_EXPR, ast->value_int);
         default:
