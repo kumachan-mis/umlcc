@@ -57,22 +57,24 @@ Srt* resolve_init_declarator(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    Srt* declarator_srt = resolve_declarator(resolver);
-    Dtype* shared_dtype = dtype_copy(resolver->shared_dtype);
-    declarator_srt->dtype = dtype_connect(declarator_srt->dtype, shared_dtype);
+    Srt* declarator = resolve_declarator(resolver);
+    declarator->dtype = dtype_connect(declarator->dtype, dtype_copy(resolver->shared_dtype));
 
-    SymbolTable* table = resolver->global_table;
-    if (resolver->local_table != NULL) table = resolver->local_table;
+    char* symbol_name = new_string(declarator->ident_name);
+    Dtype* symbol_dtype = dtype_copy(declarator->dtype);
 
-    if (!symboltable_can_define(table, declarator_srt->ident_name)) {
-        fprintf(stderr, "Error: identifier '%s' is already defined\n", declarator_srt->ident_name);
-        exit(1);
+    if (resolver->local_table == NULL) {
+        SymbolTable* table = resolver->global_table;
+        symboltable_define_label(table, symbol_name, symbol_dtype);
+    } else if (symbol_dtype->type == DTYPE_FUNCUCTION) {
+        SymbolTable* table = resolver->local_table;
+        symboltable_define_label(table, symbol_name, symbol_dtype);
+    } else {
+        SymbolTable* table = resolver->local_table;
+        symboltable_define_memory(table, symbol_name, symbol_dtype);
     }
-    char* table_ident_name = new_string(declarator_srt->ident_name);
-    Dtype* table_dtype = dtype_copy(declarator_srt->dtype);
-    symboltable_define(table, table_ident_name, table_dtype);
 
-    vector_push(srt->children, declarator_srt);
+    vector_push(srt->children, declarator);
 
     resolver->ast = ast;
     return srt;
@@ -95,9 +97,9 @@ Srt* resolve_declarator(Resolver* resolver) {
             case AST_ARRAY_DECLOR: {
                 // TODO: support expression for array size
                 resolver->ast = vector_at(ast_ptr->children, 1);
-                Srt* size_srt = resolve_expr(resolver);
-                Dtype* socket_dtype = new_socket_array_dtype(size_srt->value_int);
-                delete_srt(size_srt);
+                Srt* array_size = resolve_expr(resolver);
+                Dtype* socket_dtype = new_socket_array_dtype(array_size->value_int);
+                delete_srt(array_size);
                 dtype = dtype_connect(socket_dtype, dtype);
                 ast_ptr = vector_at(ast_ptr->children, 0);
                 break;

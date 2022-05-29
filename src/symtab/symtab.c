@@ -16,10 +16,18 @@ int symboltable_can_define(SymbolTable* table, char* name) {
     return map_get(table->symbol_map, name) == NULL;
 }
 
-Symbol* symboltable_define(SymbolTable* table, char* name, Dtype* dtype) {
+Symbol* symboltable_define_memory(SymbolTable* table, char* name, Dtype* dtype) {
     if (!symboltable_can_define(table, name)) return NULL;
     table->memory_size += dtype_size(dtype);
-    Symbol* symbol = new_symbol(name, dtype, table->memory_size);
+    Symbol* symbol = new_memory_symbol(name, dtype, table->memory_size);
+    char* symbol_name = new_string(name);
+    map_add(table->symbol_map, symbol_name, symbol);
+    return symbol;
+}
+
+Symbol* symboltable_define_label(SymbolTable* table, char* name, Dtype* dtype) {
+    if (!symboltable_can_define(table, name)) return NULL;
+    Symbol* symbol = new_label_symbol(name, dtype);
     char* symbol_name = new_string(name);
     map_add(table->symbol_map, symbol_name, symbol);
     return symbol;
