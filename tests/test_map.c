@@ -1,5 +1,5 @@
 #include "./test_map.h"
-#include "../src/common/common.h"
+#include "../src/common/type.h"
 #include "../src/map/map.h"
 
 #include <CUnit/Basic.h>

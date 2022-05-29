@@ -1,5 +1,5 @@
 #include "./test_set.h"
-#include "../src/common/common.h"
+#include "../src/common/type.h"
 #include "../src/set/set.h"
 
 #include <CUnit/Basic.h>

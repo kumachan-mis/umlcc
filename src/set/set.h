@@ -1,7 +1,7 @@
 #ifndef UMLCC_SET_H
 #define UMLCC_SET_H
 
-#include "../common/common.h"
+#include "../common/type.h"
 
 typedef struct Set Set;
 typedef struct SetIter SetIter;

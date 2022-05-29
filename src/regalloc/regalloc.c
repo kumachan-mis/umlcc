@@ -1,5 +1,5 @@
 #include "./regalloc.h"
-#include "../common/common.h"
+#include "../common/type.h"
 #include "../immc/immc.h"
 #include "../liveseq/liveness.h"
 #include "../liveseq/liveseq.h"

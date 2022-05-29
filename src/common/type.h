@@ -1,5 +1,5 @@
-#ifndef UMLCC_COMMON_H
-#define UMLCC_COMMON_H
+#ifndef UMLCC_COMMON_TYPE_H
+#define UMLCC_COMMON_TYPE_H
 
 typedef struct BaseType {
     void* (*copy_object)(void* object);
@@ -21,6 +21,5 @@ extern HashableType t_hashable_string;
 
 int* new_integer(int value);
 char* new_string(char* str);
-void swap_ptr(void** a, void** b);
 
 #endif

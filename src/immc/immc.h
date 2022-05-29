@@ -1,7 +1,7 @@
 #ifndef UMLCC_IMMC_H
 #define UMLCC_IMMC_H
 
-#include "../common/common.h"
+#include "../common/type.h"
 #include "./inst.h"
 #include "./label.h"
 

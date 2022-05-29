@@ -1,7 +1,7 @@
 #ifndef UMLCC_SRT_H
 #define UMLCC_SRT_H
 
-#include "../common/common.h"
+#include "../common/type.h"
 #include "../dtype/dtype.h"
 #include "../vector/vector.h"
 

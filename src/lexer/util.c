@@ -1,5 +1,5 @@
 #include "./util.h"
-#include "../common/common.h"
+#include "../common/type.h"
 
 #include <ctype.h>
 #include <stdlib.h>

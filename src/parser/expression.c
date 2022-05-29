@@ -1,5 +1,5 @@
 #include "./expression.h"
-#include "../common/common.h"
+#include "../common/type.h"
 #include "../ctoken/ctoken.h"
 #include "./util.h"
 

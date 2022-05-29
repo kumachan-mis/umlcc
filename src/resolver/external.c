@@ -1,5 +1,5 @@
 #include "./external.h"
-#include "../common/common.h"
+#include "../common/type.h"
 #include "./declaration.h"
 #include "./statement.h"
 

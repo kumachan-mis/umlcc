@@ -1,5 +1,5 @@
 #include "./x64gen.h"
-#include "../common/common.h"
+#include "../common/type.h"
 #include "../immc/immc.h"
 #include "./inst.h"
 #include "./label.h"

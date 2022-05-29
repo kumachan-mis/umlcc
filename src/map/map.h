@@ -1,7 +1,7 @@
 #ifndef UMLCC_MAP_H
 #define UMLCC_MAP_H
 
-#include "../common/common.h"
+#include "../common/type.h"
 
 typedef struct Map Map;
 typedef struct MapIter MapIter;
