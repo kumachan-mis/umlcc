@@ -28,9 +28,9 @@ Vector* gen_shrot_common_x64code(X64gen* x64gen, char* inst) {
     switch (snd_src->type) {
         case IMMC_OPERAND_IMM: {
             int src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
-            ImmcOpeSuffix immc_suffix = fst_src->suffix;
+            ImmcSuffix immc_suffix = fst_src->suffix;
             char* src_name = reg_name(src_id, immc_suffix);
-            char suffix = immcope_suffix_tochar(immc_suffix);
+            char suffix = immcsuffix_tochar(immc_suffix);
             append_code(codes, "\t%s%c\t$%d, %s\n", inst, suffix, snd_src->imm_value, src_name);
 
             int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];

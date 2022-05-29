@@ -16,7 +16,7 @@ ImmcOpe* new_imm_immcope(int imm_value) {
     return immcope;
 }
 
-ImmcOpe* new_arg_immcope(ImmcOpeSuffix suffix, int imm_value) {
+ImmcOpe* new_arg_immcope(ImmcSuffix suffix, int imm_value) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = IMMC_OPERAND_ARG;
     immcope->suffix = suffix;
@@ -27,7 +27,7 @@ ImmcOpe* new_arg_immcope(ImmcOpeSuffix suffix, int imm_value) {
     return immcope;
 }
 
-ImmcOpe* new_reg_immcope(ImmcOpeSuffix suffix, int reg_id) {
+ImmcOpe* new_reg_immcope(ImmcSuffix suffix, int reg_id) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = IMMC_OPERAND_REG;
     immcope->suffix = suffix;
@@ -71,11 +71,6 @@ ImmcOpe* new_label_immcope(char* label_name) {
     return immcope;
 }
 
-void delete_immope(ImmcOpe* immcope) {
-    if (immcope->label_name != NULL) free(immcope->label_name);
-    free(immcope);
-}
-
 ImmcOpe* immcope_copy(ImmcOpe* immcope) {
     ImmcOpe* copied_immcope = malloc(sizeof(ImmcOpe));
     copied_immcope->type = immcope->type;
@@ -92,7 +87,7 @@ ImmcOpe* immcope_copy(ImmcOpe* immcope) {
 
 char* immcope_tostring(ImmcOpe* immcope) {
     char* ope_str = malloc(20 * sizeof(char));
-    char suffix = immcope_suffix_tochar(immcope->suffix);
+    char suffix = immcsuffix_tochar(immcope->suffix);
 
     switch (immcope->type) {
         case IMMC_OPERAND_IMM:
@@ -118,7 +113,12 @@ char* immcope_tostring(ImmcOpe* immcope) {
     return ope_str;
 }
 
-ImmcOpeSuffix immcope_suffix_get(int size) {
+void delete_immope(ImmcOpe* immcope) {
+    if (immcope->label_name != NULL) free(immcope->label_name);
+    free(immcope);
+}
+
+ImmcSuffix immcsuffix_get(int size) {
     switch (size) {
         case 1:
             return IMMC_SUFFIX_BYTE;
@@ -133,7 +133,7 @@ ImmcOpeSuffix immcope_suffix_get(int size) {
     }
 }
 
-int immcope_suffix_tosize(ImmcOpeSuffix suffix) {
+int immcsuffix_tosize(ImmcSuffix suffix) {
     switch (suffix) {
         case IMMC_SUFFIX_BYTE:
             return 1;
@@ -148,7 +148,7 @@ int immcope_suffix_tosize(ImmcOpeSuffix suffix) {
     }
 }
 
-char immcope_suffix_tochar(ImmcOpeSuffix suffix) {
+char immcsuffix_tochar(ImmcSuffix suffix) {
     switch (suffix) {
         case IMMC_SUFFIX_BYTE:
             return 'b';
@@ -163,6 +163,6 @@ char immcope_suffix_tochar(ImmcOpeSuffix suffix) {
     }
 }
 
-ImmcOpeSuffix immcope_suffix_max(ImmcOpeSuffix a, ImmcOpeSuffix b) {
+ImmcSuffix immcsuffix_max(ImmcSuffix a, ImmcSuffix b) {
     return a >= b ? a : b;
 }

@@ -55,7 +55,7 @@ Vector* gen_logical_or_expr_immcode(Immcgen* immcgen) {
     snd_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(IMMC_INST_JNEQ, dst, fst_src, snd_src));
 
-    immcgen->virtual_reg_suffix = immcope_suffix_get(dtype_size(srt->dtype));
+    immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
     immcgen->virtual_reg_id++;
     dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
     fst_src = new_imm_immcope(0);
@@ -104,7 +104,7 @@ Vector* gen_logical_and_expr_immcode(Immcgen* immcgen) {
     snd_src = new_imm_immcope(0);
     vector_push(codes, new_inst_immc(IMMC_INST_JEQ, dst, fst_src, snd_src));
 
-    immcgen->virtual_reg_suffix = immcope_suffix_get(dtype_size(srt->dtype));
+    immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
     immcgen->virtual_reg_id++;
     dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
     fst_src = new_imm_immcope(1);
@@ -136,7 +136,7 @@ Vector* gen_equality_expr_immcode(Immcgen* immcgen) {
     append_child_immcode(immcgen, codes, 1);
     ImmcOpe* snd_src = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 
-    immcgen->virtual_reg_suffix = immcope_suffix_get(dtype_size(srt->dtype));
+    immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
     immcgen->virtual_reg_id++;
     ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 
@@ -165,7 +165,7 @@ Vector* gen_additive_expr_immcode(Immcgen* immcgen) {
     append_child_immcode(immcgen, codes, 1);
     ImmcOpe* snd_src = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 
-    immcgen->virtual_reg_suffix = immcope_suffix_get(dtype_size(srt->dtype));
+    immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
     immcgen->virtual_reg_id++;
     ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 
@@ -224,7 +224,7 @@ Vector* gen_multiplicative_expr_immcode(Immcgen* immcgen) {
     append_child_immcode(immcgen, codes, 1);
     ImmcOpe* snd_src = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 
-    immcgen->virtual_reg_suffix = immcope_suffix_get(dtype_size(srt->dtype));
+    immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
     immcgen->virtual_reg_id++;
     ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 
@@ -284,7 +284,7 @@ Vector* gen_call_expr_immcode(Immcgen* immcgen) {
     ImmcOpe* fst_src = new_ptr_immcope(immcgen->virtual_reg_id);
     ImmcOpe* snd_src = new_imm_immcope(num_args);
 
-    immcgen->virtual_reg_suffix = immcope_suffix_get(dtype_size(srt->dtype));
+    immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
     immcgen->virtual_reg_id++;
     ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 
@@ -326,7 +326,7 @@ Vector* gen_indirection_expr_immcode(Immcgen* immcgen) {
     append_child_immcode(immcgen, codes, 0);
     ImmcOpe* src = new_ptr_immcope(immcgen->virtual_reg_id);
 
-    immcgen->virtual_reg_suffix = immcope_suffix_get(dtype_size(srt->dtype));
+    immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
     immcgen->virtual_reg_id++;
     ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 
@@ -357,7 +357,7 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             } else {
                 src = new_mem_immcope(symbol->memory_offset);
             }
-            immcgen->virtual_reg_suffix = immcope_suffix_get(dtype_size(srt->dtype));
+            immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
             immcgen->virtual_reg_id++;
             dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
             vector_push(codes, new_inst_immc(IMMC_INST_ADDR, dst, src, NULL));
@@ -383,7 +383,7 @@ Vector* gen_not_expr_immcode(Immcgen* immcgen) {
     append_child_immcode(immcgen, codes, 0);
     ImmcOpe* src = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 
-    immcgen->virtual_reg_suffix = immcope_suffix_get(dtype_size(srt->dtype));
+    immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
     immcgen->virtual_reg_id++;
     ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 
@@ -430,7 +430,7 @@ Vector* gen_primary_expr_immcode(Immcgen* immcgen) {
             exit(1);
     }
 
-    immcgen->virtual_reg_suffix = immcope_suffix_get(dtype_size(srt->dtype));
+    immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
     immcgen->virtual_reg_id++;
     dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));

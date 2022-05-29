@@ -35,7 +35,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
         Dtype* symbol_dtype = dtype_copy(dparam->dtype);
         Symbol* symbol = symboltable_define_memory(immcgen->local_table, symbol_name, symbol_dtype);
 
-        ImmcOpeSuffix suffix = immcope_suffix_get(dtype_size(dparam->dtype));
+        ImmcSuffix suffix = immcsuffix_get(dtype_size(dparam->dtype));
         ImmcOpe* dst = new_mem_immcope(symbol->memory_offset);
         ImmcOpe* src = new_arg_immcope(suffix, i);
         vector_push(param_codes, new_inst_immc(IMMC_INST_LDARG, dst, src, NULL));

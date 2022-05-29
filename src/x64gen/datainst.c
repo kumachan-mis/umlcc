@@ -17,7 +17,7 @@ Vector* gen_load_x64code(X64gen* x64gen) {
 
     int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
     char* dst_name = reg_name(dst_id, dst->suffix);
-    char suffix = immcope_suffix_tochar(dst->suffix);
+    char suffix = immcsuffix_tochar(dst->suffix);
 
     switch (src->type) {
         case IMMC_OPERAND_IMM: {
@@ -88,7 +88,7 @@ Vector* gen_store_x64code(X64gen* x64gen) {
 
     int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
     char* src_name = reg_name(src_id, src->suffix);
-    char suffix = immcope_suffix_tochar(src->suffix);
+    char suffix = immcsuffix_tochar(src->suffix);
 
     switch (dst->type) {
         case IMMC_OPERAND_PTR: {
@@ -118,14 +118,14 @@ Vector* gen_ldarg_x64code(X64gen* x64gen) {
     if (src->imm_value < NUM_ARG_REGS) {
         int src_id = ARG_REG_IDS[src->imm_value];
         char* src_name = reg_name(src_id, src->suffix);
-        char suffix = immcope_suffix_tochar(src->suffix);
+        char suffix = immcsuffix_tochar(src->suffix);
         append_code(codes, "\tmov%c\t%s, -%d(%s)\n", suffix, src_name, dst->mem_offset, BP_NAME);
         return codes;
     }
 
     int tmp_reg_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
     char* tmp_reg_name = reg_name(tmp_reg_id, src->suffix);
-    char suffix = immcope_suffix_tochar(src->suffix);
+    char suffix = immcsuffix_tochar(src->suffix);
 
     int mem_arg_offset = (src->imm_value - NUM_ARG_REGS + 1) * 8 + 8;
     // (1-indexed non-register param no.) * (bytes of memory address) + (offset for pushq %rbp)

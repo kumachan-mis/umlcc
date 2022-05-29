@@ -35,6 +35,6 @@ extern int NUM_ARG_REGS;
 extern int NUM_CALLER_SAVED_REGS;
 extern int NUM_CALLEE_SAVED_REGS;
 
-char* reg_name(int reg_id, ImmcOpeSuffix suffix);
+char* reg_name(int reg_id, ImmcSuffix suffix);
 
 #endif

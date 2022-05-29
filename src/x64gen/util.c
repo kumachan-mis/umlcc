@@ -19,13 +19,13 @@ void append_code(Vector* codes, char* format, ...) {
     va_end(arg_ptr);
 }
 
-void append_mov_code(Vector* codes, int src_reg_id, ImmcOpeSuffix src_immc_suffix, int dst_reg_id,
-                     ImmcOpeSuffix dst_immc_suffix) {
+void append_mov_code(Vector* codes, int src_reg_id, ImmcSuffix src_immc_suffix, int dst_reg_id,
+                     ImmcSuffix dst_immc_suffix) {
 
     if (src_immc_suffix >= dst_immc_suffix) {
         if (src_reg_id == dst_reg_id) return;
-        ImmcOpeSuffix immc_suffix = src_immc_suffix;
-        char suffix = immcope_suffix_tochar(immc_suffix);
+        ImmcSuffix immc_suffix = src_immc_suffix;
+        char suffix = immcsuffix_tochar(immc_suffix);
         char* src_name = reg_name(src_reg_id, immc_suffix);
         char* dst_name = reg_name(dst_reg_id, immc_suffix);
         append_code(codes, "\tmov%c\t%s, %s\n", suffix, src_name, dst_name);
@@ -39,8 +39,8 @@ void append_mov_code(Vector* codes, int src_reg_id, ImmcOpeSuffix src_immc_suffi
         return;
     }
 
-    char src_suffix = immcope_suffix_tochar(src_immc_suffix);
-    char dst_suffix = immcope_suffix_tochar(dst_immc_suffix);
+    char src_suffix = immcsuffix_tochar(src_immc_suffix);
+    char dst_suffix = immcsuffix_tochar(dst_immc_suffix);
     char* src_name = reg_name(src_reg_id, src_immc_suffix);
     char* dst_name = reg_name(dst_reg_id, dst_immc_suffix);
     append_code(codes, "\tmovs%c%c\t%s, %s\n", src_suffix, dst_suffix, src_name, dst_name);
