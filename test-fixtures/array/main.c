@@ -1,4 +1,5 @@
 int put_int(int x);
+int put_blank_line();
 
 int main() {
     int a[5];
@@ -13,6 +14,7 @@ int main() {
     put_int(*(a + 2));
     put_int(a[3]);
     put_int(a[4]);
+    put_blank_line();
 
     int b[3];
     0 [b] = 10;
@@ -21,6 +23,11 @@ int main() {
     put_int(0 [b]);
     put_int(1 [b]);
     put_int(2 [b]);
+    put_blank_line();
+
+    int c[3][3];
+    c[1][2] = 3;
+    put_int(c[1][2]);
 
     return 0;
 }

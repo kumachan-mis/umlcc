@@ -178,32 +178,32 @@ Vector* gen_additive_expr_immcode(Immcgen* immcgen) {
             break;
         case SRT_PADD_EXPR: {
             Srt* lhs = vector_at(srt->children, 0);
-            int shift_amount = dtype_log2_size(lhs->dtype->pointer->to_dtype);
-            ImmcOpe* sal_fst_src = immcope_copy(snd_src);
-            ImmcOpe* sal_snd_src = new_imm_immcope(shift_amount);
-            ImmcOpe* sal_dst = immcope_copy(snd_src);
-            vector_push(codes, new_inst_immc(IMMC_INST_SAL, sal_dst, sal_fst_src, sal_snd_src));
+            int mul_amount = dtype_size(lhs->dtype->pointer->to_dtype);
+            ImmcOpe* mul_fst_src = immcope_copy(snd_src);
+            ImmcOpe* mul_snd_src = new_imm_immcope(mul_amount);
+            ImmcOpe* mul_dst = immcope_copy(snd_src);
+            vector_push(codes, new_inst_immc(IMMC_INST_MUL, mul_dst, mul_fst_src, mul_snd_src));
             vector_push(codes, new_inst_immc(IMMC_INST_ADD, dst, fst_src, snd_src));
             break;
         }
         case SRT_PSUB_EXPR: {
             Srt* lhs = vector_at(srt->children, 0);
-            int shift_amount = dtype_log2_size(lhs->dtype->pointer->to_dtype);
-            ImmcOpe* sal_fst_src = immcope_copy(snd_src);
-            ImmcOpe* sal_snd_src = new_imm_immcope(shift_amount);
-            ImmcOpe* sal_dst = immcope_copy(snd_src);
-            vector_push(codes, new_inst_immc(IMMC_INST_SAL, sal_dst, sal_fst_src, sal_snd_src));
+            int mul_amount = dtype_size(lhs->dtype->pointer->to_dtype);
+            ImmcOpe* mul_fst_src = immcope_copy(snd_src);
+            ImmcOpe* mul_snd_src = new_imm_immcope(mul_amount);
+            ImmcOpe* mul_dst = immcope_copy(snd_src);
+            vector_push(codes, new_inst_immc(IMMC_INST_MUL, mul_dst, mul_fst_src, mul_snd_src));
             vector_push(codes, new_inst_immc(IMMC_INST_SUB, dst, fst_src, snd_src));
             break;
         }
         case SRT_PDIFF_EXPR: {
             Srt* lhs = vector_at(srt->children, 0);
-            int shift_amount = dtype_log2_size(lhs->dtype->pointer->to_dtype);
-            ImmcOpe* sar_fst_src = immcope_copy(dst);
-            ImmcOpe* sar_snd_src = new_imm_immcope(shift_amount);
-            ImmcOpe* sar_dst = immcope_copy(dst);
+            int div_amount = dtype_size(lhs->dtype->pointer->to_dtype);
+            ImmcOpe* div_fst_src = immcope_copy(dst);
+            ImmcOpe* div_snd_src = new_imm_immcope(div_amount);
+            ImmcOpe* div_dst = immcope_copy(dst);
             vector_push(codes, new_inst_immc(IMMC_INST_SUB, dst, fst_src, snd_src));
-            vector_push(codes, new_inst_immc(IMMC_INST_SAR, sar_dst, sar_fst_src, sar_snd_src));
+            vector_push(codes, new_inst_immc(IMMC_INST_DIV, div_dst, div_fst_src, div_snd_src));
             break;
         }
         default:

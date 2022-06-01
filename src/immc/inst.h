@@ -42,12 +42,18 @@ typedef enum ImmcInstType {
     IMMC_INST_MUL,
     // - multiply fst_src and snd_src.
     // mul dst(reg), fst_src(reg), snd_src(reg)
+    // - multiply fst_src and snd_src.
+    // mul dst(reg), fst_src(reg), snd_src(imm)
     IMMC_INST_DIV,
     // - divide fst_src by snd_src.
     // div dst(reg), fst_src(reg), snd_src(reg)
+    // - divide fst_src by snd_src.
+    // div dst(reg), fst_src(reg), snd_src(imm)
     IMMC_INST_MOD,
     // - modulo fst_src by snd_src.
     // mod dst(reg), fst_src(reg), snd_src(reg)
+    // - modulo fst_src by snd_src.
+    // mod dst(reg), fst_src(reg), snd_src(imm)
 
     // shift/rotate instructions
     IMMC_INST_SAL,
