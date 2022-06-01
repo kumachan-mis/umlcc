@@ -139,17 +139,6 @@ int dtype_size(Dtype* dtype) {
     }
 }
 
-int dtype_log2_size(Dtype* dtype) {
-    switch (dtype->type) {
-        case DTYPE_INT:
-            return 2;
-        case DTYPE_POINTER:
-            return 3;
-        default:
-            return -1;
-    }
-}
-
 void delete_dtype(Dtype* dtype) {
     if (dtype->pointer != NULL) delete_dpointer(dtype->pointer);
     if (dtype->array != NULL) delete_darray(dtype->array);
