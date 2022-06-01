@@ -31,7 +31,7 @@ Vector* vector_copy(Vector* vector) {
     copied_vector->capacity = vector->capacity;
 
     for (int i = 0; i < vector->size; i++) {
-        copied_vector->container[i] = vector->t_item->copy_object(copied_vector->container[i]);
+        copied_vector->container[i] = vector->t_item->copy_object(vector->container[i]);
     }
     return copied_vector;
 }
