@@ -16,9 +16,9 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = immcgen->srt;
 
-    Srt* declarator = vector_at(srt->children, 0);
-    char* symbol_name = new_string(declarator->ident_name);
-    Dtype* symbol_dtype = dtype_copy(declarator->dtype);
+    Srt* declarator_srt = vector_at(srt->children, 0);
+    char* symbol_name = new_string(declarator_srt->ident_name);
+    Dtype* symbol_dtype = dtype_copy(declarator_srt->dtype);
     symboltable_define_label(immcgen->global_table, symbol_name, symbol_dtype);
 
     immcgen->virtual_reg_id = -1;
@@ -27,7 +27,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
     immcgen->return_label_id = immcgen->label_id;
 
     Vector* param_codes = new_vector(&t_immc);
-    Vector* params = declarator->dtype->function->params;
+    Vector* params = declarator_srt->dtype->function->params;
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
         DParam* dparam = vector_at(params, i);
@@ -45,7 +45,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
     Vector* body_codes = new_vector(&t_immc);
     append_children_immcode(immcgen, body_codes);
 
-    char* label_name = new_string(declarator->ident_name);
+    char* label_name = new_string(declarator_srt->ident_name);
     vector_push(codes, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, label_name));
     ImmcOpe* memory_size = new_imm_immcope(immcgen->local_table->memory_size);
     vector_push(codes, new_inst_immc(IMMC_INST_ENTER, NULL, memory_size, NULL));
