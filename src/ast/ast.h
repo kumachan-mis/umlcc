@@ -25,6 +25,8 @@ typedef enum AstType {
     AST_FUNC_DECLOR,
     AST_PARAM_LIST,
     AST_PARAM_DECL,
+    //   initialization
+    AST_INIT_LIST,
 
     // statement
     AST_CMPD_STMT,

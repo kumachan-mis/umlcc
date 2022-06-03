@@ -51,7 +51,7 @@ Ast* parse_init_declarator(Parser* parser) {
     if (ctoken->type != CTOKEN_EQUAL) return new_ast(AST_INIT_DECLOR, 1, declarator_ast);
 
     parser->index++;
-    Ast* initializer_ast = NULL; // TODO: implement here
+    Ast* initializer_ast = parse_initializer(parser);
     return new_ast(AST_INIT_DECLOR, 2, declarator_ast, initializer_ast);
 }
 
@@ -155,4 +155,31 @@ Ast* parse_parameter_decl(Parser* parser) {
     Ast* specifiers_ast = parse_decl_specifiers(parser);
     Ast* declarator_ast = parse_declarator(parser);
     return new_ast(AST_PARAM_DECL, 2, specifiers_ast, declarator_ast);
+}
+
+Ast* parse_initializer(Parser* parser) {
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type != CTOKEN_LBRACE) return parse_assignment_expr(parser);
+    parser->index++;
+    Ast* ast = parse_initializer_list(parser);
+    consume_ctoken(parser, CTOKEN_RBRACE);
+    return ast;
+}
+
+Ast* parse_initializer_list(Parser* parser) {
+    Ast* ast = new_ast(AST_INIT_LIST, 0);
+
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type == CTOKEN_RBRACE) return ast;
+
+    while (1) {
+        vector_push(ast->children, parse_initializer(parser));
+        ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type == CTOKEN_RBRACE) break;
+        consume_ctoken(parser, CTOKEN_COMMA);
+        ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type == CTOKEN_RBRACE) break;
+    }
+
+    return ast;
 }
