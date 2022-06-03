@@ -53,7 +53,6 @@ Srt* resolve_init_declarator_list(Resolver* resolver) {
 }
 
 Srt* resolve_init_declarator(Resolver* resolver) {
-    ;
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
