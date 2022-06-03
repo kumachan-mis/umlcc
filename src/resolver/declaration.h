@@ -10,5 +10,7 @@ Srt* resolve_init_declarator(Resolver* resolver);
 Srt* resolve_declarator(Resolver* resolver);
 Vector* resolve_parameter_list(Resolver* resolver);
 DParam* resolve_parameter_decl(Resolver* resolver);
+Srt* resolve_initializer(Resolver* resolver);
+Srt* resolve_initializer_list(Resolver* resolver);
 
 #endif

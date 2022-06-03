@@ -53,7 +53,7 @@ Srt* resolve_init_declarator_list(Resolver* resolver) {
 }
 
 Srt* resolve_init_declarator(Resolver* resolver) {
-    Srt* srt = new_srt(SRT_INIT_DECL, 0);
+    ;
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
@@ -75,10 +75,20 @@ Srt* resolve_init_declarator(Resolver* resolver) {
         symboltable_define_memory(table, symbol_name, symbol_dtype);
     }
 
-    vector_push(srt->children, declarator_srt);
+    if (vector_size(ast->children) == 1) {
+        resolver->ast = ast;
+        return new_srt(SRT_INIT_DECL, 1, declarator_srt);
+    }
+
+    shared_dtype = resolver->shared_dtype;
+    resolver->ast = vector_at(ast->children, 1);
+    resolver->shared_dtype = declarator_srt->dtype;
+
+    Srt* initializer_srt = resolve_initializer(resolver);
 
     resolver->ast = ast;
-    return srt;
+    resolver->shared_dtype = shared_dtype;
+    return new_srt(SRT_INIT_DECL, 2, declarator_srt, initializer_srt);
 }
 
 Srt* resolve_declarator(Resolver* resolver) {
@@ -152,4 +162,24 @@ DParam* resolve_parameter_decl(Resolver* resolver) {
 
     resolver->ast = ast;
     return dparam;
+}
+
+Srt* resolve_initializer(Resolver* resolver) {
+    if (resolver->ast->type != AST_INIT_LIST) return resolve_expr(resolver);
+    return resolve_initializer_list(resolver);
+}
+
+Srt* resolve_initializer_list(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_INIT_LIST, 0);
+    Ast* ast = resolver->ast;
+
+    int num_children = vector_size(ast->children);
+    for (int i = 0; i < num_children; i++) {
+        resolver->ast = vector_at(ast->children, i);
+        vector_push(srt->children, resolve_initializer(resolver));
+    }
+
+    resolver->ast = ast;
+
+    return srt;
 }
