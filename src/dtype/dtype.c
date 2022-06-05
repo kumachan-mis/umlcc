@@ -123,7 +123,15 @@ Dtype* dtype_connect(Dtype* socket_dtype, Dtype* plug_dtype) {
 }
 
 int dtype_isarithmetic(Dtype* dtype) {
-    return DTYPE_INT <= dtype->type && dtype->type <= DTYPE_INT;
+    return dtype->type == DTYPE_INT;
+}
+
+int dtype_isscalar(Dtype* dtype) {
+    return dtype->type == DTYPE_INT || dtype->type == DTYPE_POINTER;
+}
+
+int dtype_isaggregate(Dtype* dtype) {
+    return dtype->type == DTYPE_ARRAY;
 }
 
 int dtype_size(Dtype* dtype) {
