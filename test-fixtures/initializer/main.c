@@ -7,7 +7,11 @@ int main() {
     int b[2][3] = {{
                        2,
                    },
-                   {3, 4, 5}};
+                   {
+                       3,
+                       4,
+                       5,
+                   }};
 
     put_int(x);
     put_blank_line();
