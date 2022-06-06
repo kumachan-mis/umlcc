@@ -4,14 +4,7 @@ int put_blank_line();
 int main() {
     int x = 8;
     int a[2] = {1};
-    int b[2][3] = {{
-                       2,
-                   },
-                   {
-                       3,
-                       4,
-                       5,
-                   }};
+    int b[2][3] = {{2}, {3, 4, 5}};
 
     put_int(x);
     put_blank_line();
