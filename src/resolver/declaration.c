@@ -81,10 +81,12 @@ Srt* resolve_init_declarator(Resolver* resolver) {
 
     resolver->ast = vector_at(ast->children, 1);
     resolver->initialized_dtype = declarator_srt->dtype;
+    resolver->initialized_offset = 0;
 
     Srt* initializer_srt = resolve_initializer(resolver);
 
     resolver->ast = ast;
+    resolver->initialized_offset = -1;
     resolver->initialized_dtype = NULL;
     return new_srt(SRT_INIT_DECL, 2, declarator_srt, initializer_srt);
 }
@@ -237,8 +239,11 @@ Srt* resolve_zero_array_initializer(Resolver* resolver) {
 }
 
 Srt* resolve_scalar_initializer(Resolver* resolver) {
-    // TODO: optionally enclosed in braces
-    return new_srt(SRT_INIT, 1, resolve_expr(resolver));
+    Ast* ast = resolver->ast;
+    if (ast->type == AST_INIT_LIST) resolver->ast = vector_at(ast->children, 0);
+    Srt* srt = new_srt(SRT_INIT, 1, resolve_expr(resolver));
+    resolver->ast = ast;
+    return srt;
 }
 
 Srt* resolve_zero_scalar_initializer() {
