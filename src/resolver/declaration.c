@@ -206,17 +206,13 @@ Srt* resolve_array_initializer(Resolver* resolver) {
     Dtype* dtype = resolver->initialized_dtype;
 
     int initializer_len = vector_size(ast->children);
-    int array_index = 0, subobj_init_flag = 0;
+    int array_index = 0;
 
     while (resolver->initialized_offset < initializer_len && array_index < dtype->array->size) {
         Ast* child_ast = vector_at(ast->children, resolver->initialized_offset);
-        if (dtype_isaggregate(dtype->array->of_dtype) && child_ast->type != AST_INIT_LIST) {
-            subobj_init_flag = 1;
-        }
-
         resolver->initialized_dtype = dtype->array->of_dtype;
 
-        if (subobj_init_flag) {
+        if (dtype_isaggregate(dtype->array->of_dtype) && child_ast->type != AST_INIT_LIST) {
             resolver->ast = ast;
             vector_push(srt->children, resolve_initializer(resolver));
             array_index++;
