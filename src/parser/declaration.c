@@ -47,7 +47,12 @@ Ast* parse_init_declarator_list(Parser* parser) {
 
 Ast* parse_init_declarator(Parser* parser) {
     Ast* declarator_ast = parse_declarator(parser);
-    return new_ast(AST_INIT_DECLOR, 1, declarator_ast);
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type != CTOKEN_EQUAL) return new_ast(AST_INIT_DECLOR, 1, declarator_ast);
+
+    parser->index++;
+    Ast* initializer_ast = parse_initializer(parser);
+    return new_ast(AST_INIT_DECLOR, 2, declarator_ast, initializer_ast);
 }
 
 Ast* parse_declarator(Parser* parser) {
@@ -55,26 +60,26 @@ Ast* parse_declarator(Parser* parser) {
     Ast* direct_declarator_ast = parse_direct_declarator(parser);
     if (pointer_ast == NULL) return direct_declarator_ast;
 
-    Ast* pointer_tail = pointer_ast;
-    while (vector_size(pointer_tail->children) > 0) {
-        pointer_tail = vector_at(pointer_tail->children, 0);
+    Ast* pointer_tail_ast = pointer_ast;
+    while (vector_size(pointer_tail_ast->children) > 0) {
+        pointer_tail_ast = vector_at(pointer_tail_ast->children, 0);
     }
 
     if (direct_declarator_ast->type == AST_IDENT_DECLOR) {
-        vector_push(pointer_tail->children, direct_declarator_ast);
+        vector_push(pointer_tail_ast->children, direct_declarator_ast);
         return pointer_ast;
     }
 
-    Ast* func_or_array_tail = direct_declarator_ast;
+    Ast* func_or_array_tail_ast = direct_declarator_ast;
     while (1) {
-        Ast* child = vector_at(func_or_array_tail->children, 0);
-        if (child->type == AST_IDENT_DECLOR) break;
-        func_or_array_tail = child;
+        Ast* child_ast = vector_at(func_or_array_tail_ast->children, 0);
+        if (child_ast->type == AST_IDENT_DECLOR) break;
+        func_or_array_tail_ast = child_ast;
     }
 
-    Ast* ident_ast = ast_copy(vector_at(func_or_array_tail->children, 0));
-    vector_set(func_or_array_tail->children, 0, pointer_ast);
-    vector_push(pointer_tail->children, ident_ast);
+    Ast* ident_ast = ast_copy(vector_at(func_or_array_tail_ast->children, 0));
+    vector_set(func_or_array_tail_ast->children, 0, pointer_ast);
+    vector_push(pointer_tail_ast->children, ident_ast);
     return direct_declarator_ast;
 }
 
@@ -150,4 +155,31 @@ Ast* parse_parameter_decl(Parser* parser) {
     Ast* specifiers_ast = parse_decl_specifiers(parser);
     Ast* declarator_ast = parse_declarator(parser);
     return new_ast(AST_PARAM_DECL, 2, specifiers_ast, declarator_ast);
+}
+
+Ast* parse_initializer(Parser* parser) {
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type != CTOKEN_LBRACE) return parse_assignment_expr(parser);
+    parser->index++;
+    Ast* ast = parse_initializer_list(parser);
+    consume_ctoken(parser, CTOKEN_RBRACE);
+    return ast;
+}
+
+Ast* parse_initializer_list(Parser* parser) {
+    Ast* ast = new_ast(AST_INIT_LIST, 0);
+
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type == CTOKEN_RBRACE) return ast;
+
+    while (1) {
+        vector_push(ast->children, parse_initializer(parser));
+        ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type == CTOKEN_RBRACE) break;
+        consume_ctoken(parser, CTOKEN_COMMA);
+        ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type == CTOKEN_RBRACE) break;
+    }
+
+    return ast;
 }

@@ -12,5 +12,7 @@ Ast* parse_pointer(Parser* parser);
 Ast* parse_direct_declarator(Parser* parser);
 Ast* parse_parameter_list(Parser* parser);
 Ast* parse_parameter_decl(Parser* parser);
+Ast* parse_initializer(Parser* parser);
+Ast* parse_initializer_list(Parser* parser);
 
 #endif

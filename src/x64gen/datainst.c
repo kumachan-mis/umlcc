@@ -83,6 +83,7 @@ Vector* gen_store_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
+    char* BP_NAME = QREG_NAMES[BP_REG_ID];
     ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* src = immc->inst->fst_src;
 
@@ -95,6 +96,11 @@ Vector* gen_store_x64code(X64gen* x64gen) {
             int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
             char* dst_name = QREG_NAMES[dst_id];
             append_code(codes, "\tmov%c\t%s, (%s)\n", suffix, src_name, dst_name);
+            break;
+        }
+        case IMMC_OPERAND_MEM: {
+            int mem_offset = dst->mem_offset;
+            append_code(codes, "\tmov%c\t%s, -%d(%s)\n", suffix, src_name, mem_offset, BP_NAME);
             break;
         }
         default:

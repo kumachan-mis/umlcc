@@ -35,13 +35,13 @@ Ast* parse_compound_stmt(Parser* parser) {
 
 Ast* parse_return_stmt(Parser* parser) {
     consume_ctoken(parser, CTOKEN_KEYWORD_RETURN);
-    Ast* expr = parse_expr(parser);
+    Ast* expr_ast = parse_expr(parser);
     consume_ctoken(parser, CTOKEN_SEMICOLON);
-    return new_ast(AST_RET_STMT, 1, expr);
+    return new_ast(AST_RET_STMT, 1, expr_ast);
 }
 
 Ast* parse_expression_stmt(Parser* parser) {
-    Ast* expr = parse_expr(parser);
+    Ast* expr_ast = parse_expr(parser);
     consume_ctoken(parser, CTOKEN_SEMICOLON);
-    return new_ast(AST_EXPR_STMT, 1, expr);
+    return new_ast(AST_EXPR_STMT, 1, expr_ast);
 }

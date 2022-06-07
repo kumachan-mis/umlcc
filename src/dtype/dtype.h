@@ -33,6 +33,8 @@ Dtype* new_socket_array_dtype(int size);
 Dtype* new_socket_function_dtype(Vector* params);
 Dtype* dtype_connect(Dtype* socket_dtype, Dtype* plug_dtype);
 int dtype_isarithmetic(Dtype* dtype);
+int dtype_isscalar(Dtype* dtype);
+int dtype_isaggregate(Dtype* dtype);
 int dtype_size(Dtype* dtype);
 void delete_dtype(Dtype* dtype);
 

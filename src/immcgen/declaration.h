@@ -6,5 +6,6 @@
 Vector* gen_decl_list_immcode(Immcgen* immcgen);
 Vector* gen_init_decl_immcode(Immcgen* immcgen);
 Vector* gen_decl_immcode(Immcgen* immcgen);
+Vector* gen_initializer_immcode(Immcgen* immcgen);
 
 #endif

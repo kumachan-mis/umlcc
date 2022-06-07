@@ -53,15 +53,15 @@ Srt* resolve_init_declarator_list(Resolver* resolver) {
 }
 
 Srt* resolve_init_declarator(Resolver* resolver) {
-    Srt* srt = new_srt(SRT_INIT_DECL, 0);
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    Srt* declarator = resolve_declarator(resolver);
-    declarator->dtype = dtype_connect(declarator->dtype, dtype_copy(resolver->shared_dtype));
+    Srt* declarator_srt = resolve_declarator(resolver);
+    Dtype* shared_dtype = dtype_copy(resolver->shared_dtype);
+    declarator_srt->dtype = dtype_connect(declarator_srt->dtype, shared_dtype);
 
-    char* symbol_name = new_string(declarator->ident_name);
-    Dtype* symbol_dtype = dtype_copy(declarator->dtype);
+    char* symbol_name = new_string(declarator_srt->ident_name);
+    Dtype* symbol_dtype = dtype_copy(declarator_srt->dtype);
 
     if (resolver->local_table == NULL) {
         SymbolTable* table = resolver->global_table;
@@ -74,10 +74,20 @@ Srt* resolve_init_declarator(Resolver* resolver) {
         symboltable_define_memory(table, symbol_name, symbol_dtype);
     }
 
-    vector_push(srt->children, declarator);
+    if (vector_size(ast->children) == 1) {
+        resolver->ast = ast;
+        return new_srt(SRT_INIT_DECL, 1, declarator_srt);
+    }
+
+    shared_dtype = resolver->shared_dtype;
+    resolver->ast = vector_at(ast->children, 1);
+    resolver->shared_dtype = declarator_srt->dtype;
+
+    Srt* initializer_srt = resolve_initializer(resolver);
 
     resolver->ast = ast;
-    return srt;
+    resolver->shared_dtype = shared_dtype;
+    return new_srt(SRT_INIT_DECL, 2, declarator_srt, initializer_srt);
 }
 
 Srt* resolve_declarator(Resolver* resolver) {
@@ -97,9 +107,9 @@ Srt* resolve_declarator(Resolver* resolver) {
             case AST_ARRAY_DECLOR: {
                 // TODO: support expression for array size
                 resolver->ast = vector_at(ast_ptr->children, 1);
-                Srt* array_size = resolve_expr(resolver);
-                Dtype* socket_dtype = new_socket_array_dtype(array_size->value_int);
-                delete_srt(array_size);
+                Srt* array_size_srt = resolve_expr(resolver);
+                Dtype* socket_dtype = new_socket_array_dtype(array_size_srt->value_int);
+                delete_srt(array_size_srt);
                 dtype = dtype_connect(socket_dtype, dtype);
                 ast_ptr = vector_at(ast_ptr->children, 0);
                 break;
@@ -151,4 +161,87 @@ DParam* resolve_parameter_decl(Resolver* resolver) {
 
     resolver->ast = ast;
     return dparam;
+}
+
+Srt* resolve_initializer(Resolver* resolver) {
+    Srt* resolve_array_initializer(Resolver * resolver);
+    Srt* resolve_scalar_initializer(Resolver * resolver);
+
+    Dtype* dtype = resolver->shared_dtype;
+
+    switch (dtype->type) {
+        case DTYPE_ARRAY:
+            return resolve_array_initializer(resolver);
+        default:
+            if (dtype_isscalar(dtype)) return resolve_scalar_initializer(resolver);
+            break;
+    }
+
+    fprintf(stderr, "Error: unexpected data type %d\n", dtype->type);
+    exit(1);
+}
+
+Srt* resolve_zero_initializer(Resolver* resolver) {
+    Srt* resolve_zero_array_initializer(Resolver * resolver);
+    Srt* resolve_zero_scalar_initializer();
+
+    Dtype* dtype = resolver->shared_dtype;
+
+    switch (dtype->type) {
+        case DTYPE_ARRAY:
+            return resolve_zero_array_initializer(resolver);
+        default:
+            if (dtype_isscalar(dtype)) return resolve_zero_scalar_initializer();
+            break;
+    }
+
+    fprintf(stderr, "Error: unexpected data type %d\n", dtype->type);
+    exit(1);
+}
+
+Srt* resolve_array_initializer(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_INIT, 0);
+    Ast* ast = resolver->ast;
+    Dtype* dtype = resolver->shared_dtype;
+
+    // TODO: when no designations are present, subobjects of the current object are initialized
+
+    int initializer_len = vector_size(ast->children);
+    for (int i = 0; i < initializer_len && i < dtype->array->size; i++) {
+        resolver->ast = vector_at(ast->children, i);
+        resolver->shared_dtype = dtype->array->of_dtype;
+        vector_push(srt->children, resolve_initializer(resolver));
+    }
+
+    for (int i = initializer_len; i < dtype->array->size; i++) {
+        resolver->ast = NULL;
+        resolver->shared_dtype = dtype->array->of_dtype;
+        vector_push(srt->children, resolve_zero_initializer(resolver));
+    }
+
+    resolver->ast = ast;
+    resolver->shared_dtype = dtype;
+    return srt;
+}
+
+Srt* resolve_zero_array_initializer(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_INIT, 0);
+    Dtype* dtype = resolver->shared_dtype;
+
+    for (int i = 0; i < dtype->array->size; i++) {
+        resolver->shared_dtype = dtype->array->of_dtype;
+        vector_push(srt->children, resolve_zero_initializer(resolver));
+    }
+
+    resolver->shared_dtype = dtype;
+    return srt;
+}
+
+Srt* resolve_scalar_initializer(Resolver* resolver) {
+    // TODO: optionally enclosed in braces
+    return new_srt(SRT_INIT, 1, resolve_expr(resolver));
+}
+
+Srt* resolve_zero_scalar_initializer() {
+    return new_srt(SRT_INIT, 1, new_integer_srt(SRT_INT_EXPR, 0));
 }

@@ -22,6 +22,8 @@ typedef enum ImmcInstType {
     IMMC_INST_STORE,
     // - store value of fst_src to memory dst points to.
     // store dst(ptr), fst_src(reg)
+    // - store value of fst_src to dst in memory.
+    // store dst(mem), fst_src(reg)
     IMMC_INST_LDARG,
     // - load fst_src-th argument of function to dst in memory.
     // ldarg dst(mem), fst_src(arg)

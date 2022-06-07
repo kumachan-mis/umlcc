@@ -177,8 +177,8 @@ Vector* gen_additive_expr_immcode(Immcgen* immcgen) {
             vector_push(codes, new_inst_immc(IMMC_INST_SUB, dst, fst_src, snd_src));
             break;
         case SRT_PADD_EXPR: {
-            Srt* lhs = vector_at(srt->children, 0);
-            int mul_amount = dtype_size(lhs->dtype->pointer->to_dtype);
+            Srt* lhs_srt = vector_at(srt->children, 0);
+            int mul_amount = dtype_size(lhs_srt->dtype->pointer->to_dtype);
             ImmcOpe* mul_fst_src = immcope_copy(snd_src);
             ImmcOpe* mul_snd_src = new_imm_immcope(mul_amount);
             ImmcOpe* mul_dst = immcope_copy(snd_src);
@@ -187,8 +187,8 @@ Vector* gen_additive_expr_immcode(Immcgen* immcgen) {
             break;
         }
         case SRT_PSUB_EXPR: {
-            Srt* lhs = vector_at(srt->children, 0);
-            int mul_amount = dtype_size(lhs->dtype->pointer->to_dtype);
+            Srt* lhs_srt = vector_at(srt->children, 0);
+            int mul_amount = dtype_size(lhs_srt->dtype->pointer->to_dtype);
             ImmcOpe* mul_fst_src = immcope_copy(snd_src);
             ImmcOpe* mul_snd_src = new_imm_immcope(mul_amount);
             ImmcOpe* mul_dst = immcope_copy(snd_src);
@@ -197,8 +197,8 @@ Vector* gen_additive_expr_immcode(Immcgen* immcgen) {
             break;
         }
         case SRT_PDIFF_EXPR: {
-            Srt* lhs = vector_at(srt->children, 0);
-            int div_amount = dtype_size(lhs->dtype->pointer->to_dtype);
+            Srt* lhs_srt = vector_at(srt->children, 0);
+            int div_amount = dtype_size(lhs_srt->dtype->pointer->to_dtype);
             ImmcOpe* div_fst_src = immcope_copy(dst);
             ImmcOpe* div_snd_src = new_imm_immcope(div_amount);
             ImmcOpe* div_dst = immcope_copy(dst);
@@ -267,11 +267,11 @@ Vector* gen_call_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = immcgen->srt;
 
-    Srt* param = vector_at(srt->children, 1);
-    int num_args = vector_size(param->children);
+    Srt* param_srt = vector_at(srt->children, 1);
+    int num_args = vector_size(param_srt->children);
     vector_push(codes, new_inst_immc(IMMC_INST_PREP, NULL, new_imm_immcope(num_args), NULL));
 
-    immcgen->srt = param;
+    immcgen->srt = param_srt;
     for (int i = num_args - 1; i >= 0; i--) {
         append_child_immcode(immcgen, codes, i);
         ImmcOpe* fst_src = new_arg_immcope(immcgen->virtual_reg_suffix, i);
