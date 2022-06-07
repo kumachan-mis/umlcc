@@ -16,7 +16,7 @@ typedef enum SrtType {
     SRT_DECL_LIST,
     SRT_INIT_DECL,
     SRT_DECL,
-    SRT_INIT_LIST,
+    SRT_INIT,
 
     // statement
     SRT_CMPD_STMT,

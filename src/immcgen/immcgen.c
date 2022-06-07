@@ -13,8 +13,10 @@ Immcgen* new_immcgen(Srt* srt) {
     immcgen->global_table = new_symboltable();
     immcgen->local_table = NULL;
     immcgen->virtual_reg_suffix = IMMC_SUFFIX_NONE;
-    immcgen->return_label_id = -1;
     immcgen->virtual_reg_id = -1;
+    immcgen->initialized_dtype = NULL;
+    immcgen->initialized_offset = -1;
+    immcgen->return_label_id = -1;
     immcgen->label_id = -1;
     return immcgen;
 }
@@ -38,6 +40,9 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
             break;
         case SRT_DECL:
             codes = gen_decl_immcode(immcgen);
+            break;
+        case SRT_INIT:
+            codes = gen_initializer_immcode(immcgen);
             break;
         case SRT_CMPD_STMT:
             immcgen->local_table = symboltable_enter_scope(immcgen->local_table);
@@ -99,5 +104,6 @@ void delete_immcgen(Immcgen* immcgen) {
     delete_srt(immcgen->srt);
     delete_symboltable(immcgen->global_table);
     if (immcgen->local_table != NULL) delete_symboltable(immcgen->local_table);
+    if (immcgen->initialized_dtype != NULL) delete_dtype(immcgen->initialized_dtype);
     free(immcgen);
 }

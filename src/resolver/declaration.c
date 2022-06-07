@@ -200,7 +200,7 @@ Srt* resolve_zero_initializer(Resolver* resolver) {
 }
 
 Srt* resolve_array_initializer(Resolver* resolver) {
-    Srt* srt = new_srt(SRT_INIT_LIST, 0);
+    Srt* srt = new_srt(SRT_INIT, 0);
     Ast* ast = resolver->ast;
     Dtype* dtype = resolver->shared_dtype;
 
@@ -225,7 +225,7 @@ Srt* resolve_array_initializer(Resolver* resolver) {
 }
 
 Srt* resolve_zero_array_initializer(Resolver* resolver) {
-    Srt* srt = new_srt(SRT_INIT_LIST, 0);
+    Srt* srt = new_srt(SRT_INIT, 0);
     Dtype* dtype = resolver->shared_dtype;
 
     for (int i = 0; i < dtype->array->size; i++) {
@@ -239,9 +239,9 @@ Srt* resolve_zero_array_initializer(Resolver* resolver) {
 
 Srt* resolve_scalar_initializer(Resolver* resolver) {
     // TODO: optionally enclosed in braces
-    return resolve_expr(resolver);
+    return new_srt(SRT_INIT, 1, resolve_expr(resolver));
 }
 
 Srt* resolve_zero_scalar_initializer() {
-    return new_integer_srt(SRT_INT_EXPR, 0);
+    return new_srt(SRT_INIT, 1, new_integer_srt(SRT_INT_EXPR, 0));
 }
