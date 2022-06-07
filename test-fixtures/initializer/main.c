@@ -3,11 +3,13 @@ int put_blank_line();
 
 int main() {
     int x = 8;
+    int y = {x};
     int a[2] = {1};
     int b[2][3] = {{2}, {3, 4, 5}};
     int c[3][2] = {x + 1, x * 2, x + 4};
 
     put_int(x);
+    put_int(y);
     put_blank_line();
 
     put_int(a[0]);
