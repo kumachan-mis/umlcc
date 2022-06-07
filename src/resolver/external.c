@@ -29,11 +29,11 @@ Srt* resolve_function_definition(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    resolver->shared_dtype = resolve_decl_specifiers(resolver);
+    resolver->specifier_dtype = resolve_decl_specifiers(resolver);
 
     resolver->ast = vector_at(ast->children, 1);
     Srt* declarator_srt = resolve_declarator(resolver);
-    declarator_srt->dtype = dtype_connect(declarator_srt->dtype, resolver->shared_dtype);
+    declarator_srt->dtype = dtype_connect(declarator_srt->dtype, resolver->specifier_dtype);
     vector_push(srt->children, declarator_srt);
 
     char* symbol_name = new_string(declarator_srt->ident_name);
@@ -57,7 +57,7 @@ Srt* resolve_function_definition(Resolver* resolver) {
     delete_symboltable(resolver->local_table);
     resolver->local_table = NULL;
 
-    resolver->shared_dtype = NULL;
+    resolver->specifier_dtype = NULL;
     resolver->ast = ast;
     return srt;
 }
