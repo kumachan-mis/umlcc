@@ -9,7 +9,9 @@ typedef struct Resolver {
     Ast* ast;
     SymbolTable* global_table;
     SymbolTable* local_table;
-    Dtype* shared_dtype;
+    Dtype* specifier_dtype;
+    Dtype* initialized_dtype;
+    int initialized_offset;
 } Resolver;
 
 Resolver* new_resolver(Ast* ast);

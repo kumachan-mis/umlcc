@@ -8,7 +8,9 @@ Resolver* new_resolver(Ast* ast) {
     resolver->ast = ast;
     resolver->global_table = new_symboltable();
     resolver->local_table = NULL;
-    resolver->shared_dtype = NULL;
+    resolver->specifier_dtype = NULL;
+    resolver->initialized_dtype = NULL;
+    resolver->initialized_offset = -1;
     return resolver;
 }
 
@@ -20,6 +22,7 @@ void delete_resolver(Resolver* resolver) {
     delete_ast(resolver->ast);
     delete_symboltable(resolver->global_table);
     if (resolver->local_table != NULL) delete_symboltable(resolver->local_table);
-    if (resolver->shared_dtype != NULL) delete_dtype(resolver->shared_dtype);
+    if (resolver->specifier_dtype != NULL) delete_dtype(resolver->specifier_dtype);
+    if (resolver->initialized_dtype != NULL) delete_dtype(resolver->initialized_dtype);
     free(resolver);
 }
