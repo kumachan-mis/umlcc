@@ -205,16 +205,32 @@ Srt* resolve_array_initializer(Resolver* resolver) {
     Ast* ast = resolver->ast;
     Dtype* dtype = resolver->initialized_dtype;
 
-    // TODO: when no designations are present, subobjects of the current object are initialized
-
     int initializer_len = vector_size(ast->children);
-    for (int i = 0; i < initializer_len && i < dtype->array->size; i++) {
-        resolver->ast = vector_at(ast->children, i);
+    int array_index = 0, subobj_init_flag = 0;
+    while (resolver->initialized_offset < initializer_len && array_index < dtype->array->size) {
+        Ast* child_ast = vector_at(ast->children, resolver->initialized_offset);
+        if (dtype_isaggregate(dtype->array->of_dtype) && child_ast->type != AST_INIT_LIST) {
+            subobj_init_flag = 1;
+        }
+
         resolver->initialized_dtype = dtype->array->of_dtype;
+
+        if (subobj_init_flag) {
+            resolver->ast = ast;
+            vector_push(srt->children, resolve_initializer(resolver));
+            array_index++;
+            continue;
+        }
+
+        int offset = resolver->initialized_offset;
+        resolver->ast = child_ast;
+        resolver->initialized_offset = 0;
         vector_push(srt->children, resolve_initializer(resolver));
+        resolver->initialized_offset = offset + 1;
+        array_index++;
     }
 
-    for (int i = initializer_len; i < dtype->array->size; i++) {
+    for (int i = array_index; i < dtype->array->size; i++) {
         resolver->ast = NULL;
         resolver->initialized_dtype = dtype->array->of_dtype;
         vector_push(srt->children, resolve_zero_initializer(resolver));
@@ -241,7 +257,10 @@ Srt* resolve_zero_array_initializer(Resolver* resolver) {
 Srt* resolve_scalar_initializer(Resolver* resolver) {
     Ast* ast = resolver->ast;
     if (ast->type == AST_INIT_LIST) resolver->ast = vector_at(ast->children, 0);
+
     Srt* srt = new_srt(SRT_INIT, 1, resolve_expr(resolver));
+    resolver->initialized_offset++;
+
     resolver->ast = ast;
     return srt;
 }
