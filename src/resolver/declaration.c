@@ -207,6 +207,7 @@ Srt* resolve_array_initializer(Resolver* resolver) {
 
     int initializer_len = vector_size(ast->children);
     int array_index = 0, subobj_init_flag = 0;
+
     while (resolver->initialized_offset < initializer_len && array_index < dtype->array->size) {
         Ast* child_ast = vector_at(ast->children, resolver->initialized_offset);
         if (dtype_isaggregate(dtype->array->of_dtype) && child_ast->type != AST_INIT_LIST) {
