@@ -103,6 +103,11 @@ Srt* resolve_equality_expr(Resolver* resolver) {
     Dtype* dtype = new_integer_dtype(DTYPE_INT);
     resolver->ast = ast;
 
+    if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
+        lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
+        rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
+    }
+
     switch (ast->type) {
         case AST_EQUAL_EXPR:
             return new_dtyped_srt(SRT_EQUAL_EXPR, dtype, 2, lhs_srt, rhs_srt);
@@ -130,7 +135,8 @@ Srt* resolve_additive_expr(Resolver* resolver) {
     resolver->ast = ast;
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
-        // TODO: fix DTYPE_INT
+        lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
+        rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
         Dtype* dtype = new_integer_dtype(DTYPE_INT);
         switch (ast->type) {
             case AST_ADD_EXPR:
@@ -181,13 +187,14 @@ Srt* resolve_multiplicative_expr(Resolver* resolver) {
     Srt* lhs_srt = resolve_expr(resolver);
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
     lhs_srt = convert_to_ptr_if_function(lhs_srt);
+    lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
 
     resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
     rhs_srt = convert_to_ptr_if_array(rhs_srt);
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
+    rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
 
-    // TODO: fix DTYPE_INT
     Dtype* dtype = new_integer_dtype(DTYPE_INT);
     resolver->ast = ast;
 
