@@ -123,6 +123,14 @@ Dtype* dtype_connect(Dtype* socket_dtype, Dtype* plug_dtype) {
     }
 }
 
+int dtype_cmp_integer_rank(Dtype* dtype, Dtype* other) {
+    return dtype->type - other->type;
+}
+
+int dtype_isinteger(Dtype* dtype) {
+    return DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_INT;
+}
+
 int dtype_isarithmetic(Dtype* dtype) {
     return DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_INT;
 }
@@ -132,7 +140,7 @@ int dtype_isscalar(Dtype* dtype) {
 }
 
 int dtype_isaggregate(Dtype* dtype) {
-    return dtype->type == DTYPE_ARRAY;
+    return DTYPE_ARRAY <= dtype->type && dtype->type <= DTYPE_ARRAY;
 }
 
 int dtype_size(Dtype* dtype) {

@@ -163,6 +163,6 @@ char immcsuffix_tochar(ImmcSuffix suffix) {
     }
 }
 
-ImmcSuffix immcsuffix_max(ImmcSuffix a, ImmcSuffix b) {
+ImmcSuffix immcsuffix_greater(ImmcSuffix a, ImmcSuffix b) {
     return a >= b ? a : b;
 }

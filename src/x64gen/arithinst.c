@@ -19,7 +19,7 @@ Vector* gen_add_x64code(X64gen* x64gen) {
     int fst_src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
     int snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
 
-    ImmcSuffix immc_suffix = immcsuffix_max(fst_src->suffix, snd_src->suffix);
+    ImmcSuffix immc_suffix = immcsuffix_greater(fst_src->suffix, snd_src->suffix);
     append_mov_code(codes, fst_src_id, fst_src->suffix, fst_src_id, immc_suffix);
     append_mov_code(codes, snd_src_id, snd_src->suffix, snd_src_id, immc_suffix);
 
@@ -47,7 +47,7 @@ Vector* gen_sub_x64code(X64gen* x64gen) {
     int fst_src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
     int snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
 
-    ImmcSuffix immc_suffix = immcsuffix_max(fst_src->suffix, snd_src->suffix);
+    ImmcSuffix immc_suffix = immcsuffix_greater(fst_src->suffix, snd_src->suffix);
     append_mov_code(codes, fst_src_id, fst_src->suffix, fst_src_id, immc_suffix);
     append_mov_code(codes, snd_src_id, snd_src->suffix, snd_src_id, immc_suffix);
 
@@ -85,7 +85,7 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
             break;
         }
         case IMMC_OPERAND_REG: {
-            immc_suffix = immcsuffix_max(fst_src->suffix, snd_src->suffix);
+            immc_suffix = immcsuffix_greater(fst_src->suffix, snd_src->suffix);
             int snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
             append_mov_code(codes, fst_src_id, fst_src->suffix, AX_REG_ID, immc_suffix);
             append_mov_code(codes, snd_src_id, snd_src->suffix, snd_src_id, immc_suffix);
@@ -131,7 +131,7 @@ Vector* gen_div_x64code(X64gen* x64gen) {
         }
         case IMMC_OPERAND_REG: {
             snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
-            immc_suffix = immcsuffix_max(fst_src->suffix, snd_src->suffix);
+            immc_suffix = immcsuffix_greater(fst_src->suffix, snd_src->suffix);
             append_mov_code(codes, fst_src_id, fst_src->suffix, AX_REG_ID, immc_suffix);
             if (snd_src_id != DX_REG_ID) {
                 append_mov_code(codes, snd_src_id, snd_src->suffix, snd_src_id, immc_suffix);
@@ -183,7 +183,7 @@ Vector* gen_mod_x64code(X64gen* x64gen) {
         }
         case IMMC_OPERAND_REG: {
             snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
-            immc_suffix = immcsuffix_max(fst_src->suffix, snd_src->suffix);
+            immc_suffix = immcsuffix_greater(fst_src->suffix, snd_src->suffix);
             append_mov_code(codes, fst_src_id, fst_src->suffix, AX_REG_ID, immc_suffix);
             if (snd_src_id != DX_REG_ID) {
                 append_mov_code(codes, snd_src_id, snd_src->suffix, snd_src_id, immc_suffix);

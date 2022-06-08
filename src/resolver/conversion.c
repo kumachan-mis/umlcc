@@ -18,3 +18,11 @@ Srt* convert_to_ptr_if_function(Srt* srt) {
     Dtype* dtype = new_pointer_dtype(dtype_copy(srt->dtype));
     return new_dtyped_srt(SRT_ADDR_EXPR, dtype, 1, srt);
 }
+
+Srt* perform_usual_arithmetic_conversion(Srt* srt) {
+    return srt;
+}
+
+Srt* perform_integer_promotion(Srt* srt) {
+    return srt;
+}

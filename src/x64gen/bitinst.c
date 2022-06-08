@@ -37,7 +37,7 @@ Vector* gen_setcmp_common_x64code(X64gen* x64gen, char* inst) {
         case IMMC_OPERAND_REG: {
             int fst_src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
             int snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
-            ImmcSuffix immc_suffix = immcsuffix_max(fst_src->suffix, snd_src->suffix);
+            ImmcSuffix immc_suffix = immcsuffix_greater(fst_src->suffix, snd_src->suffix);
             char* fst_src_name = reg_name(fst_src_id, immc_suffix);
             char* snd_src_name = reg_name(snd_src_id, immc_suffix);
             char suffix = immcsuffix_tochar(immc_suffix);

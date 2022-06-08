@@ -40,6 +40,6 @@ void delete_immope(ImmcOpe* immcope);
 ImmcSuffix immcsuffix_get(int size);
 int immcsuffix_tosize(ImmcSuffix suffix);
 char immcsuffix_tochar(ImmcSuffix suffix);
-ImmcSuffix immcsuffix_max(ImmcSuffix a, ImmcSuffix b);
+ImmcSuffix immcsuffix_greater(ImmcSuffix a, ImmcSuffix b);
 
 #endif
