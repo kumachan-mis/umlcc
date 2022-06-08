@@ -43,6 +43,8 @@ typedef enum SrtType {
     SRT_MUL_EXPR,
     SRT_DIV_EXPR,
     SRT_MOD_EXPR,
+    //   cast-expression
+    SRT_CAST_EXPR,
     //   unary-expression
     SRT_ADDR_EXPR,
     SRT_INDIR_EXPR,

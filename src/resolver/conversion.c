@@ -20,9 +20,13 @@ Srt* convert_to_ptr_if_function(Srt* srt) {
 }
 
 Srt* perform_usual_arithmetic_conversion(Srt* srt) {
-    return srt;
+    if (srt->dtype == NULL || !dtype_isarithmetic(srt->dtype)) return srt;
+    return perform_integer_promotion(srt);
 }
 
 Srt* perform_integer_promotion(Srt* srt) {
+    if (srt->dtype == NULL || !dtype_isinteger(srt->dtype)) return srt;
+    Dtype* dtype = new_integer_dtype(DTYPE_INT);
+    if (srt->dtype == DTYPE_CHAR) return new_dtyped_srt(SRT_CAST_EXPR, dtype, 1, srt);
     return srt;
 }
