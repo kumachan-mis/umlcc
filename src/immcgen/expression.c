@@ -423,6 +423,7 @@ Vector* gen_primary_expr_immcode(Immcgen* immcgen) {
             break;
         }
         case SRT_INT_EXPR:
+        case SRT_CHAR_EXPR:
             src = new_imm_immcope(srt->value_int);
             break;
         default:

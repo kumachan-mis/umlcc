@@ -2,6 +2,7 @@
 #include "./reader.h"
 #include "./util.h"
 
+#include <ctype.h>
 #include <stdlib.h>
 
 Lexer* new_lexer(FILE* file_ptr) {
@@ -18,14 +19,18 @@ Vector* lexer_read_ctokens(Lexer* lexer) {
 
     while (1) {
         CToken* ctoken = NULL;
-        if (ctoken == NULL) ctoken = read_keyword_or_identifier(lexer);
-        if (ctoken == NULL) ctoken = read_integer_constant(lexer);
-        if (ctoken == NULL) ctoken = read_punctuator(lexer);
 
-        if (ctoken == NULL) {
-            int c = fgetc(lexer->file_ptr);
-            fprintf(stderr, "Error: unexpected character %c\n", c);
-            exit(1);
+        int c = fgetc(lexer->file_ptr);
+        ungetc(c, lexer->file_ptr);
+
+        if (isalpha(c) && c != '_') {
+            ctoken = read_keyword_or_identifier(lexer);
+        } else if (isdigit(c)) {
+            ctoken = read_integer_constant(lexer);
+        } else if (c == '\'') {
+            ctoken = read_character_constant(lexer);
+        } else {
+            ctoken = read_punctuator(lexer);
         }
 
         vector_push(ctokens, ctoken);

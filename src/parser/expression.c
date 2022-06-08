@@ -232,6 +232,10 @@ Ast* parse_primary_expr(Parser* parser) {
             parser->index++;
             ast = new_integer_ast(AST_INT_EXPR, ctoken->value_int);
             break;
+        case CTOKEN_CHAR:
+            parser->index++;
+            ast = new_integer_ast(AST_CHAR_EXPR, ctoken->value_int);
+            break;
         case CTOKEN_LPALEN:
             parser->index++;
             ast = parse_expr(parser);

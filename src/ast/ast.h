@@ -62,6 +62,7 @@ typedef enum AstType {
     //   primary-expression
     AST_IDENT_EXPR,
     AST_INT_EXPR,
+    AST_CHAR_EXPR,
 } AstType;
 
 typedef struct Ast {

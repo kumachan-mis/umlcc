@@ -5,6 +5,7 @@
 
 CToken* read_keyword_or_identifier(Lexer* lexer);
 CToken* read_integer_constant(Lexer* lexer);
+CToken* read_character_constant(Lexer* lexer);
 CToken* read_punctuator(Lexer* lexer);
 
 #endif

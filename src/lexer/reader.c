@@ -8,14 +8,9 @@
 CToken* read_keyword_or_identifier(Lexer* lexer) {
     Builder* builder = new_builder();
 
-    char c = fgetc(lexer->file_ptr);
-    if (!isalpha(c) && c != '_') {
-        ungetc(c, lexer->file_ptr);
-        delete_builder(builder);
-        return NULL;
-    }
-
+    int c = fgetc(lexer->file_ptr);
     builder_push(builder, c);
+
     while (1) {
         c = fgetc(lexer->file_ptr);
         if (!isalpha(c) && !isdigit(c) && c != '_') {
@@ -32,20 +27,16 @@ CToken* read_keyword_or_identifier(Lexer* lexer) {
         free(ctoken_str);
         return new_ctoken(*ctoken_ref);
     }
+
     return new_identifier_ctoken(ctoken_str);
 }
 
 CToken* read_integer_constant(Lexer* lexer) {
     Builder* builder = new_builder();
 
-    char c = fgetc(lexer->file_ptr);
-    if (!isdigit(c)) {
-        ungetc(c, lexer->file_ptr);
-        delete_builder(builder);
-        return NULL;
-    }
-
+    int c = fgetc(lexer->file_ptr);
     builder_push(builder, c);
+
     while (1) {
         c = fgetc(lexer->file_ptr);
         if (!isdigit(c)) {
@@ -56,10 +47,80 @@ CToken* read_integer_constant(Lexer* lexer) {
     }
 
     char* ctoken_str = builder_build(builder);
-    CToken* ctoken = new_integer_ctoken(atoi(ctoken_str));
+    CToken* ctoken = new_integer_ctoken(CTOKEN_INT, atoi(ctoken_str));
     free(ctoken_str);
 
     return ctoken;
+}
+
+CToken* read_character_constant(Lexer* lexer) {
+    int read_escaped_character(Lexer * lexer);
+
+    fgetc(lexer->file_ptr);
+
+    int c = fgetc(lexer->file_ptr);
+    switch (c) {
+        case '\\':
+            c = read_escaped_character(lexer);
+            break;
+        case '\'':
+        case '\n':
+            fprintf(stderr, "Error: unexpected character \\n\n");
+            exit(1);
+        default:
+            break;
+    }
+
+    int terminated = 0;
+    while (!terminated) {
+        int rest = fgetc(lexer->file_ptr);
+        switch (rest) {
+            case '\\':
+                rest = read_escaped_character(lexer);
+                break;
+            case '\'':
+                terminated = 1;
+                break;
+            case '\n':
+                fprintf(stderr, "Error: unexpected character \\n\n");
+                exit(1);
+            default:
+                break;
+        }
+    }
+
+    return new_integer_ctoken(CTOKEN_CHAR, c);
+}
+
+int read_escaped_character(Lexer* lexer) {
+    int c = fgetc(lexer->file_ptr);
+    switch (c) {
+        case '\'':
+            return '\'';
+        case '\"':
+            return '\"';
+        case '\?':
+            return '\?';
+        case '\\':
+            return '\\';
+        case 'a':
+            return '\a';
+        case 'b':
+            return '\b';
+        case 'f':
+            return '\f';
+        case 'n':
+            return '\n';
+        case 'r':
+            return '\r';
+        case 't':
+            return '\t';
+        case 'v':
+            return '\v';
+        default:
+            fprintf(stderr, "Error: unexpected character %c\n", c);
+            exit(1);
+    }
 }
 
 CToken* read_punctuator(Lexer* lexer) {
@@ -94,10 +155,11 @@ CToken* read_punctuator(Lexer* lexer) {
             return new_ctoken(*ctoken_ref);
         }
         length--;
+        c = ctoken_str[length];
         ungetc(ctoken_str[length], lexer->file_ptr);
         ctoken_str[length] = '\0';
     }
 
-    free(ctoken_str);
-    return NULL;
+    fprintf(stderr, "Error: unexpected character %c\n", c);
+    exit(1);
 }
