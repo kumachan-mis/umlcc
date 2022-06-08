@@ -8,6 +8,7 @@
 #include "./pointer.h"
 
 typedef enum DtypeType {
+    DTYPE_CHAR,
     DTYPE_INT,
     DTYPE_POINTER,
     DTYPE_ARRAY,
@@ -23,7 +24,7 @@ typedef struct Dtype {
 
 extern BaseType t_dtype;
 
-Dtype* new_integer_dtype();
+Dtype* new_integer_dtype(DtypeType type);
 Dtype* new_pointer_dtype(Dtype* to_dtype);
 Dtype* new_array_dtype(Dtype* of_dtype, int size);
 Dtype* new_function_dtype(Vector* params, Dtype* return_dtype);

@@ -9,6 +9,7 @@ void ctoken_map_add(Map* ctoken_map, char* ctoken_str, CTokenType type);
 Map* new_keyword_map() {
     Map* keyword_map = new_map(&t_hashable_string, &t_integer);
 
+    ctoken_map_add(keyword_map, "char", CTOKEN_KEYWORD_CHAR);
     ctoken_map_add(keyword_map, "int", CTOKEN_KEYWORD_INT);
     ctoken_map_add(keyword_map, "return", CTOKEN_KEYWORD_RETURN);
 

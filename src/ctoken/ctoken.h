@@ -5,6 +5,7 @@
 
 typedef enum CTokenType {
     // keyword
+    CTOKEN_KEYWORD_CHAR,
     CTOKEN_KEYWORD_INT,
     CTOKEN_KEYWORD_RETURN,
 

@@ -7,9 +7,9 @@ BaseType t_dtype = {
     .delete_object = (void (*)(void*))delete_dtype,
 };
 
-Dtype* new_integer_dtype() {
+Dtype* new_integer_dtype(DtypeType type) {
     Dtype* dtype = malloc(sizeof(Dtype));
-    dtype->type = DTYPE_INT;
+    dtype->type = type;
     dtype->pointer = NULL;
     dtype->array = NULL;
     dtype->function = NULL;
@@ -89,6 +89,7 @@ Dtype* dtype_connect(Dtype* socket_dtype, Dtype* plug_dtype) {
     Dtype* socket_tail = socket_dtype;
     while (1) {
         switch (socket_tail->type) {
+            case DTYPE_CHAR:
             case DTYPE_INT:
                 return socket_dtype;
             case DTYPE_POINTER: {
@@ -123,11 +124,11 @@ Dtype* dtype_connect(Dtype* socket_dtype, Dtype* plug_dtype) {
 }
 
 int dtype_isarithmetic(Dtype* dtype) {
-    return dtype->type == DTYPE_INT;
+    return DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_INT;
 }
 
 int dtype_isscalar(Dtype* dtype) {
-    return dtype->type == DTYPE_INT || dtype->type == DTYPE_POINTER;
+    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_INT) || dtype->type == DTYPE_POINTER;
 }
 
 int dtype_isaggregate(Dtype* dtype) {
@@ -136,6 +137,8 @@ int dtype_isaggregate(Dtype* dtype) {
 
 int dtype_size(Dtype* dtype) {
     switch (dtype->type) {
+        case DTYPE_CHAR:
+            return 1;
         case DTYPE_INT:
             return 4;
         case DTYPE_POINTER:

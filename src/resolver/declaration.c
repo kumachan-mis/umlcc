@@ -28,7 +28,10 @@ Dtype* resolve_decl_specifiers(Resolver* resolver) {
     Ast* ast_ptr = vector_at(ast->children, 0);
     switch (ast_ptr->type) {
         case AST_TYPE_INT:
-            dtype = new_integer_dtype();
+            dtype = new_integer_dtype(DTYPE_INT);
+            break;
+        case AST_TYPE_CHAR:
+            dtype = new_integer_dtype(DTYPE_CHAR);
             break;
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast_ptr->type);
@@ -263,5 +266,6 @@ Srt* resolve_scalar_initializer(Resolver* resolver) {
 }
 
 Srt* resolve_zero_scalar_initializer() {
-    return new_srt(SRT_INIT, 1, new_integer_srt(SRT_INT_EXPR, 0));
+    // TODO: fix DTYPE_INT
+    return new_srt(SRT_INIT, 1, new_integer_srt(SRT_INT_EXPR, DTYPE_INT, 0));
 }
