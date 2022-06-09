@@ -123,6 +123,8 @@ int read_escaped_character(Lexer* lexer) {
     }
 }
 
+// TODO: support octorial escape sequence
+
 CToken* read_punctuator(Lexer* lexer) {
     int MAX_PUNCUATOR_LEN = 3;
 

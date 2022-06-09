@@ -290,6 +290,7 @@ Srt* resolve_argument_expr_list(Resolver* resolver) {
         Srt* child_srt = resolve_expr(resolver);
         child_srt = convert_to_ptr_if_array(child_srt);
         child_srt = convert_to_ptr_if_function(child_srt);
+        // TODO: type conversion if needed
         vector_push(srt->children, child_srt);
     }
 
