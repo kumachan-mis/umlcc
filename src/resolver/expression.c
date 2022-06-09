@@ -34,6 +34,7 @@ Srt* resolve_expr(Resolver* resolver) {
             return resolve_postfix_expr(resolver);
         case AST_IDENT_EXPR:
         case AST_INT_EXPR:
+        case AST_CHAR_EXPR:
             return resolve_primary_expr(resolver);
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
