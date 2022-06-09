@@ -19,6 +19,10 @@ Ast* parse_decl_specifiers(Parser* parser) {
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     switch (ctoken->type) {
+        case CTOKEN_KEYWORD_CHAR:
+            parser->index++;
+            ast = new_ast(AST_DECL_SPECIFIERS, 1, new_ast(AST_TYPE_CHAR, 0));
+            return ast;
         case CTOKEN_KEYWORD_INT:
             parser->index++;
             ast = new_ast(AST_DECL_SPECIFIERS, 1, new_ast(AST_TYPE_INT, 0));

@@ -246,6 +246,22 @@ Vector* gen_multiplicative_expr_immcode(Immcgen* immcgen) {
     return codes;
 }
 
+Vector* gen_cast_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+    Srt* srt = immcgen->srt;
+
+    append_child_immcode(immcgen, codes, 0);
+    ImmcOpe* src = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+
+    immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
+    immcgen->virtual_reg_id++;
+    ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+
+    vector_push(codes, new_inst_immc(IMMC_INST_MOVE, dst, src, NULL));
+
+    return codes;
+}
+
 Vector* gen_postfix_expr_immcode(Immcgen* immcgen) {
     Vector* codes = NULL;
     Srt* srt = immcgen->srt;
@@ -423,6 +439,7 @@ Vector* gen_primary_expr_immcode(Immcgen* immcgen) {
             break;
         }
         case SRT_INT_EXPR:
+        case SRT_CHAR_EXPR:
             src = new_imm_immcope(srt->value_int);
             break;
         default:

@@ -17,6 +17,8 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
             return gen_addr_x64code(x64gen);
         case IMMC_INST_STORE:
             return gen_store_x64code(x64gen);
+        case IMMC_INST_MOVE:
+            return gen_move_x64code(x64gen);
         case IMMC_INST_LDARG:
             return gen_ldarg_x64code(x64gen);
         case IMMC_INST_STARG:

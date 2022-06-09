@@ -10,6 +10,7 @@ DPointer* new_socket_dpointer();
 DPointer* dpointer_copy(DPointer* dpointer);
 struct Dtype* dpointer_next(DPointer* dpointer);
 DPointer* dpointer_connect(DPointer* socket, struct Dtype* plug);
+int dpointer_equals(DPointer* dpointer, DPointer* other);
 void delete_dpointer(DPointer* dpointer);
 
 #endif

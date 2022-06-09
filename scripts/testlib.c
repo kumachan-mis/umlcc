@@ -28,6 +28,11 @@ int put_8ints(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8) {
     return 0;
 }
 
+int put_str(char* x) {
+    printf("%s\n", x);
+    return 0;
+}
+
 int put_blank_line() {
     printf("\n");
     return 0;

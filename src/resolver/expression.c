@@ -34,6 +34,7 @@ Srt* resolve_expr(Resolver* resolver) {
             return resolve_postfix_expr(resolver);
         case AST_IDENT_EXPR:
         case AST_INT_EXPR:
+        case AST_CHAR_EXPR:
             return resolve_primary_expr(resolver);
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
@@ -52,6 +53,11 @@ Srt* resolve_assignment_expr(Resolver* resolver) {
     Srt* rhs_srt = resolve_expr(resolver);
     rhs_srt = convert_to_ptr_if_array(rhs_srt);
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
+
+    if (!dtype_equals(rhs_srt->dtype, lhs_srt->dtype->pointer->to_dtype)) {
+        Dtype* dtype = dtype_copy(lhs_srt->dtype->pointer->to_dtype);
+        lhs_srt = new_dtyped_srt(SRT_CAST_EXPR, dtype, 1, lhs_srt);
+    }
 
     Dtype* dtype = dtype_copy(lhs_srt->dtype->pointer->to_dtype);
     resolver->ast = ast;
@@ -72,7 +78,7 @@ Srt* resolve_logical_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_array(rhs_srt);
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
-    Dtype* dtype = new_integer_dtype();
+    Dtype* dtype = new_integer_dtype(DTYPE_INT);
     resolver->ast = ast;
 
     switch (ast->type) {
@@ -100,8 +106,13 @@ Srt* resolve_equality_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_array(rhs_srt);
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
-    Dtype* dtype = new_integer_dtype();
+    Dtype* dtype = new_integer_dtype(DTYPE_INT);
     resolver->ast = ast;
+
+    if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
+        lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
+        rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
+    }
 
     switch (ast->type) {
         case AST_EQUAL_EXPR:
@@ -130,8 +141,9 @@ Srt* resolve_additive_expr(Resolver* resolver) {
     resolver->ast = ast;
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
-
-        Dtype* dtype = new_integer_dtype();
+        lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
+        rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
+        Dtype* dtype = new_integer_dtype(DTYPE_INT);
         switch (ast->type) {
             case AST_ADD_EXPR:
                 return new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
@@ -159,7 +171,7 @@ Srt* resolve_additive_expr(Resolver* resolver) {
 
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
 
-        Dtype* dtype = new_integer_dtype();
+        Dtype* dtype = new_integer_dtype(DTYPE_INT);
         switch (ast->type) {
             case AST_SUB_EXPR:
                 return new_dtyped_srt(SRT_PDIFF_EXPR, dtype, 2, rhs_srt, lhs_srt);
@@ -181,13 +193,15 @@ Srt* resolve_multiplicative_expr(Resolver* resolver) {
     Srt* lhs_srt = resolve_expr(resolver);
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
     lhs_srt = convert_to_ptr_if_function(lhs_srt);
+    lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
 
     resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
     rhs_srt = convert_to_ptr_if_array(rhs_srt);
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
+    rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
 
-    Dtype* dtype = new_integer_dtype();
+    Dtype* dtype = new_integer_dtype(DTYPE_INT);
     resolver->ast = ast;
 
     switch (ast->type) {
@@ -225,7 +239,7 @@ Srt* resolve_unary_expr(Resolver* resolver) {
         case AST_LNOT_EXPR: {
             child_srt = convert_to_ptr_if_array(child_srt);
             child_srt = convert_to_ptr_if_function(child_srt);
-            Dtype* dtype = new_integer_dtype();
+            Dtype* dtype = new_integer_dtype(DTYPE_INT);
             return new_dtyped_srt(SRT_LNOT_EXPR, dtype, 1, child_srt);
         }
         default:
@@ -276,6 +290,7 @@ Srt* resolve_argument_expr_list(Resolver* resolver) {
         Srt* child_srt = resolve_expr(resolver);
         child_srt = convert_to_ptr_if_array(child_srt);
         child_srt = convert_to_ptr_if_function(child_srt);
+        // TODO: type conversion if needed
         vector_push(srt->children, child_srt);
     }
 
@@ -300,7 +315,9 @@ Srt* resolve_primary_expr(Resolver* resolver) {
             return new_identifier_srt(SRT_IDENT_EXPR, ident_dtype, ident_name);
         }
         case AST_INT_EXPR:
-            return new_integer_srt(SRT_INT_EXPR, ast->value_int);
+            return new_integer_srt(SRT_INT_EXPR, DTYPE_INT, ast->value_int);
+        case AST_CHAR_EXPR:
+            return new_integer_srt(SRT_CHAR_EXPR, DTYPE_INT, ast->value_int);
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
             exit(1);

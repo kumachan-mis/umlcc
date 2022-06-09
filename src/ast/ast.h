@@ -17,6 +17,7 @@ typedef enum AstType {
     AST_INIT_DECLOR_LIST,
     AST_INIT_DECLOR,
     //   type-specifiers
+    AST_TYPE_CHAR,
     AST_TYPE_INT,
     //   declarators
     AST_IDENT_DECLOR,
@@ -61,6 +62,7 @@ typedef enum AstType {
     //   primary-expression
     AST_IDENT_EXPR,
     AST_INT_EXPR,
+    AST_CHAR_EXPR,
 } AstType;
 
 typedef struct Ast {

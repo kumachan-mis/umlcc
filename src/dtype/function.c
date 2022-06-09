@@ -10,6 +10,7 @@ BaseType t_dparam = {
 
 struct Dtype* dtype_copy(struct Dtype* dtype);
 void delete_dtype(struct Dtype* dtype);
+int dtype_equals(struct Dtype* dtype, struct Dtype* other);
 
 DFunction* new_dfunction(Vector* params, struct Dtype* return_dtype) {
     DFunction* dfunction = malloc(sizeof(DFunction));
@@ -26,8 +27,8 @@ DFunction* dfunction_copy(DFunction* dfunction) {
     DFunction* copied_dfunction = malloc(sizeof(DFunction));
 
     Vector* copied_params = new_vector(&t_dparam);
-    int num_args = vector_size(dfunction->params);
-    for (int i = 0; i < num_args; i++) {
+    int num_params = vector_size(dfunction->params);
+    for (int i = 0; i < num_params; i++) {
         DParam* copied_param = dparam_copy(vector_at(dfunction->params, i));
         vector_push(copied_params, copied_param);
     }
@@ -50,6 +51,19 @@ DFunction* dfunction_connect(DFunction* socket, struct Dtype* plug) {
     return socket;
 }
 
+int dfunction_equals(DFunction* dfunction, DFunction* other) {
+    if (!dtype_equals(dfunction->return_dtype, other->return_dtype)) return 0;
+    if (vector_size(dfunction->params) != vector_size(other->params)) return 0;
+
+    int num_params = vector_size(dfunction->params);
+    for (int i = 0; i < num_params; i++) {
+        DParam* dfunction_param = vector_at(dfunction->params, i);
+        DParam* other_param = vector_at(other->params, i);
+        if (!dparam_equals(dfunction_param, other_param)) return 0;
+    }
+    return 1;
+}
+
 void delete_dfunction(DFunction* dfunction) {
     delete_vector(dfunction->params);
     if (dfunction->return_dtype != NULL) delete_dtype(dfunction->return_dtype);
@@ -68,6 +82,10 @@ DParam* dparam_copy(DParam* dparam) {
     copied_dparam->ident_name = new_string(dparam->ident_name);
     copied_dparam->dtype = dtype_copy(dparam->dtype);
     return copied_dparam;
+}
+
+int dparam_equals(DParam* dparam, DParam* other) {
+    return dtype_equals(dparam->dtype, other->dtype);
 }
 
 void delete_dparam(DParam* dparam) {

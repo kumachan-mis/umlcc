@@ -43,6 +43,8 @@ typedef enum SrtType {
     SRT_MUL_EXPR,
     SRT_DIV_EXPR,
     SRT_MOD_EXPR,
+    //   cast-expression
+    SRT_CAST_EXPR,
     //   unary-expression
     SRT_ADDR_EXPR,
     SRT_INDIR_EXPR,
@@ -53,6 +55,7 @@ typedef enum SrtType {
     //   primary-expression
     SRT_IDENT_EXPR,
     SRT_INT_EXPR,
+    SRT_CHAR_EXPR,
 } SrtType;
 
 typedef struct Srt {
@@ -68,7 +71,7 @@ extern BaseType t_srt;
 Srt* new_srt(SrtType type, int num_children, ...);
 Srt* new_dtyped_srt(SrtType type, Dtype* dtype, int num_children, ...);
 Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name);
-Srt* new_integer_srt(SrtType type, int value);
+Srt* new_integer_srt(SrtType type, DtypeType dtype_type, int value);
 Srt* srt_copy(Srt* srt);
 void delete_srt(Srt* srt);
 

@@ -55,10 +55,10 @@ Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name) {
     return srt;
 }
 
-Srt* new_integer_srt(SrtType type, int value) {
+Srt* new_integer_srt(SrtType type, DtypeType dtype_type, int value) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
-    srt->dtype = new_integer_dtype();
+    srt->dtype = new_integer_dtype(dtype_type);
     srt->ident_name = NULL;
     srt->value_int = value;
     srt->children = new_vector(&t_srt);

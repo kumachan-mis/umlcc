@@ -4,6 +4,7 @@
 
 struct Dtype* dtype_copy(struct Dtype* dtype);
 void delete_dtype(struct Dtype* dtype);
+int dtype_equals(struct Dtype* dtype, struct Dtype* other);
 
 DArray* new_darray(struct Dtype* of_dtype, int size) {
     DArray* darray = malloc(sizeof(DArray));
@@ -31,6 +32,10 @@ struct Dtype* darray_next(DArray* darray) {
 DArray* darray_connect(DArray* socket, struct Dtype* plug) {
     socket->of_dtype = plug;
     return socket;
+}
+
+int darray_equals(DArray* darray, DArray* other) {
+    return darray->size == other->size && dtype_equals(darray->of_dtype, other->of_dtype);
 }
 
 void delete_darray(DArray* darray) {
