@@ -1,7 +1,6 @@
 #include "./reader.h"
 #include "./builder.h"
 
-#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -13,7 +12,7 @@ CToken* read_keyword_or_identifier(Lexer* lexer) {
 
     while (1) {
         c = fgetc(lexer->file_ptr);
-        if (!isalpha(c) && !isdigit(c) && c != '_') {
+        if (!set_contains(lexer->nondigit_set, &c) && !map_contains(lexer->digit_map, &c)) {
             ungetc(c, lexer->file_ptr);
             break;
         }
@@ -39,7 +38,7 @@ CToken* read_integer_constant(Lexer* lexer) {
 
     while (1) {
         c = fgetc(lexer->file_ptr);
-        if (!isdigit(c)) {
+        if (!map_contains(lexer->digit_map, &c)) {
             ungetc(c, lexer->file_ptr);
             break;
         }
