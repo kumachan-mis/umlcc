@@ -53,6 +53,11 @@ Srt* resolve_assignment_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_array(rhs_srt);
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
+    if (!dtype_equals(rhs_srt->dtype, lhs_srt->dtype->pointer->to_dtype)) {
+        Dtype* dtype = dtype_copy(lhs_srt->dtype->pointer->to_dtype);
+        lhs_srt = new_dtyped_srt(SRT_CAST_EXPR, dtype, 1, lhs_srt);
+    }
+
     Dtype* dtype = dtype_copy(lhs_srt->dtype->pointer->to_dtype);
     resolver->ast = ast;
 

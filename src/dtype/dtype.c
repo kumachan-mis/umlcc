@@ -123,8 +123,22 @@ Dtype* dtype_connect(Dtype* socket_dtype, Dtype* plug_dtype) {
     }
 }
 
-int dtype_cmp_integer_rank(Dtype* dtype, Dtype* other) {
-    return dtype->type - other->type;
+int dtype_equals(Dtype* dtype, Dtype* other) {
+    if (dtype->type != other->type) return 0;
+
+    switch (dtype->type) {
+        case DTYPE_CHAR:
+        case DTYPE_INT:
+            return 1;
+        case DTYPE_POINTER:
+            return dpointer_equals(dtype->pointer, other->pointer);
+        case DTYPE_ARRAY:
+            return darray_equals(dtype->array, other->array);
+        case DTYPE_FUNCUCTION:
+            return dfunction_equals(dtype->function, other->function);
+        default:
+            return 0;
+    }
 }
 
 int dtype_isinteger(Dtype* dtype) {

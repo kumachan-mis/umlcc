@@ -112,6 +112,23 @@ Vector* gen_store_x64code(X64gen* x64gen) {
     return codes;
 }
 
+Vector* gen_move_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector(&t_string);
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
+
+    ImmcOpe* dst = immc->inst->dst;
+    ImmcOpe* src = immc->inst->fst_src;
+
+    int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
+    int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
+
+    append_mov_code(codes, src_id, src->suffix, dst_id, dst->suffix);
+
+    liveseqs_next(x64gen->liveseqs);
+    return codes;
+}
+
 Vector* gen_ldarg_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);

@@ -4,6 +4,7 @@
 
 struct Dtype* dtype_copy(struct Dtype* dtype);
 void delete_dtype(struct Dtype* dtype);
+int dtype_equals(struct Dtype* dtype, struct Dtype* other);
 
 DPointer* new_dpointer(struct Dtype* to_dtype) {
     DPointer* dpointer = malloc(sizeof(DPointer));
@@ -29,6 +30,10 @@ struct Dtype* dpointer_next(DPointer* dpointer) {
 DPointer* dpointer_connect(DPointer* socket, struct Dtype* plug) {
     socket->to_dtype = plug;
     return socket;
+}
+
+int dpointer_equals(DPointer* dpointer, DPointer* other) {
+    return dtype_equals(dpointer->to_dtype, other->to_dtype);
 }
 
 void delete_dpointer(DPointer* dpointer) {

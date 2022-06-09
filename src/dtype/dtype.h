@@ -33,7 +33,7 @@ Dtype* new_socket_pointer_dtype();
 Dtype* new_socket_array_dtype(int size);
 Dtype* new_socket_function_dtype(Vector* params);
 Dtype* dtype_connect(Dtype* socket_dtype, Dtype* plug_dtype);
-int dtype_cmp_integer_rank(Dtype* dtype, Dtype* other);
+int dtype_equals(Dtype* dtype, Dtype* other);
 int dtype_isinteger(Dtype* dtype);
 int dtype_isarithmetic(Dtype* dtype);
 int dtype_isscalar(Dtype* dtype);

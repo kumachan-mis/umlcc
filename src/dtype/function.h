@@ -21,10 +21,12 @@ DFunction* new_socket_dfunction(Vector* params);
 DFunction* dfunction_copy(DFunction* dfunction);
 struct Dtype* dfunction_next(DFunction* dfunction);
 DFunction* dfunction_connect(DFunction* socket, struct Dtype* plug);
+int dfunction_equals(DFunction* dfunction, DFunction* other);
 void delete_dfunction(DFunction* dfunction);
 
 DParam* new_dparam(char* ident_name, struct Dtype* dtype);
 DParam* dparam_copy(DParam* dparam);
+int dparam_equals(DParam* dparam, DParam* other);
 void delete_dparam(DParam* dparam);
 
 #endif

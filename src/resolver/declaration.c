@@ -187,7 +187,7 @@ Srt* resolve_initializer(Resolver* resolver) {
 
 Srt* resolve_zero_initializer(Resolver* resolver) {
     Srt* resolve_zero_array_initializer(Resolver * resolver);
-    Srt* resolve_zero_scalar_initializer();
+    Srt* resolve_zero_scalar_initializer(Resolver * resolver);
 
     Dtype* dtype = resolver->initialized_dtype;
 
@@ -195,7 +195,7 @@ Srt* resolve_zero_initializer(Resolver* resolver) {
         case DTYPE_ARRAY:
             return resolve_zero_array_initializer(resolver);
         default:
-            if (dtype_isscalar(dtype)) return resolve_zero_scalar_initializer();
+            if (dtype_isscalar(dtype)) return resolve_zero_scalar_initializer(resolver);
             break;
     }
 
@@ -256,16 +256,27 @@ Srt* resolve_zero_array_initializer(Resolver* resolver) {
 
 Srt* resolve_scalar_initializer(Resolver* resolver) {
     Ast* ast = resolver->ast;
+    Dtype* dtype = resolver->initialized_dtype;
+
     if (ast->type == AST_INIT_LIST) resolver->ast = vector_at(ast->children, 0);
 
-    Srt* srt = new_srt(SRT_INIT, 1, resolve_expr(resolver));
+    Srt* srt = resolve_expr(resolver);
+    if (!dtype_equals(dtype, srt->dtype)) {
+        srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(dtype), 1, srt);
+    }
     resolver->initialized_offset++;
 
     resolver->ast = ast;
-    return srt;
+    return new_srt(SRT_INIT, 1, srt);
 }
 
-Srt* resolve_zero_scalar_initializer() {
-    // TODO: fix DTYPE_INT
-    return new_srt(SRT_INIT, 1, new_integer_srt(SRT_INT_EXPR, DTYPE_INT, 0));
+Srt* resolve_zero_scalar_initializer(Resolver* resolver) {
+    Dtype* dtype = resolver->initialized_dtype;
+
+    Srt* srt = new_integer_srt(SRT_INT_EXPR, DTYPE_INT, 0);
+    if (!dtype_equals(dtype, srt->dtype)) {
+        srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(dtype), 1, srt);
+    }
+
+    return new_srt(SRT_INIT, 1, srt);
 }
