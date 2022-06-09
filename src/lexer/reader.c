@@ -117,13 +117,14 @@ int read_escaped_character(Lexer* lexer) {
             return '\t';
         case 'v':
             return '\v';
+        case '0':
+            // TODO: support octorial escape sequence
+            return '\0';
         default:
             fprintf(stderr, "Error: unexpected character %c\n", c);
             exit(1);
     }
 }
-
-// TODO: support octorial escape sequence
 
 CToken* read_punctuator(Lexer* lexer) {
     int MAX_PUNCUATOR_LEN = 3;
