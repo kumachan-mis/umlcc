@@ -48,7 +48,7 @@ void set_remove(Set* set, void* item) {
 }
 
 int set_contains(Set* set, void* item) {
-    return map_get(set->inner, item) == NOTNULL;
+    return map_contains(set->inner, item);
 }
 
 SetIter* set_iter_begin(Set* set) {

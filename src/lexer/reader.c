@@ -1,26 +1,36 @@
 #include "./reader.h"
-#include "./builder.h"
 
-#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
 CToken* read_keyword_or_identifier(Lexer* lexer) {
-    Builder* builder = new_builder();
+    int length = 0, capacity = 4;
+    char* ctoken_str = malloc(sizeof(char) * capacity);
 
     int c = fgetc(lexer->file_ptr);
-    builder_push(builder, c);
+    ctoken_str[length] = c;
+    length++;
+    if (length >= capacity) {
+        ctoken_str = realloc(ctoken_str, 2 * capacity * sizeof(char));
+        capacity *= 2;
+    }
+    ctoken_str[length] = '\0';
 
     while (1) {
         c = fgetc(lexer->file_ptr);
-        if (!isalpha(c) && !isdigit(c) && c != '_') {
+        if (!set_contains(lexer->nondigit_set, &c) && !map_contains(lexer->digit_map, &c)) {
             ungetc(c, lexer->file_ptr);
             break;
         }
-        builder_push(builder, c);
+        ctoken_str[length] = c;
+        length++;
+        if (length >= capacity) {
+            ctoken_str = realloc(ctoken_str, 2 * capacity * sizeof(char));
+            capacity *= 2;
+        }
+        ctoken_str[length] = '\0';
     }
 
-    char* ctoken_str = builder_build(builder);
     CTokenType* ctoken_ref = map_get(lexer->keyword_map, ctoken_str);
 
     if (ctoken_ref != NULL) {
@@ -32,36 +42,90 @@ CToken* read_keyword_or_identifier(Lexer* lexer) {
 }
 
 CToken* read_integer_constant(Lexer* lexer) {
-    Builder* builder = new_builder();
+    int read_decimal_constant(Lexer * lexer);
+    int read_octal_constant(Lexer * lexer);
+    int read_hexadecimal_constant(Lexer * lexer);
 
+    int fst = fgetc(lexer->file_ptr);
+    int snd = fgetc(lexer->file_ptr);
+
+    if (fst == '0' && (snd == 'x' || snd == 'X')) {
+        return new_integer_ctoken(CTOKEN_INT, read_hexadecimal_constant(lexer));
+    }
+
+    ungetc(snd, lexer->file_ptr);
+    ungetc(fst, lexer->file_ptr);
+
+    if (fst == '0') return new_integer_ctoken(CTOKEN_INT, read_octal_constant(lexer));
+    return new_integer_ctoken(CTOKEN_INT, read_decimal_constant(lexer));
+}
+
+int read_decimal_constant(Lexer* lexer) {
     int c = fgetc(lexer->file_ptr);
-    builder_push(builder, c);
+    int* digit_ref = map_get(lexer->digit_map, &c);
+    int value = *digit_ref;
 
     while (1) {
         c = fgetc(lexer->file_ptr);
-        if (!isdigit(c)) {
-            ungetc(c, lexer->file_ptr);
-            break;
+        digit_ref = map_get(lexer->digit_map, &c);
+        if (digit_ref != NULL) {
+            value = value * 10 + *digit_ref;
+            continue;
         }
-        builder_push(builder, c);
+        ungetc(c, lexer->file_ptr);
+        break;
     }
 
-    char* ctoken_str = builder_build(builder);
-    CToken* ctoken = new_integer_ctoken(CTOKEN_INT, atoi(ctoken_str));
-    free(ctoken_str);
+    return value;
+}
 
-    return ctoken;
+int read_octal_constant(Lexer* lexer) {
+    int c = fgetc(lexer->file_ptr);
+    int* octdigit_ref = map_get(lexer->octdigit_map, &c);
+    int value = *octdigit_ref;
+
+    while (1) {
+        c = fgetc(lexer->file_ptr);
+        octdigit_ref = map_get(lexer->octdigit_map, &c);
+        if (octdigit_ref != NULL) {
+            value = value * 010 + *octdigit_ref;
+            continue;
+        }
+        ungetc(c, lexer->file_ptr);
+        break;
+    }
+
+    return value;
+}
+
+int read_hexadecimal_constant(Lexer* lexer) {
+    int c = fgetc(lexer->file_ptr);
+    int* hexdigit_ref = map_get(lexer->hexdigit_map, &c);
+    int value = *hexdigit_ref;
+
+    while (1) {
+        c = fgetc(lexer->file_ptr);
+        hexdigit_ref = map_get(lexer->hexdigit_map, &c);
+        if (hexdigit_ref != NULL) {
+            value = value * 0x10 + *hexdigit_ref;
+            continue;
+        }
+        ungetc(c, lexer->file_ptr);
+        break;
+    }
+
+    return value;
 }
 
 CToken* read_character_constant(Lexer* lexer) {
-    int read_escaped_character(Lexer * lexer);
+    int read_escape_seqence(Lexer * lexer);
 
     fgetc(lexer->file_ptr);
 
     int c = fgetc(lexer->file_ptr);
     switch (c) {
         case '\\':
-            c = read_escaped_character(lexer);
+            c = read_escape_seqence(lexer);
             break;
         case '\'':
         case '\n':
@@ -76,7 +140,7 @@ CToken* read_character_constant(Lexer* lexer) {
         int rest = fgetc(lexer->file_ptr);
         switch (rest) {
             case '\\':
-                rest = read_escaped_character(lexer);
+                rest = read_escape_seqence(lexer);
                 break;
             case '\'':
                 terminated = 1;
@@ -92,7 +156,61 @@ CToken* read_character_constant(Lexer* lexer) {
     return new_integer_ctoken(CTOKEN_CHAR, c);
 }
 
-int read_escaped_character(Lexer* lexer) {
+int read_escape_seqence(Lexer* lexer) {
+    int read_octal_escape_seqence(Lexer * lexer);
+    int read_hexadecimal_escape_seqence(Lexer * lexer);
+    int read_simple_escape_seqence(Lexer * lexer);
+
+    int c = fgetc(lexer->file_ptr);
+    if (c == 'x') return read_hexadecimal_escape_seqence(lexer);
+
+    ungetc(c, lexer->file_ptr);
+    if (map_contains(lexer->octdigit_map, &c)) return read_octal_escape_seqence(lexer);
+
+    return read_simple_escape_seqence(lexer);
+}
+
+int read_octal_escape_seqence(Lexer* lexer) {
+    int MAX_OCTAL_SEQUENCE_LEN = 3;
+
+    int c = fgetc(lexer->file_ptr);
+    int* octdigit_ref = map_get(lexer->octdigit_map, &c);
+    int value = *octdigit_ref;
+
+    for (int i = 0; i < MAX_OCTAL_SEQUENCE_LEN - 1; i++) {
+        c = fgetc(lexer->file_ptr);
+        octdigit_ref = map_get(lexer->octdigit_map, &c);
+        if (octdigit_ref != NULL) {
+            value = value * 010 + *octdigit_ref;
+            continue;
+        }
+        ungetc(c, lexer->file_ptr);
+        break;
+    }
+
+    return value;
+}
+
+int read_hexadecimal_escape_seqence(Lexer* lexer) {
+    int c = fgetc(lexer->file_ptr);
+    int* hexdigit_ref = map_get(lexer->hexdigit_map, &c);
+    int value = *hexdigit_ref;
+
+    while (1) {
+        c = fgetc(lexer->file_ptr);
+        hexdigit_ref = map_get(lexer->hexdigit_map, &c);
+        if (hexdigit_ref != NULL) {
+            value = value * 0x10 + *hexdigit_ref;
+            continue;
+        }
+        ungetc(c, lexer->file_ptr);
+        break;
+    }
+
+    return value;
+}
+
+int read_simple_escape_seqence(Lexer* lexer) {
     int c = fgetc(lexer->file_ptr);
     switch (c) {
         case '\'':
@@ -117,9 +235,6 @@ int read_escaped_character(Lexer* lexer) {
             return '\t';
         case 'v':
             return '\v';
-        case '0':
-            // TODO: support octorial escape sequence
-            return '\0';
         default:
             fprintf(stderr, "Error: unexpected character %c\n", c);
             exit(1);

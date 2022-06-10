@@ -124,6 +124,10 @@ void map_remove(Map* map, void* key) {
     if (2 * std_capacity < map->capacity) update_capacity(map, std_capacity);
 }
 
+int map_contains(Map* map, void* key) {
+    return map_get_with_default(map, key, NULL) != NULL;
+}
+
 MapIter* map_iter_begin(Map* map) {
     MapIter* iter = malloc(sizeof(MapIter));
     iter->index = 0;
