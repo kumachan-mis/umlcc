@@ -1,14 +1,20 @@
 #include "./reader.h"
-#include "./builder.h"
 
 #include <stdlib.h>
 #include <string.h>
 
 CToken* read_keyword_or_identifier(Lexer* lexer) {
-    Builder* builder = new_builder();
+    int length = 0, capacity = 4;
+    char* ctoken_str = malloc(sizeof(char) * capacity);
 
     int c = fgetc(lexer->file_ptr);
-    builder_push(builder, c);
+    ctoken_str[length] = c;
+    length++;
+    if (length >= capacity) {
+        ctoken_str = realloc(ctoken_str, 2 * capacity * sizeof(char));
+        capacity *= 2;
+    }
+    ctoken_str[length] = '\0';
 
     while (1) {
         c = fgetc(lexer->file_ptr);
@@ -16,10 +22,15 @@ CToken* read_keyword_or_identifier(Lexer* lexer) {
             ungetc(c, lexer->file_ptr);
             break;
         }
-        builder_push(builder, c);
+        ctoken_str[length] = c;
+        length++;
+        if (length >= capacity) {
+            ctoken_str = realloc(ctoken_str, 2 * capacity * sizeof(char));
+            capacity *= 2;
+        }
+        ctoken_str[length] = '\0';
     }
 
-    char* ctoken_str = builder_build(builder);
     CTokenType* ctoken_ref = map_get(lexer->keyword_map, ctoken_str);
 
     if (ctoken_ref != NULL) {
