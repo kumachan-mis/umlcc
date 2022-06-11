@@ -250,6 +250,7 @@ Srt* resolve_unary_expr(Resolver* resolver) {
 
 Srt* resolve_postfix_expr(Resolver* resolver) {
     Ast* ast = resolver->ast;
+    Dtype* function_dtype = resolver->function_dtype;
 
     switch (ast->type) {
         case AST_SUBSC_EXPR: {
@@ -268,9 +269,11 @@ Srt* resolve_postfix_expr(Resolver* resolver) {
             lhs_srt = convert_to_ptr_if_function(lhs_srt);
 
             resolver->ast = vector_at(ast->children, 1);
+            resolver->function_dtype = lhs_srt->dtype->pointer->to_dtype;
             Srt* rhs_srt = resolve_argument_expr_list(resolver);
 
-            Dtype* dtype = dtype_copy(lhs_srt->dtype->pointer->to_dtype->function->return_dtype);
+            Dtype* dtype = dtype_copy(resolver->function_dtype->function->return_dtype);
+            resolver->function_dtype = function_dtype;
             resolver->ast = ast;
             return new_dtyped_srt(SRT_CALL_EXPR, dtype, 2, lhs_srt, rhs_srt);
         }
@@ -283,14 +286,21 @@ Srt* resolve_postfix_expr(Resolver* resolver) {
 Srt* resolve_argument_expr_list(Resolver* resolver) {
     Srt* srt = new_srt(SRT_ARG_LIST, 0);
     Ast* ast = resolver->ast;
+    Dtype* function_dtype = resolver->function_dtype;
 
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
+        DParam* dparam = vector_at(function_dtype->function->params, i);
+
         resolver->ast = vector_at(ast->children, i);
         Srt* child_srt = resolve_expr(resolver);
         child_srt = convert_to_ptr_if_array(child_srt);
         child_srt = convert_to_ptr_if_function(child_srt);
-        // TODO: type conversion if needed
+
+        if (!dtype_equals(dparam->dtype, child_srt->dtype)) {
+            child_srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(dparam->dtype), 1, child_srt);
+        }
+
         vector_push(srt->children, child_srt);
     }
 

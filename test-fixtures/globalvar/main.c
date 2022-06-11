@@ -27,14 +27,14 @@ int main() {
     put_str(zca);
     put_blank_line();
 
-    put_str(ia[0]);
-    put_str(ia[1]);
-    put_str(ia[2]);
-    put_str(ia[3]);
-    put_str(zia[0]);
-    put_str(zia[1]);
-    put_str(zia[2]);
-    put_str(zia[3]);
+    put_int(ia[0]);
+    put_int(ia[1]);
+    put_int(ia[2]);
+    put_int(ia[3]);
+    put_int(zia[0]);
+    put_int(zia[1]);
+    put_int(zia[2]);
+    put_int(zia[3]);
 
     return 0;
 }

@@ -11,6 +11,7 @@ Resolver* new_resolver(Ast* ast) {
     resolver->specifier_dtype = NULL;
     resolver->initialized_dtype = NULL;
     resolver->initialized_offset = -1;
+    resolver->function_dtype = NULL;
     return resolver;
 }
 
@@ -24,5 +25,6 @@ void delete_resolver(Resolver* resolver) {
     if (resolver->local_table != NULL) delete_symboltable(resolver->local_table);
     if (resolver->specifier_dtype != NULL) delete_dtype(resolver->specifier_dtype);
     if (resolver->initialized_dtype != NULL) delete_dtype(resolver->initialized_dtype);
+    if (resolver->function_dtype != NULL) delete_dtype(resolver->function_dtype);
     free(resolver);
 }
