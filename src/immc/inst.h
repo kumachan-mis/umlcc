@@ -20,16 +20,10 @@ typedef enum ImmcInstType {
     // - load address fst_src label represents.
     // addr dst(reg), fst_src(label)
     IMMC_INST_STORE,
-    // - store fst_src value to memory dst points to.
-    // store dst(ptr), fst_src(imm)
     // - store value of fst_src to memory dst points to.
     // store dst(ptr), fst_src(reg)
-    // - store fst_src value to dst in memory.
-    // store dst(mem), fst_src(imm)
     // - store value of fst_src to dst in memory.
     // store dst(mem), fst_src(reg)
-    // - store value of fst_src to dst label.
-    // store dst(label), fst_src(imm)
     // - store value of fst_src to dst label.
     // store dst(label), fst_src(reg)
     IMMC_INST_MOVE,
