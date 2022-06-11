@@ -103,6 +103,11 @@ Vector* gen_store_x64code(X64gen* x64gen) {
             append_code(codes, "\tmov%c\t%s, -%d(%s)\n", suffix, src_name, mem_offset, BP_NAME);
             break;
         }
+        case IMMC_OPERAND_LABEL: {
+            char* label_name = dst->label_name;
+            append_code(codes, "\tmov%c\t%s, %s(%s)\n", suffix, src_name, PC_NAME, label_name);
+            break;
+        }
         default:
             fprintf(stderr, "Error: unexpected operand %d\n", dst->type);
             exit(1);
