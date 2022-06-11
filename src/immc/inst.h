@@ -20,10 +20,18 @@ typedef enum ImmcInstType {
     // - load address fst_src label represents.
     // addr dst(reg), fst_src(label)
     IMMC_INST_STORE,
+    // - store fst_src value to memory dst points to.
+    // store dst(ptr), fst_src(imm)
     // - store value of fst_src to memory dst points to.
     // store dst(ptr), fst_src(reg)
+    // - store fst_src value to dst in memory.
+    // store dst(mem), fst_src(imm)
     // - store value of fst_src to dst in memory.
     // store dst(mem), fst_src(reg)
+    // - store value of fst_src to dst label.
+    // store dst(label), fst_src(imm)
+    // - store value of fst_src to dst label.
+    // store dst(label), fst_src(reg)
     IMMC_INST_MOVE,
     // - move value from register to register.
     // move dst(reg), fst_src(reg)
@@ -31,6 +39,8 @@ typedef enum ImmcInstType {
     // - load fst_src-th argument of function to dst in memory.
     // ldarg dst(mem), fst_src(arg)
     IMMC_INST_STARG,
+    // - store snd_src to fst_src-th argument of function.
+    // starg            fst_src(arg), snd_src(imm)
     // - store snd_src to fst_src-th argument of function.
     // starg            fst_src(arg), snd_src(reg)
     IMMC_INST_STRET,
@@ -40,25 +50,29 @@ typedef enum ImmcInstType {
     // arithmetic instructions
     IMMC_INST_ADD,
     // - add fst_src and snd_src.
+    // add dst(reg), fst_src(reg), snd_src(imm)
+    // - add fst_src and snd_src.
     // add dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_SUB,
+    // - subtract snd_src from fst_src.
+    // sub dst(reg), fst_src(reg), snd_src(imm)
     // - subtract snd_src from fst_src.
     // sub dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_MUL,
     // - multiply fst_src and snd_src.
-    // mul dst(reg), fst_src(reg), snd_src(reg)
-    // - multiply fst_src and snd_src.
     // mul dst(reg), fst_src(reg), snd_src(imm)
+    // - multiply fst_src and snd_src.
+    // mul dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_DIV,
     // - divide fst_src by snd_src.
-    // div dst(reg), fst_src(reg), snd_src(reg)
-    // - divide fst_src by snd_src.
     // div dst(reg), fst_src(reg), snd_src(imm)
+    // - divide fst_src by snd_src.
+    // div dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_MOD,
     // - modulo fst_src by snd_src.
-    // mod dst(reg), fst_src(reg), snd_src(reg)
-    // - modulo fst_src by snd_src.
     // mod dst(reg), fst_src(reg), snd_src(imm)
+    // - modulo fst_src by snd_src.
+    // mod dst(reg), fst_src(reg), snd_src(reg)
 
     // shift/rotate instructions
     IMMC_INST_SAL,
