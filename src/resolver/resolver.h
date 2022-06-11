@@ -12,6 +12,7 @@ typedef struct Resolver {
     Dtype* specifier_dtype;
     Dtype* initialized_dtype;
     int initialized_offset;
+    Dtype* function_dtype;
 } Resolver;
 
 Resolver* new_resolver(Ast* ast);

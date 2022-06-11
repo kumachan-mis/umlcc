@@ -14,8 +14,42 @@ Vector* gen_decl_list_immcode(Immcgen* immcgen) {
 }
 
 Vector* gen_init_decl_immcode(Immcgen* immcgen) {
+    Vector* gen_global_init_decl_immcode(Immcgen * immcgen);
+    Vector* gen_local_init_decl_immcode(Immcgen * immcgen);
+
+    if (immcgen->local_table == NULL) { return gen_global_init_decl_immcode(immcgen); }
+    return gen_local_init_decl_immcode(immcgen);
+}
+
+Vector* gen_global_init_decl_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
+
     append_child_immcode(immcgen, codes, 0);
+
+    Srt* decl_srt = vector_at(immcgen->srt->children, 0);
+    Symbol* decl_symbol = symboltable_search(immcgen->global_table, decl_srt->ident_name);
+    if (decl_symbol->dtype->type == DTYPE_FUNCUCTION) return codes;
+
+    char* label_name = new_string(decl_srt->ident_name);
+    vector_push(codes, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, label_name));
+
+    if (vector_size(immcgen->srt->children) == 1) {
+        vector_push(codes, new_data_immc(IMMC_DATA_ZERO, dtype_size(decl_srt->dtype)));
+        return codes;
+    }
+
+    immcgen->initialized_dtype = decl_symbol->dtype;
+    append_child_immcode(immcgen, codes, 1);
+    immcgen->initialized_dtype = NULL;
+
+    return codes;
+}
+
+Vector* gen_local_init_decl_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    append_child_immcode(immcgen, codes, 0);
+
     if (vector_size(immcgen->srt->children) == 1) return codes;
 
     Srt* decl_srt = vector_at(immcgen->srt->children, 0);
@@ -77,6 +111,29 @@ Vector* gen_array_initializer_immcode(Immcgen* immcgen) {
 }
 
 Vector* gen_scalar_initializer_immcode(Immcgen* immcgen) {
+    Vector* gen_global_scalar_initializer_immcode(Immcgen * immcgen);
+    Vector* gen_local_scalar_initializer_immcode(Immcgen * immcgen);
+
+    if (immcgen->local_table == NULL) { return gen_global_scalar_initializer_immcode(immcgen); }
+    return gen_local_scalar_initializer_immcode(immcgen);
+}
+
+Vector* gen_global_scalar_initializer_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    ImmcDataType type = immcdata_get_type(dtype_size(immcgen->initialized_dtype));
+    Srt* srt = vector_at(immcgen->srt->children, 0);
+    while (srt->type == SRT_CAST_EXPR) {
+        srt = vector_at(srt->children, 0);
+    }
+
+    // TODO: support expression for global initializer
+    vector_push(codes, new_data_immc(type, srt->value_int));
+
+    return codes;
+}
+
+Vector* gen_local_scalar_initializer_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
 
     ImmcOpe* dst = new_mem_immcope(immcgen->initialized_offset);

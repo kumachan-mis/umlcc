@@ -1,6 +1,7 @@
 #include "./x64gen.h"
 #include "../common/type.h"
 #include "../immc/immc.h"
+#include "./data.h"
 #include "./inst.h"
 #include "./label.h"
 #include "./register.h"
@@ -10,6 +11,7 @@
 #include <stdlib.h>
 
 Vector* gen_function_x64code(X64gen* x64gen);
+Vector* gen_variable_x64code(X64gen* x64gen);
 
 X64gen* new_x64gen(Vector* immcs, Vector* liveseqs) {
     X64gen* x64gen = malloc(sizeof(X64gen));
@@ -32,6 +34,9 @@ Vector* x64gen_generate_x64code(X64gen* x64gen) {
         switch (immc->label->type) {
             case IMMC_LABEL_FUNCTION:
                 sub_codes = gen_function_x64code(x64gen);
+                break;
+            case IMMC_LABEL_VARIABLE:
+                sub_codes = gen_variable_x64code(x64gen);
                 break;
             default:
                 fprintf(stderr, "Error: unexpected external label type %d\n", immc->label->type);
@@ -70,9 +75,15 @@ Vector* gen_function_x64code(X64gen* x64gen) {
             case IMMC_INST:
                 sub_codes = gen_inst_x64code(x64gen);
                 break;
+            case IMMC_DATA:
+                sub_codes = gen_data_x64code(x64gen);
+                break;
             case IMMC_LABEL:
                 sub_codes = gen_label_x64code(x64gen);
                 break;
+            default:
+                fprintf(stderr, "Error: unexpected immc type %d\n", immc->type);
+                exit(1);
         }
         vector_extend(body_codes, sub_codes);
         delete_vector(sub_codes);
@@ -102,6 +113,38 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     delete_vector(tail_codes);
 
     x64gen->evacuation_count = 0;
+    return codes;
+}
+
+Vector* gen_variable_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector(&t_string);
+    Vector* sub_codes = NULL;
+
+    sub_codes = gen_label_x64code(x64gen);
+    vector_extend(codes, sub_codes);
+    delete_vector(sub_codes);
+
+    while (1) {
+        Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+        if (immc == NULL || (immc->type == IMMC_LABEL && immc->label->type != IMMC_LABEL_NORMAL)) {
+            break;
+        }
+
+        switch (immc->type) {
+            case IMMC_DATA:
+                sub_codes = gen_data_x64code(x64gen);
+                break;
+            case IMMC_LABEL:
+                sub_codes = gen_label_x64code(x64gen);
+                break;
+            default:
+                fprintf(stderr, "Error: unexpected immc type %d\n", immc->type);
+                exit(1);
+        }
+        vector_extend(codes, sub_codes);
+        delete_vector(sub_codes);
+    }
+
     return codes;
 }
 

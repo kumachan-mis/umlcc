@@ -362,7 +362,7 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
     switch (child->type) {
         case SRT_IDENT_EXPR: {
             Symbol* symbol = NULL;
-            if (symbol == NULL) {
+            if (symbol == NULL && immcgen->local_table != NULL) {
                 symbol = symboltable_search(immcgen->local_table, child->ident_name);
             }
             if (symbol == NULL) {
@@ -425,7 +425,7 @@ Vector* gen_primary_expr_immcode(Immcgen* immcgen) {
     switch (srt->type) {
         case SRT_IDENT_EXPR: {
             Symbol* symbol = NULL;
-            if (symbol == NULL) {
+            if (symbol == NULL && immcgen->local_table != NULL) {
                 symbol = symboltable_search(immcgen->local_table, srt->ident_name);
             }
             if (symbol == NULL) {

@@ -39,6 +39,9 @@ char* immclabel_tostring(ImmcLabel* immclabel) {
         case IMMC_LABEL_FUNCTION:
             strcat(label_str, "function ");
             break;
+        case IMMC_LABEL_VARIABLE:
+            strcat(label_str, "variable ");
+            break;
         default:
             break;
     }

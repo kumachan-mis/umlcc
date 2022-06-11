@@ -25,20 +25,11 @@ DFunction* new_socket_dfunction(Vector* params) {
 
 DFunction* dfunction_copy(DFunction* dfunction) {
     DFunction* copied_dfunction = malloc(sizeof(DFunction));
-
-    Vector* copied_params = new_vector(&t_dparam);
-    int num_params = vector_size(dfunction->params);
-    for (int i = 0; i < num_params; i++) {
-        DParam* copied_param = dparam_copy(vector_at(dfunction->params, i));
-        vector_push(copied_params, copied_param);
-    }
-    copied_dfunction->params = copied_params;
-
+    copied_dfunction->params = vector_copy(dfunction->params);
     copied_dfunction->return_dtype = NULL;
     if (dfunction->return_dtype != NULL) {
         copied_dfunction->return_dtype = dtype_copy(dfunction->return_dtype);
     }
-
     return copied_dfunction;
 }
 
@@ -57,9 +48,9 @@ int dfunction_equals(DFunction* dfunction, DFunction* other) {
 
     int num_params = vector_size(dfunction->params);
     for (int i = 0; i < num_params; i++) {
-        DParam* dfunction_param = vector_at(dfunction->params, i);
-        DParam* other_param = vector_at(other->params, i);
-        if (!dparam_equals(dfunction_param, other_param)) return 0;
+        DParam* dfunction_dparam = vector_at(dfunction->params, i);
+        DParam* other_dparam = vector_at(other->params, i);
+        if (!dparam_equals(dfunction_dparam, other_dparam)) return 0;
     }
     return 1;
 }
