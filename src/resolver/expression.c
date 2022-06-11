@@ -304,7 +304,7 @@ Srt* resolve_primary_expr(Resolver* resolver) {
     switch (ast->type) {
         case AST_IDENT_EXPR: {
             Symbol* symbol = NULL;
-            if (symbol == NULL) {
+            if (symbol == NULL && resolver->local_table != NULL) {
                 symbol = symboltable_search(resolver->local_table, ast->ident_name);
             }
             if (symbol == NULL) {

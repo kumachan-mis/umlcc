@@ -19,7 +19,14 @@ Vector* gen_init_decl_immcode(Immcgen* immcgen) {
     if (vector_size(immcgen->srt->children) == 1) return codes;
 
     Srt* decl_srt = vector_at(immcgen->srt->children, 0);
-    Symbol* decl_symbol = symboltable_search(immcgen->local_table, decl_srt->ident_name);
+
+    Symbol* decl_symbol = NULL;
+    if (decl_symbol == NULL && immcgen->local_table != NULL) {
+        decl_symbol = symboltable_search(immcgen->local_table, decl_srt->ident_name);
+    }
+    if (decl_symbol == NULL) {
+        decl_symbol = symboltable_search(immcgen->global_table, decl_srt->ident_name);
+    }
 
     immcgen->initialized_dtype = decl_symbol->dtype;
     immcgen->initialized_offset = decl_symbol->memory_offset;
@@ -52,7 +59,8 @@ Vector* gen_decl_immcode(Immcgen* immcgen) {
 
 Vector* gen_initializer_immcode(Immcgen* immcgen) {
     Vector* gen_array_initializer_immcode(Immcgen * immcgen);
-    Vector* gen_scalar_initializer_immcode(Immcgen * immcgen);
+    Vector* gen_global_scalar_initializer_immcode();
+    Vector* gen_local_scalar_initializer_immcode(Immcgen * immcgen);
 
     Dtype* dtype = immcgen->initialized_dtype;
 
@@ -60,7 +68,8 @@ Vector* gen_initializer_immcode(Immcgen* immcgen) {
         case DTYPE_ARRAY:
             return gen_array_initializer_immcode(immcgen);
         default:
-            return gen_scalar_initializer_immcode(immcgen);
+            if (immcgen->local_table == NULL) { return gen_global_scalar_initializer_immcode(); }
+            return gen_local_scalar_initializer_immcode(immcgen);
     }
 }
 
@@ -76,7 +85,12 @@ Vector* gen_array_initializer_immcode(Immcgen* immcgen) {
     return codes;
 }
 
-Vector* gen_scalar_initializer_immcode(Immcgen* immcgen) {
+Vector* gen_global_scalar_initializer_immcode() {
+    Vector* codes = new_vector(&t_immc);
+    return codes;
+}
+
+Vector* gen_local_scalar_initializer_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
 
     ImmcOpe* dst = new_mem_immcope(immcgen->initialized_offset);
