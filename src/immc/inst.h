@@ -108,6 +108,9 @@ typedef enum ImmcInstType {
     // - call function at address of fst_src, which takes snd_src-params.
     //   (return value is stored to dst)
     // call dst(reg), fst_src(ptr), snd_src(imm)
+    // - call function named fst_src, which takes snd_src-params.
+    //   (return value is stored to dst)
+    // call dst(reg), fst_src(label), snd_src(imm)
     IMMC_INST_ENTER,
     // - enter function which needs fst_src-bytes local memory.
     // enter           fst_src(imm)
