@@ -6,6 +6,7 @@ typedef enum ImmcLabelType {
     IMMC_LABEL_VARIABLE,
     IMMC_LABEL_NORMAL,
 } ImmcLabelType;
+
 typedef enum ImmcVisibility {
     IMMC_VIS_NONE,
     IMMC_VIS_LOCAL,

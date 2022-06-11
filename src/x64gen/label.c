@@ -5,52 +5,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Vector* gen_global_label_x64code(X64gen* x64gen);
-Vector* gen_local_label_x64code(X64gen* x64gen);
-Vector* gen_default_label_x64code(X64gen* x64gen);
-
 Vector* gen_label_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
+
+    switch (immc->label->type) {
+        case IMMC_LABEL_FUNCTION:
+            append_code(codes, "    .text\n");
+            break;
+        case IMMC_LABEL_VARIABLE:
+            append_code(codes, "    .data\n");
+            break;
+        default:
+            break;
+    }
+
     switch (immc->label->visibility) {
         case IMMC_VIS_GLOBAL:
-            return gen_global_label_x64code(x64gen);
+            append_code(codes, "    .globl %s\n", immc->label->name);
+            break;
         case IMMC_VIS_LOCAL:
-            return gen_local_label_x64code(x64gen);
-        case IMMC_VIS_NONE:
-            return gen_default_label_x64code(x64gen);
+            append_code(codes, "    .local %s\n", immc->label->name);
+            break;
         default:
-            fprintf(stderr, "Error: unexpected label visibility %d\n", immc->label->visibility);
-            exit(1);
+            break;
     }
-}
-
-Vector* gen_global_label_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
-    x64gen->index++;
-
-    append_code(codes, "    .globl %s\n", immc->label->name);
-    append_code(codes, "%s:\n", immc->label->name);
-
-    liveseqs_next(x64gen->liveseqs);
-    return codes;
-}
-
-Vector* gen_local_label_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
-    x64gen->index++;
-
-    append_code(codes, "    .local %s\n", immc->label->name);
-    append_code(codes, "%s:\n", immc->label->name);
-
-    liveseqs_next(x64gen->liveseqs);
-    return codes;
-}
-Vector* gen_default_label_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
-    x64gen->index++;
 
     append_code(codes, "%s:\n", immc->label->name);
 

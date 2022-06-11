@@ -9,23 +9,10 @@
 #include <stdlib.h>
 
 Vector* dequeue_external_immcs(RegAlloc* regalloc);
-
 Vector* create_control_flow_graph(Vector* external_immcs);
-Vector* create_basic_blocks(Vector* external_immcs);
-Vector* connect_basic_blocks(Vector* basic_blocks);
-Vector* analyze_register_flow(Vector* basic_blocks);
-int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block);
-
 Vector* analyze_register_liveness(RegAlloc* regalloc, Vector* control_flow_graph);
-void update_register_liveness(RegAlloc* regalloc, Vector* livenesses, BasicBlock* basic_block);
-
 Vector* determine_allocation(Vector* livenesses, int num_real_regs);
-void free_unused_register(Vector* statuses, Vector* livenesses, int virtual_reg_id);
-int allocate_real_register(Vector* allocations, Vector* statuses, int virtual_reg_id);
-void spil_register(Vector* allocations, Vector* statuses, Vector* livenesses, int virtual_reg_id);
-
 Vector* gen_allocated_immcs(Vector* external_immcs, Vector* allocations);
-
 void update_liveseqs(Vector* liveseqs, Vector* livenesses, Vector* allocations);
 
 RegAlloc* new_regalloc(Vector* immcs, int num_real_regs) {
@@ -46,6 +33,14 @@ AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc) {
     while (regalloc->immc_offset < immcs_len) {
         Vector* external_immcs = dequeue_external_immcs(regalloc);
         int external_immcs_len = vector_size(external_immcs);
+
+        Immc* label = vector_at(external_immcs, 0);
+        if (label->label->type != IMMC_LABEL_FUNCTION) {
+            vector_extend(allocated_immcs, external_immcs);
+            delete_vector(external_immcs);
+            regalloc->immc_offset += external_immcs_len;
+            continue;
+        }
 
         Vector* control_flow_graph = create_control_flow_graph(external_immcs);
         Vector* livenesses = analyze_register_liveness(regalloc, control_flow_graph);
@@ -78,7 +73,7 @@ Vector* dequeue_external_immcs(RegAlloc* regalloc) {
     int immcs_len = vector_size(regalloc->immcs);
     while (regalloc->immc_offset + index < immcs_len) {
         Immc* immc = vector_at(regalloc->immcs, regalloc->immc_offset + index);
-        if (immc->type == IMMC_LABEL && immc->label->type == IMMC_LABEL_FUNCTION) break;
+        if (immc->type == IMMC_LABEL && immc->label->type != IMMC_LABEL_NORMAL) break;
         index++;
         vector_push(sequence, immc_copy(immc));
     }
@@ -87,9 +82,14 @@ Vector* dequeue_external_immcs(RegAlloc* regalloc) {
 }
 
 Vector* create_control_flow_graph(Vector* external_immcs) {
+    Vector* create_basic_blocks(Vector * external_immcs);
+    Vector* connect_basic_blocks(Vector * basic_blocks);
+    Vector* analyze_register_flow(Vector * basic_blocks);
+
     Vector* basic_blocks = create_basic_blocks(external_immcs);
     Vector* control_flow_graph = connect_basic_blocks(basic_blocks);
     control_flow_graph = analyze_register_flow(control_flow_graph);
+
     return control_flow_graph;
 }
 
@@ -165,6 +165,8 @@ Vector* connect_basic_blocks(Vector* basic_blocks) {
 }
 
 Vector* analyze_register_flow(Vector* control_flow_graph) {
+    int update_register_flow(Vector * control_flow_graph, BasicBlock * basic_block);
+
     int blocks_len = vector_size(control_flow_graph);
     int terminated = 0;
     while (!terminated) {
@@ -230,6 +232,9 @@ int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
 }
 
 Vector* analyze_register_liveness(RegAlloc* regalloc, Vector* control_flow_graph) {
+    void update_register_liveness(RegAlloc * regalloc, Vector * livenesses,
+                                  BasicBlock * basic_block);
+
     Vector* livenesses = new_vector(&t_liveness);
     int immc_offset = regalloc->immc_offset;
 
@@ -284,6 +289,11 @@ void update_register_liveness(RegAlloc* regalloc, Vector* livenesses, BasicBlock
 }
 
 Vector* determine_allocation(Vector* livenesses, int num_real_regs) {
+    void free_unused_register(Vector * statuses, Vector * livenesses, int virtual_reg_id);
+    int allocate_real_register(Vector * allocations, Vector * statuses, int virtual_reg_id);
+    void spil_register(Vector * allocations, Vector * statuses, Vector * livenesses,
+                       int virtual_reg_id);
+
     int num_virtual_regs = vector_size(livenesses);
 
     // -1: free, 0~: virtual register using allocatee register
