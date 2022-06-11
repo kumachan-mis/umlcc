@@ -172,9 +172,22 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
 
     ImmcOpe* src = immc->inst->snd_src;
 
-    int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
-    char* src_name = QREG_NAMES[src_id];
-    append_code(codes, "\tpushq\t%s\n", src_name);
+    switch (src->type) {
+        case IMMC_OPERAND_IMM: {
+            int imm_value = src->imm_value;
+            append_code(codes, "\tpushq\t$%d\n", imm_value);
+            break;
+        }
+        case IMMC_OPERAND_REG: {
+            int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
+            char* src_name = QREG_NAMES[src_id];
+            append_code(codes, "\tpushq\t%s\n", src_name);
+            break;
+        }
+        default:
+            fprintf(stderr, "Error: unexpected operand %d\n", src->type);
+            exit(1);
+    }
 
     liveseqs_next(x64gen->liveseqs);
     return codes;
