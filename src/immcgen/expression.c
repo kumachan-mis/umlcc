@@ -176,6 +176,29 @@ Vector* gen_additive_expr_immcode(Immcgen* immcgen) {
         case SRT_SUB_EXPR:
             vector_push(codes, new_inst_immc(IMMC_INST_SUB, dst, fst_src, snd_src));
             break;
+        default:
+            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            exit(1);
+    }
+
+    return codes;
+}
+
+Vector* gen_pointer_additive_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+    Srt* srt = immcgen->srt;
+
+    append_child_immcode(immcgen, codes, 0);
+    ImmcOpe* fst_src = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+
+    append_child_immcode(immcgen, codes, 1);
+    ImmcOpe* snd_src = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+
+    immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
+    immcgen->virtual_reg_id++;
+    ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+
+    switch (srt->type) {
         case SRT_PADD_EXPR: {
             Srt* lhs_srt = vector_at(srt->children, 0);
             int mul_amount = dtype_size(lhs_srt->dtype->pointer->to_dtype);
