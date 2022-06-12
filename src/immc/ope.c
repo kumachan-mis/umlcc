@@ -113,7 +113,7 @@ char* immcope_tostring(ImmcOpe* immcope) {
     return ope_str;
 }
 
-void delete_immope(ImmcOpe* immcope) {
+void delete_immcope(ImmcOpe* immcope) {
     if (immcope->label_name != NULL) free(immcope->label_name);
     free(immcope);
 }

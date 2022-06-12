@@ -29,6 +29,6 @@ ImmcOpe* new_mem_immcope(int mem_offset);
 ImmcOpe* new_label_immcope(char* label_name);
 ImmcOpe* immcope_copy(ImmcOpe* immcope);
 char* immcope_tostring(ImmcOpe* immcope);
-void delete_immope(ImmcOpe* immcope);
+void delete_immcope(ImmcOpe* immcope);
 
 #endif

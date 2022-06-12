@@ -71,8 +71,8 @@ char* immcinst_tostring(ImmcInst* immcinst) {
 }
 
 void delete_immcinst(ImmcInst* immcinst) {
-    if (immcinst->dst != NULL) delete_immope(immcinst->dst);
-    if (immcinst->fst_src != NULL) delete_immope(immcinst->fst_src);
-    if (immcinst->snd_src != NULL) delete_immope(immcinst->snd_src);
+    if (immcinst->dst != NULL) delete_immcope(immcinst->dst);
+    if (immcinst->fst_src != NULL) delete_immcope(immcinst->fst_src);
+    if (immcinst->snd_src != NULL) delete_immcope(immcinst->snd_src);
     free(immcinst);
 }
