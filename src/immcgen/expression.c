@@ -340,9 +340,7 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             } else {
                 src = new_mem_immcope(symbol->memory_offset);
             }
-            immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
-            immcgen->virtual_reg_id++;
-            dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+            dst = create_dest_reg_immcope(immcgen);
             vector_push(codes, new_inst_immc(IMMC_INST_ADDR, dst, src, NULL));
             break;
         }
