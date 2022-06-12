@@ -77,7 +77,9 @@ int main(int argc, char* argv[]) {
 
     int x64codes_len = vector_size(x64codes);
     for (int i = 0; i < x64codes_len; i++) {
-        fprintf(dst, "%s", (char*)vector_at(x64codes, i));
+        char* x64_str = immc_tostring(vector_at(x64codes, i));
+        fprintf(dst, "%s", x64_str);
+        free(x64_str);
     }
     delete_vector(x64codes);
 
