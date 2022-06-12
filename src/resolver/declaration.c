@@ -159,6 +159,12 @@ DParam* resolve_parameter_decl(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 1);
     Srt* srt = resolve_declarator(resolver);
     srt->dtype = dtype_connect(srt->dtype, specifiers_dtype);
+    if (srt->dtype->type == DTYPE_ARRAY) {
+        srt->dtype = new_pointer_dtype(dtype_copy(srt->dtype->array->of_dtype));
+    }
+    if (srt->dtype->type == DTYPE_FUNCUCTION) {
+        srt->dtype = new_pointer_dtype(dtype_copy(srt->dtype));
+    }
 
     dparam = new_dparam(new_string(srt->ident_name), dtype_copy(srt->dtype));
     delete_srt(srt);
