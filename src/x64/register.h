@@ -1,7 +1,7 @@
 #ifndef UMLCC_X64GEN_REGISTER_H
 #define UMLCC_X64GEN_REGISTER_H
 
-#include "../immc/immc.h"
+#include "./suffix.h"
 
 extern char* PC_NAME;
 extern char* BREG_NAMES[16];
@@ -35,6 +35,6 @@ extern int NUM_ARG_REGS;
 extern int NUM_CALLER_SAVED_REGS;
 extern int NUM_CALLEE_SAVED_REGS;
 
-char* reg_name(int reg_id, ImmcSuffix suffix);
+char* reg_name(int reg_id, X64Suffix suffix);
 
 #endif
