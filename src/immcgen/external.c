@@ -47,7 +47,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
 
     char* label_name = new_string(declarator_srt->ident_name);
     vector_push(codes, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, label_name));
-    ImmcOpe* memory_size = new_imm_immcope(IMMC_SUFFIX_QUAD, immcgen->local_table->memory_size);
+    ImmcOpe* memory_size = new_imm_immcope(immcgen->local_table->memory_size);
     vector_push(codes, new_inst_immc(IMMC_INST_ENTER, NULL, memory_size, NULL));
 
     vector_extend(codes, param_codes);

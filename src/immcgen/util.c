@@ -37,7 +37,7 @@ ImmcOpe* gen_child_imm_immcope(Immcgen* immcgen, Vector* codes, int index) {
     Srt* child = vector_at(immcgen->srt->children, index);
 
     if (child->type == SRT_INT_EXPR || child->type == SRT_CHAR_EXPR) {
-        return new_imm_immcope(immcsuffix_get(dtype_size(child->dtype)), child->value_int);
+        return new_imm_immcope(child->value_int);
     }
 
     append_child_immcode(immcgen, codes, index);
