@@ -234,11 +234,7 @@ Vector* gen_cast_expr_immcode(Immcgen* immcgen) {
     ImmcOpe* src = gen_child_imm_immcope(immcgen, codes, 0);
     ImmcOpe* dst = create_dest_reg_immcope(immcgen);
 
-    if (src->type == IMMC_OPERAND_REG) {
-        vector_push(codes, new_inst_immc(IMMC_INST_MOVE, dst, src, NULL));
-    } else {
-        vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
-    }
+    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
 
     return codes;
 }
