@@ -103,6 +103,11 @@ Vector* gen_store_x64code(X64gen* x64gen) {
             append_code(codes, "\tmov%c\t%s, -%d(%s)\n", suffix, src_name, mem_offset, BP_NAME);
             break;
         }
+        case IMMC_OPERAND_LABEL: {
+            char* label_name = dst->label_name;
+            append_code(codes, "\tmov%c\t%s, %s(%s)\n", suffix, src_name, PC_NAME, label_name);
+            break;
+        }
         default:
             fprintf(stderr, "Error: unexpected operand %d\n", dst->type);
             exit(1);
@@ -165,11 +170,24 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
-    ImmcOpe* src = immc->inst->snd_src;
+    ImmcOpe* src = immc->inst->fst_src;
 
-    int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
-    char* src_name = QREG_NAMES[src_id];
-    append_code(codes, "\tpushq\t%s\n", src_name);
+    switch (src->type) {
+        case IMMC_OPERAND_IMM: {
+            int imm_value = src->imm_value;
+            append_code(codes, "\tpushq\t$%d\n", imm_value);
+            break;
+        }
+        case IMMC_OPERAND_REG: {
+            int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
+            char* src_name = QREG_NAMES[src_id];
+            append_code(codes, "\tpushq\t%s\n", src_name);
+            break;
+        }
+        default:
+            fprintf(stderr, "Error: unexpected operand %d\n", src->type);
+            exit(1);
+    }
 
     liveseqs_next(x64gen->liveseqs);
     return codes;

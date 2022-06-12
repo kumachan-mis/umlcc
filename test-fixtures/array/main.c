@@ -1,6 +1,10 @@
 int put_int(int x);
 int put_blank_line();
 
+int sum(int a[5]) {
+    return a[0] + a[1] + a[2] + a[3] + a[4];
+}
+
 int main() {
     int a[5];
     a[0] = 3;
@@ -28,6 +32,10 @@ int main() {
     int c[3][3];
     c[1][2] = 3;
     put_int(c[1][2]);
+    put_blank_line();
+
+    int d[5] = {1, 2, 3, 5, 8};
+    put_int(sum(d));
 
     return 0;
 }

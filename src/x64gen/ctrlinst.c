@@ -89,14 +89,17 @@ Vector* gen_call_x64code(X64gen* x64gen) {
         evacuation_count++;
     }
 
-    int src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
-    Set* arg_regs_set = create_arg_regs_set(snd_src->imm_value);
-    if (set_contains(arg_regs_set, &src_id)) {
-        int evacuation_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
-        append_mov_code(codes, src_id, IMMC_SUFFIX_QUAD, evacuation_id, IMMC_SUFFIX_QUAD);
-        src_id = evacuation_id;
+    int src_id = -1;
+    if (fst_src->type == IMMC_OPERAND_PTR) {
+        src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
+        Set* arg_regs_set = create_arg_regs_set(snd_src->imm_value);
+        if (set_contains(arg_regs_set, &src_id)) {
+            int evacuation_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
+            append_mov_code(codes, src_id, IMMC_SUFFIX_QUAD, evacuation_id, IMMC_SUFFIX_QUAD);
+            src_id = evacuation_id;
+        }
+        delete_set(arg_regs_set);
     }
-    delete_set(arg_regs_set);
 
     for (int i = 0; i < snd_src->imm_value && i < NUM_ARG_REGS; i++) {
         int arg_id = ARG_REG_IDS[i];
@@ -104,9 +107,23 @@ Vector* gen_call_x64code(X64gen* x64gen) {
         append_code(codes, "\tpopq\t%s\n", arg_name);
     }
 
-    char* src_name = QREG_NAMES[src_id];
     append_code(codes, "\tmovl\t$%d, %s\n", 0, LREG_NAMES[AX_REG_ID]);
-    append_code(codes, "\tcall\t*%s\n", src_name);
+
+    switch (fst_src->type) {
+        case IMMC_OPERAND_PTR: {
+            char* src_name = QREG_NAMES[src_id];
+            append_code(codes, "\tcall\t*%s\n", src_name);
+            break;
+        }
+        case IMMC_OPERAND_LABEL: {
+            char* label_name = fst_src->label_name;
+            append_code(codes, "\tcall\t%s\n", label_name);
+            break;
+        }
+        default:
+            fprintf(stderr, "Error: unexpected operand %d\n", fst_src->type);
+            exit(1);
+    }
 
     evacuation_count = 0;
     for (SetIter* iter = set_iter_begin(alive_regs_set); !set_iter_end(iter, alive_regs_set);
