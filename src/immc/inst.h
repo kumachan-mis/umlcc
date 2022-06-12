@@ -9,7 +9,7 @@ typedef enum ImmcInstType {
     // - load fst_src value to dst.
     // load dst(reg), fst_src(imm)
     // - load value from register.
-    // move dst(reg), fst_src(reg)
+    // load dst(reg), fst_src(reg)
     // - load value at memory fst_src points to dst.
     // load dst(reg), fst_src(ptr)
     // - load value at fst_src in memory to dst.
