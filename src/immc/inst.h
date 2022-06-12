@@ -8,6 +8,8 @@ typedef enum ImmcInstType {
     IMMC_INST_LOAD,
     // - load fst_src value to dst.
     // load dst(reg), fst_src(imm)
+    // - load value from register.
+    // load dst(reg), fst_src(reg)
     // - load value at memory fst_src points to dst.
     // load dst(reg), fst_src(ptr)
     // - load value at fst_src in memory to dst.
@@ -20,15 +22,18 @@ typedef enum ImmcInstType {
     // - load address fst_src label represents.
     // addr dst(reg), fst_src(label)
     IMMC_INST_STORE,
+    // - store fst_src value to memory dst points to.
+    // store dst(ptr), fst_src(imm)
     // - store value of fst_src to memory dst points to.
     // store dst(ptr), fst_src(reg)
+    // - store fst_src value to dst in memory.
+    // store dst(mem), fst_src(imm)
     // - store value of fst_src to dst in memory.
     // store dst(mem), fst_src(reg)
+    // - store fst_src value to dst label.
+    // store dst(label), fst_src(imm)
     // - store value of fst_src to dst label.
     // store dst(label), fst_src(reg)
-    IMMC_INST_MOVE,
-    // - move value from register to register.
-    // move dst(reg), fst_src(reg)
     IMMC_INST_LDARG,
     // - load fst_src-th argument of function to dst in memory.
     // ldarg dst(mem), fst_src(arg)

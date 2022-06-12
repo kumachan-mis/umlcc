@@ -137,9 +137,7 @@ Vector* gen_local_scalar_initializer_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
 
     ImmcOpe* dst = new_mem_immcope(immcgen->initialized_offset);
-
-    append_child_immcode(immcgen, codes, 0);
-    ImmcOpe* src = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+    ImmcOpe* src = gen_child_imm_immcope(immcgen, codes, 0);
 
     vector_push(codes, new_inst_immc(IMMC_INST_STORE, dst, src, NULL));
     immcgen->initialized_offset -= dtype_size(immcgen->initialized_dtype);

@@ -21,8 +21,13 @@ Vector* gen_load_x64code(X64gen* x64gen) {
 
     switch (src->type) {
         case IMMC_OPERAND_IMM: {
-            int imm_value = src->imm_value;
-            append_code(codes, "\tmov%c\t$%d, %s\n", suffix, imm_value, dst_name);
+            int imm = src->imm_value;
+            append_code(codes, "\tmov%c\t$%d, %s\n", suffix, imm, dst_name);
+            break;
+        }
+        case IMMC_OPERAND_REG: {
+            int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
+            append_mov_code(codes, src_id, src->suffix, dst_id, dst->suffix);
             break;
         }
         case IMMC_OPERAND_PTR: {
@@ -87,51 +92,67 @@ Vector* gen_store_x64code(X64gen* x64gen) {
     ImmcOpe* dst = immc->inst->dst;
     ImmcOpe* src = immc->inst->fst_src;
 
-    int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
-    char* src_name = reg_name(src_id, src->suffix);
-    char suffix = immcsuffix_tochar(src->suffix);
+    if (src->type == IMMC_OPERAND_IMM) {
+        int imm = src->imm_value;
+        char suffix = immcsuffix_tochar(src->suffix);
 
-    switch (dst->type) {
-        case IMMC_OPERAND_PTR: {
-            int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
-            char* dst_name = QREG_NAMES[dst_id];
-            append_code(codes, "\tmov%c\t%s, (%s)\n", suffix, src_name, dst_name);
-            break;
+        switch (dst->type) {
+            case IMMC_OPERAND_PTR: {
+                int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
+                char* dst_name = QREG_NAMES[dst_id];
+                append_code(codes, "\tmov%c\t$%d, (%s)\n", suffix, imm, dst_name);
+                break;
+            }
+            case IMMC_OPERAND_MEM: {
+                int mem_offset = dst->mem_offset;
+                append_code(codes, "\tmov%c\t$%d, -%d(%s)\n", suffix, imm, mem_offset, BP_NAME);
+                break;
+            }
+            case IMMC_OPERAND_LABEL: {
+                char* label_name = dst->label_name;
+                append_code(codes, "\tmov%c\t$%d, %s(%s)\n", suffix, imm, PC_NAME, label_name);
+                break;
+            }
+            default:
+                fprintf(stderr, "Error: unexpected operand %d\n", dst->type);
+                exit(1);
         }
-        case IMMC_OPERAND_MEM: {
-            int mem_offset = dst->mem_offset;
-            append_code(codes, "\tmov%c\t%s, -%d(%s)\n", suffix, src_name, mem_offset, BP_NAME);
-            break;
+
+        liveseqs_next(x64gen->liveseqs);
+        return codes;
+    } else if (src->type == IMMC_OPERAND_REG) {
+        int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
+        char* src_name = reg_name(src_id, src->suffix);
+        char suffix = immcsuffix_tochar(src->suffix);
+
+        switch (dst->type) {
+            case IMMC_OPERAND_PTR: {
+                int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
+                char* dst_name = QREG_NAMES[dst_id];
+                append_code(codes, "\tmov%c\t%s, (%s)\n", suffix, src_name, dst_name);
+                break;
+            }
+            case IMMC_OPERAND_MEM: {
+                int mem_offset = dst->mem_offset;
+                append_code(codes, "\tmov%c\t%s, -%d(%s)\n", suffix, src_name, mem_offset, BP_NAME);
+                break;
+            }
+            case IMMC_OPERAND_LABEL: {
+                char* label_name = dst->label_name;
+                append_code(codes, "\tmov%c\t%s, %s(%s)\n", suffix, src_name, PC_NAME, label_name);
+                break;
+            }
+            default:
+                fprintf(stderr, "Error: unexpected operand %d\n", dst->type);
+                exit(1);
         }
-        case IMMC_OPERAND_LABEL: {
-            char* label_name = dst->label_name;
-            append_code(codes, "\tmov%c\t%s, %s(%s)\n", suffix, src_name, PC_NAME, label_name);
-            break;
-        }
-        default:
-            fprintf(stderr, "Error: unexpected operand %d\n", dst->type);
-            exit(1);
+
+        liveseqs_next(x64gen->liveseqs);
+        return codes;
     }
 
-    liveseqs_next(x64gen->liveseqs);
-    return codes;
-}
-
-Vector* gen_move_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
-    x64gen->index++;
-
-    ImmcOpe* dst = immc->inst->dst;
-    ImmcOpe* src = immc->inst->fst_src;
-
-    int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
-    int src_id = CALLER_SAVED_REG_IDS[src->reg_id];
-
-    append_mov_code(codes, src_id, src->suffix, dst_id, dst->suffix);
-
-    liveseqs_next(x64gen->liveseqs);
-    return codes;
+    fprintf(stderr, "Error: unexpected operand %d\n", src->type);
+    exit(1);
 }
 
 Vector* gen_ldarg_x64code(X64gen* x64gen) {
@@ -174,8 +195,8 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
 
     switch (src->type) {
         case IMMC_OPERAND_IMM: {
-            int imm_value = src->imm_value;
-            append_code(codes, "\tpushq\t$%d\n", imm_value);
+            int imm = src->imm_value;
+            append_code(codes, "\tpushq\t$%d\n", imm);
             break;
         }
         case IMMC_OPERAND_REG: {

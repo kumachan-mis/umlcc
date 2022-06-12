@@ -231,10 +231,10 @@ Vector* gen_multiplicative_expr_immcode(Immcgen* immcgen) {
 Vector* gen_cast_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
 
-    ImmcOpe* src = gen_child_reg_immcope(immcgen, codes, 0);
+    ImmcOpe* src = gen_child_imm_immcope(immcgen, codes, 0);
     ImmcOpe* dst = create_dest_reg_immcope(immcgen);
 
-    vector_push(codes, new_inst_immc(IMMC_INST_MOVE, dst, src, NULL));
+    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
 
     return codes;
 }
@@ -262,7 +262,9 @@ Vector* gen_call_expr_immcode(Immcgen* immcgen) {
 
     Srt* param_srt = vector_at(srt->children, 1);
     int num_args = vector_size(param_srt->children);
-    vector_push(codes, new_inst_immc(IMMC_INST_PREP, NULL, new_imm_immcope(num_args), NULL));
+
+    ImmcOpe* prep_src = new_imm_immcope(num_args);
+    vector_push(codes, new_inst_immc(IMMC_INST_PREP, NULL, prep_src, NULL));
 
     immcgen->srt = param_srt;
     for (int i = num_args - 1; i >= 0; i--) {
@@ -277,7 +279,9 @@ Vector* gen_call_expr_immcode(Immcgen* immcgen) {
     ImmcOpe* dst = create_dest_reg_immcope(immcgen);
 
     vector_push(codes, new_inst_immc(IMMC_INST_CALL, dst, fst_src, snd_src));
-    vector_push(codes, new_inst_immc(IMMC_INST_CLEAN, NULL, new_imm_immcope(num_args), NULL));
+
+    ImmcOpe* clean_src = new_imm_immcope(num_args);
+    vector_push(codes, new_inst_immc(IMMC_INST_CLEAN, NULL, clean_src, NULL));
 
     return codes;
 }
@@ -340,9 +344,7 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             } else {
                 src = new_mem_immcope(symbol->memory_offset);
             }
-            immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(srt->dtype));
-            immcgen->virtual_reg_id++;
-            dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+            dst = create_dest_reg_immcope(immcgen);
             vector_push(codes, new_inst_immc(IMMC_INST_ADDR, dst, src, NULL));
             break;
         }
@@ -367,9 +369,11 @@ Vector* gen_not_expr_immcode(Immcgen* immcgen) {
     ImmcOpe* dst = create_dest_reg_immcope(immcgen);
 
     switch (srt->type) {
-        case SRT_LNOT_EXPR:
-            vector_push(codes, new_inst_immc(IMMC_INST_SETEQ, dst, src, new_imm_immcope(0)));
+        case SRT_LNOT_EXPR: {
+            ImmcOpe* zero = new_imm_immcope(0);
+            vector_push(codes, new_inst_immc(IMMC_INST_SETEQ, dst, src, zero));
             break;
+        }
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);
