@@ -170,7 +170,7 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
-    ImmcOpe* src = immc->inst->snd_src;
+    ImmcOpe* src = immc->inst->fst_src;
 
     switch (src->type) {
         case IMMC_OPERAND_IMM: {
