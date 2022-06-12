@@ -27,7 +27,7 @@ typedef struct ImmcOpe {
     char* label_name;
 } ImmcOpe;
 
-ImmcOpe* new_imm_immcope(int imm_value);
+ImmcOpe* new_imm_immcope(ImmcSuffix suffix, int imm_value);
 ImmcOpe* new_arg_immcope(ImmcSuffix suffix, int imm_value);
 ImmcOpe* new_ptr_immcope(int reg_id);
 ImmcOpe* new_reg_immcope(ImmcSuffix suffix, int reg_id);
