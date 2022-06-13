@@ -12,5 +12,6 @@ typedef enum X64Suffix {
 X64Suffix x64suffix_get(int size);
 int x64suffix_tosize(X64Suffix suffix);
 char x64suffix_tochar(X64Suffix suffix);
+X64Suffix x64suffix_greater(X64Suffix a, X64Suffix b)
 
 #endif

@@ -1,22 +1,21 @@
 #include "./shrotinst.h"
 #include "../immc/immc.h"
-#include "./register.h"
 #include "./util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-Vector* gen_shrot_common_x64code(X64gen* x64gen, char* inst);
+Vector* gen_shrot_common_x64code(X64gen* x64gen, X64InstType type);
 
 Vector* gen_sal_x64code(X64gen* x64gen) {
-    return gen_shrot_common_x64code(x64gen, "sal");
+    return gen_shrot_common_x64code(x64gen, X64_INST_SALX);
 }
 
 Vector* gen_sar_x64code(X64gen* x64gen) {
-    return gen_shrot_common_x64code(x64gen, "sar");
+    return gen_shrot_common_x64code(x64gen, X64_INST_SARX);
 }
 
-Vector* gen_shrot_common_x64code(X64gen* x64gen, char* inst) {
+Vector* gen_shrot_common_x64code(X64gen* x64gen, X64InstType type) {
     Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
@@ -27,14 +26,14 @@ Vector* gen_shrot_common_x64code(X64gen* x64gen, char* inst) {
 
     switch (snd_src->type) {
         case IMMC_OPERAND_IMM: {
-            int src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
-            ImmcSuffix immc_suffix = fst_src->suffix;
-            char* src_name = reg_name(src_id, immc_suffix);
-            char suffix = immcsuffix_tochar(immc_suffix);
-            append_code(codes, "\t%s%c\t$%d, %s\n", inst, suffix, snd_src->imm_value, src_name);
-
+            X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(fst_src->suffix));
+            int fst_src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
+            X64Ope* fst_src = new_reg_x64ope(fst_src_suffix, fst_src_id);
+            X64Ope* snd_src = new_imm_x64ope(snd_src->imm_value);
+            append_code(codes, new_inst_x64(type, snd_src, fst_src));
+            X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(dst->suffix));
             int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
-            append_mov_code(codes, src_id, immc_suffix, dst_id, dst->suffix);
+            append_mov_code(codes, fst_src_id, fst_src_suffix, dst_id, dst_suffix);
             break;
         }
         default:

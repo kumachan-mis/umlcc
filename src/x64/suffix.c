@@ -44,3 +44,7 @@ char x64suffix_tochar(X64Suffix suffix) {
             return '\0';
     }
 }
+
+X64Suffix x64suffix_greater(X64Suffix a, X64Suffix b) {
+    return a >= b ? a : b;
+}
