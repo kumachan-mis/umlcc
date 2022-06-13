@@ -80,7 +80,7 @@ X64Ope* x64ope_copy(X64Ope* x64ope) {
     copied_x64ope->reg_id = x64ope->reg_id;
     copied_x64ope->mem_offset = x64ope->mem_offset;
     copied_x64ope->label_name = NULL;
-    if (x64ope->label_name != NULL) { copied_x64ope->label_name = new_string(x64ope->label_name); }
+    if (x64ope->label_name != NULL) copied_x64ope->label_name = new_string(x64ope->label_name);
     return copied_x64ope;
 }
 

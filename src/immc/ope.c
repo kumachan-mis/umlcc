@@ -79,9 +79,7 @@ ImmcOpe* immcope_copy(ImmcOpe* immcope) {
     copied_immcope->reg_id = immcope->reg_id;
     copied_immcope->mem_offset = immcope->mem_offset;
     copied_immcope->label_name = NULL;
-    if (immcope->label_name != NULL) {
-        copied_immcope->label_name = new_string(immcope->label_name);
-    }
+    if (immcope->label_name != NULL) copied_immcope->label_name = new_string(immcope->label_name);
     return copied_immcope;
 }
 
