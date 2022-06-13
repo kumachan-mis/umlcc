@@ -33,6 +33,7 @@ typedef enum X64InstType {
     X64_INST_JE,
     X64_INST_JNE,
     X64_INST_CALL,
+    X64_INST_RET,
 } X64InstType;
 
 typedef struct X64Inst {
