@@ -37,11 +37,11 @@ typedef enum X64InstType {
 
 typedef struct X64Inst {
     X64InstType type;
-    X64Ope* dst;
     X64Ope* src;
+    X64Ope* dst;
 } X64Inst;
 
-X64Inst* new_x64inst(X64InstType type, X64Ope* dst, X64Ope* src);
+X64Inst* new_x64inst(X64InstType type, X64Ope* src, X64Ope* dst);
 X64Inst* x64inst_copy(X64Inst* x64inst);
 char* x64inst_tostring(X64Inst* x64inst);
 void delete_x64inst(X64Inst* x64inst);

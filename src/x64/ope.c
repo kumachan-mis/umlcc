@@ -61,6 +61,17 @@ X64Ope* new_label_x64ope(char* label_name) {
     return x64ope;
 }
 
+X64Ope* new_suffix_x64ope(X64Suffix suffix) {
+    X64Ope* x64ope = malloc(sizeof(X64Ope));
+    x64ope->type = X64_OPERAND_SUFFIX;
+    x64ope->suffix = suffix;
+    x64ope->imm_value = -1;
+    x64ope->reg_id = -1;
+    x64ope->mem_offset = -1;
+    x64ope->label_name = NULL;
+    return x64ope;
+}
+
 X64Ope* x64ope_copy(X64Ope* x64ope) {
     X64Ope* copied_x64ope = malloc(sizeof(X64Ope));
     copied_x64ope->type = x64ope->type;
@@ -91,6 +102,9 @@ char* x64ope_tostring(X64Ope* x64ope) {
             break;
         case X64_OPERAND_LABEL:
             sprintf(ope_str, "%s(%s)", x64ope->label_name, PC_NAME);
+            break;
+        case X64_OPERAND_SUFFIX:
+            sprintf(ope_str, "");
             break;
     }
     ope_str = realloc(ope_str, (strlen(ope_str) + 1) * sizeof(char));

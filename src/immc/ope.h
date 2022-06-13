@@ -23,8 +23,8 @@ typedef struct ImmcOpe {
 
 ImmcOpe* new_imm_immcope(int imm_value);
 ImmcOpe* new_arg_immcope(ImmcSuffix suffix, int imm_value);
-ImmcOpe* new_ptr_immcope(int reg_id);
 ImmcOpe* new_reg_immcope(ImmcSuffix suffix, int reg_id);
+ImmcOpe* new_ptr_immcope(int reg_id);
 ImmcOpe* new_mem_immcope(int mem_offset);
 ImmcOpe* new_label_immcope(char* label_name);
 ImmcOpe* immcope_copy(ImmcOpe* immcope);
