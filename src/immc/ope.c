@@ -87,20 +87,19 @@ ImmcOpe* immcope_copy(ImmcOpe* immcope) {
 
 char* immcope_tostring(ImmcOpe* immcope) {
     char* ope_str = malloc(20 * sizeof(char));
-    char suffix = immcsuffix_tochar(immcope->suffix);
 
     switch (immcope->type) {
         case IMMC_OPERAND_IMM:
             sprintf(ope_str, "%d", immcope->imm_value);
             break;
         case IMMC_OPERAND_ARG:
-            sprintf(ope_str, "%%a%d%c", immcope->imm_value, suffix);
+            sprintf(ope_str, "%%a%d%c", immcope->imm_value, immcsuffix_tochar(immcope->suffix));
             break;
         case IMMC_OPERAND_REG:
-            sprintf(ope_str, "%%r%d%c", immcope->reg_id, suffix);
+            sprintf(ope_str, "%%r%d%c", immcope->reg_id, immcsuffix_tochar(immcope->suffix));
             break;
         case IMMC_OPERAND_PTR:
-            sprintf(ope_str, "(%%r%d%c)", immcope->reg_id, suffix);
+            sprintf(ope_str, "(%%r%d%c)", immcope->reg_id, immcsuffix_tochar(immcope->suffix));
             break;
         case IMMC_OPERAND_MEM:
             sprintf(ope_str, "M[%d]", immcope->mem_offset);

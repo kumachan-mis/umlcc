@@ -5,6 +5,7 @@
 #include "./data.h"
 #include "./inst.h"
 #include "./label.h"
+#include "./register.h"
 
 typedef enum X64Type {
     X64_INST,
