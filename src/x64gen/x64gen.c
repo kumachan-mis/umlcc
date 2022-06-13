@@ -4,7 +4,6 @@
 #include "./data.h"
 #include "./inst.h"
 #include "./label.h"
-#include "./register.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -91,14 +90,23 @@ Vector* gen_function_x64code(X64gen* x64gen) {
 
     int evacuation_count = x64gen->evacuation_count;
     for (int i = 0; i < evacuation_count; i++) {
-        append_code(head_codes, "\tpushq\t%s\n", QREG_NAMES[CALLEE_SAVED_REG_IDS[i]]);
+        X64Ope* src = new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[i]);
+        vector_push(head_codes, new_inst_x64(X64_INST_PUSHX, src, NULL));
     }
     if (evacuation_count % 2 == 1) {
-        append_code(head_codes, "\tsubq\t$%d, %s\n", 8, QREG_NAMES[SP_REG_ID]);
-        append_code(tail_codes, "\taddq\t$%d, %s\n", 8, QREG_NAMES[SP_REG_ID]);
+        X64Ope* src = new_imm_immcope(8);
+        X64Ope* dst = new_reg_immcope(X64_SUFFIX_QUAD, SP_REG_ID);
+        vector_push(head_codes, new_inst_x64(X64_INST_SUBX, src, dst));
+    }
+
+    if (evacuation_count % 2 == 1) {
+        X64Ope* src = new_imm_immcope(8);
+        X64Ope* dst = new_reg_immcope(X64_SUFFIX_QUAD, SP_REG_ID);
+        vector_push(head_codes, new_inst_x64(X64_INST_ADDX, src, dst));
     }
     for (int i = evacuation_count - 1; i >= 0; i--) {
-        append_code(tail_codes, "\tpopq\t%s\n", QREG_NAMES[CALLEE_SAVED_REG_IDS[i]]);
+        X64Ope* src = new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[i]);
+        vector_push(head_codes, new_inst_x64(X64_INST_POPX, src, NULL));
     }
 
     sub_codes = gen_inst_x64code(x64gen);

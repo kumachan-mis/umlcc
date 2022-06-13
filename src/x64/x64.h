@@ -22,7 +22,7 @@ typedef struct X64 {
 
 extern BaseType t_x64;
 
-X64* new_inst_x64(X64InstType type, X64Ope* dst, X64Ope* src);
+X64* new_inst_x64(X64InstType type, X64Ope* src, X64Ope* dst);
 X64* new_data_x64(X64DataType type, int value);
 X64* new_label_x64(X64LabelType type, X64Visibility visibility, char* name);
 X64* x64_copy(X64* x64);

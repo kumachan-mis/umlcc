@@ -7,31 +7,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-void append_mov_code(Vector* codes, int src_reg_id, ImmcSuffix src_immc_suffix, int dst_reg_id,
-                     ImmcSuffix dst_immc_suffix) {
-
-    if (src_immc_suffix >= dst_immc_suffix) {
+void append_mov_code(Vector* codes, int src_reg_id, X64Suffix src_suffix, int dst_reg_id,
+                     X64Suffix dst_suffix) {
+    if (src_suffix >= dst_suffix) {
         if (src_reg_id == dst_reg_id) return;
-        ImmcSuffix immc_suffix = src_immc_suffix;
-        char suffix = immcsuffix_tochar(immc_suffix);
-        char* src_name = reg_name(src_reg_id, immc_suffix);
-        char* dst_name = reg_name(dst_reg_id, immc_suffix);
-        append_code(codes, "\tmov%c\t%s, %s\n", suffix, src_name, dst_name);
-        return;
+        X64Ope* src = new_reg_x64ope(src_suffix, src_reg_id);
+        X64Ope* dst = new_reg_x64ope(src_suffix, dst_reg_id);
+        vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
+    } else {
+        X64Ope* src = new_reg_x64ope(src_suffix, src_reg_id);
+        X64Ope* dst = new_reg_x64ope(dst_suffix, dst_reg_id);
+        vector_push(codes, new_inst_x64(X64_INST_MOVSXX, src, dst));
     }
-
-    if (src_immc_suffix == IMMC_SUFFIX_LONG && dst_immc_suffix == IMMC_SUFFIX_QUAD) {
-        append_code(codes, "\tmovl\t%s, %s\n", LREG_NAMES[src_reg_id], LREG_NAMES[AX_REG_ID]);
-        append_code(codes, "\tcltq\n");
-        append_code(codes, "\tmovq\t%s, %s\n", QREG_NAMES[AX_REG_ID], QREG_NAMES[dst_reg_id]);
-        return;
-    }
-
-    char src_suffix = immcsuffix_tochar(src_immc_suffix);
-    char dst_suffix = immcsuffix_tochar(dst_immc_suffix);
-    char* src_name = reg_name(src_reg_id, src_immc_suffix);
-    char* dst_name = reg_name(dst_reg_id, dst_immc_suffix);
-    append_code(codes, "\tmovs%c%c\t%s, %s\n", src_suffix, dst_suffix, src_name, dst_name);
 }
 
 void liveseqs_next(Vector* liveseqs) {

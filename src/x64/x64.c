@@ -7,10 +7,10 @@ BaseType t_x64 = {
     .delete_object = (void (*)(void*))delete_x64,
 };
 
-X64* new_inst_x64(X64InstType type, X64Ope* dst, X64Ope* src) {
+X64* new_inst_x64(X64InstType type, X64Ope* src, X64Ope* dst) {
     X64* x64 = malloc(sizeof(X64));
     x64->type = X64_INST;
-    x64->inst = new_x64inst(type, dst, src);
+    x64->inst = new_x64inst(type, src, dst);
     x64->data = NULL;
     x64->label = NULL;
     return x64;

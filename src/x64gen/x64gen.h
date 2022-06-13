@@ -2,7 +2,6 @@
 #define UMLCC_X64GEN_H
 
 #include "../vector/vector.h"
-#include "./register.h"
 
 typedef struct X64gen {
     Vector* immcs;
