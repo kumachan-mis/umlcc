@@ -9,7 +9,7 @@
 X64Ope* new_imm_x64ope(int imm_value) {
     X64Ope* x64ope = malloc(sizeof(X64Ope));
     x64ope->type = X64_OPERAND_IMM;
-    x64ope->suffix = X64_SUFFIX_LONG;
+    x64ope->suffix = X64_SUFFIX_NONE;
     x64ope->imm_value = imm_value;
     x64ope->reg_id = -1;
     x64ope->mem_offset = -1;
