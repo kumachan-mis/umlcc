@@ -19,7 +19,7 @@ ImmcData* immcdata_copy(ImmcData* immcdata) {
 }
 
 char* immcdata_tostring(ImmcData* immcdata) {
-    char* data_str = malloc(100 * sizeof(char));
+    char* data_str = malloc(200 * sizeof(char));
 
     switch (immcdata->type) {
         case IMMC_DATA_BYTE:

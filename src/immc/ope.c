@@ -84,7 +84,7 @@ ImmcOpe* immcope_copy(ImmcOpe* immcope) {
 }
 
 char* immcope_tostring(ImmcOpe* immcope) {
-    char* ope_str = malloc(20 * sizeof(char));
+    char* ope_str = malloc(50 * sizeof(char));
 
     switch (immcope->type) {
         case IMMC_OPERAND_IMM:

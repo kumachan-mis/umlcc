@@ -85,7 +85,7 @@ X64Ope* x64ope_copy(X64Ope* x64ope) {
 }
 
 char* x64ope_tostring(X64Ope* x64ope) {
-    char* ope_str = malloc(20 * sizeof(char));
+    char* ope_str = malloc(50 * sizeof(char));
 
     switch (x64ope->type) {
         case X64_OPERAND_IMM:
@@ -104,7 +104,7 @@ char* x64ope_tostring(X64Ope* x64ope) {
             sprintf(ope_str, "%s(%s)", x64ope->label_name, PC_NAME);
             break;
         case X64_OPERAND_SUFFIX:
-            memset(ope_str, 0, 20 * sizeof(char));
+            memset(ope_str, 0, 50 * sizeof(char));
             break;
     }
     ope_str = realloc(ope_str, (strlen(ope_str) + 1) * sizeof(char));

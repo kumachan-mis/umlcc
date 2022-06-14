@@ -81,7 +81,7 @@ ImmcOpe* create_dest_reg_immcope(Immcgen* immcgen) {
 }
 
 char* create_label_name(int label_id) {
-    char* label_name = malloc(20 * sizeof(char));
+    char* label_name = malloc(50 * sizeof(char));
     sprintf(label_name, "L%d", label_id);
     label_name = realloc(label_name, (strlen(label_name) + 1) * sizeof(char));
     return label_name;

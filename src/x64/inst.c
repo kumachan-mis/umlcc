@@ -27,8 +27,8 @@ X64Inst* x64inst_copy(X64Inst* x64inst) {
 }
 
 char* x64inst_tostring(X64Inst* x64inst) {
-    char* code_str = malloc(100 * sizeof(char));
-    memset(code_str, 0, 100 * sizeof(char));
+    char* code_str = malloc(200 * sizeof(char));
+    memset(code_str, 0, 200 * sizeof(char));
 
     strcat(code_str, "\t");
 
@@ -47,7 +47,7 @@ char* x64inst_tostring(X64Inst* x64inst) {
     }
 
     int operand_appears = 0;
-    if (x64inst->src != NULL && x64inst->dst->type != X64_OPERAND_SUFFIX) {
+    if (x64inst->src != NULL && x64inst->src->type != X64_OPERAND_SUFFIX) {
         char* src_string = x64ope_tostring(x64inst->src);
         strcat(code_str, "\t");
         strcat(code_str, src_string);

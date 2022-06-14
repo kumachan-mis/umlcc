@@ -21,8 +21,8 @@ X64Label* x64label_copy(X64Label* x64label) {
 }
 
 char* x64label_tostring(X64Label* x64label) {
-    char* label_str = malloc(100 * sizeof(char));
-    memset(label_str, 0, 100 * sizeof(char));
+    char* label_str = malloc(200 * sizeof(char));
+    memset(label_str, 0, 200 * sizeof(char));
 
     switch (x64label->type) {
         case X64_LABEL_FUNCTION:

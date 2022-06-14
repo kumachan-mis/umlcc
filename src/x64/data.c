@@ -19,7 +19,7 @@ X64Data* x64data_copy(X64Data* x64data) {
 }
 
 char* x64data_tostring(X64Data* x64data) {
-    char* data_str = malloc(100 * sizeof(char));
+    char* data_str = malloc(200 * sizeof(char));
 
     switch (x64data->type) {
         case X64_DATA_BYTE:
