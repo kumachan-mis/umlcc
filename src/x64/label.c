@@ -37,16 +37,18 @@ char* x64label_tostring(X64Label* x64label) {
 
     switch (x64label->visibility) {
         case X64_VIS_GLOBAL:
-            strcat(label_str, "\tglobl ");
+            strcat(label_str, "\t.globl ");
+            strcat(label_str, x64label->name);
+            strcat(label_str, "\n");
             break;
         case X64_VIS_LOCAL:
-            strcat(label_str, "\tlocal ");
+            strcat(label_str, "\t.local ");
+            strcat(label_str, x64label->name);
+            strcat(label_str, "\n");
             break;
         default:
             break;
     }
-    strcat(label_str, x64label->name);
-    strcat(label_str, "\n");
 
     strcat(label_str, x64label->name);
     strcat(label_str, ":\n");
