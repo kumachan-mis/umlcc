@@ -104,7 +104,7 @@ char* x64ope_tostring(X64Ope* x64ope) {
             sprintf(ope_str, "%s(%s)", x64ope->label_name, PC_NAME);
             break;
         case X64_OPERAND_SUFFIX:
-            sprintf(ope_str, "");
+            memset(ope_str, 0, 20 * sizeof(char));
             break;
     }
     ope_str = realloc(ope_str, (strlen(ope_str) + 1) * sizeof(char));
