@@ -38,8 +38,8 @@ ImmcOpe* gen_child_imm_immcope(Immcgen* immcgen, Vector* codes, int index) {
     Srt* child = vector_at(srt->children, index);
 
     ImmcSuffix suffix = IMMC_SUFFIX_NONE;
+    if (child->type == SRT_CAST_EXPR) suffix = immcsuffix_get(dtype_size(child->dtype));
     while (child->type == SRT_CAST_EXPR) {
-        if (suffix == IMMC_SUFFIX_NONE) suffix = immcsuffix_get(dtype_size(child->dtype));
         immcgen->srt = child;
         index = 0;
         child = vector_at(child->children, index);
@@ -63,8 +63,8 @@ ImmcOpe* gen_child_reg_immcope(Immcgen* immcgen, Vector* codes, int index) {
     Srt* child = vector_at(srt->children, index);
 
     ImmcSuffix suffix = IMMC_SUFFIX_NONE;
+    if (child->type == SRT_CAST_EXPR) suffix = immcsuffix_get(dtype_size(child->dtype));
     while (child->type == SRT_CAST_EXPR) {
-        if (suffix == IMMC_SUFFIX_NONE) suffix = immcsuffix_get(dtype_size(child->dtype));
         immcgen->srt = child;
         index = 0;
         child = vector_at(child->children, index);
