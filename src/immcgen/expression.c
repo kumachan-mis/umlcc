@@ -228,17 +228,6 @@ Vector* gen_multiplicative_expr_immcode(Immcgen* immcgen) {
     return codes;
 }
 
-Vector* gen_cast_expr_immcode(Immcgen* immcgen) {
-    Vector* codes = new_vector(&t_immc);
-
-    ImmcOpe* src = gen_child_imm_immcope(immcgen, codes, 0);
-    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
-
-    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
-
-    return codes;
-}
-
 Vector* gen_postfix_expr_immcode(Immcgen* immcgen) {
     Vector* codes = NULL;
     Srt* srt = immcgen->srt;
