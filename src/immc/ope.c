@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-ImmcOpe* new_imm_immcope(int imm_value) {
+ImmcOpe* new_imm_immcope(ImmcSuffix suffix, int imm_value) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = IMMC_OPERAND_IMM;
-    immcope->suffix = IMMC_SUFFIX_LONG;
+    immcope->suffix = suffix;
     immcope->imm_value = imm_value;
     immcope->reg_id = -1;
     immcope->mem_offset = -1;
@@ -79,28 +79,25 @@ ImmcOpe* immcope_copy(ImmcOpe* immcope) {
     copied_immcope->reg_id = immcope->reg_id;
     copied_immcope->mem_offset = immcope->mem_offset;
     copied_immcope->label_name = NULL;
-    if (immcope->label_name != NULL) {
-        copied_immcope->label_name = new_string(immcope->label_name);
-    }
+    if (immcope->label_name != NULL) copied_immcope->label_name = new_string(immcope->label_name);
     return copied_immcope;
 }
 
 char* immcope_tostring(ImmcOpe* immcope) {
-    char* ope_str = malloc(20 * sizeof(char));
-    char suffix = immcsuffix_tochar(immcope->suffix);
+    char* ope_str = malloc(50 * sizeof(char));
 
     switch (immcope->type) {
         case IMMC_OPERAND_IMM:
             sprintf(ope_str, "%d", immcope->imm_value);
             break;
         case IMMC_OPERAND_ARG:
-            sprintf(ope_str, "%%a%d%c", immcope->imm_value, suffix);
+            sprintf(ope_str, "%%a%d%c", immcope->imm_value, immcsuffix_tochar(immcope->suffix));
             break;
         case IMMC_OPERAND_REG:
-            sprintf(ope_str, "%%r%d%c", immcope->reg_id, suffix);
+            sprintf(ope_str, "%%r%d%c", immcope->reg_id, immcsuffix_tochar(immcope->suffix));
             break;
         case IMMC_OPERAND_PTR:
-            sprintf(ope_str, "(%%r%d%c)", immcope->reg_id, suffix);
+            sprintf(ope_str, "(%%r%d%c)", immcope->reg_id, immcsuffix_tochar(immcope->suffix));
             break;
         case IMMC_OPERAND_MEM:
             sprintf(ope_str, "M[%d]", immcope->mem_offset);
@@ -113,56 +110,7 @@ char* immcope_tostring(ImmcOpe* immcope) {
     return ope_str;
 }
 
-void delete_immope(ImmcOpe* immcope) {
+void delete_immcope(ImmcOpe* immcope) {
     if (immcope->label_name != NULL) free(immcope->label_name);
     free(immcope);
-}
-
-ImmcSuffix immcsuffix_get(int size) {
-    switch (size) {
-        case 1:
-            return IMMC_SUFFIX_BYTE;
-        case 2:
-            return IMMC_SUFFIX_WORD;
-        case 4:
-            return IMMC_SUFFIX_LONG;
-        case 8:
-            return IMMC_SUFFIX_QUAD;
-        default:
-            return IMMC_SUFFIX_NONE;
-    }
-}
-
-int immcsuffix_tosize(ImmcSuffix suffix) {
-    switch (suffix) {
-        case IMMC_SUFFIX_BYTE:
-            return 1;
-        case IMMC_SUFFIX_WORD:
-            return 2;
-        case IMMC_SUFFIX_LONG:
-            return 4;
-        case IMMC_SUFFIX_QUAD:
-            return 8;
-        default:
-            return 0;
-    }
-}
-
-char immcsuffix_tochar(ImmcSuffix suffix) {
-    switch (suffix) {
-        case IMMC_SUFFIX_BYTE:
-            return 'b';
-        case IMMC_SUFFIX_WORD:
-            return 'w';
-        case IMMC_SUFFIX_LONG:
-            return 'l';
-        case IMMC_SUFFIX_QUAD:
-            return 'q';
-        default:
-            return '\0';
-    }
-}
-
-ImmcSuffix immcsuffix_greater(ImmcSuffix a, ImmcSuffix b) {
-    return a >= b ? a : b;
 }

@@ -17,7 +17,7 @@ Vector* gen_init_decl_immcode(Immcgen* immcgen) {
     Vector* gen_global_init_decl_immcode(Immcgen * immcgen);
     Vector* gen_local_init_decl_immcode(Immcgen * immcgen);
 
-    if (immcgen->local_table == NULL) { return gen_global_init_decl_immcode(immcgen); }
+    if (immcgen->local_table == NULL) return gen_global_init_decl_immcode(immcgen);
     return gen_local_init_decl_immcode(immcgen);
 }
 
@@ -114,7 +114,7 @@ Vector* gen_scalar_initializer_immcode(Immcgen* immcgen) {
     Vector* gen_global_scalar_initializer_immcode(Immcgen * immcgen);
     Vector* gen_local_scalar_initializer_immcode(Immcgen * immcgen);
 
-    if (immcgen->local_table == NULL) { return gen_global_scalar_initializer_immcode(immcgen); }
+    if (immcgen->local_table == NULL) return gen_global_scalar_initializer_immcode(immcgen);
     return gen_local_scalar_initializer_immcode(immcgen);
 }
 
@@ -123,6 +123,7 @@ Vector* gen_global_scalar_initializer_immcode(Immcgen* immcgen) {
 
     ImmcDataType type = immcdata_get_type(dtype_size(immcgen->initialized_dtype));
     Srt* srt = vector_at(immcgen->srt->children, 0);
+
     while (srt->type == SRT_CAST_EXPR) {
         srt = vector_at(srt->children, 0);
     }

@@ -34,18 +34,44 @@ void append_child_immcode(Immcgen* immcgen, Vector* codes, int index) {
 }
 
 ImmcOpe* gen_child_imm_immcope(Immcgen* immcgen, Vector* codes, int index) {
-    Srt* child = vector_at(immcgen->srt->children, index);
+    Srt* srt = immcgen->srt;
+    Srt* child = vector_at(srt->children, index);
+
+    ImmcSuffix suffix = IMMC_SUFFIX_NONE;
+    if (child->type == SRT_CAST_EXPR) suffix = immcsuffix_get(dtype_size(child->dtype));
+    while (child->type == SRT_CAST_EXPR) {
+        immcgen->srt = child;
+        index = 0;
+        child = vector_at(child->children, index);
+    }
 
     if (child->type == SRT_INT_EXPR || child->type == SRT_CHAR_EXPR) {
-        return new_imm_immcope(child->value_int);
+        immcgen->srt = srt;
+        if (suffix == IMMC_SUFFIX_NONE) suffix = IMMC_SUFFIX_LONG;
+        return new_imm_immcope(suffix, child->value_int);
     }
 
     append_child_immcode(immcgen, codes, index);
+    immcgen->srt = srt;
+
+    if (suffix != IMMC_SUFFIX_NONE) {
+        ImmcOpe* src = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+        immcgen->virtual_reg_suffix = suffix;
+        immcgen->virtual_reg_id++;
+        ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+        vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
+    }
     return new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 }
 
 ImmcOpe* gen_child_reg_immcope(Immcgen* immcgen, Vector* codes, int index) {
-    append_child_immcode(immcgen, codes, index);
+    ImmcOpe* immc_ope = gen_child_imm_immcope(immcgen, codes, index);
+    if (immc_ope->type == IMMC_OPERAND_REG) return immc_ope;
+
+    immcgen->virtual_reg_suffix = immc_ope->suffix;
+    immcgen->virtual_reg_id++;
+    ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, immc_ope, NULL));
     return new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 }
 
@@ -66,7 +92,7 @@ ImmcOpe* gen_child_ptr_immcope(Immcgen* immcgen, Vector* codes, int index) {
         if (symbol == NULL) {
             symbol = symboltable_search(immcgen->global_table, child->ident_name);
         }
-        if (symbol->type == SYMBOL_LABEL) { return new_label_immcope(new_string(symbol->name)); }
+        if (symbol->type == SYMBOL_LABEL) return new_label_immcope(new_string(symbol->name));
         return new_mem_immcope(symbol->memory_offset);
     }
 
@@ -81,7 +107,7 @@ ImmcOpe* create_dest_reg_immcope(Immcgen* immcgen) {
 }
 
 char* create_label_name(int label_id) {
-    char* label_name = malloc(20 * sizeof(char));
+    char* label_name = malloc(50 * sizeof(char));
     sprintf(label_name, "L%d", label_id);
     label_name = realloc(label_name, (strlen(label_name) + 1) * sizeof(char));
     return label_name;

@@ -34,8 +34,8 @@ int immcinst_isjump(ImmcInst* immcinst) {
 }
 
 char* immcinst_tostring(ImmcInst* immcinst) {
-    char* code_str = malloc(100 * sizeof(char));
-    memset(code_str, 0, 100 * sizeof(char));
+    char* code_str = malloc(200 * sizeof(char));
+    memset(code_str, 0, 200 * sizeof(char));
 
     strcat(code_str, "\t");
     strcat(code_str, immc_insts[immcinst->type]);
@@ -71,8 +71,8 @@ char* immcinst_tostring(ImmcInst* immcinst) {
 }
 
 void delete_immcinst(ImmcInst* immcinst) {
-    if (immcinst->dst != NULL) delete_immope(immcinst->dst);
-    if (immcinst->fst_src != NULL) delete_immope(immcinst->fst_src);
-    if (immcinst->snd_src != NULL) delete_immope(immcinst->snd_src);
+    if (immcinst->dst != NULL) delete_immcope(immcinst->dst);
+    if (immcinst->fst_src != NULL) delete_immcope(immcinst->fst_src);
+    if (immcinst->snd_src != NULL) delete_immcope(immcinst->snd_src);
     free(immcinst);
 }

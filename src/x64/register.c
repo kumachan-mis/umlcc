@@ -48,15 +48,15 @@ int NUM_ARG_REGS = 6;
 int NUM_CALLER_SAVED_REGS = 8;
 int NUM_CALLEE_SAVED_REGS = 5;
 
-char* reg_name(int reg_id, ImmcSuffix suffix) {
+char* reg_name(int reg_id, X64Suffix suffix) {
     switch (suffix) {
-        case IMMC_SUFFIX_BYTE:
+        case X64_SUFFIX_BYTE:
             return BREG_NAMES[reg_id];
-        case IMMC_SUFFIX_WORD:
+        case X64_SUFFIX_WORD:
             return WREG_NAMES[reg_id];
-        case IMMC_SUFFIX_LONG:
+        case X64_SUFFIX_LONG:
             return LREG_NAMES[reg_id];
-        case IMMC_SUFFIX_QUAD:
+        case X64_SUFFIX_QUAD:
             return QREG_NAMES[reg_id];
         default:
             return NULL;

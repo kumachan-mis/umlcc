@@ -1,57 +1,62 @@
 #include "./bitinst.h"
 #include "../immc/immc.h"
-#include "./register.h"
 #include "./util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-Vector* gen_setcmp_common_x64code(X64gen* x64gen, char* inst);
+Vector* gen_setcmp_common_x64code(X64gen* x64gen, X64InstType type);
 
 Vector* gen_seteq_x64code(X64gen* x64gen) {
-    return gen_setcmp_common_x64code(x64gen, "sete");
+    return gen_setcmp_common_x64code(x64gen, X64_INST_SETE);
 }
 
 Vector* gen_setneq_x64code(X64gen* x64gen) {
-    return gen_setcmp_common_x64code(x64gen, "setne");
+    return gen_setcmp_common_x64code(x64gen, X64_INST_SETNE);
 }
 
-Vector* gen_setcmp_common_x64code(X64gen* x64gen, char* inst) {
+Vector* gen_setcmp_common_x64code(X64gen* x64gen, X64InstType type) {
     Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
-    ImmcOpe* dst = immc->inst->dst;
-    ImmcOpe* fst_src = immc->inst->fst_src;
-    ImmcOpe* snd_src = immc->inst->snd_src;
+    ImmcOpe* immc_dst = immc->inst->dst;
+    ImmcOpe* immc_fst_src = immc->inst->fst_src;
+    ImmcOpe* immc_snd_src = immc->inst->snd_src;
 
-    switch (snd_src->type) {
+    switch (immc_snd_src->type) {
         case IMMC_OPERAND_IMM: {
-            int fst_src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
-            ImmcSuffix immc_suffix = fst_src->suffix;
-            char* fst_src_name = reg_name(fst_src_id, immc_suffix);
-            char suffix = immcsuffix_tochar(immc_suffix);
-            append_code(codes, "\tcmp%c\t$%d, %s\n", suffix, snd_src->imm_value, fst_src_name);
+            X64Suffix suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
+            int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
+            X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
+            X64Ope* snd_src = new_imm_x64ope(suffix, immc_snd_src->imm_value);
+            vector_push(codes, new_inst_x64(X64_INST_CMPX, snd_src, fst_src));
             break;
         }
         case IMMC_OPERAND_REG: {
-            int fst_src_id = CALLER_SAVED_REG_IDS[fst_src->reg_id];
-            int snd_src_id = CALLER_SAVED_REG_IDS[snd_src->reg_id];
-            ImmcSuffix immc_suffix = immcsuffix_greater(fst_src->suffix, snd_src->suffix);
-            char* fst_src_name = reg_name(fst_src_id, immc_suffix);
-            char* snd_src_name = reg_name(snd_src_id, immc_suffix);
-            char suffix = immcsuffix_tochar(immc_suffix);
-            append_code(codes, "\tcmp%c\t%s, %s\n", suffix, snd_src_name, fst_src_name);
+            X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
+            X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
+            X64Suffix suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
+            int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
+            int snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg_id];
+            append_mov_code(codes, fst_src_id, fst_src_suffix, fst_src_id, suffix);
+            append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
+            X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
+            X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
+            vector_push(codes, new_inst_x64(X64_INST_CMPX, snd_src, fst_src));
             break;
         }
         default:
-            fprintf(stderr, "Error: unexpected operand %d\n", dst->type);
+            fprintf(stderr, "Error: unexpected operand %d\n", immc_dst->type);
             exit(1);
     }
 
-    int dst_id = CALLER_SAVED_REG_IDS[dst->reg_id];
-    append_code(codes, "\t%s\t%s\n", inst, BREG_NAMES[dst_id]);
-    append_mov_code(codes, dst_id, IMMC_SUFFIX_BYTE, dst_id, dst->suffix);
+    int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
+    X64Ope* dst = new_reg_x64ope(X64_SUFFIX_BYTE, dst_id);
+    vector_push(codes, new_inst_x64(type, dst, NULL));
+
+    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(immc_dst->suffix));
+    append_mov_code(codes, dst_id, X64_SUFFIX_BYTE, dst_id, dst_suffix);
 
     liveseqs_next(x64gen->liveseqs);
     return codes;

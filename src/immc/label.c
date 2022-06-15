@@ -21,8 +21,8 @@ ImmcLabel* immclabel_copy(ImmcLabel* immclabel) {
 }
 
 char* immclabel_tostring(ImmcLabel* immclabel) {
-    char* label_str = malloc(100 * sizeof(char));
-    memset(label_str, 0, 100 * sizeof(char));
+    char* label_str = malloc(200 * sizeof(char));
+    memset(label_str, 0, 200 * sizeof(char));
 
     switch (immclabel->visibility) {
         case IMMC_VIS_GLOBAL:

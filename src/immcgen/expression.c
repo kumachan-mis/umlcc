@@ -39,16 +39,16 @@ Vector* gen_logical_or_expr_immcode(Immcgen* immcgen) {
 
     dst = new_label_immcope(new_string(true_label));
     fst_src = gen_child_reg_immcope(immcgen, codes, 0);
-    snd_src = new_imm_immcope(0);
+    snd_src = new_imm_immcope(fst_src->suffix, 0);
     vector_push(codes, new_inst_immc(IMMC_INST_JNEQ, dst, fst_src, snd_src));
 
     dst = new_label_immcope(new_string(true_label));
     fst_src = gen_child_reg_immcope(immcgen, codes, 1);
-    snd_src = new_imm_immcope(0);
+    snd_src = new_imm_immcope(fst_src->suffix, 0);
     vector_push(codes, new_inst_immc(IMMC_INST_JNEQ, dst, fst_src, snd_src));
 
     dst = create_dest_reg_immcope(immcgen);
-    fst_src = new_imm_immcope(0);
+    fst_src = new_imm_immcope(dst->suffix, 0);
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, fst_src, NULL));
 
     dst = new_label_immcope(new_string(end_label));
@@ -57,7 +57,7 @@ Vector* gen_logical_or_expr_immcode(Immcgen* immcgen) {
     vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(true_label)));
 
     dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
-    fst_src = new_imm_immcope(1);
+    fst_src = new_imm_immcope(dst->suffix, 1);
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, fst_src, NULL));
 
     vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(end_label)));
@@ -81,16 +81,16 @@ Vector* gen_logical_and_expr_immcode(Immcgen* immcgen) {
 
     dst = new_label_immcope(new_string(false_label));
     fst_src = gen_child_reg_immcope(immcgen, codes, 0);
-    snd_src = new_imm_immcope(0);
+    snd_src = new_imm_immcope(fst_src->suffix, 0);
     vector_push(codes, new_inst_immc(IMMC_INST_JEQ, dst, fst_src, snd_src));
 
     dst = new_label_immcope(new_string(false_label));
     fst_src = gen_child_reg_immcope(immcgen, codes, 1);
-    snd_src = new_imm_immcope(0);
+    snd_src = new_imm_immcope(fst_src->suffix, 0);
     vector_push(codes, new_inst_immc(IMMC_INST_JEQ, dst, fst_src, snd_src));
 
     dst = create_dest_reg_immcope(immcgen);
-    fst_src = new_imm_immcope(1);
+    fst_src = new_imm_immcope(dst->suffix, 1);
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, fst_src, NULL));
 
     dst = new_label_immcope(new_string(end_label));
@@ -99,7 +99,7 @@ Vector* gen_logical_and_expr_immcode(Immcgen* immcgen) {
     vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(false_label)));
 
     dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
-    fst_src = new_imm_immcope(0);
+    fst_src = new_imm_immcope(dst->suffix, 0);
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, fst_src, NULL));
 
     vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(end_label)));
@@ -168,7 +168,7 @@ Vector* gen_pointer_additive_expr_immcode(Immcgen* immcgen) {
             Srt* lhs_srt = vector_at(srt->children, 0);
             int mul_amount = dtype_size(lhs_srt->dtype->pointer->to_dtype);
             ImmcOpe* mul_fst_src = immcope_copy(snd_src);
-            ImmcOpe* mul_snd_src = new_imm_immcope(mul_amount);
+            ImmcOpe* mul_snd_src = new_imm_immcope(mul_fst_src->suffix, mul_amount);
             ImmcOpe* mul_dst = immcope_copy(snd_src);
             vector_push(codes, new_inst_immc(IMMC_INST_MUL, mul_dst, mul_fst_src, mul_snd_src));
             vector_push(codes, new_inst_immc(IMMC_INST_ADD, dst, fst_src, snd_src));
@@ -178,7 +178,7 @@ Vector* gen_pointer_additive_expr_immcode(Immcgen* immcgen) {
             Srt* lhs_srt = vector_at(srt->children, 0);
             int mul_amount = dtype_size(lhs_srt->dtype->pointer->to_dtype);
             ImmcOpe* mul_fst_src = immcope_copy(snd_src);
-            ImmcOpe* mul_snd_src = new_imm_immcope(mul_amount);
+            ImmcOpe* mul_snd_src = new_imm_immcope(mul_fst_src->suffix, mul_amount);
             ImmcOpe* mul_dst = immcope_copy(snd_src);
             vector_push(codes, new_inst_immc(IMMC_INST_MUL, mul_dst, mul_fst_src, mul_snd_src));
             vector_push(codes, new_inst_immc(IMMC_INST_SUB, dst, fst_src, snd_src));
@@ -188,7 +188,7 @@ Vector* gen_pointer_additive_expr_immcode(Immcgen* immcgen) {
             Srt* lhs_srt = vector_at(srt->children, 0);
             int div_amount = dtype_size(lhs_srt->dtype->pointer->to_dtype);
             ImmcOpe* div_fst_src = immcope_copy(dst);
-            ImmcOpe* div_snd_src = new_imm_immcope(div_amount);
+            ImmcOpe* div_snd_src = new_imm_immcope(div_fst_src->suffix, div_amount);
             ImmcOpe* div_dst = immcope_copy(dst);
             vector_push(codes, new_inst_immc(IMMC_INST_SUB, dst, fst_src, snd_src));
             vector_push(codes, new_inst_immc(IMMC_INST_DIV, div_dst, div_fst_src, div_snd_src));
@@ -228,17 +228,6 @@ Vector* gen_multiplicative_expr_immcode(Immcgen* immcgen) {
     return codes;
 }
 
-Vector* gen_cast_expr_immcode(Immcgen* immcgen) {
-    Vector* codes = new_vector(&t_immc);
-
-    ImmcOpe* src = gen_child_imm_immcope(immcgen, codes, 0);
-    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
-
-    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
-
-    return codes;
-}
-
 Vector* gen_postfix_expr_immcode(Immcgen* immcgen) {
     Vector* codes = NULL;
     Srt* srt = immcgen->srt;
@@ -263,7 +252,7 @@ Vector* gen_call_expr_immcode(Immcgen* immcgen) {
     Srt* param_srt = vector_at(srt->children, 1);
     int num_args = vector_size(param_srt->children);
 
-    ImmcOpe* prep_src = new_imm_immcope(num_args);
+    ImmcOpe* prep_src = new_imm_immcope(IMMC_SUFFIX_NONE, num_args);
     vector_push(codes, new_inst_immc(IMMC_INST_PREP, NULL, prep_src, NULL));
 
     immcgen->srt = param_srt;
@@ -275,12 +264,12 @@ Vector* gen_call_expr_immcode(Immcgen* immcgen) {
     immcgen->srt = srt;
 
     ImmcOpe* fst_src = gen_child_ptr_immcope(immcgen, codes, 0);
-    ImmcOpe* snd_src = new_imm_immcope(num_args);
+    ImmcOpe* snd_src = new_imm_immcope(IMMC_SUFFIX_NONE, num_args);
     ImmcOpe* dst = create_dest_reg_immcope(immcgen);
 
     vector_push(codes, new_inst_immc(IMMC_INST_CALL, dst, fst_src, snd_src));
 
-    ImmcOpe* clean_src = new_imm_immcope(num_args);
+    ImmcOpe* clean_src = new_imm_immcope(IMMC_SUFFIX_NONE, num_args);
     vector_push(codes, new_inst_immc(IMMC_INST_CLEAN, NULL, clean_src, NULL));
 
     return codes;
@@ -370,7 +359,7 @@ Vector* gen_not_expr_immcode(Immcgen* immcgen) {
 
     switch (srt->type) {
         case SRT_LNOT_EXPR: {
-            ImmcOpe* zero = new_imm_immcope(0);
+            ImmcOpe* zero = new_imm_immcope(src->suffix, 0);
             vector_push(codes, new_inst_immc(IMMC_INST_SETEQ, dst, src, zero));
             break;
         }
@@ -407,7 +396,7 @@ Vector* gen_primary_expr_immcode(Immcgen* immcgen) {
         }
         case SRT_INT_EXPR:
         case SRT_CHAR_EXPR:
-            src = new_imm_immcope(srt->value_int);
+            src = new_imm_immcope(IMMC_SUFFIX_LONG, srt->value_int);
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);

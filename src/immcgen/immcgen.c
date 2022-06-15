@@ -82,9 +82,6 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
         case SRT_MOD_EXPR:
             codes = gen_multiplicative_expr_immcode(immcgen);
             break;
-        case SRT_CAST_EXPR:
-            codes = gen_cast_expr_immcode(immcgen);
-            break;
         case SRT_ADDR_EXPR:
         case SRT_INDIR_EXPR:
         case SRT_LNOT_EXPR:

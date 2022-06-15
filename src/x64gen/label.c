@@ -10,29 +10,33 @@ Vector* gen_label_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
+    X64LabelType type = X64_LABEL_NORMAL;
     switch (immc->label->type) {
         case IMMC_LABEL_FUNCTION:
-            append_code(codes, "    .text\n");
+            type = X64_LABEL_FUNCTION;
             break;
         case IMMC_LABEL_VARIABLE:
-            append_code(codes, "    .data\n");
+            type = X64_LABEL_VARIABLE;
             break;
-        default:
+        case IMMC_LABEL_NORMAL:
+            type = X64_LABEL_NORMAL;
             break;
     }
 
+    X64Visibility visibility = X64_VIS_NONE;
     switch (immc->label->visibility) {
         case IMMC_VIS_GLOBAL:
-            append_code(codes, "    .globl %s\n", immc->label->name);
+            visibility = X64_VIS_GLOBAL;
             break;
         case IMMC_VIS_LOCAL:
-            append_code(codes, "    .local %s\n", immc->label->name);
+            visibility = X64_VIS_LOCAL;
             break;
-        default:
+        case IMMC_VIS_NONE:
+            visibility = X64_VIS_NONE;
             break;
     }
 
-    append_code(codes, "%s:\n", immc->label->name);
+    vector_push(codes, new_label_x64(type, visibility, new_string(immc->label->name)));
 
     liveseqs_next(x64gen->liveseqs);
     return codes;
