@@ -54,26 +54,24 @@ ImmcOpe* gen_child_imm_immcope(Immcgen* immcgen, Vector* codes, int index) {
     append_child_immcode(immcgen, codes, index);
     immcgen->srt = srt;
 
-    if (suffix != IMMC_SUFFIX_NONE) immcgen->virtual_reg_suffix = suffix;
+    if (suffix != IMMC_SUFFIX_NONE) {
+        ImmcOpe* src = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+        immcgen->virtual_reg_suffix = suffix;
+        immcgen->virtual_reg_id++;
+        ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+        vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
+    }
     return new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 }
 
 ImmcOpe* gen_child_reg_immcope(Immcgen* immcgen, Vector* codes, int index) {
-    Srt* srt = immcgen->srt;
-    Srt* child = vector_at(srt->children, index);
+    ImmcOpe* immc_ope = gen_child_imm_immcope(immcgen, codes, index);
+    if (immc_ope->type == IMMC_OPERAND_REG) return immc_ope;
 
-    ImmcSuffix suffix = IMMC_SUFFIX_NONE;
-    if (child->type == SRT_CAST_EXPR) suffix = immcsuffix_get(dtype_size(child->dtype));
-    while (child->type == SRT_CAST_EXPR) {
-        immcgen->srt = child;
-        index = 0;
-        child = vector_at(child->children, index);
-    }
-
-    append_child_immcode(immcgen, codes, index);
-    immcgen->srt = srt;
-
-    if (suffix != IMMC_SUFFIX_NONE) immcgen->virtual_reg_suffix = suffix;
+    immcgen->virtual_reg_suffix = immc_ope->suffix;
+    immcgen->virtual_reg_id++;
+    ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, immc_ope, NULL));
     return new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
 }
 
