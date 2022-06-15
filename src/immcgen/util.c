@@ -48,7 +48,7 @@ ImmcOpe* gen_child_imm_immcope(Immcgen* immcgen, Vector* codes, int index) {
     if (child->type == SRT_INT_EXPR || child->type == SRT_CHAR_EXPR) {
         immcgen->srt = srt;
         if (suffix == IMMC_SUFFIX_NONE) suffix = IMMC_SUFFIX_LONG;
-        return new_imm_immcope(child->value_int);
+        return new_imm_immcope(suffix, child->value_int);
     }
 
     append_child_immcode(immcgen, codes, index);

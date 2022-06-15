@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-ImmcOpe* new_imm_immcope(int imm_value) {
+ImmcOpe* new_imm_immcope(ImmcSuffix suffix, int imm_value) {
     ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
     immcope->type = IMMC_OPERAND_IMM;
-    immcope->suffix = IMMC_SUFFIX_NONE;
+    immcope->suffix = suffix;
     immcope->imm_value = imm_value;
     immcope->reg_id = -1;
     immcope->mem_offset = -1;

@@ -26,14 +26,14 @@ Vector* gen_shrot_common_x64code(X64gen* x64gen, X64InstType type) {
 
     switch (immc_snd_src->type) {
         case IMMC_OPERAND_IMM: {
-            X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
+            X64Suffix suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
             int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
-            X64Ope* fst_src = new_reg_x64ope(fst_src_suffix, fst_src_id);
-            X64Ope* snd_src = new_imm_x64ope(immc_snd_src->imm_value);
+            X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
+            X64Ope* snd_src = new_imm_x64ope(suffix, immc_snd_src->imm_value);
             vector_push(codes, new_inst_x64(type, snd_src, fst_src));
             X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(immc_dst->suffix));
             int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
-            append_mov_code(codes, fst_src_id, fst_src_suffix, dst_id, dst_suffix);
+            append_mov_code(codes, fst_src_id, suffix, dst_id, dst_suffix);
             break;
         }
         default:

@@ -21,7 +21,7 @@ typedef struct X64Ope {
     char* label_name;
 } X64Ope;
 
-X64Ope* new_imm_x64ope(int imm_value);
+X64Ope* new_imm_x64ope(X64Suffix suffix, int imm_value);
 X64Ope* new_reg_x64ope(X64Suffix suffix, int reg_id);
 X64Ope* new_ptr_x64ope(int reg_id);
 X64Ope* new_mem_x64ope(int mem_offset);
