@@ -39,6 +39,17 @@ X64Ope* new_ptr_x64ope(int reg_id) {
     return x64ope;
 }
 
+X64Ope* new_jptr_x64ope(int reg_id) {
+    X64Ope* x64ope = malloc(sizeof(X64Ope));
+    x64ope->type = X64_OPERAND_JPTR;
+    x64ope->suffix = X64_SUFFIX_QUAD;
+    x64ope->imm_value = -1;
+    x64ope->reg_id = reg_id;
+    x64ope->mem_offset = -1;
+    x64ope->label_name = NULL;
+    return x64ope;
+}
+
 X64Ope* new_mem_x64ope(int mem_offset) {
     X64Ope* x64ope = malloc(sizeof(X64Ope));
     x64ope->type = X64_OPERAND_MEM;
@@ -53,6 +64,17 @@ X64Ope* new_mem_x64ope(int mem_offset) {
 X64Ope* new_label_x64ope(char* label_name) {
     X64Ope* x64ope = malloc(sizeof(X64Ope));
     x64ope->type = X64_OPERAND_LABEL;
+    x64ope->suffix = X64_SUFFIX_NONE;
+    x64ope->imm_value = -1;
+    x64ope->reg_id = -1;
+    x64ope->mem_offset = -1;
+    x64ope->label_name = label_name;
+    return x64ope;
+}
+
+X64Ope* new_jlabel_x64ope(char* label_name) {
+    X64Ope* x64ope = malloc(sizeof(X64Ope));
+    x64ope->type = X64_OPERAND_JLABEL;
     x64ope->suffix = X64_SUFFIX_NONE;
     x64ope->imm_value = -1;
     x64ope->reg_id = -1;
@@ -97,11 +119,17 @@ char* x64ope_tostring(X64Ope* x64ope) {
         case X64_OPERAND_PTR:
             sprintf(ope_str, "(%s)", reg_name(x64ope->reg_id, x64ope->suffix));
             break;
+        case X64_OPERAND_JPTR:
+            sprintf(ope_str, "*%s", reg_name(x64ope->reg_id, x64ope->suffix));
+            break;
         case X64_OPERAND_MEM:
             sprintf(ope_str, "%d(%s)", -x64ope->mem_offset, QREG_NAMES[BP_REG_ID]);
             break;
         case X64_OPERAND_LABEL:
             sprintf(ope_str, "%s(%s)", x64ope->label_name, PC_NAME);
+            break;
+        case X64_OPERAND_JLABEL:
+            sprintf(ope_str, "%s", x64ope->label_name);
             break;
         case X64_OPERAND_SUFFIX:
             memset(ope_str, 0, 50 * sizeof(char));

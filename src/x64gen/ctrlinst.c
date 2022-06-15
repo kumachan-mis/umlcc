@@ -14,7 +14,7 @@ Vector* gen_jmp_x64code(X64gen* x64gen) {
 
     ImmcOpe* immc_dst = immc->inst->dst;
 
-    X64Ope* dst = new_label_x64ope(new_string(immc_dst->label_name));
+    X64Ope* dst = new_jlabel_x64ope(new_string(immc_dst->label_name));
     vector_push(codes, new_inst_x64(X64_INST_JMP, dst, NULL));
 
     liveseqs_next(x64gen->liveseqs);
@@ -65,7 +65,7 @@ Vector* gen_jcmp_common_x64code(X64gen* x64gen, X64InstType type) {
             exit(1);
     }
 
-    X64Ope* dst = new_label_x64ope(new_string(immc_dst->label_name));
+    X64Ope* dst = new_jlabel_x64ope(new_string(immc_dst->label_name));
     vector_push(codes, new_inst_x64(type, dst, NULL));
 
     liveseqs_next(x64gen->liveseqs);
@@ -116,12 +116,12 @@ Vector* gen_call_x64code(X64gen* x64gen) {
 
     switch (immc_fst_src->type) {
         case IMMC_OPERAND_PTR: {
-            X64Ope* src = new_reg_x64ope(X64_SUFFIX_QUAD, src_id);
+            X64Ope* src = new_jptr_x64ope(src_id);
             vector_push(codes, new_inst_x64(X64_INST_CALL, src, NULL));
             break;
         }
         case IMMC_OPERAND_LABEL: {
-            X64Ope* src = new_label_x64ope(new_string(immc_fst_src->label_name));
+            X64Ope* src = new_jlabel_x64ope(new_string(immc_fst_src->label_name));
             vector_push(codes, new_inst_x64(X64_INST_CALL, src, NULL));
             break;
         }
