@@ -56,6 +56,7 @@ typedef enum SrtType {
     SRT_IDENT_EXPR,
     SRT_INT_EXPR,
     SRT_CHAR_EXPR,
+    SRT_STRING_EXPR,
 } SrtType;
 
 typedef struct Srt {
