@@ -158,5 +158,6 @@ Vector* gen_variable_x64code(X64gen* x64gen) {
 
 void delete_x64gen(X64gen* x64gen) {
     delete_vector(x64gen->immcs);
+    delete_vector(x64gen->liveseqs);
     free(x64gen);
 }
