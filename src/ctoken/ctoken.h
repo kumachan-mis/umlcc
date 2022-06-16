@@ -51,9 +51,9 @@ typedef struct CToken {
 extern BaseType t_ctoken;
 
 CToken* new_ctoken(CTokenType type);
-CToken* new_identifier_ctoken(char* name);
+CToken* new_identifier_ctoken(CTokenType type, char* name);
 CToken* new_integer_ctoken(CTokenType type, int value);
-CToken* new_string_literal_ctoken(char* value);
+CToken* new_string_literal_ctoken(CTokenType type, char* value);
 CToken* ctoken_copy(CToken* ctoken);
 void delete_ctoken(CToken* ctoken);
 

@@ -279,7 +279,7 @@ Srt* resolve_scalar_initializer(Resolver* resolver) {
 Srt* resolve_zero_scalar_initializer(Resolver* resolver) {
     Dtype* dtype = resolver->initialized_dtype;
 
-    Srt* srt = new_integer_srt(SRT_INT_EXPR, DTYPE_INT, 0);
+    Srt* srt = new_integer_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), 0);
     if (!dtype_equals(dtype, srt->dtype)) {
         srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(dtype), 1, srt);
     }

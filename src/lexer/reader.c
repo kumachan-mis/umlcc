@@ -37,7 +37,7 @@ CToken* read_keyword_or_identifier(Lexer* lexer) {
     }
 
     ctoken_str = realloc(ctoken_str, (strlen(ctoken_str) + 1) * sizeof(char));
-    return new_identifier_ctoken(ctoken_str);
+    return new_identifier_ctoken(CTOKEN_IDENT, ctoken_str);
 }
 
 CToken* read_integer_constant(Lexer* lexer) {
@@ -191,7 +191,7 @@ CToken* read_string_literal(Lexer* lexer) {
     value[length] = '\0';
 
     value = realloc(value, (strlen(value) + 1) * sizeof(char));
-    return new_string_literal_ctoken(value);
+    return new_string_literal_ctoken(CTOKEN_STRING, value);
 }
 
 int read_escape_seqence(Lexer* lexer) {

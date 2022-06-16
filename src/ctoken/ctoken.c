@@ -16,7 +16,7 @@ CToken* new_ctoken(CTokenType type) {
     return ctoken;
 }
 
-CToken* new_identifier_ctoken(char* name) {
+CToken* new_identifier_ctoken(CTokenType type, char* name) {
     CToken* ctoken = malloc(sizeof(CToken));
     ctoken->type = CTOKEN_IDENT;
     ctoken->ident_name = name;
@@ -34,9 +34,9 @@ CToken* new_integer_ctoken(CTokenType type, int value) {
     return ctoken;
 }
 
-CToken* new_string_literal_ctoken(char* value) {
+CToken* new_string_literal_ctoken(CTokenType type, char* value) {
     CToken* ctoken = malloc(sizeof(CToken));
-    ctoken->type = CTOKEN_STRING;
+    ctoken->type = type;
     ctoken->ident_name = NULL;
     ctoken->value_int = -1;
     ctoken->value_str = value;

@@ -14,6 +14,7 @@ Ast* new_ast(AstType type, int num_children, ...) {
     ast->type = type;
     ast->ident_name = NULL;
     ast->value_int = -1;
+    ast->value_str = NULL;
     ast->children = new_vector(&t_ast);
 
     va_list children;
@@ -31,6 +32,7 @@ Ast* new_identifier_ast(AstType type, char* name) {
     ast->type = type;
     ast->ident_name = name;
     ast->value_int = -1;
+    ast->value_str = NULL;
     ast->children = new_vector(&t_ast);
     return ast;
 }
@@ -40,14 +42,19 @@ Ast* new_integer_ast(AstType type, int value) {
     ast->type = type;
     ast->ident_name = NULL;
     ast->value_int = value;
+    ast->value_str = NULL;
     ast->children = new_vector(&t_ast);
     return ast;
 }
 
-void delete_ast(Ast* ast) {
-    if (ast->ident_name != NULL) free(ast->ident_name);
-    delete_vector(ast->children);
-    free(ast);
+Ast* new_string_literal_ast(AstType type, char* value) {
+    Ast* ast = malloc(sizeof(Ast));
+    ast->type = type;
+    ast->ident_name = NULL;
+    ast->value_int = -1;
+    ast->value_str = value;
+    ast->children = new_vector(&t_ast);
+    return ast;
 }
 
 Ast* ast_copy(Ast* ast) {
@@ -56,6 +63,15 @@ Ast* ast_copy(Ast* ast) {
     copied_ast->ident_name = NULL;
     if (ast->ident_name != NULL) copied_ast->ident_name = new_string(ast->ident_name);
     copied_ast->value_int = ast->value_int;
+    copied_ast->value_str = NULL;
+    if (ast->value_str != NULL) copied_ast->value_str = new_string(ast->value_str);
     copied_ast->children = vector_copy(ast->children);
     return copied_ast;
+}
+
+void delete_ast(Ast* ast) {
+    if (ast->ident_name != NULL) free(ast->ident_name);
+    if (ast->value_str != NULL) free(ast->value_str);
+    delete_vector(ast->children);
+    free(ast);
 }
