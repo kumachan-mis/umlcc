@@ -49,10 +49,13 @@ CToken* ctoken_copy(CToken* ctoken) {
     copied_ctoken->ident_name = NULL;
     if (ctoken->ident_name != NULL) copied_ctoken->ident_name = new_string(ctoken->ident_name);
     copied_ctoken->value_int = ctoken->value_int;
+    copied_ctoken->value_str = NULL;
+    if (ctoken->value_str != NULL) copied_ctoken->value_str = new_string(ctoken->value_str);
     return copied_ctoken;
 }
 
 void delete_ctoken(CToken* ctoken) {
     if (ctoken->ident_name != NULL) free(ctoken->ident_name);
+    if (ctoken->value_str != NULL) free(ctoken->value_str);
     free(ctoken);
 }
