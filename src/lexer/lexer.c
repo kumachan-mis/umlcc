@@ -33,6 +33,8 @@ Vector* lexer_read_ctokens(Lexer* lexer) {
             ctoken = read_integer_constant(lexer);
         } else if (c == '\'') {
             ctoken = read_character_constant(lexer);
+        } else if (c == '\"') {
+            ctoken = read_string_literal(lexer);
         } else {
             ctoken = read_punctuator(lexer);
         }

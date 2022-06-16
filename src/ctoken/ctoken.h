@@ -15,6 +15,7 @@ typedef enum CTokenType {
     // constant
     CTOKEN_INT,
     CTOKEN_CHAR,
+    CTOKEN_STRING,
 
     // punctuator
     CTOKEN_LBRACKET,
@@ -44,6 +45,7 @@ typedef struct CToken {
     CTokenType type;
     char* ident_name;
     int value_int;
+    char* value_str;
 } CToken;
 
 extern BaseType t_ctoken;
@@ -51,6 +53,7 @@ extern BaseType t_ctoken;
 CToken* new_ctoken(CTokenType type);
 CToken* new_identifier_ctoken(char* name);
 CToken* new_integer_ctoken(CTokenType type, int value);
+CToken* new_string_literal_ctoken(char* value);
 CToken* ctoken_copy(CToken* ctoken);
 void delete_ctoken(CToken* ctoken);
 

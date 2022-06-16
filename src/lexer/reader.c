@@ -10,11 +10,10 @@ CToken* read_keyword_or_identifier(Lexer* lexer) {
     int c = fgetc(lexer->file_ptr);
     ctoken_str[length] = c;
     length++;
-    if (length >= capacity) {
+    if (length + 1 >= capacity) {
         ctoken_str = realloc(ctoken_str, 2 * capacity * sizeof(char));
         capacity *= 2;
     }
-    ctoken_str[length] = '\0';
 
     while (1) {
         c = fgetc(lexer->file_ptr);
@@ -24,20 +23,20 @@ CToken* read_keyword_or_identifier(Lexer* lexer) {
         }
         ctoken_str[length] = c;
         length++;
-        if (length >= capacity) {
+        if (length + 1 >= capacity) {
             ctoken_str = realloc(ctoken_str, 2 * capacity * sizeof(char));
             capacity *= 2;
         }
-        ctoken_str[length] = '\0';
     }
+    ctoken_str[length] = '\0';
 
     CTokenType* ctoken_ref = map_get(lexer->keyword_map, ctoken_str);
-
     if (ctoken_ref != NULL) {
         free(ctoken_str);
         return new_ctoken(*ctoken_ref);
     }
 
+    ctoken_str = realloc(ctoken_str, (strlen(ctoken_str) + 1) * sizeof(char));
     return new_identifier_ctoken(ctoken_str);
 }
 
@@ -154,6 +153,45 @@ CToken* read_character_constant(Lexer* lexer) {
     }
 
     return new_integer_ctoken(CTOKEN_CHAR, c);
+}
+
+CToken* read_string_literal(Lexer* lexer) {
+    int read_escape_seqence(Lexer * lexer);
+
+    int length = 0, capacity = 4;
+    char* value = malloc(sizeof(char) * capacity);
+
+    fgetc(lexer->file_ptr);
+
+    int terminated = 0;
+    while (1) {
+        int c = fgetc(lexer->file_ptr);
+        switch (c) {
+            case '\\':
+                c = read_escape_seqence(lexer);
+                break;
+            case '\"':
+                terminated = 1;
+                break;
+            case '\n':
+                fprintf(stderr, "Error: unexpected character \\n\n");
+                exit(1);
+            default:
+                break;
+        }
+        if (terminated) break;
+
+        value[length] = c;
+        length++;
+        if (length + 1 >= capacity) {
+            value = realloc(value, 2 * capacity * sizeof(char));
+            capacity *= 2;
+        }
+    }
+    value[length] = '\0';
+
+    value = realloc(value, (strlen(value) + 1) * sizeof(char));
+    return new_string_literal_ctoken(value);
 }
 
 int read_escape_seqence(Lexer* lexer) {
