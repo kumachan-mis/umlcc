@@ -18,7 +18,7 @@ CToken* new_ctoken(CTokenType type) {
 
 CToken* new_identifier_ctoken(CTokenType type, char* name) {
     CToken* ctoken = malloc(sizeof(CToken));
-    ctoken->type = CTOKEN_IDENT;
+    ctoken->type = type;
     ctoken->ident_name = name;
     ctoken->value_int = -1;
     ctoken->value_str = NULL;
