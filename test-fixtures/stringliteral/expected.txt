@@ -1,0 +1,4 @@
+global char array
+local char array
+local char pointer
+inline string
