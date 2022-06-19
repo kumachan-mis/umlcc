@@ -2,3 +2,11 @@ global char array
 local char array
 local char pointer
 inline string
+
+tricky glo
+bal array
+tricky lo
+cal array
+local ch
+ar pointer
+tricky inl
