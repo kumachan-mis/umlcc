@@ -1,4 +1,5 @@
 #include "./srt.h"
+#include "../common/util.h"
 
 #include <stdarg.h>
 #include <stdlib.h>
@@ -15,6 +16,7 @@ Srt* new_srt(SrtType type, int num_children, ...) {
     srt->ident_name = NULL;
     srt->value_int = -1;
     srt->value_str = NULL;
+    srt->size_str = -1;
     srt->children = new_vector(&t_srt);
 
     va_list children;
@@ -34,6 +36,7 @@ Srt* new_dtyped_srt(SrtType type, Dtype* dtype, int num_children, ...) {
     srt->ident_name = NULL;
     srt->value_int = -1;
     srt->value_str = NULL;
+    srt->size_str = -1;
     srt->children = new_vector(&t_srt);
 
     va_list children;
@@ -53,6 +56,7 @@ Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name) {
     srt->ident_name = ident_name;
     srt->value_int = -1;
     srt->value_str = NULL;
+    srt->size_str = -1;
     srt->children = new_vector(&t_srt);
     return srt;
 }
@@ -64,17 +68,19 @@ Srt* new_integer_srt(SrtType type, Dtype* dtype, int value) {
     srt->ident_name = NULL;
     srt->value_int = value;
     srt->value_str = NULL;
+    srt->size_str = -1;
     srt->children = new_vector(&t_srt);
     return srt;
 }
 
-Srt* new_string_literal_srt(SrtType type, Dtype* dtype, char* value) {
+Srt* new_string_literal_srt(SrtType type, Dtype* dtype, char* value, int size) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
     srt->dtype = dtype;
     srt->ident_name = NULL;
     srt->value_int = -1;
     srt->value_str = value;
+    srt->size_str = size;
     srt->children = new_vector(&t_srt);
     return srt;
 }
@@ -87,7 +93,8 @@ Srt* srt_copy(Srt* srt) {
     if (srt->ident_name != NULL) copied_srt->ident_name = new_string(srt->ident_name);
     copied_srt->value_int = srt->value_int;
     copied_srt->value_str = NULL;
-    if (srt->value_str != NULL) copied_srt->value_str = new_string(srt->value_str);
+    if (srt->value_str != NULL) copied_srt->value_str = copy_memory(srt->value_str, srt->size_str);
+    copied_srt->size_str = srt->size_str;
     copied_srt->children = vector_copy(srt->children);
     return copied_srt;
 }

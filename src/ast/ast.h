@@ -72,6 +72,7 @@ typedef struct Ast {
     int value_int;
     Vector* children;
     char* value_str;
+    int size_str;
 } Ast;
 
 extern BaseType t_ast;
@@ -79,7 +80,7 @@ extern BaseType t_ast;
 Ast* new_ast(AstType type, int num_children, ...);
 Ast* new_identifier_ast(AstType type, char* name);
 Ast* new_integer_ast(AstType type, int value);
-Ast* new_string_literal_ast(AstType type, char* value);
+Ast* new_string_literal_ast(AstType type, char* value, int size);
 Ast* ast_copy(Ast* ast);
 void delete_ast(Ast* ast);
 
