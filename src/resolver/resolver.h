@@ -7,11 +7,13 @@
 
 typedef struct Resolver {
     Ast* ast;
+    Srt* trans_unit_srt;
     SymbolTable* global_table;
     SymbolTable* local_table;
     Dtype* specifier_dtype;
     Dtype* initialized_dtype;
     int initialized_offset;
+    int string_literal_id;
     Dtype* function_dtype;
 } Resolver;
 

@@ -9,7 +9,9 @@
 Srt* resolve_transration_unit(Resolver* resolver) {
     Srt* srt = new_srt(SRT_TRAS_UNIT, 0);
     Ast* ast = resolver->ast;
+    Srt* trans_unit_srt = resolver->trans_unit_srt;
 
+    resolver->trans_unit_srt = srt;
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
         resolver->ast = vector_at(ast->children, i);
@@ -21,6 +23,7 @@ Srt* resolve_transration_unit(Resolver* resolver) {
     }
 
     resolver->ast = ast;
+    resolver->trans_unit_srt = trans_unit_srt;
     return srt;
 }
 

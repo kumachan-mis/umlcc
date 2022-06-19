@@ -1,4 +1,5 @@
 #include "./srt.h"
+#include "../common/util.h"
 
 #include <stdarg.h>
 #include <stdlib.h>
@@ -51,18 +52,16 @@ Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name) {
     srt->ident_name = ident_name;
     srt->value_int = -1;
     srt->children = new_vector(&t_srt);
-
     return srt;
 }
 
-Srt* new_integer_srt(SrtType type, DtypeType dtype_type, int value) {
+Srt* new_integer_srt(SrtType type, Dtype* dtype, int value) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
-    srt->dtype = new_integer_dtype(dtype_type);
+    srt->dtype = dtype;
     srt->ident_name = NULL;
     srt->value_int = value;
     srt->children = new_vector(&t_srt);
-
     return srt;
 }
 
@@ -72,6 +71,7 @@ Srt* srt_copy(Srt* srt) {
     if (srt->dtype != NULL) copied_srt->dtype = dtype_copy(srt->dtype);
     copied_srt->ident_name = NULL;
     if (srt->ident_name != NULL) copied_srt->ident_name = new_string(srt->ident_name);
+    copied_srt->value_int = srt->value_int;
     copied_srt->children = vector_copy(srt->children);
     return copied_srt;
 }

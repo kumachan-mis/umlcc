@@ -21,8 +21,8 @@ X64Inst* x64inst_copy(X64Inst* x64inst) {
     X64Inst* copied_x64inst = malloc(sizeof(X64Inst));
     copied_x64inst->type = x64inst->type;
     copied_x64inst->src = NULL;
-    copied_x64inst->dst = NULL;
     if (x64inst->src != NULL) copied_x64inst->src = x64ope_copy(x64inst->src);
+    copied_x64inst->dst = NULL;
     if (x64inst->dst != NULL) copied_x64inst->dst = x64ope_copy(x64inst->dst);
     return copied_x64inst;
 }

@@ -1,5 +1,6 @@
 #include "./expression.h"
 #include "../common/type.h"
+#include "../common/util.h"
 #include "../ctoken/ctoken.h"
 #include "./util.h"
 
@@ -236,6 +237,12 @@ Ast* parse_primary_expr(Parser* parser) {
             parser->index++;
             ast = new_integer_ast(AST_CHAR_EXPR, ctoken->value_int);
             break;
+        case CTOKEN_STRING: {
+            parser->index++;
+            char* value_str = copy_memory(ctoken->value_str, ctoken->size_str);
+            ast = new_string_literal_ast(AST_STRING_EXPR, value_str, ctoken->size_str);
+            break;
+        }
         case CTOKEN_LPALEN:
             parser->index++;
             ast = parse_expr(parser);
