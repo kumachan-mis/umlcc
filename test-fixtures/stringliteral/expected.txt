@@ -10,3 +10,4 @@ cal array
 local ch
 ar pointer
 tricky inl
+ine string
