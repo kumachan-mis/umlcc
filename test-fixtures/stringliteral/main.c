@@ -23,7 +23,7 @@ int main() {
     put_str(tricky_local_pointer);
     put_str(tricky_local_pointer + 9);
     put_str("tricky inl\0ine string");
-    put_str("tricky inl\0ine string" + 11);
+    put_str(&"tricky inl\0ine string"[11]);
 
     return 0;
 }
