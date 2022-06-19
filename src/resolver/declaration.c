@@ -1,5 +1,6 @@
 #include "./declaration.h"
 #include "../common/type.h"
+#include "./conversion.h"
 #include "./expression.h"
 
 #include <stdio.h>
@@ -175,12 +176,16 @@ DParam* resolve_parameter_decl(Resolver* resolver) {
 
 Srt* resolve_initializer(Resolver* resolver) {
     Srt* resolve_array_initializer(Resolver * resolver);
+    Srt* resolve_string_initializer(Resolver * resolver);
     Srt* resolve_scalar_initializer(Resolver * resolver);
 
     Dtype* dtype = resolver->initialized_dtype;
 
     switch (dtype->type) {
         case DTYPE_ARRAY:
+            if (dtype->array->of_dtype->type == DTYPE_CHAR) {
+                return resolve_string_initializer(resolver);
+            }
             return resolve_array_initializer(resolver);
         default:
             if (dtype_isscalar(dtype)) return resolve_scalar_initializer(resolver);
@@ -247,6 +252,28 @@ Srt* resolve_array_initializer(Resolver* resolver) {
     return srt;
 }
 
+Srt* resolve_string_initializer(Resolver* resolver) {
+    Ast* literal_ast = resolver->ast;
+    if (literal_ast->type == AST_INIT_LIST) literal_ast = vector_at(literal_ast->children, 0);
+    if (literal_ast->type != AST_STRING_EXPR) return resolve_array_initializer(resolver);
+
+    Srt* srt = new_srt(SRT_INIT, 0);
+    Dtype* dtype = resolver->initialized_dtype;
+
+    for (int i = 0; i < literal_ast->size_str - 1; i++) {
+        int c = literal_ast->value_str[i];
+        Srt* child = new_integer_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_CHAR), c);
+        vector_push(srt->children, new_srt(SRT_INIT, 1, child));
+    }
+
+    for (int i = literal_ast->size_str - 1; i < dtype->array->size; i++) {
+        Srt* child = new_integer_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_CHAR), 0);
+        vector_push(srt->children, new_srt(SRT_INIT, 1, child));
+    }
+
+    return srt;
+}
+
 Srt* resolve_zero_array_initializer(Resolver* resolver) {
     Srt* srt = new_srt(SRT_INIT, 0);
     Dtype* dtype = resolver->initialized_dtype;
@@ -267,6 +294,8 @@ Srt* resolve_scalar_initializer(Resolver* resolver) {
     if (ast->type == AST_INIT_LIST) resolver->ast = vector_at(ast->children, 0);
 
     Srt* srt = resolve_expr(resolver);
+    srt = convert_to_ptr_if_array(srt);
+    srt = convert_to_ptr_if_function(srt);
     if (!dtype_equals(dtype, srt->dtype)) {
         srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(dtype), 1, srt);
     }

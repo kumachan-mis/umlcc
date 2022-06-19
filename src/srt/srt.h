@@ -56,7 +56,6 @@ typedef enum SrtType {
     SRT_IDENT_EXPR,
     SRT_INT_EXPR,
     SRT_CHAR_EXPR,
-    SRT_STRING_EXPR,
 } SrtType;
 
 typedef struct Srt {
@@ -64,8 +63,6 @@ typedef struct Srt {
     Dtype* dtype;
     char* ident_name;
     int value_int;
-    char* value_str;
-    int size_str;
     Vector* children;
 } Srt;
 
@@ -75,7 +72,6 @@ Srt* new_srt(SrtType type, int num_children, ...);
 Srt* new_dtyped_srt(SrtType type, Dtype* dtype, int num_children, ...);
 Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name);
 Srt* new_integer_srt(SrtType type, Dtype* dtype, int value);
-Srt* new_string_literal_srt(SrtType type, Dtype* dtype, char* value, int size);
 Srt* srt_copy(Srt* srt);
 void delete_srt(Srt* srt);
 
