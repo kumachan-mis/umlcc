@@ -89,6 +89,18 @@ Vector* gen_addr_x64code(X64gen* x64gen) {
     return codes;
 }
 
+Vector* gen_str_x64code(X64gen* x64gen) {
+    Vector* codes = new_vector(&t_string);
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    x64gen->index++;
+
+    ImmcOpe* immmc_dst = immc->inst->dst;
+    ImmcOpe* immc_src = immc->inst->fst_src;
+
+    liveseqs_next(x64gen->liveseqs);
+    return codes;
+}
+
 Vector* gen_store_x64code(X64gen* x64gen) {
     Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
