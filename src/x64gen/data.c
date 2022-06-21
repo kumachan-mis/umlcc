@@ -1,4 +1,5 @@
 #include "./data.h"
+#include "../common/util.h"
 #include "../immc/immc.h"
 #include "./util.h"
 
@@ -7,26 +8,28 @@ Vector* gen_data_x64code(X64gen* x64gen) {
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
-    X64DataType type = X64_DATA_ZERO;
     switch (immc->data->type) {
         case IMMC_DATA_BYTE:
-            type = X64_DATA_BYTE;
+            vector_push(codes, new_imm_data_x64(X64_DATA_BYTE, immc->data->imm_value));
             break;
         case IMMC_DATA_WORD:
-            type = X64_DATA_WORD;
+            vector_push(codes, new_imm_data_x64(X64_DATA_WORD, immc->data->imm_value));
             break;
         case IMMC_DATA_LONG:
-            type = X64_DATA_LONG;
+            vector_push(codes, new_imm_data_x64(X64_DATA_LONG, immc->data->imm_value));
             break;
         case IMMC_DATA_QUAD:
-            type = X64_DATA_QUAD;
+            vector_push(codes, new_imm_data_x64(X64_DATA_QUAD, immc->data->imm_value));
             break;
         case IMMC_DATA_ZERO:
-            type = X64_DATA_ZERO;
+            vector_push(codes, new_imm_data_x64(X64_DATA_ZERO, immc->data->imm_value));
             break;
+        case IMMC_DATA_STR: {
+            char* value_str = copy_charmem(immc->data->str_value, immc->data->str_size);
+            vector_push(codes, new_str_data_x64(X64_DATA_STR, value_str, immc->data->str_size));
+            break;
+        }
     }
-
-    vector_push(codes, new_data_x64(type, immc->data->imm_value));
 
     liveseqs_next(x64gen->liveseqs);
     return codes;

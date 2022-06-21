@@ -92,7 +92,7 @@ Srt* srt_copy(Srt* srt) {
     if (srt->value_str != NULL) {
         int size = strlen(srt->value_str) + 1;
         if (srt->dtype != NULL && srt->dtype->type == DTYPE_ARRAY) size = srt->dtype->array->size;
-        copied_srt->value_str = copy_memory(srt->value_str, size * sizeof(char));
+        copied_srt->value_str = copy_charmem(srt->value_str, size * sizeof(char));
     }
     copied_srt->children = vector_copy(srt->children);
     return copied_srt;

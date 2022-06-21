@@ -104,8 +104,9 @@ ImmcOpe* immcope_copy(ImmcOpe* immcope) {
     copied_immcope->imm_value = immcope->imm_value;
     copied_immcope->str_value = NULL;
     if (immcope->str_value != NULL) {
-        copied_immcope->str_value = copy_memory(immcope->str_value, immcope->str_size);
+        copied_immcope->str_value = copy_charmem(immcope->str_value, immcope->str_size);
     }
+    copied_immcope->str_size = immcope->str_size;
     copied_immcope->reg_id = immcope->reg_id;
     copied_immcope->mem_offset = immcope->mem_offset;
     copied_immcope->label_name = NULL;
@@ -135,6 +136,12 @@ char* immcope_tostring(ImmcOpe* immcope) {
         case IMMC_OPERAND_LABEL:
             sprintf(ope_str, "%s", immcope->label_name);
             break;
+        case IMMC_OPERAND_STR: {
+            char* charmem_str = charmem_tostring(immcope->str_value, immcope->str_size);
+            sprintf(ope_str, "%s", charmem_str);
+            free(charmem_str);
+            break;
+        }
     }
     ope_str = realloc(ope_str, (strlen(ope_str) + 1) * sizeof(char));
     return ope_str;

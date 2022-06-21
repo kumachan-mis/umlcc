@@ -29,7 +29,7 @@ ImmcData* immcdata_copy(ImmcData* immcdata) {
     copied_immcdata->imm_value = immcdata->imm_value;
     copied_immcdata->str_value = NULL;
     if (immcdata->str_value != NULL) {
-        copied_immcdata->str_value = copy_memory(immcdata->str_value, immcdata->str_size);
+        copied_immcdata->str_value = copy_charmem(immcdata->str_value, immcdata->str_size);
     }
     copied_immcdata->str_size = immcdata->str_size;
     return copied_immcdata;
@@ -54,6 +54,12 @@ char* immcdata_tostring(ImmcData* immcdata) {
         case IMMC_DATA_ZERO:
             sprintf(data_str, "\tzero %d\n", immcdata->imm_value);
             break;
+        case IMMC_DATA_STR: {
+            char* charmem_str = charmem_tostring(immcdata->str_value, immcdata->str_size);
+            sprintf(data_str, "\tstring %s\n", charmem_str);
+            free(charmem_str);
+            break;
+        }
     }
 
     data_str = realloc(data_str, (strlen(data_str) + 1) * sizeof(char));

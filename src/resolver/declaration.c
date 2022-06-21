@@ -261,7 +261,7 @@ Srt* resolve_string_initializer(Resolver* resolver) {
     if (literal_ast->type == AST_INIT_LIST) literal_ast = vector_at(literal_ast->children, 0);
     if (literal_ast->type == AST_STRING_EXPR) {
         int src_size = literal_ast->size_str, dst_size = dtype->array->size;
-        char* value_str = copy_memory_zero_padding(literal_ast->value_str, src_size, dst_size);
+        char* value_str = copy_charmem_zero_padding(literal_ast->value_str, src_size, dst_size);
         Srt* srt = new_string_literal_srt(SRT_STRING_EXPR, dtype_copy(dtype), value_str);
         return new_srt(SRT_INIT, 1, srt);
     }
