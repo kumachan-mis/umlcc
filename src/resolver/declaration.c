@@ -266,7 +266,7 @@ Srt* resolve_string_initializer(Resolver* resolver) {
         return new_srt(SRT_INIT, 1, srt);
     }
 
-    Srt* array_init_srt = resolve_array_initializer(resolver);
+    return resolve_array_initializer(resolver);
 }
 
 Srt* resolve_zero_array_initializer(Resolver* resolver) {

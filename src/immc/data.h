@@ -7,14 +7,18 @@ typedef enum ImmcDataType {
     IMMC_DATA_LONG,
     IMMC_DATA_QUAD,
     IMMC_DATA_ZERO,
+    IMMC_DATA_STR,
 } ImmcDataType;
 
 typedef struct ImmcData {
     ImmcDataType type;
-    int value;
+    int imm_value;
+    char* str_value;
+    int str_size;
 } ImmcData;
 
-ImmcData* new_immcdata(ImmcDataType type, int value);
+ImmcData* new_imm_immcdata(ImmcDataType type, int value);
+ImmcData* new_str_immcdata(ImmcDataType type, char* value, int size);
 ImmcData* immcdata_copy(ImmcData* immcdata);
 char* immcdata_tostring(ImmcData* immcdata);
 void delete_immcdata(ImmcData* immcdata);

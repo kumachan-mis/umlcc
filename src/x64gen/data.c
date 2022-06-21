@@ -26,7 +26,7 @@ Vector* gen_data_x64code(X64gen* x64gen) {
             break;
     }
 
-    vector_push(codes, new_data_x64(type, immc->data->value));
+    vector_push(codes, new_data_x64(type, immc->data->imm_value));
 
     liveseqs_next(x64gen->liveseqs);
     return codes;

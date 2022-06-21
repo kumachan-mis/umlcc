@@ -34,7 +34,7 @@ Vector* gen_global_init_decl_immcode(Immcgen* immcgen) {
     vector_push(codes, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, label_name));
 
     if (vector_size(immcgen->srt->children) == 1) {
-        vector_push(codes, new_data_immc(IMMC_DATA_ZERO, dtype_size(decl_srt->dtype)));
+        vector_push(codes, new_imm_data_immc(IMMC_DATA_ZERO, dtype_size(decl_srt->dtype)));
         return codes;
     }
 
@@ -99,6 +99,15 @@ Vector* gen_initializer_immcode(Immcgen* immcgen) {
 }
 
 Vector* gen_array_initializer_immcode(Immcgen* immcgen) {
+    Vector* gen_global_string_initializer_immcode();
+    Vector* gen_local_string_initializer_immcode();
+
+    Srt* srt = vector_at(immcgen->srt->children, 0);
+    if (srt->type == SRT_STRING_EXPR) {
+        if (immcgen->local_table == NULL) return gen_global_string_initializer_immcode(immcgen);
+        return gen_local_string_initializer_immcode(immcgen);
+    }
+
     Vector* codes = new_vector(&t_immc);
     Dtype* dtype = immcgen->initialized_dtype;
 
@@ -107,6 +116,16 @@ Vector* gen_array_initializer_immcode(Immcgen* immcgen) {
         append_child_immcode(immcgen, codes, i);
     }
 
+    return codes;
+}
+
+Vector* gen_global_string_initializer_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+    return codes;
+}
+
+Vector* gen_local_string_initializer_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
     return codes;
 }
 
@@ -129,7 +148,7 @@ Vector* gen_global_scalar_initializer_immcode(Immcgen* immcgen) {
     }
 
     // TODO: support expression for global initializer
-    vector_push(codes, new_data_immc(type, srt->value_int));
+    vector_push(codes, new_imm_data_immc(type, srt->value_int));
 
     return codes;
 }
