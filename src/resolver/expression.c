@@ -338,7 +338,7 @@ Srt* resolve_primary_expr(Resolver* resolver) {
             Srt* decl_srt = new_identifier_srt(SRT_DECL, decl_dtype, literal_name);
 
             Srt* init_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->size_str);
-            char* value_str = copy_memory(ast->value_str, ast->size_str * sizeof(char));
+            char* value_str = copy_memory(ast->value_str, ast->size_str);
             Srt* literal_srt = new_string_literal_srt(SRT_STRING_EXPR, init_dtype, value_str);
             Srt* init_srt = new_srt(SRT_INIT, 1, literal_srt);
 

@@ -1,10 +1,12 @@
 #include "./declaration.h"
 #include "../common/type.h"
+#include "../common/util.h"
 #include "./conversion.h"
 #include "./expression.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 Srt* resolve_decl(Resolver* resolver) {
     Srt* srt = NULL;
@@ -253,25 +255,18 @@ Srt* resolve_array_initializer(Resolver* resolver) {
 }
 
 Srt* resolve_string_initializer(Resolver* resolver) {
-    Ast* literal_ast = resolver->ast;
-    if (literal_ast->type == AST_INIT_LIST) literal_ast = vector_at(literal_ast->children, 0);
-    if (literal_ast->type != AST_STRING_EXPR) return resolve_array_initializer(resolver);
-
-    Srt* srt = new_srt(SRT_INIT, 0);
     Dtype* dtype = resolver->initialized_dtype;
 
-    for (int i = 0; i < literal_ast->size_str - 1; i++) {
-        int c = literal_ast->value_str[i];
-        Srt* child = new_integer_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_CHAR), c);
-        vector_push(srt->children, new_srt(SRT_INIT, 1, child));
+    Ast* literal_ast = resolver->ast;
+    if (literal_ast->type == AST_INIT_LIST) literal_ast = vector_at(literal_ast->children, 0);
+    if (literal_ast->type == AST_STRING_EXPR) {
+        int src_size = literal_ast->size_str, dst_size = dtype->array->size;
+        char* value_str = copy_memory_zero_padding(literal_ast->value_str, src_size, dst_size);
+        Srt* srt = new_string_literal_srt(SRT_STRING_EXPR, dtype_copy(dtype), value_str);
+        return new_srt(SRT_INIT, 1, srt);
     }
 
-    for (int i = literal_ast->size_str - 1; i < dtype->array->size; i++) {
-        Srt* child = new_integer_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_CHAR), 0);
-        vector_push(srt->children, new_srt(SRT_INIT, 1, child));
-    }
-
-    return srt;
+    Srt* array_init_srt = resolve_array_initializer(resolver);
 }
 
 Srt* resolve_zero_array_initializer(Resolver* resolver) {

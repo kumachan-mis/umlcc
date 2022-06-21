@@ -14,3 +14,10 @@ void* copy_memory(void* src, int size) {
     memcpy(dst, src, size);
     return dst;
 }
+
+void* copy_memory_zero_padding(void* src, int src_size, int dst_size) {
+    void* dst = malloc(dst_size);
+    memset(dst, 0, dst_size);
+    memcpy(dst, src, src_size);
+    return dst;
+}
