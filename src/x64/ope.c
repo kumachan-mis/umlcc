@@ -6,6 +6,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+X64Ope* new_suffix_x64ope(X64Suffix suffix) {
+    X64Ope* x64ope = malloc(sizeof(X64Ope));
+    x64ope->type = X64_OPERAND_SUFFIX;
+    x64ope->suffix = suffix;
+    x64ope->signed_value = -1LL;
+    x64ope->unsigned_value = 0LL;
+    x64ope->reg_id = -1;
+    x64ope->mem_offset = -1;
+    x64ope->label_name = NULL;
+    return x64ope;
+}
+
 X64Ope* new_signed_x64ope(X64Suffix suffix, long long signed_value) {
     X64Ope* x64ope = malloc(sizeof(X64Ope));
     x64ope->type = X64_OPERAND_SIGNED;
@@ -99,18 +111,6 @@ X64Ope* new_jlabel_x64ope(char* label_name) {
     x64ope->reg_id = -1;
     x64ope->mem_offset = -1;
     x64ope->label_name = label_name;
-    return x64ope;
-}
-
-X64Ope* new_suffix_x64ope(X64Suffix suffix) {
-    X64Ope* x64ope = malloc(sizeof(X64Ope));
-    x64ope->type = X64_OPERAND_SUFFIX;
-    x64ope->suffix = suffix;
-    x64ope->signed_value = -1LL;
-    x64ope->unsigned_value = 0LL;
-    x64ope->reg_id = -1;
-    x64ope->mem_offset = -1;
-    x64ope->label_name = NULL;
     return x64ope;
 }
 
