@@ -6,11 +6,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-X64Ope* new_imm_x64ope(X64Suffix suffix, int imm_value) {
+X64Ope* new_signed_x64ope(X64Suffix suffix, long long signed_value) {
     X64Ope* x64ope = malloc(sizeof(X64Ope));
-    x64ope->type = X64_OPERAND_IMM;
+    x64ope->type = X64_OPERAND_SIGNED;
     x64ope->suffix = suffix;
-    x64ope->imm_value = imm_value;
+    x64ope->signed_value = signed_value;
+    x64ope->unsigned_value = 0LL;
+    x64ope->reg_id = -1;
+    x64ope->mem_offset = -1;
+    x64ope->label_name = NULL;
+    return x64ope;
+}
+
+X64Ope* new_unsigned_x64ope(X64Suffix suffix, unsigned long long unsigned_value) {
+    X64Ope* x64ope = malloc(sizeof(X64Ope));
+    x64ope->type = X64_OPERAND_SIGNED;
+    x64ope->suffix = suffix;
+    x64ope->signed_value = -1LL;
+    x64ope->unsigned_value = unsigned_value;
     x64ope->reg_id = -1;
     x64ope->mem_offset = -1;
     x64ope->label_name = NULL;
@@ -21,7 +34,8 @@ X64Ope* new_reg_x64ope(X64Suffix suffix, int reg_id) {
     X64Ope* x64ope = malloc(sizeof(X64Ope));
     x64ope->type = X64_OPERAND_REG;
     x64ope->suffix = suffix;
-    x64ope->imm_value = -1;
+    x64ope->signed_value = -1LL;
+    x64ope->unsigned_value = 0LL;
     x64ope->reg_id = reg_id;
     x64ope->mem_offset = -1;
     x64ope->label_name = NULL;
@@ -32,7 +46,8 @@ X64Ope* new_ptr_x64ope(int reg_id) {
     X64Ope* x64ope = malloc(sizeof(X64Ope));
     x64ope->type = X64_OPERAND_PTR;
     x64ope->suffix = X64_SUFFIX_QUAD;
-    x64ope->imm_value = -1;
+    x64ope->signed_value = -1LL;
+    x64ope->unsigned_value = 0LL;
     x64ope->reg_id = reg_id;
     x64ope->mem_offset = -1;
     x64ope->label_name = NULL;
@@ -43,7 +58,8 @@ X64Ope* new_jptr_x64ope(int reg_id) {
     X64Ope* x64ope = malloc(sizeof(X64Ope));
     x64ope->type = X64_OPERAND_JPTR;
     x64ope->suffix = X64_SUFFIX_QUAD;
-    x64ope->imm_value = -1;
+    x64ope->signed_value = -1LL;
+    x64ope->unsigned_value = 0LL;
     x64ope->reg_id = reg_id;
     x64ope->mem_offset = -1;
     x64ope->label_name = NULL;
@@ -54,7 +70,8 @@ X64Ope* new_mem_x64ope(int mem_offset) {
     X64Ope* x64ope = malloc(sizeof(X64Ope));
     x64ope->type = X64_OPERAND_MEM;
     x64ope->suffix = X64_SUFFIX_NONE;
-    x64ope->imm_value = -1;
+    x64ope->signed_value = -1LL;
+    x64ope->unsigned_value = 0LL;
     x64ope->reg_id = -1;
     x64ope->mem_offset = mem_offset;
     x64ope->label_name = NULL;
@@ -65,7 +82,8 @@ X64Ope* new_label_x64ope(char* label_name) {
     X64Ope* x64ope = malloc(sizeof(X64Ope));
     x64ope->type = X64_OPERAND_LABEL;
     x64ope->suffix = X64_SUFFIX_NONE;
-    x64ope->imm_value = -1;
+    x64ope->signed_value = -1LL;
+    x64ope->unsigned_value = 0LL;
     x64ope->reg_id = -1;
     x64ope->mem_offset = -1;
     x64ope->label_name = label_name;
@@ -76,7 +94,8 @@ X64Ope* new_jlabel_x64ope(char* label_name) {
     X64Ope* x64ope = malloc(sizeof(X64Ope));
     x64ope->type = X64_OPERAND_JLABEL;
     x64ope->suffix = X64_SUFFIX_NONE;
-    x64ope->imm_value = -1;
+    x64ope->signed_value = -1LL;
+    x64ope->unsigned_value = 0LL;
     x64ope->reg_id = -1;
     x64ope->mem_offset = -1;
     x64ope->label_name = label_name;
@@ -87,7 +106,8 @@ X64Ope* new_suffix_x64ope(X64Suffix suffix) {
     X64Ope* x64ope = malloc(sizeof(X64Ope));
     x64ope->type = X64_OPERAND_SUFFIX;
     x64ope->suffix = suffix;
-    x64ope->imm_value = -1;
+    x64ope->signed_value = -1LL;
+    x64ope->unsigned_value = 0LL;
     x64ope->reg_id = -1;
     x64ope->mem_offset = -1;
     x64ope->label_name = NULL;
@@ -98,7 +118,8 @@ X64Ope* x64ope_copy(X64Ope* x64ope) {
     X64Ope* copied_x64ope = malloc(sizeof(X64Ope));
     copied_x64ope->type = x64ope->type;
     copied_x64ope->suffix = x64ope->suffix;
-    copied_x64ope->imm_value = x64ope->imm_value;
+    copied_x64ope->signed_value = x64ope->signed_value;
+    copied_x64ope->unsigned_value = x64ope->unsigned_value;
     copied_x64ope->reg_id = x64ope->reg_id;
     copied_x64ope->mem_offset = x64ope->mem_offset;
     copied_x64ope->label_name = NULL;
@@ -110,8 +131,11 @@ char* x64ope_tostring(X64Ope* x64ope) {
     char* ope_str = malloc(50 * sizeof(char));
 
     switch (x64ope->type) {
-        case X64_OPERAND_IMM:
-            sprintf(ope_str, "$%d", x64ope->imm_value);
+        case X64_OPERAND_SIGNED:
+            sprintf(ope_str, "$%lld", x64ope->signed_value);
+            break;
+        case X64_OPERAND_UNSIGNED:
+            sprintf(ope_str, "$%lld", x64ope->signed_value);
             break;
         case X64_OPERAND_REG:
             sprintf(ope_str, "%s", reg_name(x64ope->reg_id, x64ope->suffix));
