@@ -2,6 +2,7 @@
 #include "../immc/immc.h"
 #include "./util.h"
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -97,10 +98,53 @@ Vector* gen_str_x64code(X64gen* x64gen) {
     ImmcOpe* immmc_dst = immc->inst->dst;
     ImmcOpe* immc_src = immc->inst->fst_src;
 
-    for (int i = 0; i < immc_src->str_size; i++) {
-        X64Ope* dst = new_mem_x64ope(immmc_dst->mem_offset - i);
-        X64Ope* src = new_signed_x64ope(X64_SUFFIX_BYTE, immc_src->str_value[i]);
-        vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
+    int mem_offset = immmc_dst->mem_offset;
+    int index_offset = 0;
+
+    int tmp_reg_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
+    int unit_size = x64suffix_tosize(X64_SUFFIX_QUAD);
+
+    while (index_offset + unit_size < immc_src->str_size) {
+        unsigned long long unit_value = 0ULL;
+        for (int i = 0; i < unit_size; i++) {
+            char c = immc_src->str_value[index_offset + i];
+            unit_value = (unit_value << CHAR_BIT) | c;
+        }
+
+        X64Ope* imm_dst = new_reg_x64ope(X64_SUFFIX_QUAD, tmp_reg_id);
+        X64Ope* imm_src = new_unsigned_x64ope(X64_SUFFIX_QUAD, unit_value);
+        vector_push(codes, new_inst_x64(X64_INST_MOVABSX, imm_src, imm_dst));
+
+        X64Ope* mem_dst = new_mem_x64ope(mem_offset);
+        X64Ope* mem_src = new_reg_x64ope(X64_SUFFIX_QUAD, tmp_reg_id);
+        vector_push(codes, new_inst_x64(X64_INST_MOVX, mem_src, mem_dst));
+
+        mem_offset -= unit_size;
+        index_offset += unit_size;
+    }
+
+    int num_rest_bytes = immc_src->str_size - index_offset;
+    switch (num_rest_bytes) {
+        case 0:
+            break;
+        default: {
+            mem_offset = immmc_dst->mem_offset - immc_src->str_size + unit_size;
+            index_offset = immc_src->str_size - unit_size;
+            unsigned long long unit_value = 0ULL;
+            for (int i = 0; i < unit_size; i++) {
+                char c = immc_src->str_value[index_offset + i];
+                unit_value = (unit_value << CHAR_BIT) | c;
+            }
+
+            X64Ope* imm_dst = new_reg_x64ope(X64_SUFFIX_QUAD, tmp_reg_id);
+            X64Ope* imm_src = new_unsigned_x64ope(X64_SUFFIX_QUAD, unit_value);
+            vector_push(codes, new_inst_x64(X64_INST_MOVABSX, imm_src, imm_dst));
+
+            X64Ope* mem_dst = new_mem_x64ope(mem_offset);
+            X64Ope* mem_src = new_reg_x64ope(X64_SUFFIX_QUAD, tmp_reg_id);
+            vector_push(codes, new_inst_x64(X64_INST_MOVX, mem_src, mem_dst));
+            break;
+        }
     }
 
     liveseqs_next(x64gen->liveseqs);

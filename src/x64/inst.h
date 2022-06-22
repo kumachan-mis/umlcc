@@ -7,6 +7,7 @@ typedef enum X64InstType {
     // data transfar instructions
     X64_INST_MOVX,
     X64_INST_MOVSXX,
+    X64_INST_MOVABSX,
     X64_INST_LEAX,
     X64_INST_CXTX,
     X64_INST_CXTD,

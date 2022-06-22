@@ -5,9 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* x64_inst_formats[] = {"mov%c", "movs%c%c", "lea%c",  "c%ct%c", "c%ctd", "push%c", "pop%c",
-                            "add%c", "sub%c",    "imul%c", "idiv%c", "sal%c", "sar%c",  "cmp%c",
-                            "sete",  "setne",    "jmp",    "je",     "jne",   "call",   "ret"};
+char* x64_inst_formats[] = {"mov%c",  "movs%c%c", "movabs%c", "lea%c", "c%ct%c", "c%ctd",
+                            "push%c", "pop%c",    "add%c",    "sub%c", "imul%c", "idiv%c",
+                            "sal%c",  "sar%c",    "cmp%c",    "sete",  "setne",  "jmp",
+                            "je",     "jne",      "call",     "ret"};
 
 X64Inst* new_x64inst(X64InstType type, X64Ope* src, X64Ope* dst) {
     X64Inst* x64inst = malloc(sizeof(X64Inst));
@@ -77,6 +78,7 @@ char* x64instcode_tostring(X64Inst* x64inst) {
 
         // one-suffix instruction
         case X64_INST_MOVX:
+        case X64_INST_MOVABSX:
         case X64_INST_LEAX:
         case X64_INST_CXTD:
         case X64_INST_PUSHX:
