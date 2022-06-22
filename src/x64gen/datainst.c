@@ -97,6 +97,12 @@ Vector* gen_str_x64code(X64gen* x64gen) {
     ImmcOpe* immmc_dst = immc->inst->dst;
     ImmcOpe* immc_src = immc->inst->fst_src;
 
+    for (int i = 0; i < immc_src->str_size; i++) {
+        X64Ope* dst = new_mem_x64ope(immmc_dst->mem_offset - i);
+        X64Ope* src = new_imm_x64ope(X64_SUFFIX_BYTE, immc_src->str_value[i]);
+        vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
+    }
+
     liveseqs_next(x64gen->liveseqs);
     return codes;
 }
