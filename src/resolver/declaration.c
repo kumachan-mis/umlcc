@@ -1,6 +1,5 @@
 #include "./declaration.h"
 #include "../common/type.h"
-#include "../common/util.h"
 #include "./conversion.h"
 #include "./expression.h"
 
@@ -260,9 +259,9 @@ Srt* resolve_string_initializer(Resolver* resolver) {
     Ast* literal_ast = resolver->ast;
     if (literal_ast->type == AST_INIT_LIST) literal_ast = vector_at(literal_ast->children, 0);
     if (literal_ast->type == AST_STRING_EXPR) {
-        int src_size = literal_ast->size_str, dst_size = dtype->array->size;
-        char* value_str = copy_charmem_zero_padding(literal_ast->value_str, src_size, dst_size);
-        Srt* srt = new_string_literal_srt(SRT_STRING_EXPR, dtype_copy(dtype), value_str);
+        int size = dtype->array->size;
+        StringLiteral* sliteral = sliteral_zero_padding_copy(literal_ast->sliteral, size);
+        Srt* srt = new_sliteral_srt(SRT_STRING_EXPR, dtype_copy(dtype), sliteral);
         return new_srt(SRT_INIT, 1, srt);
     }
 

@@ -25,11 +25,11 @@ Immc* new_imm_data_immc(ImmcDataType type, int value) {
     return immc;
 }
 
-Immc* new_str_data_immc(ImmcDataType type, char* value, int size) {
+Immc* new_str_data_immc(ImmcDataType type, StringLiteral* sliteral) {
     Immc* immc = malloc(sizeof(Immc));
     immc->type = IMMC_DATA;
     immc->inst = NULL;
-    immc->data = new_str_immcdata(type, value, size);
+    immc->data = new_str_immcdata(type, sliteral);
     immc->label = NULL;
     return immc;
 }

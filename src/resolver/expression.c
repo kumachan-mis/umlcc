@@ -332,14 +332,16 @@ Srt* resolve_primary_expr(Resolver* resolver) {
         case AST_CHAR_EXPR:
             return new_integer_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT), ast->value_int);
         case AST_STRING_EXPR: {
-            resolver->string_literal_id++;
-            char* literal_name = create_string_literal_name(resolver->string_literal_id);
-            Dtype* decl_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->size_str);
+            int size = ast->sliteral->size;
+
+            resolver->sliteral_id++;
+            char* literal_name = create_sliteral_name(resolver->sliteral_id);
+            Dtype* decl_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), size);
             Srt* decl_srt = new_identifier_srt(SRT_DECL, decl_dtype, literal_name);
 
-            Dtype* init_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->size_str);
-            char* value_str = copy_charmem(ast->value_str, ast->size_str);
-            Srt* literal_srt = new_string_literal_srt(SRT_STRING_EXPR, init_dtype, value_str);
+            Dtype* init_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), size);
+            StringLiteral* sliteral = sliteral_copy(ast->sliteral);
+            Srt* literal_srt = new_sliteral_srt(SRT_STRING_EXPR, init_dtype, sliteral);
             Srt* init_srt = new_srt(SRT_INIT, 1, literal_srt);
 
             Srt* srt = new_srt(SRT_DECL_LIST, 1, new_srt(SRT_INIT_DECL, 2, decl_srt, init_srt));

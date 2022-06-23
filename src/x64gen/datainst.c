@@ -104,10 +104,10 @@ Vector* gen_str_x64code(X64gen* x64gen) {
     int tmp_reg_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
     int unit_size = x64suffix_tosize(X64_SUFFIX_QUAD);
 
-    while (index_offset + unit_size < immc_src->str_size) {
+    while (index_offset + unit_size < immc_src->sliteral->size) {
         unsigned long long unit_value = 0ULL;
         for (int i = 0; i < unit_size; i++) {
-            unsigned long long char_bits = immc_src->str_value[index_offset + i];
+            unsigned long long char_bits = immc_src->sliteral->value[index_offset + i];
             unit_value = (char_bits << (i * CHAR_BIT)) | unit_value;
         }
 
@@ -123,7 +123,7 @@ Vector* gen_str_x64code(X64gen* x64gen) {
         index_offset += unit_size;
     }
 
-    int num_rest_bytes = immc_src->str_size - index_offset;
+    int num_rest_bytes = immc_src->sliteral->size - index_offset;
     switch (num_rest_bytes) {
         case 0:
             break;
@@ -133,7 +133,7 @@ Vector* gen_str_x64code(X64gen* x64gen) {
             X64Suffix suffix = x64suffix_get(num_rest_bytes);
             unsigned long long unit_value = 0ULL;
             for (int i = 0; i < num_rest_bytes; i++) {
-                unsigned long long char_bits = immc_src->str_value[index_offset + i];
+                unsigned long long char_bits = immc_src->sliteral->value[index_offset + i];
                 unit_value = (char_bits << (i * CHAR_BIT)) | unit_value;
             }
 
@@ -143,11 +143,11 @@ Vector* gen_str_x64code(X64gen* x64gen) {
             break;
         }
         default: {
-            mem_offset = immmc_dst->mem_offset - immc_src->str_size + unit_size;
-            index_offset = immc_src->str_size - unit_size;
+            mem_offset = immmc_dst->mem_offset - immc_src->sliteral->size + unit_size;
+            index_offset = immc_src->sliteral->size - unit_size;
             unsigned long long unit_value = 0ULL;
             for (int i = 0; i < unit_size; i++) {
-                unsigned long long char_bits = immc_src->str_value[index_offset + i];
+                unsigned long long char_bits = immc_src->sliteral->value[index_offset + i];
                 unit_value = (char_bits << (i * CHAR_BIT)) | unit_value;
             }
 

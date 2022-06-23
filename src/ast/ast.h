@@ -2,6 +2,7 @@
 #define UMLCC_AST_H
 
 #include "../common/type.h"
+#include "../sliteral/sliteral.h"
 #include "../vector/vector.h"
 
 typedef enum AstType {
@@ -70,9 +71,8 @@ typedef struct Ast {
     AstType type;
     char* ident_name;
     int value_int;
+    StringLiteral* sliteral;
     Vector* children;
-    char* value_str;
-    int size_str;
 } Ast;
 
 extern BaseType t_ast;
@@ -80,7 +80,7 @@ extern BaseType t_ast;
 Ast* new_ast(AstType type, int num_children, ...);
 Ast* new_identifier_ast(AstType type, char* name);
 Ast* new_integer_ast(AstType type, int value);
-Ast* new_string_literal_ast(AstType type, char* value, int size);
+Ast* new_sliteral_ast(AstType type, StringLiteral* sliteral);
 Ast* ast_copy(Ast* ast);
 void delete_ast(Ast* ast);
 

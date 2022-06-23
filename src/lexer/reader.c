@@ -1,4 +1,5 @@
 #include "./reader.h"
+#include "../sliteral/sliteral.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -191,7 +192,7 @@ CToken* read_string_literal(Lexer* lexer) {
     value[length] = '\0';
 
     value = realloc(value, (length + 1) * sizeof(char));
-    return new_string_literal_ctoken(CTOKEN_STRING, value, (length + 1) * sizeof(char));
+    return new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(value, length + 1));
 }
 
 int read_escape_seqence(Lexer* lexer) {

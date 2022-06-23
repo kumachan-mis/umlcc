@@ -1,5 +1,4 @@
 #include "./srt.h"
-#include "../common/util.h"
 
 #include <stdarg.h>
 #include <stdlib.h>
@@ -16,7 +15,7 @@ Srt* new_srt(SrtType type, int num_children, ...) {
     srt->dtype = NULL;
     srt->ident_name = NULL;
     srt->value_int = -1;
-    srt->value_str = NULL;
+    srt->sliteral = NULL;
     srt->children = new_vector(&t_srt);
 
     va_list children;
@@ -35,7 +34,7 @@ Srt* new_dtyped_srt(SrtType type, Dtype* dtype, int num_children, ...) {
     srt->dtype = dtype;
     srt->ident_name = NULL;
     srt->value_int = -1;
-    srt->value_str = NULL;
+    srt->sliteral = NULL;
     srt->children = new_vector(&t_srt);
 
     va_list children;
@@ -54,7 +53,7 @@ Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name) {
     srt->dtype = dtype;
     srt->ident_name = ident_name;
     srt->value_int = -1;
-    srt->value_str = NULL;
+    srt->sliteral = NULL;
     srt->children = new_vector(&t_srt);
     return srt;
 }
@@ -65,18 +64,18 @@ Srt* new_integer_srt(SrtType type, Dtype* dtype, int value) {
     srt->dtype = dtype;
     srt->ident_name = NULL;
     srt->value_int = value;
-    srt->value_str = NULL;
+    srt->sliteral = NULL;
     srt->children = new_vector(&t_srt);
     return srt;
 }
 
-Srt* new_string_literal_srt(SrtType type, Dtype* dtype, char* value) {
+Srt* new_sliteral_srt(SrtType type, Dtype* dtype, StringLiteral* sliteral) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
     srt->dtype = dtype;
     srt->ident_name = NULL;
     srt->value_int = -1;
-    srt->value_str = value;
+    srt->sliteral = sliteral;
     srt->children = new_vector(&t_srt);
     return srt;
 }
@@ -88,12 +87,8 @@ Srt* srt_copy(Srt* srt) {
     copied_srt->ident_name = NULL;
     if (srt->ident_name != NULL) copied_srt->ident_name = new_string(srt->ident_name);
     copied_srt->value_int = srt->value_int;
-    copied_srt->value_str = NULL;
-    if (srt->value_str != NULL) {
-        int size = strlen(srt->value_str) + 1;
-        if (srt->dtype != NULL && srt->dtype->type == DTYPE_ARRAY) size = srt->dtype->array->size;
-        copied_srt->value_str = copy_charmem(srt->value_str, size * sizeof(char));
-    }
+    copied_srt->sliteral = NULL;
+    if (srt->sliteral != NULL) copied_srt->sliteral = sliteral_copy(srt->sliteral);
     copied_srt->children = vector_copy(srt->children);
     return copied_srt;
 }
