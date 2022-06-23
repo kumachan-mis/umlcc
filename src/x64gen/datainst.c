@@ -107,8 +107,8 @@ Vector* gen_str_x64code(X64gen* x64gen) {
     while (index_offset + unit_size < immc_src->str_size) {
         unsigned long long unit_value = 0ULL;
         for (int i = 0; i < unit_size; i++) {
-            char c = immc_src->str_value[index_offset + i];
-            unit_value = (unit_value << CHAR_BIT) | c;
+            unsigned long long char_bits = immc_src->str_value[index_offset + i];
+            unit_value = (char_bits << (i * CHAR_BIT)) | unit_value;
         }
 
         X64Ope* imm_dst = new_reg_x64ope(X64_SUFFIX_QUAD, tmp_reg_id);
@@ -127,13 +127,28 @@ Vector* gen_str_x64code(X64gen* x64gen) {
     switch (num_rest_bytes) {
         case 0:
             break;
+        case 1:
+        case 2:
+        case 4: {
+            X64Suffix suffix = x64suffix_get(num_rest_bytes);
+            unsigned long long unit_value = 0ULL;
+            for (int i = 0; i < num_rest_bytes; i++) {
+                unsigned long long char_bits = immc_src->str_value[index_offset + i];
+                unit_value = (char_bits << (i * CHAR_BIT)) | unit_value;
+            }
+
+            X64Ope* dst = new_mem_x64ope(mem_offset);
+            X64Ope* src = new_unsigned_x64ope(suffix, unit_value);
+            vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
+            break;
+        }
         default: {
             mem_offset = immmc_dst->mem_offset - immc_src->str_size + unit_size;
             index_offset = immc_src->str_size - unit_size;
             unsigned long long unit_value = 0ULL;
             for (int i = 0; i < unit_size; i++) {
-                char c = immc_src->str_value[index_offset + i];
-                unit_value = (unit_value << CHAR_BIT) | c;
+                unsigned long long char_bits = immc_src->str_value[index_offset + i];
+                unit_value = (char_bits << (i * CHAR_BIT)) | unit_value;
             }
 
             X64Ope* imm_dst = new_reg_x64ope(X64_SUFFIX_QUAD, tmp_reg_id);
