@@ -56,7 +56,7 @@ CToken* ctoken_copy(CToken* ctoken) {
     copied_ctoken->value_int = ctoken->value_int;
     copied_ctoken->value_str = NULL;
     if (ctoken->value_str != NULL) {
-        copied_ctoken->value_str = copy_memory(ctoken->value_str, ctoken->size_str);
+        copied_ctoken->value_str = copy_charmem(ctoken->value_str, ctoken->size_str);
     }
     copied_ctoken->size_str = ctoken->size_str;
     return copied_ctoken;

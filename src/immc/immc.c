@@ -16,11 +16,20 @@ Immc* new_inst_immc(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* 
     return immc;
 }
 
-Immc* new_data_immc(ImmcDataType type, int value) {
+Immc* new_imm_data_immc(ImmcDataType type, int value) {
     Immc* immc = malloc(sizeof(Immc));
     immc->type = IMMC_DATA;
     immc->inst = NULL;
-    immc->data = new_immcdata(type, value);
+    immc->data = new_imm_immcdata(type, value);
+    immc->label = NULL;
+    return immc;
+}
+
+Immc* new_str_data_immc(ImmcDataType type, char* value, int size) {
+    Immc* immc = malloc(sizeof(Immc));
+    immc->type = IMMC_DATA;
+    immc->inst = NULL;
+    immc->data = new_str_immcdata(type, value, size);
     immc->label = NULL;
     return immc;
 }

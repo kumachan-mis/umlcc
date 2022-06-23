@@ -1,5 +1,6 @@
 #include "./declaration.h"
 #include "../common/type.h"
+#include "../common/util.h"
 #include "../dtype/dtype.h"
 #include "../immc/immc.h"
 #include "./util.h"
@@ -34,7 +35,7 @@ Vector* gen_global_init_decl_immcode(Immcgen* immcgen) {
     vector_push(codes, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, label_name));
 
     if (vector_size(immcgen->srt->children) == 1) {
-        vector_push(codes, new_data_immc(IMMC_DATA_ZERO, dtype_size(decl_srt->dtype)));
+        vector_push(codes, new_imm_data_immc(IMMC_DATA_ZERO, dtype_size(decl_srt->dtype)));
         return codes;
     }
 
@@ -99,6 +100,15 @@ Vector* gen_initializer_immcode(Immcgen* immcgen) {
 }
 
 Vector* gen_array_initializer_immcode(Immcgen* immcgen) {
+    Vector* gen_global_string_initializer_immcode();
+    Vector* gen_local_string_initializer_immcode();
+
+    Srt* srt = vector_at(immcgen->srt->children, 0);
+    if (srt->type == SRT_STRING_EXPR) {
+        if (immcgen->local_table == NULL) return gen_global_string_initializer_immcode(immcgen);
+        return gen_local_string_initializer_immcode(immcgen);
+    }
+
     Vector* codes = new_vector(&t_immc);
     Dtype* dtype = immcgen->initialized_dtype;
 
@@ -106,6 +116,33 @@ Vector* gen_array_initializer_immcode(Immcgen* immcgen) {
         immcgen->initialized_dtype = dtype->array->of_dtype;
         append_child_immcode(immcgen, codes, i);
     }
+
+    return codes;
+}
+
+Vector* gen_global_string_initializer_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+    Srt* srt = vector_at(immcgen->srt->children, 0);
+
+    int size = srt->dtype->array->size;
+    char* value_str = copy_charmem(srt->value_str, size);
+    vector_push(codes, new_str_data_immc(IMMC_DATA_STR, value_str, size));
+
+    return codes;
+}
+
+Vector* gen_local_string_initializer_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+    Srt* srt = vector_at(immcgen->srt->children, 0);
+
+    int size = srt->dtype->array->size;
+    char* value_str = copy_charmem(srt->value_str, size);
+
+    ImmcOpe* dst = new_mem_immcope(immcgen->initialized_offset);
+    ImmcOpe* src = new_str_immcope(value_str, size);
+
+    vector_push(codes, new_inst_immc(IMMC_INST_STR, dst, src, NULL));
+    immcgen->initialized_offset -= dtype_size(immcgen->initialized_dtype);
 
     return codes;
 }
@@ -129,7 +166,7 @@ Vector* gen_global_scalar_initializer_immcode(Immcgen* immcgen) {
     }
 
     // TODO: support expression for global initializer
-    vector_push(codes, new_data_immc(type, srt->value_int));
+    vector_push(codes, new_imm_data_immc(type, srt->value_int));
 
     return codes;
 }

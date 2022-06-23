@@ -69,7 +69,7 @@ Ast* ast_copy(Ast* ast) {
     if (ast->ident_name != NULL) copied_ast->ident_name = new_string(ast->ident_name);
     copied_ast->value_int = ast->value_int;
     copied_ast->value_str = NULL;
-    if (ast->value_str != NULL) copied_ast->value_str = copy_memory(ast->value_str, ast->size_str);
+    if (ast->value_str != NULL) copied_ast->value_str = copy_charmem(ast->value_str, ast->size_str);
     copied_ast->size_str = ast->size_str;
     copied_ast->children = vector_copy(ast->children);
     return copied_ast;

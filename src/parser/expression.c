@@ -239,7 +239,7 @@ Ast* parse_primary_expr(Parser* parser) {
             break;
         case CTOKEN_STRING: {
             parser->index++;
-            char* value_str = copy_memory(ctoken->value_str, ctoken->size_str);
+            char* value_str = copy_charmem(ctoken->value_str, ctoken->size_str);
             ast = new_string_literal_ast(AST_STRING_EXPR, value_str, ctoken->size_str);
             break;
         }

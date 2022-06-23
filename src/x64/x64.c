@@ -16,11 +16,20 @@ X64* new_inst_x64(X64InstType type, X64Ope* src, X64Ope* dst) {
     return x64;
 }
 
-X64* new_data_x64(X64DataType type, int value) {
+X64* new_imm_data_x64(X64DataType type, int value) {
     X64* x64 = malloc(sizeof(X64));
     x64->type = X64_DATA;
     x64->inst = NULL;
-    x64->data = new_x64data(type, value);
+    x64->data = new_imm_x64data(type, value);
+    x64->label = NULL;
+    return x64;
+}
+
+X64* new_str_data_x64(X64DataType type, char* value, int size) {
+    X64* x64 = malloc(sizeof(X64));
+    x64->type = X64_DATA;
+    x64->inst = NULL;
+    x64->data = new_str_x64data(type, value, size);
     x64->label = NULL;
     return x64;
 }

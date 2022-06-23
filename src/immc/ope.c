@@ -1,5 +1,6 @@
 #include "./ope.h"
 #include "../common/type.h"
+#include "../common/util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +11,8 @@ ImmcOpe* new_imm_immcope(ImmcSuffix suffix, int imm_value) {
     immcope->type = IMMC_OPERAND_IMM;
     immcope->suffix = suffix;
     immcope->imm_value = imm_value;
+    immcope->str_value = NULL;
+    immcope->str_size = -1;
     immcope->reg_id = -1;
     immcope->mem_offset = -1;
     immcope->label_name = NULL;
@@ -21,6 +24,8 @@ ImmcOpe* new_arg_immcope(ImmcSuffix suffix, int imm_value) {
     immcope->type = IMMC_OPERAND_ARG;
     immcope->suffix = suffix;
     immcope->imm_value = imm_value;
+    immcope->str_value = NULL;
+    immcope->str_size = -1;
     immcope->reg_id = -1;
     immcope->mem_offset = -1;
     immcope->label_name = NULL;
@@ -32,6 +37,8 @@ ImmcOpe* new_reg_immcope(ImmcSuffix suffix, int reg_id) {
     immcope->type = IMMC_OPERAND_REG;
     immcope->suffix = suffix;
     immcope->imm_value = -1;
+    immcope->str_value = NULL;
+    immcope->str_size = -1;
     immcope->reg_id = reg_id;
     immcope->mem_offset = -1;
     immcope->label_name = NULL;
@@ -43,6 +50,8 @@ ImmcOpe* new_ptr_immcope(int reg_id) {
     immcope->type = IMMC_OPERAND_PTR;
     immcope->suffix = IMMC_SUFFIX_QUAD;
     immcope->imm_value = -1;
+    immcope->str_value = NULL;
+    immcope->str_size = -1;
     immcope->reg_id = reg_id;
     immcope->mem_offset = -1;
     immcope->label_name = NULL;
@@ -54,6 +63,8 @@ ImmcOpe* new_mem_immcope(int mem_offset) {
     immcope->type = IMMC_OPERAND_MEM;
     immcope->suffix = IMMC_SUFFIX_NONE;
     immcope->imm_value = -1;
+    immcope->str_value = NULL;
+    immcope->str_size = -1;
     immcope->reg_id = -1;
     immcope->mem_offset = mem_offset;
     immcope->label_name = NULL;
@@ -65,9 +76,24 @@ ImmcOpe* new_label_immcope(char* label_name) {
     immcope->type = IMMC_OPERAND_LABEL;
     immcope->suffix = IMMC_SUFFIX_NONE;
     immcope->imm_value = -1;
+    immcope->str_value = NULL;
+    immcope->str_size = -1;
     immcope->reg_id = -1;
     immcope->mem_offset = -1;
     immcope->label_name = label_name;
+    return immcope;
+}
+
+ImmcOpe* new_str_immcope(char* str_value, int str_size) {
+    ImmcOpe* immcope = malloc(sizeof(ImmcOpe));
+    immcope->type = IMMC_OPERAND_STR;
+    immcope->suffix = IMMC_SUFFIX_NONE;
+    immcope->imm_value = -1;
+    immcope->str_value = str_value;
+    immcope->str_size = str_size;
+    immcope->reg_id = -1;
+    immcope->mem_offset = -1;
+    immcope->label_name = NULL;
     return immcope;
 }
 
@@ -76,6 +102,11 @@ ImmcOpe* immcope_copy(ImmcOpe* immcope) {
     copied_immcope->type = immcope->type;
     copied_immcope->suffix = immcope->suffix;
     copied_immcope->imm_value = immcope->imm_value;
+    copied_immcope->str_value = NULL;
+    if (immcope->str_value != NULL) {
+        copied_immcope->str_value = copy_charmem(immcope->str_value, immcope->str_size);
+    }
+    copied_immcope->str_size = immcope->str_size;
     copied_immcope->reg_id = immcope->reg_id;
     copied_immcope->mem_offset = immcope->mem_offset;
     copied_immcope->label_name = NULL;
@@ -105,6 +136,12 @@ char* immcope_tostring(ImmcOpe* immcope) {
         case IMMC_OPERAND_LABEL:
             sprintf(ope_str, "%s", immcope->label_name);
             break;
+        case IMMC_OPERAND_STR: {
+            char* charmem_str = charmem_tostring(immcope->str_value, immcope->str_size);
+            sprintf(ope_str, "%s", charmem_str);
+            free(charmem_str);
+            break;
+        }
     }
     ope_str = realloc(ope_str, (strlen(ope_str) + 1) * sizeof(char));
     return ope_str;

@@ -29,7 +29,7 @@ Vector* gen_setcmp_common_x64code(X64gen* x64gen, X64InstType type) {
             X64Suffix suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
             int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
             X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
-            X64Ope* snd_src = new_imm_x64ope(suffix, immc_snd_src->imm_value);
+            X64Ope* snd_src = new_signed_x64ope(suffix, immc_snd_src->imm_value);
             vector_push(codes, new_inst_x64(X64_INST_CMPX, snd_src, fst_src));
             break;
         }

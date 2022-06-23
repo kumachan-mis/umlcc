@@ -26,10 +26,10 @@ char* immclabel_tostring(ImmcLabel* immclabel) {
 
     switch (immclabel->visibility) {
         case IMMC_VIS_GLOBAL:
-            strcat(label_str, "global ");
+            strcat(label_str, "\tglobal\n");
             break;
         case IMMC_VIS_LOCAL:
-            strcat(label_str, "local ");
+            strcat(label_str, "\tlocal\n");
             break;
         default:
             break;
@@ -38,15 +38,18 @@ char* immclabel_tostring(ImmcLabel* immclabel) {
     switch (immclabel->type) {
         case IMMC_LABEL_FUNCTION:
             strcat(label_str, "function ");
+            strcat(label_str, immclabel->name);
+            strcat(label_str, ":\n");
             break;
         case IMMC_LABEL_VARIABLE:
             strcat(label_str, "variable ");
+            strcat(label_str, immclabel->name);
+            strcat(label_str, ":\n");
             break;
         default:
             break;
     }
-    strcat(label_str, immclabel->name);
-    strcat(label_str, ":\n");
+
     label_str = realloc(label_str, (strlen(label_str) + 1) * sizeof(char));
     return label_str;
 }

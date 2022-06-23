@@ -337,14 +337,10 @@ Srt* resolve_primary_expr(Resolver* resolver) {
             Dtype* decl_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->size_str);
             Srt* decl_srt = new_identifier_srt(SRT_DECL, decl_dtype, literal_name);
 
-            Srt* init_srt = new_srt(SRT_INIT, 0);
-            for (int i = 0; i < ast->size_str - 1; i++) {
-                int c = ast->value_str[i];
-                Srt* child = new_integer_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_CHAR), c);
-                vector_push(init_srt->children, new_srt(SRT_INIT, 1, child));
-            }
-            Srt* child = new_integer_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_CHAR), 0);
-            vector_push(init_srt->children, new_srt(SRT_INIT, 1, child));
+            Dtype* init_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->size_str);
+            char* value_str = copy_charmem(ast->value_str, ast->size_str);
+            Srt* literal_srt = new_string_literal_srt(SRT_STRING_EXPR, init_dtype, value_str);
+            Srt* init_srt = new_srt(SRT_INIT, 1, literal_srt);
 
             Srt* srt = new_srt(SRT_DECL_LIST, 1, new_srt(SRT_INIT_DECL, 2, decl_srt, init_srt));
             vector_push(resolver->trans_unit_srt->children, srt);
