@@ -13,7 +13,7 @@ typedef struct Resolver {
     Dtype* specifier_dtype;
     Dtype* initialized_dtype;
     int initialized_offset;
-    int string_literal_id;
+    int sliteral_id;
     Dtype* function_dtype;
 } Resolver;
 

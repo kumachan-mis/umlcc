@@ -1,5 +1,4 @@
 #include "./data.h"
-#include "../common/util.h"
 #include "../immc/immc.h"
 #include "./util.h"
 
@@ -25,8 +24,8 @@ Vector* gen_data_x64code(X64gen* x64gen) {
             vector_push(codes, new_imm_data_x64(X64_DATA_ZERO, immc->data->imm_value));
             break;
         case IMMC_DATA_STR: {
-            char* value_str = copy_charmem(immc->data->str_value, immc->data->str_size);
-            vector_push(codes, new_str_data_x64(X64_DATA_STR, value_str, immc->data->str_size));
+            StringLiteral* sliteral = sliteral_copy(immc->data->sliteral);
+            vector_push(codes, new_str_data_x64(X64_DATA_STR, sliteral));
             break;
         }
     }

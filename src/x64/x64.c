@@ -25,11 +25,11 @@ X64* new_imm_data_x64(X64DataType type, int value) {
     return x64;
 }
 
-X64* new_str_data_x64(X64DataType type, char* value, int size) {
+X64* new_str_data_x64(X64DataType type, StringLiteral* sliteral) {
     X64* x64 = malloc(sizeof(X64));
     x64->type = X64_DATA;
     x64->inst = NULL;
-    x64->data = new_str_x64data(type, value, size);
+    x64->data = new_str_x64data(type, sliteral);
     x64->label = NULL;
     return x64;
 }

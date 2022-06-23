@@ -1,6 +1,7 @@
 #ifndef UMLCC_IMMC_OPE_H
 #define UMLCC_IMMC_OPE_H
 
+#include "../sliteral/sliteral.h"
 #include "./suffix.h"
 
 typedef enum ImmcOpeType {
@@ -17,11 +18,10 @@ typedef struct ImmcOpe {
     ImmcOpeType type;
     ImmcSuffix suffix;
     int imm_value;
-    char* str_value;
-    int str_size;
     int reg_id;
     int mem_offset;
     char* label_name;
+    StringLiteral* sliteral;
 } ImmcOpe;
 
 ImmcOpe* new_imm_immcope(ImmcSuffix suffix, int imm_value);
@@ -30,7 +30,7 @@ ImmcOpe* new_reg_immcope(ImmcSuffix suffix, int reg_id);
 ImmcOpe* new_ptr_immcope(int reg_id);
 ImmcOpe* new_mem_immcope(int mem_offset);
 ImmcOpe* new_label_immcope(char* label_name);
-ImmcOpe* new_str_immcope(char* str_value, int str_size);
+ImmcOpe* new_str_immcope(StringLiteral* sliteral);
 ImmcOpe* immcope_copy(ImmcOpe* immcope);
 char* immcope_tostring(ImmcOpe* immcope);
 void delete_immcope(ImmcOpe* immcope);

@@ -1,5 +1,5 @@
 #include "./data.h"
-#include "../common/util.h"
+#include "../sliteral/sliteral.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,17 +9,15 @@ ImmcData* new_imm_immcdata(ImmcDataType type, int value) {
     ImmcData* immcdata = malloc(sizeof(ImmcData));
     immcdata->type = type;
     immcdata->imm_value = value;
-    immcdata->str_value = NULL;
-    immcdata->str_size = -1;
+    immcdata->sliteral = NULL;
     return immcdata;
 }
 
-ImmcData* new_str_immcdata(ImmcDataType type, char* value, int size) {
+ImmcData* new_str_immcdata(ImmcDataType type, StringLiteral* sliteral) {
     ImmcData* immcdata = malloc(sizeof(ImmcData));
     immcdata->type = type;
     immcdata->imm_value = -1;
-    immcdata->str_value = value;
-    immcdata->str_size = size;
+    immcdata->sliteral = sliteral;
     return immcdata;
 }
 
@@ -27,11 +25,8 @@ ImmcData* immcdata_copy(ImmcData* immcdata) {
     ImmcData* copied_immcdata = malloc(sizeof(ImmcData));
     copied_immcdata->type = immcdata->type;
     copied_immcdata->imm_value = immcdata->imm_value;
-    copied_immcdata->str_value = NULL;
-    if (immcdata->str_value != NULL) {
-        copied_immcdata->str_value = copy_charmem(immcdata->str_value, immcdata->str_size);
-    }
-    copied_immcdata->str_size = immcdata->str_size;
+    copied_immcdata->sliteral = NULL;
+    if (immcdata->sliteral != NULL) copied_immcdata->sliteral = sliteral_copy(immcdata->sliteral);
     return copied_immcdata;
 }
 
@@ -55,9 +50,9 @@ char* immcdata_tostring(ImmcData* immcdata) {
             sprintf(data_str, "\tzero %d\n", immcdata->imm_value);
             break;
         case IMMC_DATA_STR: {
-            char* charmem_str = charmem_tostring(immcdata->str_value, immcdata->str_size);
-            sprintf(data_str, "\tstring %s\n", charmem_str);
-            free(charmem_str);
+            char* display_str = sliteral_display_string(immcdata->sliteral);
+            sprintf(data_str, "\tstring %s\n", display_str);
+            free(display_str);
             break;
         }
     }

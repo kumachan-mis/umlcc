@@ -12,7 +12,7 @@ Resolver* new_resolver(Ast* ast) {
     resolver->specifier_dtype = NULL;
     resolver->initialized_dtype = NULL;
     resolver->initialized_offset = -1;
-    resolver->string_literal_id = -1;
+    resolver->sliteral_id = -1;
     resolver->function_dtype = NULL;
     return resolver;
 }

@@ -1,6 +1,5 @@
 #include "./declaration.h"
 #include "../common/type.h"
-#include "../common/util.h"
 #include "../dtype/dtype.h"
 #include "../immc/immc.h"
 #include "./util.h"
@@ -124,9 +123,8 @@ Vector* gen_global_string_initializer_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = vector_at(immcgen->srt->children, 0);
 
-    int size = srt->dtype->array->size;
-    char* value_str = copy_charmem(srt->value_str, size);
-    vector_push(codes, new_str_data_immc(IMMC_DATA_STR, value_str, size));
+    StringLiteral* sliteral = sliteral_copy(srt->sliteral);
+    vector_push(codes, new_str_data_immc(IMMC_DATA_STR, sliteral));
 
     return codes;
 }
@@ -135,11 +133,8 @@ Vector* gen_local_string_initializer_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = vector_at(immcgen->srt->children, 0);
 
-    int size = srt->dtype->array->size;
-    char* value_str = copy_charmem(srt->value_str, size);
-
     ImmcOpe* dst = new_mem_immcope(immcgen->initialized_offset);
-    ImmcOpe* src = new_str_immcope(value_str, size);
+    ImmcOpe* src = new_str_immcope(sliteral_copy(srt->sliteral));
 
     vector_push(codes, new_inst_immc(IMMC_INST_STR, dst, src, NULL));
     immcgen->initialized_offset -= dtype_size(immcgen->initialized_dtype);
