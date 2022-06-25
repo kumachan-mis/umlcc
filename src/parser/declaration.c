@@ -8,10 +8,38 @@
 #include <stdlib.h>
 
 Ast* parse_decl(Parser* parser) {
+    Ast* ast = new_ast(AST_DECL, 0);
+
     Ast* specifiers_ast = parse_decl_specifiers(parser);
+    vector_push(ast->children, specifiers_ast);
+
     Ast* init_list_ast = parse_init_declarator_list(parser);
+    vector_push(ast->children, init_list_ast);
+
     consume_ctoken(parser, CTOKEN_SEMICOLON);
-    return new_ast(AST_DECL, 2, specifiers_ast, init_list_ast);
+
+    int typedef_flag = 0;
+    int specifier_len = vector_size(specifiers_ast->children);
+    for (int i = 0; i < specifier_len; i++) {
+        Ast* specifier_ast = vector_at(specifiers_ast->children, i);
+        if (specifier_ast->type == AST_STG_TYPEDEF) {
+            typedef_flag = 1;
+            break;
+        }
+    }
+
+    if (!typedef_flag) return ast;
+
+    int init_len = vector_size(init_list_ast->children);
+    for (int i = 0; i < init_len; i++) {
+        Ast* init_declarator_ast = vector_at(init_list_ast->children, i);
+        Ast* declarator_ast = vector_at(init_declarator_ast->children, 0);
+        while (declarator_ast->type != AST_IDENT_DECLOR) {
+            declarator_ast = vector_at(declarator_ast->children, 0);
+        }
+        set_add(parser->typedef_names_set, new_string(declarator_ast->ident_name));
+    }
+    return ast;
 }
 
 Ast* parse_decl_specifiers(Parser* parser) {

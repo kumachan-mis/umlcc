@@ -25,7 +25,10 @@ int external_may_function_definition(Parser* parser) {
 
 int blockitem_may_decl(Parser* parser) {
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
-    return ctoken->type == CTOKEN_KEYWORD_CHAR || ctoken->type == CTOKEN_KEYWORD_INT;
+    return ctoken->type == CTOKEN_KEYWORD_TYPEDEF || ctoken->type == CTOKEN_KEYWORD_CHAR ||
+           ctoken->type == CTOKEN_KEYWORD_INT ||
+           (ctoken->type == CTOKEN_IDENT &&
+            set_contains(parser->typedef_names_set, ctoken->ident_name));
 }
 
 void consume_ctoken(Parser* parser, CTokenType ctoken_type) {
