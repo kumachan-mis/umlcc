@@ -7,6 +7,8 @@
 int external_may_function_definition(Parser* parser) {
     Ast* ast = NULL;
     int index = parser->index;
+    Set* typedef_names_set = set_copy(parser->typedef_names_set);
+    int typedef_flag = parser->typedef_flag;
 
     ast = parse_decl_specifiers(parser);
     delete_ast(ast);
@@ -14,7 +16,12 @@ int external_may_function_definition(Parser* parser) {
     delete_ast(ast);
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
+
+    delete_set(parser->typedef_names_set);
     parser->index = index;
+    parser->typedef_names_set = typedef_names_set;
+    parser->typedef_flag = typedef_flag;
+
     return ctoken->type == CTOKEN_LBRACE;
 }
 
