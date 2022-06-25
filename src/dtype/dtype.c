@@ -13,6 +13,7 @@ Dtype* new_integer_dtype(DtypeType type) {
     dtype->pointer = NULL;
     dtype->array = NULL;
     dtype->function = NULL;
+    dtype->definition = NULL;
     return dtype;
 }
 
@@ -22,6 +23,7 @@ Dtype* new_pointer_dtype(Dtype* to_dtype) {
     dtype->pointer = new_dpointer(to_dtype);
     dtype->array = NULL;
     dtype->function = NULL;
+    dtype->definition = NULL;
     return dtype;
 }
 
@@ -31,6 +33,7 @@ Dtype* new_array_dtype(Dtype* of_dtype, int size) {
     dtype->pointer = NULL;
     dtype->array = new_darray(of_dtype, size);
     dtype->function = NULL;
+    dtype->definition = NULL;
     return dtype;
 }
 
@@ -40,6 +43,17 @@ Dtype* new_function_dtype(Vector* params, Dtype* return_dtype) {
     dtype->pointer = NULL;
     dtype->array = NULL;
     dtype->function = new_dfunction(params, return_dtype);
+    dtype->definition = NULL;
+    return dtype;
+}
+
+Dtype* new_definition_dtype(Dtype* def_dtype) {
+    Dtype* dtype = malloc(sizeof(Dtype));
+    dtype->type = DTYPE_DEFINITION;
+    dtype->pointer = NULL;
+    dtype->array = NULL;
+    dtype->function = NULL;
+    dtype->definition = new_ddefinition(def_dtype);
     return dtype;
 }
 
@@ -53,6 +67,8 @@ Dtype* dtype_copy(Dtype* dtype) {
     if (dtype->array != NULL) copied_dtype->array = darray_copy(dtype->array);
     copied_dtype->function = NULL;
     if (dtype->function != NULL) copied_dtype->function = dfunction_copy(dtype->function);
+    copied_dtype->definition = NULL;
+    if (dtype->definition != NULL) copied_dtype->definition = ddefinition_copy(dtype->definition);
     return copied_dtype;
 }
 
@@ -62,6 +78,7 @@ Dtype* new_socket_pointer_dtype() {
     dtype->pointer = new_socket_dpointer();
     dtype->array = NULL;
     dtype->function = NULL;
+    dtype->definition = NULL;
     return dtype;
 }
 
@@ -71,6 +88,7 @@ Dtype* new_socket_array_dtype(int size) {
     dtype->pointer = NULL;
     dtype->array = new_socket_darray(size);
     dtype->function = NULL;
+    dtype->definition = NULL;
     return dtype;
 }
 
@@ -80,43 +98,63 @@ Dtype* new_socket_function_dtype(Vector* params) {
     dtype->pointer = NULL;
     dtype->array = NULL;
     dtype->function = new_socket_dfunction(params);
+    dtype->definition = NULL;
+    return dtype;
+}
+
+Dtype* new_socket_definition_dtype() {
+    Dtype* dtype = malloc(sizeof(Dtype));
+    dtype->type = DTYPE_DEFINITION;
+    dtype->pointer = NULL;
+    dtype->array = NULL;
+    dtype->function = NULL;
+    dtype->definition = new_socket_ddefinition();
     return dtype;
 }
 
 Dtype* dtype_connect(Dtype* socket_dtype, Dtype* plug_dtype) {
     if (socket_dtype == NULL) return plug_dtype;
 
-    Dtype* socket_tail = socket_dtype;
+    Dtype* tail = socket_dtype;
     while (1) {
-        switch (socket_tail->type) {
+        switch (tail->type) {
             case DTYPE_CHAR:
             case DTYPE_INT:
                 return socket_dtype;
             case DTYPE_POINTER: {
-                Dtype* next = dpointer_next(socket_tail->pointer);
+                Dtype* next = dpointer_next(tail->pointer);
                 if (next == NULL) {
-                    socket_tail->pointer = dpointer_connect(socket_tail->pointer, plug_dtype);
+                    tail->pointer = dpointer_connect(tail->pointer, plug_dtype);
                     return socket_dtype;
                 }
-                socket_tail = next;
+                tail = next;
                 break;
             }
             case DTYPE_ARRAY: {
-                Dtype* next = darray_next(socket_tail->array);
+                Dtype* next = darray_next(tail->array);
                 if (next == NULL) {
-                    socket_tail->array = darray_connect(socket_tail->array, plug_dtype);
+                    tail->array = darray_connect(tail->array, plug_dtype);
                     return socket_dtype;
                 }
-                socket_tail = next;
+                tail = next;
                 break;
             }
             case DTYPE_FUNCUCTION: {
-                Dtype* next = dfunction_next(socket_tail->function);
+                Dtype* next = dfunction_next(tail->function);
                 if (next == NULL) {
-                    socket_tail->function = dfunction_connect(socket_tail->function, plug_dtype);
+                    tail->function = dfunction_connect(tail->function, plug_dtype);
                     return socket_dtype;
                 }
-                socket_tail = next;
+                tail = next;
+                break;
+            }
+            case DTYPE_DEFINITION: {
+                Dtype* next = ddefinition_next(tail->definition);
+                if (next == NULL) {
+                    tail->definition = ddefinition_connect(tail->definition, plug_dtype);
+                    return socket_dtype;
+                }
+                tail = next;
                 break;
             }
         }
@@ -136,6 +174,8 @@ int dtype_equals(Dtype* dtype, Dtype* other) {
             return darray_equals(dtype->array, other->array);
         case DTYPE_FUNCUCTION:
             return dfunction_equals(dtype->function, other->function);
+        case DTYPE_DEFINITION:
+            return ddefinition_equals(dtype->definition, other->definition);
         default:
             return 0;
     }
@@ -176,5 +216,6 @@ void delete_dtype(Dtype* dtype) {
     if (dtype->pointer != NULL) delete_dpointer(dtype->pointer);
     if (dtype->array != NULL) delete_darray(dtype->array);
     if (dtype->function != NULL) delete_dfunction(dtype->function);
+    if (dtype->definition != NULL) delete_ddefinition(dtype->definition);
     free(dtype);
 }
