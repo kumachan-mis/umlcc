@@ -9,7 +9,7 @@ int main() {
     a = 8;
     b = 13;
     p = &a;
-    q = &q;
+    q = &b;
 
     put_int(a);
     put_int(b);
