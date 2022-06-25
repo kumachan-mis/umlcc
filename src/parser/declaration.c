@@ -15,21 +15,32 @@ Ast* parse_decl(Parser* parser) {
 }
 
 Ast* parse_decl_specifiers(Parser* parser) {
-    Ast* ast = NULL;
+    Ast* ast = new_ast(AST_DECL_SPECIFIERS, 0);
 
-    CToken* ctoken = vector_at(parser->ctokens, parser->index);
-    switch (ctoken->type) {
-        case CTOKEN_KEYWORD_CHAR:
-            parser->index++;
-            ast = new_ast(AST_DECL_SPECIFIERS, 1, new_ast(AST_TYPE_CHAR, 0));
-            return ast;
-        case CTOKEN_KEYWORD_INT:
-            parser->index++;
-            ast = new_ast(AST_DECL_SPECIFIERS, 1, new_ast(AST_TYPE_INT, 0));
-            return ast;
-        default:
-            fprintf(stderr, "Error: unexpected ctoken type %d\n", ctoken->type);
-            exit(1);
+    while (1) {
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_KEYWORD_TYPEDEF:
+                parser->index++;
+                vector_push(ast->children, new_ast(AST_STG_TYPEDEF, 0));
+                break;
+            case CTOKEN_KEYWORD_CHAR:
+                parser->index++;
+                vector_push(ast->children, new_ast(AST_TYPE_CHAR, 0));
+                break;
+            case CTOKEN_KEYWORD_INT:
+                parser->index++;
+                vector_push(ast->children, new_ast(AST_TYPE_INT, 0));
+                break;
+            case CTOKEN_IDENT: {
+                char* typedef_name = new_string(ctoken->ident_name);
+                parser->index++;
+                vector_push(ast->children, new_identifier_ast(AST_TYPEDEF_NAME, typedef_name));
+                break;
+            }
+            default:
+                return ast;
+        }
     }
 }
 
