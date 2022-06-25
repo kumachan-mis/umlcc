@@ -8,11 +8,9 @@
 #include <stdlib.h>
 
 Ast* parse_decl(Parser* parser) {
-    parser->typedef_flag = 0;
     Ast* specifiers_ast = parse_decl_specifiers(parser);
     Ast* init_list_ast = parse_init_declarator_list(parser);
     consume_ctoken(parser, CTOKEN_SEMICOLON);
-    parser->typedef_flag = 0;
     return new_ast(AST_DECL, 2, specifiers_ast, init_list_ast);
 }
 
@@ -24,7 +22,6 @@ Ast* parse_decl_specifiers(Parser* parser) {
         switch (ctoken->type) {
             case CTOKEN_KEYWORD_TYPEDEF:
                 parser->index++;
-                parser->typedef_flag = 1;
                 vector_push(ast->children, new_ast(AST_STG_TYPEDEF, 0));
                 break;
             case CTOKEN_KEYWORD_CHAR:
@@ -123,9 +120,6 @@ Ast* parse_direct_declarator(Parser* parser) {
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     switch (ctoken->type) {
         case CTOKEN_IDENT:
-            if (parser->typedef_flag) {
-                set_add(parser->typedef_names_set, new_string(ctoken->ident_name));
-            }
             parser->index++;
             ast = new_identifier_ast(AST_IDENT_DECLOR, new_string(ctoken->ident_name));
             break;
