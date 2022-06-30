@@ -24,6 +24,7 @@ Ast* parse_function_definition(Parser* parser) {
     Ast* ast = new_ast(AST_FUNC_DEF, 0);
     vector_push(ast->children, parse_decl_specifiers(parser));
     vector_push(ast->children, parse_declarator(parser));
+    parser->typedef_flag = 0;
     vector_push(ast->children, parse_compound_stmt(parser));
     return ast;
 }

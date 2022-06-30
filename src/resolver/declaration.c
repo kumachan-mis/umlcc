@@ -44,6 +44,7 @@ Dtype* resolve_decl_specifiers(Resolver* resolver) {
                 symbol = symboltable_search(resolver->global_table, ast->ident_name);
             }
             dtype = dtype_copy(symbol->dtype->definition->def_dtype);
+            break;
         }
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast_ptr->type);

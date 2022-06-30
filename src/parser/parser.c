@@ -9,6 +9,7 @@ Parser* new_parser(Vector* ctokens) {
     parser->ctokens = ctokens;
     parser->index = 0;
     parser->typedef_names_set = new_set(&t_hashable_string);
+    parser->typedef_flag = 0;
     return parser;
 }
 
