@@ -35,6 +35,16 @@ Dtype* resolve_decl_specifiers(Resolver* resolver) {
         case AST_TYPE_CHAR:
             dtype = new_integer_dtype(DTYPE_CHAR);
             break;
+        case AST_TYPEDEF_NAME: {
+            Symbol* symbol = NULL;
+            if (symbol == NULL && resolver->local_table != NULL) {
+                symbol = symboltable_search(resolver->local_table, ast->ident_name);
+            }
+            if (symbol == NULL) {
+                symbol = symboltable_search(resolver->global_table, ast->ident_name);
+            }
+            dtype = dtype_copy(symbol->dtype->definition->def_dtype);
+        }
         default:
             fprintf(stderr, "Error: unexpected ast type %d\n", ast_ptr->type);
             exit(1);
