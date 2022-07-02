@@ -82,7 +82,7 @@ Srt* resolve_init_declarator(Resolver* resolver) {
     if (resolver->local_table == NULL) {
         SymbolTable* table = resolver->global_table;
         symboltable_define_label(table, symbol_name, symbol_dtype);
-    } else if (symbol_dtype->type == DTYPE_FUNCUCTION) {
+    } else if (symbol_dtype->type == DTYPE_FUNCUCTION || symbol_dtype->type == DTYPE_DEFINITION) {
         SymbolTable* table = resolver->local_table;
         symboltable_define_label(table, symbol_name, symbol_dtype);
     } else {

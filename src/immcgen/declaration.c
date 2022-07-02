@@ -73,7 +73,7 @@ Vector* gen_decl_immcode(Immcgen* immcgen) {
     if (immcgen->local_table == NULL) {
         SymbolTable* table = immcgen->global_table;
         symboltable_define_label(table, symbol_name, symbol_dtype);
-    } else if (symbol_dtype->type == DTYPE_FUNCUCTION) {
+    } else if (symbol_dtype->type == DTYPE_FUNCUCTION || symbol_dtype->type == DTYPE_DEFINITION) {
         SymbolTable* table = immcgen->local_table;
         symboltable_define_label(table, symbol_name, symbol_dtype);
     } else {
