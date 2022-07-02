@@ -30,16 +30,23 @@ Dtype* resolve_decl_specifiers(Resolver* resolver) {
     int i = 0, num_children = vector_size(ast->children);
     while (i < num_children) {
         Ast* child = vector_at(ast->children, i);
+        if (child->type != AST_STG_TYPEDEF) {
+            i++;
+            continue;
+        }
+
+        if (dtype == NULL) dtype = new_socket_decoration_dtype();
         switch (child->type) {
             case AST_STG_TYPEDEF:
-                if (dtype == NULL) dtype = new_socket_definition_dtype();
-                vector_erase(ast->children, i);
-                num_children--;
+                dtype->decoration->typedef_flag = 1;
                 break;
             default:
-                i++;
-                break;
+                fprintf(stderr, "Error: unexpected ast type %d\n", child->type);
+                exit(1);
         }
+
+        vector_erase(ast->children, i);
+        num_children--;
     }
 
     Ast* child = vector_at(ast->children, 0);
@@ -58,7 +65,7 @@ Dtype* resolve_decl_specifiers(Resolver* resolver) {
             if (symbol == NULL) {
                 symbol = symboltable_search(resolver->global_table, child->ident_name);
             }
-            dtype = dtype_connect(dtype, dtype_copy(symbol->dtype->definition->def_dtype));
+            dtype = dtype_connect(dtype, dtype_copy(symbol->dtype->decoration->deco_dtype));
             break;
         }
         default:
@@ -88,15 +95,15 @@ Srt* resolve_init_declarator(Resolver* resolver) {
 
     resolver->ast = vector_at(ast->children, 0);
     Srt* declarator_srt = resolve_declarator(resolver);
-    Dtype* specifier_dtype = dtype_copy(resolver->specifier_dtype);
 
-    if (specifier_dtype->type == DTYPE_DEFINITION) {
-        Dtype* decoration_dtype = specifier_dtype;
-        specifier_dtype = specifier_dtype->definition->def_dtype;
-        decoration_dtype->definition->def_dtype = NULL;
+    if (resolver->specifier_dtype->type == DTYPE_DECORATION) {
+        Dtype* decoration_dtype = dtype_copy(resolver->specifier_dtype);
+        Dtype* specifier_dtype = decoration_dtype->decoration->deco_dtype;
+        decoration_dtype->decoration->deco_dtype = NULL;
         declarator_srt->dtype = dtype_connect(declarator_srt->dtype, specifier_dtype);
         declarator_srt->dtype = dtype_connect(decoration_dtype, declarator_srt->dtype);
     } else {
+        Dtype* specifier_dtype = dtype_copy(resolver->specifier_dtype);
         declarator_srt->dtype = dtype_connect(declarator_srt->dtype, specifier_dtype);
     }
 
