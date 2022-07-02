@@ -47,9 +47,12 @@ SAMPLES     := $(wildcard $(SAMPLE_DIR)/*$(SRC_EXT))
 SAMPLE_ASMS := $(patsubst $(SAMPLE_DIR)/%$(SRC_EXT),$(SAMPLE_OUT)/%$(ASM_EXT),$(SAMPLES))
 
 .PRECIOUS: $(OBJS) $(DEPS) $(TEST_OBJS) $(TEST_DEPS)
-.PHONY: all unittest e2etest sample format clean clean-sample install-pre-commit
+.PHONY: build debug-build unittest e2etest sample format clean clean-sample install-pre-commit
 
-all: $(BIN_DIR)/$(UMLCC)
+build: $(BIN_DIR)/$(UMLCC)
+
+debug-build: CFLAGS += -g
+debug-build: $(BIN_DIR)/$(UMLCC)
 
 unittest: $(BIN_DIR)/$(TEST)
 	$^
@@ -106,7 +109,11 @@ ifeq ($(MAKECMDGOALS),)
 -include $(DEPS)
 endif
 
-ifeq ($(MAKECMDGOALS),all)
+ifeq ($(MAKECMDGOALS),build)
+-include $(DEPS)
+endif
+
+ifeq ($(MAKECMDGOALS),debug-build)
 -include $(DEPS)
 endif
 
