@@ -1,22 +1,64 @@
 #include "./test_map.h"
-#include "../src/common/type.h"
-#include "../src/map/map.h"
+#include "../../src/common/type.h"
+#include "../../src/map/map.h"
 
 #include <CUnit/Basic.h>
 #include <stdlib.h>
 
+void test_map_copy();
 void test_map_get_with_default();
 void test_map_add();
 void test_map_remove();
+void test_map_contains();
 void test_map_iter();
 
 CU_Suite* add_test_suite_map() {
     CU_Suite* suite = CU_add_suite("test_suite_map", NULL, NULL);
+    CU_add_test(suite, "test_map_copy", test_map_copy);
     CU_add_test(suite, "test_map_get_with_default", test_map_get_with_default);
     CU_add_test(suite, "test_map_add", test_map_add);
     CU_add_test(suite, "test_map_remove", test_map_remove);
+    CU_add_test(suite, "test_map_contains", test_map_contains);
     CU_add_test(suite, "test_map_iter", test_map_iter);
     return suite;
+}
+
+void test_map_copy() {
+    Map* map = new_map(&t_hashable_integer, &t_string);
+    int* key = NULL;
+    char* value = NULL;
+
+    key = new_integer(1);
+    value = new_string("one");
+    map_add(map, key, value);
+
+    key = new_integer(3);
+    value = new_string("three");
+    map_add(map, key, value);
+
+    key = new_integer(4);
+    value = new_string("four");
+    map_add(map, key, value);
+
+    Map* copied_map = map_copy(map);
+    delete_map(map);
+
+    key = new_integer(1);
+    value = map_get(copied_map, key);
+    CU_ASSERT_STRING_EQUAL(value, "one");
+    free(key);
+
+    key = new_integer(4);
+    value = map_get(copied_map, key);
+    CU_ASSERT_STRING_EQUAL(value, "four");
+    free(key);
+
+    key = new_integer(3);
+    value = map_get(copied_map, key);
+    CU_ASSERT_STRING_EQUAL(value, "three");
+    free(key);
+
+    delete_map(copied_map);
 }
 
 void test_map_get_with_default() {
@@ -66,7 +108,7 @@ void test_map_add() {
     CU_ASSERT_EQUAL(*value, 2);
 
     value = map_get(map, "ten");
-    CU_ASSERT_EQUAL(value, NULL);
+    CU_ASSERT_PTR_NULL(value);
 
     key = new_string("eight");
     value = new_integer(-1);
@@ -122,6 +164,26 @@ void test_map_remove() {
 
     value = map_get(map, "erased_key");
     CU_ASSERT_EQUAL(*value, 1);
+
+    delete_map(map);
+}
+
+void test_map_contains() {
+    Map* map = new_map(&t_hashable_integer, &t_string);
+    int* key = NULL;
+    char* value = NULL;
+
+    key = new_integer(7);
+    value = new_string("seven");
+    map_add(map, key, value);
+
+    key = new_integer(7);
+    CU_ASSERT(map_contains(map, key));
+    free(key);
+
+    key = new_integer(8);
+    CU_ASSERT(!map_contains(map, key));
+    free(key);
 
     delete_map(map);
 }

@@ -1,10 +1,11 @@
 #include "./test_set.h"
-#include "../src/common/type.h"
-#include "../src/set/set.h"
+#include "../../src/common/type.h"
+#include "../../src/set/set.h"
 
 #include <CUnit/Basic.h>
 #include <stdlib.h>
 
+void test_set_copy();
 void test_set_add();
 void test_set_remove();
 void test_set_iter();
@@ -23,9 +24,14 @@ void test_set_difference_empty();
 void test_set_difference_super();
 void test_set_difference_sub();
 void test_set_difference_foreign();
+void test_set_issubset();
+void test_set_issubset_empty();
+void test_set_equals();
+void test_set_equals_empty();
 
 CU_Suite* add_test_suite_set() {
     CU_Suite* suite = CU_add_suite("test_suite_set", NULL, NULL);
+    CU_add_test(suite, "test_set_copy", test_set_copy);
     CU_add_test(suite, "test_set_add", test_set_add);
     CU_add_test(suite, "test_set_remove", test_set_remove);
     CU_add_test(suite, "test_set_iter", test_set_iter);
@@ -44,7 +50,35 @@ CU_Suite* add_test_suite_set() {
     CU_add_test(suite, "test_set_difference_super", test_set_difference_super);
     CU_add_test(suite, "test_set_difference_sub", test_set_difference_sub);
     CU_add_test(suite, "test_set_difference_foreign", test_set_difference_foreign);
+    CU_add_test(suite, "test_set_issubset", test_set_issubset);
+    CU_add_test(suite, "test_set_issubset_empty", test_set_issubset_empty);
+    CU_add_test(suite, "test_set_equals", test_set_equals);
+    CU_add_test(suite, "test_set_equals_empty", test_set_equals_empty);
     return suite;
+}
+
+void test_set_copy() {
+    Set* set = new_set(&t_hashable_string);
+    char* item = NULL;
+
+    item = new_string("one");
+    set_add(set, item);
+
+    item = new_string("two");
+    set_add(set, item);
+
+    item = new_string("four");
+    set_add(set, item);
+
+    Set* copied_set = set_copy(set);
+    delete_set(set);
+
+    CU_ASSERT(set_contains(copied_set, "two"));
+    CU_ASSERT(set_contains(copied_set, "one"));
+    CU_ASSERT(set_contains(copied_set, "four"));
+    CU_ASSERT(!set_contains(copied_set, "fou"));
+
+    delete_set(copied_set);
 }
 
 void test_set_add() {
@@ -716,4 +750,106 @@ void test_set_difference_foreign() {
     delete_set(difference_set);
     delete_set(other);
     delete_set(set);
+}
+
+void test_set_issubset() {
+    Set* set = new_set(&t_hashable_integer);
+    int* item = NULL;
+
+    item = new_integer(1);
+    set_add(set, item);
+
+    item = new_integer(2);
+    set_add(set, item);
+
+    item = new_integer(3);
+    set_add(set, item);
+
+    Set* other = new_set(&t_hashable_integer);
+    CU_ASSERT(set_issubset(set, other));
+
+    item = new_integer(2);
+    set_add(other, item);
+
+    CU_ASSERT(set_issubset(set, other));
+
+    item = new_integer(3);
+    set_add(other, item);
+
+    CU_ASSERT(set_issubset(set, other));
+
+    item = new_integer(6);
+    set_add(other, item);
+
+    CU_ASSERT(!set_issubset(set, other));
+
+    delete_set(set);
+    delete_set(other);
+}
+
+void test_set_issubset_empty() {
+    Set* set = new_set(&t_hashable_integer);
+    int* item = NULL;
+
+    Set* other = new_set(&t_hashable_integer);
+    CU_ASSERT(set_issubset(set, other));
+
+    item = new_integer(0);
+    set_add(other, item);
+
+    CU_ASSERT(!set_issubset(set, other));
+
+    delete_set(set);
+    delete_set(other);
+}
+
+void test_set_equals() {
+    Set* set = new_set(&t_hashable_integer);
+    int* item = NULL;
+
+    item = new_integer(2);
+    set_add(set, item);
+
+    item = new_integer(4);
+    set_add(set, item);
+
+    item = new_integer(5);
+    set_add(set, item);
+
+    Set* other = new_set(&t_hashable_integer);
+    CU_ASSERT(set_issubset(set, other));
+
+    item = new_integer(2);
+    set_add(other, item);
+
+    CU_ASSERT(!set_equals(set, other));
+
+    item = new_integer(5);
+    set_add(other, item);
+
+    CU_ASSERT(!set_equals(set, other));
+
+    item = new_integer(4);
+    set_add(other, item);
+
+    CU_ASSERT(set_equals(set, other));
+
+    delete_set(set);
+    delete_set(other);
+}
+
+void test_set_equals_empty() {
+    Set* set = new_set(&t_hashable_integer);
+    int* item = NULL;
+
+    Set* other = new_set(&t_hashable_integer);
+    CU_ASSERT(set_equals(set, other));
+
+    item = new_integer(0);
+    set_add(other, item);
+
+    CU_ASSERT(!set_equals(set, other));
+
+    delete_set(set);
+    delete_set(other);
 }

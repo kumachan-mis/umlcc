@@ -1,6 +1,6 @@
-#include "./test_map.h"
-#include "./test_set.h"
-#include "./test_vector.h"
+#include "./map/test_map.h"
+#include "./set/test_set.h"
+#include "./vector/test_vector.h"
 
 #include <CUnit/Basic.h>
 
