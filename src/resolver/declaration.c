@@ -27,27 +27,42 @@ Dtype* resolve_decl_specifiers(Resolver* resolver) {
     Dtype* dtype = NULL;
     Ast* ast = resolver->ast;
 
-    Ast* ast_ptr = vector_at(ast->children, 0);
-    switch (ast_ptr->type) {
+    int i = 0, num_children = vector_size(ast->children);
+    while (i < num_children) {
+        Ast* child = vector_at(ast->children, i);
+        switch (child->type) {
+            case AST_STG_TYPEDEF:
+                if (dtype == NULL) dtype = new_socket_definition_dtype();
+                vector_erase(ast->children, i);
+                num_children--;
+                break;
+            default:
+                i++;
+                break;
+        }
+    }
+
+    Ast* child = vector_at(ast->children, 0);
+    switch (child->type) {
         case AST_TYPE_INT:
-            dtype = new_integer_dtype(DTYPE_INT);
+            dtype = dtype_connect(dtype, new_integer_dtype(DTYPE_INT));
             break;
         case AST_TYPE_CHAR:
-            dtype = new_integer_dtype(DTYPE_CHAR);
+            dtype = dtype_connect(dtype, new_integer_dtype(DTYPE_CHAR));
             break;
         case AST_TYPEDEF_NAME: {
             Symbol* symbol = NULL;
             if (symbol == NULL && resolver->local_table != NULL) {
-                symbol = symboltable_search(resolver->local_table, ast->ident_name);
+                symbol = symboltable_search(resolver->local_table, child->ident_name);
             }
             if (symbol == NULL) {
-                symbol = symboltable_search(resolver->global_table, ast->ident_name);
+                symbol = symboltable_search(resolver->global_table, child->ident_name);
             }
-            dtype = dtype_copy(symbol->dtype->definition->def_dtype);
+            dtype = dtype_connect(dtype, dtype_copy(symbol->dtype->definition->def_dtype));
             break;
         }
         default:
-            fprintf(stderr, "Error: unexpected ast type %d\n", ast_ptr->type);
+            fprintf(stderr, "Error: unexpected ast type %d\n", child->type);
             exit(1);
     }
 
@@ -74,7 +89,16 @@ Srt* resolve_init_declarator(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     Srt* declarator_srt = resolve_declarator(resolver);
     Dtype* specifier_dtype = dtype_copy(resolver->specifier_dtype);
-    declarator_srt->dtype = dtype_connect(declarator_srt->dtype, specifier_dtype);
+
+    if (specifier_dtype->type == DTYPE_DEFINITION) {
+        Dtype* decoration_dtype = specifier_dtype;
+        specifier_dtype = specifier_dtype->definition->def_dtype;
+        decoration_dtype->definition->def_dtype = NULL;
+        declarator_srt->dtype = dtype_connect(declarator_srt->dtype, specifier_dtype);
+        declarator_srt->dtype = dtype_connect(decoration_dtype, declarator_srt->dtype);
+    } else {
+        declarator_srt->dtype = dtype_connect(declarator_srt->dtype, specifier_dtype);
+    }
 
     char* symbol_name = new_string(declarator_srt->ident_name);
     Dtype* symbol_dtype = dtype_copy(declarator_srt->dtype);
@@ -82,7 +106,7 @@ Srt* resolve_init_declarator(Resolver* resolver) {
     if (resolver->local_table == NULL) {
         SymbolTable* table = resolver->global_table;
         symboltable_define_label(table, symbol_name, symbol_dtype);
-    } else if (symbol_dtype->type == DTYPE_FUNCUCTION || symbol_dtype->type == DTYPE_DEFINITION) {
+    } else if (!dtype_isobject(symbol_dtype)) {
         SymbolTable* table = resolver->local_table;
         symboltable_define_label(table, symbol_name, symbol_dtype);
     } else {

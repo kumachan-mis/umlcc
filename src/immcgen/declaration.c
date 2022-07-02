@@ -28,7 +28,7 @@ Vector* gen_global_init_decl_immcode(Immcgen* immcgen) {
 
     Srt* decl_srt = vector_at(immcgen->srt->children, 0);
     Symbol* decl_symbol = symboltable_search(immcgen->global_table, decl_srt->ident_name);
-    if (decl_symbol->dtype->type == DTYPE_FUNCUCTION) return codes;
+    if (!dtype_isobject(decl_symbol->dtype)) return codes;
 
     char* label_name = new_string(decl_srt->ident_name);
     vector_push(codes, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, label_name));
@@ -73,7 +73,7 @@ Vector* gen_decl_immcode(Immcgen* immcgen) {
     if (immcgen->local_table == NULL) {
         SymbolTable* table = immcgen->global_table;
         symboltable_define_label(table, symbol_name, symbol_dtype);
-    } else if (symbol_dtype->type == DTYPE_FUNCUCTION || symbol_dtype->type == DTYPE_DEFINITION) {
+    } else if (!dtype_isobject(symbol_dtype)) {
         SymbolTable* table = immcgen->local_table;
         symboltable_define_label(table, symbol_name, symbol_dtype);
     } else {

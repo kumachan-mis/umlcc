@@ -190,11 +190,15 @@ int dtype_isarithmetic(Dtype* dtype) {
 }
 
 int dtype_isscalar(Dtype* dtype) {
-    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_INT) || dtype->type == DTYPE_POINTER;
+    return DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_POINTER;
 }
 
 int dtype_isaggregate(Dtype* dtype) {
     return DTYPE_ARRAY <= dtype->type && dtype->type <= DTYPE_ARRAY;
+}
+
+int dtype_isobject(Dtype* dtype) {
+    return DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_ARRAY;
 }
 
 int dtype_size(Dtype* dtype) {
