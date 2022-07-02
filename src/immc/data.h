@@ -1,7 +1,7 @@
 #ifndef UMLCC_IMMC_DATA_H
 #define UMLCC_IMMC_DATA_H
 
-#include "../sliteral/sliteral.h"
+#include "../literal/sliteral.h"
 
 typedef enum ImmcDataType {
     IMMC_DATA_BYTE,

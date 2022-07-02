@@ -1,5 +1,5 @@
 #include "./data.h"
-#include "../sliteral/sliteral.h"
+#include "../literal/sliteral.h"
 
 #include <stdio.h>
 #include <stdlib.h>

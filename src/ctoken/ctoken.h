@@ -2,7 +2,7 @@
 #define UMLCC_CTOKEN_H
 
 #include "../common/type.h"
-#include "../sliteral/sliteral.h"
+#include "../literal/sliteral.h"
 
 typedef enum CTokenType {
     // keyword

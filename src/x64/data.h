@@ -1,7 +1,7 @@
 #ifndef UMLCC_X64_DATA_H
 #define UMLCC_X64_DATA_H
 
-#include "../sliteral/sliteral.h"
+#include "../literal/sliteral.h"
 
 typedef enum X64DataType {
     X64_DATA_BYTE,

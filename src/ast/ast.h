@@ -2,7 +2,7 @@
 #define UMLCC_AST_H
 
 #include "../common/type.h"
-#include "../sliteral/sliteral.h"
+#include "../literal/sliteral.h"
 #include "../vector/vector.h"
 
 typedef enum AstType {
