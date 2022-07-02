@@ -5,6 +5,7 @@
 #include <CUnit/Basic.h>
 #include <stdlib.h>
 
+void test_vector_copy();
 void test_vector_push();
 void test_vector_pop();
 void test_vector_fill_all();
@@ -14,9 +15,12 @@ void test_vector_set_success();
 void test_vector_set_fail();
 void test_vector_erase_success();
 void test_vector_erase_fail();
+void test_vector_extend();
+void test_vector_extend_empty();
 
 CU_Suite* add_test_suite_vector() {
     CU_Suite* suite = CU_add_suite("test_suite_vector", NULL, NULL);
+    CU_add_test(suite, "test_vector_copy", test_vector_copy);
     CU_add_test(suite, "test_vector_push", test_vector_push);
     CU_add_test(suite, "test_vector_pop", test_vector_pop);
     CU_add_test(suite, "test_vector_fill_all", test_vector_fill_all);
@@ -26,7 +30,39 @@ CU_Suite* add_test_suite_vector() {
     CU_add_test(suite, "test_vector_set_fail", test_vector_set_fail);
     CU_add_test(suite, "test_vector_erase_success", test_vector_erase_success);
     CU_add_test(suite, "test_vector_erase_fail", test_vector_erase_fail);
+    CU_add_test(suite, "test_vector_extend", test_vector_extend);
+    CU_add_test(suite, "test_vector_extend_empty", test_vector_extend_empty);
     return suite;
+}
+
+void test_vector_copy() {
+    Vector* vector = new_vector(&t_string);
+    char* item = NULL;
+
+    item = new_string("abc");
+    vector_push(vector, item);
+
+    item = new_string("string");
+    vector_push(vector, item);
+
+    item = new_string("test");
+    vector_push(vector, item);
+
+    Vector* copied_vector = vector_copy(vector);
+    delete_vector(vector);
+
+    CU_ASSERT_EQUAL(vector_size(copied_vector), 3);
+
+    item = vector_at(copied_vector, 0);
+    CU_ASSERT_STRING_EQUAL(item, "abc");
+
+    item = vector_at(copied_vector, 1);
+    CU_ASSERT_STRING_EQUAL(item, "string");
+
+    item = vector_at(copied_vector, 2);
+    CU_ASSERT_STRING_EQUAL(item, "test");
+
+    delete_vector(copied_vector);
 }
 
 void test_vector_push() {
@@ -303,4 +339,82 @@ void test_vector_erase_fail() {
     CU_ASSERT_EQUAL(*item, 2);
 
     delete_vector(vector);
+}
+
+void test_vector_extend() {
+    Vector* vector = new_vector(&t_integer);
+    int* item = NULL;
+
+    item = new_integer(1);
+    vector_push(vector, item);
+
+    item = new_integer(3);
+    vector_push(vector, item);
+
+    item = new_integer(5);
+    vector_push(vector, item);
+
+    Vector* other = new_vector(&t_integer);
+
+    item = new_integer(2);
+    vector_push(vector, item);
+
+    item = new_integer(4);
+    vector_push(vector, item);
+
+    vector_extend(vector, other);
+
+    CU_ASSERT_EQUAL(vector_size(vector), 5);
+    CU_ASSERT_EQUAL(vector_size(other), 0);
+
+    item = vector_at(vector, 0);
+    CU_ASSERT_EQUAL(*item, 1);
+
+    item = vector_at(vector, 1);
+    CU_ASSERT_EQUAL(*item, 3);
+
+    item = vector_at(vector, 2);
+    CU_ASSERT_EQUAL(*item, 5);
+
+    item = vector_at(vector, 3);
+    CU_ASSERT_EQUAL(*item, 2);
+
+    item = vector_at(vector, 4);
+    CU_ASSERT_EQUAL(*item, 4);
+
+    delete_vector(vector);
+    delete_vector(other);
+}
+
+void test_vector_extend_empty() {
+    Vector* vector = new_vector(&t_integer);
+    int* item = NULL;
+
+    item = new_integer(1);
+    vector_push(vector, item);
+
+    item = new_integer(2);
+    vector_push(vector, item);
+
+    item = new_integer(4);
+    vector_push(vector, item);
+
+    Vector* other = new_vector(&t_integer);
+
+    vector_extend(vector, other);
+
+    CU_ASSERT_EQUAL(vector_size(vector), 3);
+    CU_ASSERT_EQUAL(vector_size(other), 0);
+
+    item = vector_at(vector, 0);
+    CU_ASSERT_EQUAL(*item, 1);
+
+    item = vector_at(vector, 1);
+    CU_ASSERT_EQUAL(*item, 2);
+
+    item = vector_at(vector, 2);
+    CU_ASSERT_EQUAL(*item, 4);
+
+    delete_vector(vector);
+    delete_vector(other);
 }
