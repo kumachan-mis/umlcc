@@ -79,6 +79,16 @@ int vector_set(Vector* vector, int index, void* item) {
     return 1;
 }
 
+void vector_erase(Vector* vector, int index) {
+    if (0 > index || index >= vector->size) return;
+
+    vector->t_item->delete_object(vector->container[index]);
+    for (int i = index + 1; i < vector->size; i++) {
+        vector->container[i - 1] = vector->container[i];
+    }
+    vector->size--;
+}
+
 void* vector_at(Vector* vector, int index) {
     if (0 > index || index >= vector->size) return NULL;
     return vector->container[index];
