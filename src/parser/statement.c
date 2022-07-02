@@ -18,12 +18,14 @@ Ast* parse_stmt(Parser* parser) {
 Ast* parse_compound_stmt(Parser* parser) {
     Ast* ast = new_ast(AST_CMPD_STMT, 0);
 
+    Set* typedef_names_set = set_copy(parser->typedef_names_set);
+
     consume_ctoken(parser, CTOKEN_LBRACE);
     while (1) {
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         if (ctoken->type == CTOKEN_RBRACE) {
             parser->index++;
-            return ast;
+            break;
         }
         if (blockitem_may_decl(parser)) {
             vector_push(ast->children, parse_decl(parser));
@@ -31,6 +33,11 @@ Ast* parse_compound_stmt(Parser* parser) {
             vector_push(ast->children, parse_stmt(parser));
         }
     }
+
+    delete_set(parser->typedef_names_set);
+    parser->typedef_names_set = typedef_names_set;
+
+    return ast;
 }
 
 Ast* parse_return_stmt(Parser* parser) {

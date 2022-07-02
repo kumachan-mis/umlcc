@@ -11,6 +11,7 @@ Map* new_keyword_map() {
     ctoken_map_add(keyword_map, "char", CTOKEN_KEYWORD_CHAR);
     ctoken_map_add(keyword_map, "int", CTOKEN_KEYWORD_INT);
     ctoken_map_add(keyword_map, "return", CTOKEN_KEYWORD_RETURN);
+    ctoken_map_add(keyword_map, "typedef", CTOKEN_KEYWORD_TYPEDEF);
 
     return keyword_map;
 }

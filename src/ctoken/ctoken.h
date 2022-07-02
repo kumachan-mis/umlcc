@@ -9,6 +9,7 @@ typedef enum CTokenType {
     CTOKEN_KEYWORD_CHAR,
     CTOKEN_KEYWORD_INT,
     CTOKEN_KEYWORD_RETURN,
+    CTOKEN_KEYWORD_TYPEDEF,
 
     // identifier
     CTOKEN_IDENT,

@@ -17,9 +17,12 @@ typedef enum AstType {
     AST_DECL_SPECIFIERS,
     AST_INIT_DECLOR_LIST,
     AST_INIT_DECLOR,
+    //   storage-class-specifiers
+    AST_STG_TYPEDEF,
     //   type-specifiers
     AST_TYPE_CHAR,
     AST_TYPE_INT,
+    AST_TYPEDEF_NAME,
     //   declarators
     AST_IDENT_DECLOR,
     AST_PTR_DECLOR,
