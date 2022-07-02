@@ -1,6 +1,6 @@
 #include "./test_set.h"
-#include "../src/common/type.h"
-#include "../src/set/set.h"
+#include "../../src/common/type.h"
+#include "../../src/set/set.h"
 
 #include <CUnit/Basic.h>
 #include <stdlib.h>

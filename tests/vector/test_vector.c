@@ -1,6 +1,6 @@
 #include "./test_vector.h"
-#include "../src/common/type.h"
-#include "../src/vector/vector.h"
+#include "../../src/common/type.h"
+#include "../../src/vector/vector.h"
 
 #include <CUnit/Basic.h>
 #include <stdlib.h>
