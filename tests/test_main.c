@@ -1,4 +1,5 @@
 #include "./ast/test_ast.h"
+#include "./ctoken/test_ctoken.h"
 #include "./map/test_map.h"
 #include "./set/test_set.h"
 #include "./vector/test_vector.h"
@@ -14,6 +15,7 @@ int main(void) {
     add_test_suite_set();
 
     // intermediate expression tests
+    add_test_suite_ctoken();
     add_test_suite_ast();
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
