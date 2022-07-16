@@ -2,9 +2,6 @@
 #include "../../src/liveseq/liveness.h"
 #include "../../src/liveseq/liveseq.h"
 
-#include <CUnit/Basic.h>
-#include <stdlib.h>
-
 void test_liveseq_copy();
 void test_liveseq_empty();
 void test_liveseq_unused_liveness();

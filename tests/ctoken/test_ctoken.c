@@ -1,7 +1,6 @@
 #include "./test_ctoken.h"
 #include "../../src/ctoken/ctoken.h"
 
-#include <CUnit/Basic.h>
 #include <stdlib.h>
 
 void test_new_ctoken();

@@ -1,7 +1,6 @@
 #include "./test_ast.h"
 #include "../../src/ast/ast.h"
 
-#include <CUnit/Basic.h>
 #include <stdlib.h>
 
 void test_new_ast();

@@ -1,9 +1,6 @@
 #include "./test_liveness.h"
 #include "../../src/liveseq/liveness.h"
 
-#include <CUnit/Basic.h>
-#include <stdlib.h>
-
 void test_new_liveness();
 void test_liveness_copy();
 

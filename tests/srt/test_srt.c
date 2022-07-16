@@ -1,7 +1,6 @@
 #include "./test_srt.h"
 #include "../../src/srt/srt.h"
 
-#include <CUnit/Basic.h>
 #include <stdlib.h>
 
 void test_new_srt();
