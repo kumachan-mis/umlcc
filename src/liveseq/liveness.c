@@ -21,10 +21,6 @@ Liveness* liveness_copy(Liveness* liveness) {
     return copied_liveness;
 }
 
-int liveness_isinit(Liveness* liveness) {
-    return liveness->first_def_index == -1 && liveness->last_use_index == -1;
-}
-
 void delete_liveness(Liveness* liveness) {
     free(liveness);
 }

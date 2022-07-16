@@ -12,7 +12,6 @@ extern BaseType t_liveness;
 
 Liveness* new_liveness(int immc_index);
 Liveness* liveness_copy(Liveness* liveness);
-int liveness_isinit(Liveness* liveness);
 void delete_liveness(Liveness* liveness);
 
 #endif

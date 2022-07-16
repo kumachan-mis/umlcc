@@ -25,10 +25,6 @@ Liveseq* liveseq_copy(Liveseq* liveseq) {
 }
 
 int liveseq_is_alive(Liveseq* liveseq) {
-    // following registers are NOT alive:
-    // - registers to be first-defined at current index
-    // - registers which are last-used at current index
-
     int index = liveseq->index;
 
     int livenesses_len = vector_size(liveseq->livenesses);
@@ -36,11 +32,11 @@ int liveseq_is_alive(Liveseq* liveseq) {
 
     if (liveseq->liveness_index < 0) {
         Liveness* first_liveness = vector_at(liveseq->livenesses, 0);
-        return index > first_liveness->first_def_index;
+        return first_liveness->first_def_index <= index && index < first_liveness->last_use_index;
     }
 
     Liveness* liveness = vector_at(liveseq->livenesses, liveseq->liveness_index);
-    return liveness->first_def_index < index && index < liveness->last_use_index;
+    return liveness->first_def_index <= index && index < liveness->last_use_index;
 }
 
 void liveseq_goto_next(Liveseq* liveseq) {

@@ -1,5 +1,7 @@
 #include "./ast/test_ast.h"
 #include "./ctoken/test_ctoken.h"
+#include "./liveseq/test_liveness.h"
+#include "./liveseq/test_liveseq.h"
 #include "./map/test_map.h"
 #include "./set/test_set.h"
 #include "./srt/test_srt.h"
@@ -19,6 +21,8 @@ int main(void) {
     add_test_suite_ctoken();
     add_test_suite_ast();
     add_test_suite_srt();
+    add_test_suite_liveness();
+    add_test_suite_liveseq();
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
