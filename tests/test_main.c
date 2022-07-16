@@ -5,6 +5,7 @@
 #include "./map/test_map.h"
 #include "./set/test_set.h"
 #include "./srt/test_srt.h"
+#include "./symtab/test_symtab.h"
 #include "./vector/test_vector.h"
 
 #include <CUnit/Basic.h>
@@ -21,6 +22,7 @@ int main(void) {
     add_test_suite_ctoken();
     add_test_suite_ast();
     add_test_suite_srt();
+    add_test_suite_symboltable();
     add_test_suite_liveness();
     add_test_suite_liveseq();
 
