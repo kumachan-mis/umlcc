@@ -61,20 +61,6 @@ char* x64data_tostring(X64Data* x64data) {
 }
 
 void delete_x64data(X64Data* x64data) {
+    if (x64data->sliteral != NULL) delete_sliteral(x64data->sliteral);
     free(x64data);
-}
-
-X64DataType x64data_get_type(int size) {
-    switch (size) {
-        case 1:
-            return X64_DATA_BYTE;
-        case 2:
-            return X64_DATA_WORD;
-        case 4:
-            return X64_DATA_LONG;
-        case 8:
-            return X64_DATA_QUAD;
-        default:
-            return X64_DATA_ZERO;
-    }
 }

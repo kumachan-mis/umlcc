@@ -62,20 +62,6 @@ char* immcdata_tostring(ImmcData* immcdata) {
 }
 
 void delete_immcdata(ImmcData* immcdata) {
+    if (immcdata->sliteral != NULL) delete_sliteral(immcdata->sliteral);
     free(immcdata);
-}
-
-ImmcDataType immcdata_get_type(int size) {
-    switch (size) {
-        case 1:
-            return IMMC_DATA_BYTE;
-        case 2:
-            return IMMC_DATA_WORD;
-        case 4:
-            return IMMC_DATA_LONG;
-        case 8:
-            return IMMC_DATA_QUAD;
-        default:
-            return IMMC_DATA_ZERO;
-    }
 }

@@ -97,6 +97,7 @@ Srt* srt_copy(Srt* srt) {
 void delete_srt(Srt* srt) {
     if (srt->dtype != NULL) delete_dtype(srt->dtype);
     if (srt->ident_name != NULL) free(srt->ident_name);
+    if (srt->sliteral != NULL) delete_sliteral(srt->sliteral);
     delete_vector(srt->children);
     free(srt);
 }

@@ -23,6 +23,5 @@ ImmcData* new_str_immcdata(ImmcDataType type, StringLiteral* sliteral);
 ImmcData* immcdata_copy(ImmcData* immcdata);
 char* immcdata_tostring(ImmcData* immcdata);
 void delete_immcdata(ImmcData* immcdata);
-ImmcDataType immcdata_get_type(int size);
 
 #endif
