@@ -8,9 +8,7 @@ void test_new_identifier_ast_ident();
 void test_new_identifier_ast_typedefname();
 void test_new_integer_ast_int();
 void test_new_integer_ast_char();
-void test_new_sliteral_ast_empty();
-void test_new_sliteral_ast_without_null();
-void test_new_sliteral_ast_with_null();
+void test_new_sliteral_ast();
 
 CU_Suite* add_test_suite_ast() {
     CU_Suite* suite = CU_add_suite("test_suite_ast", NULL, NULL);
@@ -19,9 +17,7 @@ CU_Suite* add_test_suite_ast() {
     CU_add_test(suite, "test_new_identifier_ast_typedefname", test_new_identifier_ast_typedefname);
     CU_add_test(suite, "test_new_integer_ast_int", test_new_integer_ast_int);
     CU_add_test(suite, "test_new_integer_ast_char", test_new_integer_ast_char);
-    CU_add_test(suite, "test_new_sliteral_ast_empty", test_new_sliteral_ast_empty);
-    CU_add_test(suite, "test_new_sliteral_ast_without_null", test_new_sliteral_ast_without_null);
-    CU_add_test(suite, "test_new_sliteral_ast_with_null", test_new_sliteral_ast_with_null);
+    CU_add_test(suite, "test_new_sliteral_ast", test_new_sliteral_ast);
     return suite;
 }
 
@@ -135,62 +131,8 @@ void test_new_integer_ast_char() {
     delete_ast(ast);
 }
 
-void test_new_sliteral_ast_empty() {
-    const char* sliteral_const = "";
-    const int sliteral_size = 1;
-
-    char* sliteral_value = malloc(sliteral_size * sizeof(char));
-    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
-
-    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
-    Ast* ast = new_sliteral_ast(AST_STRING_EXPR, sliteral);
-
-    for (int i = 0; i < 2; i++) {
-        if (i > 0) {
-            Ast* copied_ast = ast_copy(ast);
-            delete_ast(ast);
-            ast = copied_ast;
-        }
-        CU_ASSERT_EQUAL(ast->type, AST_STRING_EXPR);
-        CU_ASSERT_PTR_NULL(ast->ident_name);
-        CU_ASSERT_EQUAL(ast->value_int, -1);
-        CU_ASSERT_EQUAL(memcmp(ast->sliteral->value, sliteral_const, sliteral_size), 0);
-        CU_ASSERT_EQUAL(ast->sliteral->size, sliteral_size);
-        CU_ASSERT_EQUAL(vector_size(ast->children), 0);
-    }
-
-    delete_ast(ast);
-}
-
-void test_new_sliteral_ast_without_null() {
+void test_new_sliteral_ast() {
     const char* sliteral_const = "string literal";
-    const int sliteral_size = 15;
-
-    char* sliteral_value = malloc(sliteral_size * sizeof(char));
-    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
-
-    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
-    Ast* ast = new_sliteral_ast(AST_STRING_EXPR, sliteral);
-
-    for (int i = 0; i < 2; i++) {
-        if (i > 0) {
-            Ast* copied_ast = ast_copy(ast);
-            delete_ast(ast);
-            ast = copied_ast;
-        }
-        CU_ASSERT_EQUAL(ast->type, AST_STRING_EXPR);
-        CU_ASSERT_PTR_NULL(ast->ident_name);
-        CU_ASSERT_EQUAL(ast->value_int, -1);
-        CU_ASSERT_EQUAL(memcmp(ast->sliteral->value, sliteral_const, sliteral_size), 0);
-        CU_ASSERT_EQUAL(ast->sliteral->size, sliteral_size);
-        CU_ASSERT_EQUAL(vector_size(ast->children), 0);
-    }
-
-    delete_ast(ast);
-}
-
-void test_new_sliteral_ast_with_null() {
-    const char* sliteral_const = "string\0literal";
     const int sliteral_size = 15;
 
     char* sliteral_value = malloc(sliteral_size * sizeof(char));

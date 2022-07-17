@@ -20,15 +20,17 @@ int main(void) {
     add_test_suite_map();
     add_test_suite_set();
 
-    // intermediate expression tests
-    add_test_suite_ctoken();
-    add_test_suite_ast();
-    add_test_suite_srt();
+    // cross-sectional data structure tests
     add_test_suite_sliteral();
     add_test_suite_dtype();
     add_test_suite_symboltable();
     add_test_suite_liveness();
     add_test_suite_liveseq();
+
+    // intermediate expression tests
+    add_test_suite_ctoken();
+    add_test_suite_ast();
+    add_test_suite_srt();
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
