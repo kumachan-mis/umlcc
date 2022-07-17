@@ -178,11 +178,14 @@ void test_new_integer_srt_char() {
 }
 
 void test_new_sliteral_srt_empty() {
-    char* sliteral_value = malloc(1 * sizeof(char));
-    memcpy(sliteral_value, "", 1 * sizeof(char));
+    const char* sliteral_const = "";
+    const int sliteral_size = 1;
 
-    Dtype* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 1);
-    StringLiteral* sliteral = new_sliteral(sliteral_value, 1);
+    char* sliteral_value = malloc(1 * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    Dtype* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size);
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
     Srt* srt = new_sliteral_srt(SRT_STRING_EXPR, dtype, sliteral);
 
     for (int i = 0; i < 2; i++) {
@@ -196,8 +199,8 @@ void test_new_sliteral_srt_empty() {
         CU_ASSERT_PTR_EQUAL(srt->dtype, dtype);
         CU_ASSERT_PTR_NULL(srt->ident_name);
         CU_ASSERT_EQUAL(srt->value_int, -1);
-        CU_ASSERT_EQUAL(memcmp(srt->sliteral->value, "", 1), 0);
-        CU_ASSERT_EQUAL(srt->sliteral->size, 1);
+        CU_ASSERT_EQUAL(memcmp(srt->sliteral->value, sliteral_const, sliteral_size), 0);
+        CU_ASSERT_EQUAL(srt->sliteral->size, sliteral_size);
         CU_ASSERT_EQUAL(vector_size(srt->children), 0);
     }
 
@@ -205,11 +208,14 @@ void test_new_sliteral_srt_empty() {
 }
 
 void test_new_sliteral_srt_without_null() {
-    char* sliteral_value = malloc(15 * sizeof(char));
-    memcpy(sliteral_value, "string literal", 15 * sizeof(char));
+    const char* sliteral_const = "string literal";
+    const int sliteral_size = 15;
 
-    Dtype* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 15);
-    StringLiteral* sliteral = new_sliteral(sliteral_value, 15);
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    Dtype* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size);
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
     Srt* srt = new_sliteral_srt(SRT_STRING_EXPR, dtype, sliteral);
 
     for (int i = 0; i < 2; i++) {
@@ -223,8 +229,8 @@ void test_new_sliteral_srt_without_null() {
         CU_ASSERT_PTR_EQUAL(srt->dtype, dtype);
         CU_ASSERT_PTR_NULL(srt->ident_name);
         CU_ASSERT_EQUAL(srt->value_int, -1);
-        CU_ASSERT_EQUAL(memcmp(srt->sliteral->value, "string literal", 15), 0);
-        CU_ASSERT_EQUAL(srt->sliteral->size, 15);
+        CU_ASSERT_EQUAL(memcmp(srt->sliteral->value, sliteral_const, sliteral_size), 0);
+        CU_ASSERT_EQUAL(srt->sliteral->size, sliteral_size);
         CU_ASSERT_EQUAL(vector_size(srt->children), 0);
     }
 
@@ -232,11 +238,14 @@ void test_new_sliteral_srt_without_null() {
 }
 
 void test_new_sliteral_srt_with_null() {
-    char* sliteral_value = malloc(15 * sizeof(char));
-    memcpy(sliteral_value, "string\0literal", 15 * sizeof(char));
+    const char* sliteral_const = "string\0literal";
+    const int sliteral_size = 15;
 
-    Dtype* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 15);
-    StringLiteral* sliteral = new_sliteral(sliteral_value, 15);
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    Dtype* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size);
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
     Srt* srt = new_sliteral_srt(SRT_STRING_EXPR, dtype, sliteral);
 
     for (int i = 0; i < 2; i++) {
@@ -250,8 +259,8 @@ void test_new_sliteral_srt_with_null() {
         CU_ASSERT_PTR_EQUAL(srt->dtype, dtype);
         CU_ASSERT_PTR_NULL(srt->ident_name);
         CU_ASSERT_EQUAL(srt->value_int, -1);
-        CU_ASSERT_EQUAL(memcmp(srt->sliteral->value, "string\0literal", 15), 0);
-        CU_ASSERT_EQUAL(srt->sliteral->size, 15);
+        CU_ASSERT_EQUAL(memcmp(srt->sliteral->value, sliteral_const, sliteral_size), 0);
+        CU_ASSERT_EQUAL(srt->sliteral->size, sliteral_size);
         CU_ASSERT_EQUAL(vector_size(srt->children), 0);
     }
 

@@ -1,0 +1,157 @@
+#include "./test_sliteral.h"
+#include "../../src/literal/sliteral.h"
+
+#include <stdlib.h>
+
+void test_sliteral_copy_empty();
+void test_sliteral_copy_without_null();
+void test_sliteral_copy_with_null();
+void test_sliteral_display_string_normal();
+void test_sliteral_display_string_escape();
+void test_sliteral_display_string_octal();
+void test_sliteral_display_string_mixed();
+
+CU_Suite* add_test_suite_sliteral() {
+    CU_Suite* suite = CU_add_suite("add_test_suite_sliteral", NULL, NULL);
+    CU_add_test(suite, "test_sliteral_copy_empty", test_sliteral_copy_empty);
+    CU_add_test(suite, "test_sliteral_copy_without_null", test_sliteral_copy_without_null);
+    CU_add_test(suite, "test_sliteral_copy_with_null", test_sliteral_copy_with_null);
+    CU_add_test(suite, "test_sliteral_display_string_normal", test_sliteral_display_string_normal);
+    CU_add_test(suite, "test_sliteral_display_string_escape", test_sliteral_display_string_escape);
+    CU_add_test(suite, "test_sliteral_display_string_octal", test_sliteral_display_string_octal);
+    CU_add_test(suite, "test_sliteral_display_string_mixed", test_sliteral_display_string_mixed);
+    return suite;
+}
+
+void test_sliteral_copy_empty() {
+    const char* sliteral_const = "";
+    const int sliteral_size = 1;
+
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
+    StringLiteral* copied_sliteral = sliteral_copy(sliteral);
+    delete_sliteral(sliteral);
+
+    CU_ASSERT_EQUAL(memcmp(copied_sliteral->value, sliteral_const, sliteral_size), 0);
+    CU_ASSERT_EQUAL(copied_sliteral->size, sliteral_size);
+
+    delete_sliteral(copied_sliteral);
+}
+
+void test_sliteral_copy_without_null() {
+    const char* sliteral_const = "test: sliteral copy (without null-char)";
+    const int sliteral_size = 40;
+
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
+    StringLiteral* copied_sliteral = sliteral_copy(sliteral);
+    delete_sliteral(sliteral);
+
+    CU_ASSERT_EQUAL(memcmp(copied_sliteral->value, sliteral_const, sliteral_size), 0);
+    CU_ASSERT_EQUAL(copied_sliteral->size, sliteral_size);
+
+    delete_sliteral(copied_sliteral);
+}
+
+void test_sliteral_copy_with_null() {
+    const char* sliteral_const = "test: sliteral copy\0(with\0\0\0 null-char)";
+    const int sliteral_size = 40;
+
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
+    StringLiteral* copied_sliteral = sliteral_copy(sliteral);
+    delete_sliteral(sliteral);
+
+    CU_ASSERT_EQUAL(memcmp(copied_sliteral->value, sliteral_const, sliteral_size), 0);
+    CU_ASSERT_EQUAL(copied_sliteral->size, sliteral_size);
+
+    delete_sliteral(copied_sliteral);
+}
+
+void test_sliteral_display_string_normal() {
+    const char* sliteral_const = " !#$%&()*+,-./"
+                                 "0123456789"
+                                 ":;<=>@"
+                                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                 "[]^_`"
+                                 "abcdefghijklmnopqrstuvwxy"
+                                 "z{|}~";
+    const int sliteral_size = 92;
+    char* expected_display_string = "\""
+                                    " !#$%&()*+,-./"
+                                    "0123456789"
+                                    ":;<=>@"
+                                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                    "[]^_`"
+                                    "abcdefghijklmnopqrstuvwxy"
+                                    "z{|}~"
+                                    "\\000\"";
+
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
+    char* display_string = sliteral_display_string(sliteral);
+
+    CU_ASSERT_STRING_EQUAL(display_string, expected_display_string);
+
+    free(display_string);
+    delete_sliteral(sliteral);
+}
+
+void test_sliteral_display_string_escape() {
+    const char* sliteral_const = "\? \' \" \\ \a \b \f \n \r \t \v";
+    const int sliteral_size = 22;
+    char* expected_display_string = "\"\\\? \\\' \\\" \\\\ \\a \\b \\f \\n \\r \\t \\v\\000\"";
+
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
+    char* display_string = sliteral_display_string(sliteral);
+
+    CU_ASSERT_STRING_EQUAL(display_string, expected_display_string);
+
+    free(display_string);
+    delete_sliteral(sliteral);
+}
+
+void test_sliteral_display_string_octal() {
+    const char* sliteral_const = "\0\1\2\03\04\05\006\007\060";
+    const int sliteral_size = 10;
+    char* expected_display_string = "\"\\000\\001\\002\\003\\004\\005\\006\\a0\\000\"";
+
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
+    char* display_string = sliteral_display_string(sliteral);
+
+    CU_ASSERT_STRING_EQUAL(display_string, expected_display_string);
+
+    free(display_string);
+    delete_sliteral(sliteral);
+}
+
+void test_sliteral_display_string_mixed() {
+    const char* sliteral_const = "string\0literal\03\n";
+    const int sliteral_size = 17;
+    char* expected_display_string = "\"string\\000literal\\003\\n\\000\"";
+
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
+    char* display_string = sliteral_display_string(sliteral);
+
+    CU_ASSERT_STRING_EQUAL(display_string, expected_display_string);
+
+    free(display_string);
+    delete_sliteral(sliteral);
+}

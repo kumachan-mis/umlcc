@@ -136,10 +136,13 @@ void test_new_integer_ast_char() {
 }
 
 void test_new_sliteral_ast_empty() {
-    char* sliteral_value = malloc(1 * sizeof(char));
-    memcpy(sliteral_value, "", 1 * sizeof(char));
+    const char* sliteral_const = "";
+    const int sliteral_size = 1;
 
-    StringLiteral* sliteral = new_sliteral(sliteral_value, 1);
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
     Ast* ast = new_sliteral_ast(AST_STRING_EXPR, sliteral);
 
     for (int i = 0; i < 2; i++) {
@@ -151,8 +154,8 @@ void test_new_sliteral_ast_empty() {
         CU_ASSERT_EQUAL(ast->type, AST_STRING_EXPR);
         CU_ASSERT_PTR_NULL(ast->ident_name);
         CU_ASSERT_EQUAL(ast->value_int, -1);
-        CU_ASSERT_EQUAL(memcmp(ast->sliteral->value, "", 1), 0);
-        CU_ASSERT_EQUAL(ast->sliteral->size, 1);
+        CU_ASSERT_EQUAL(memcmp(ast->sliteral->value, sliteral_const, sliteral_size), 0);
+        CU_ASSERT_EQUAL(ast->sliteral->size, sliteral_size);
         CU_ASSERT_EQUAL(vector_size(ast->children), 0);
     }
 
@@ -160,10 +163,13 @@ void test_new_sliteral_ast_empty() {
 }
 
 void test_new_sliteral_ast_without_null() {
-    char* sliteral_value = malloc(15 * sizeof(char));
-    memcpy(sliteral_value, "string literal", 15 * sizeof(char));
+    const char* sliteral_const = "string literal";
+    const int sliteral_size = 15;
 
-    StringLiteral* sliteral = new_sliteral(sliteral_value, 15);
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
     Ast* ast = new_sliteral_ast(AST_STRING_EXPR, sliteral);
 
     for (int i = 0; i < 2; i++) {
@@ -175,8 +181,8 @@ void test_new_sliteral_ast_without_null() {
         CU_ASSERT_EQUAL(ast->type, AST_STRING_EXPR);
         CU_ASSERT_PTR_NULL(ast->ident_name);
         CU_ASSERT_EQUAL(ast->value_int, -1);
-        CU_ASSERT_EQUAL(memcmp(ast->sliteral->value, "string literal", 15), 0);
-        CU_ASSERT_EQUAL(ast->sliteral->size, 15);
+        CU_ASSERT_EQUAL(memcmp(ast->sliteral->value, sliteral_const, sliteral_size), 0);
+        CU_ASSERT_EQUAL(ast->sliteral->size, sliteral_size);
         CU_ASSERT_EQUAL(vector_size(ast->children), 0);
     }
 
@@ -184,10 +190,13 @@ void test_new_sliteral_ast_without_null() {
 }
 
 void test_new_sliteral_ast_with_null() {
-    char* sliteral_value = malloc(15 * sizeof(char));
-    memcpy(sliteral_value, "string\0literal", 15 * sizeof(char));
+    const char* sliteral_const = "string\0literal";
+    const int sliteral_size = 15;
 
-    StringLiteral* sliteral = new_sliteral(sliteral_value, 15);
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
     Ast* ast = new_sliteral_ast(AST_STRING_EXPR, sliteral);
 
     for (int i = 0; i < 2; i++) {
@@ -199,8 +208,8 @@ void test_new_sliteral_ast_with_null() {
         CU_ASSERT_EQUAL(ast->type, AST_STRING_EXPR);
         CU_ASSERT_PTR_NULL(ast->ident_name);
         CU_ASSERT_EQUAL(ast->value_int, -1);
-        CU_ASSERT_EQUAL(memcmp(ast->sliteral->value, "string\0literal", 15), 0);
-        CU_ASSERT_EQUAL(ast->sliteral->size, 15);
+        CU_ASSERT_EQUAL(memcmp(ast->sliteral->value, sliteral_const, sliteral_size), 0);
+        CU_ASSERT_EQUAL(ast->sliteral->size, sliteral_size);
         CU_ASSERT_EQUAL(vector_size(ast->children), 0);
     }
 

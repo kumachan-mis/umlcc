@@ -97,10 +97,13 @@ void test_new_integer_ctoken_char() {
 }
 
 void test_new_sliteral_ctoken_empty() {
-    char* sliteral_value = malloc(1 * sizeof(char));
-    memcpy(sliteral_value, "", 1 * sizeof(char));
+    const char* sliteral_const = "";
+    const int sliteral_size = 1;
 
-    StringLiteral* sliteral = new_sliteral(sliteral_value, 1);
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
     CToken* ctoken = new_sliteral_ctoken(CTOKEN_STRING, sliteral);
 
     for (int i = 0; i < 2; i++) {
@@ -112,18 +115,21 @@ void test_new_sliteral_ctoken_empty() {
         CU_ASSERT_EQUAL(ctoken->type, CTOKEN_STRING);
         CU_ASSERT_PTR_NULL(ctoken->ident_name);
         CU_ASSERT_EQUAL(ctoken->value_int, -1);
-        CU_ASSERT_EQUAL(memcmp(ctoken->sliteral->value, "", 1), 0);
-        CU_ASSERT_EQUAL(ctoken->sliteral->size, 1);
+        CU_ASSERT_EQUAL(memcmp(ctoken->sliteral->value, sliteral_const, sliteral_size), 0);
+        CU_ASSERT_EQUAL(ctoken->sliteral->size, sliteral_size);
     }
 
     delete_ctoken(ctoken);
 }
 
 void test_new_sliteral_ctoken_without_null() {
-    char* sliteral_value = malloc(15 * sizeof(char));
-    memcpy(sliteral_value, "string literal", 15 * sizeof(char));
+    const char* sliteral_const = "string literal";
+    const int sliteral_size = 15;
 
-    StringLiteral* sliteral = new_sliteral(sliteral_value, 15);
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
     CToken* ctoken = new_sliteral_ctoken(CTOKEN_STRING, sliteral);
 
     for (int i = 0; i < 2; i++) {
@@ -135,18 +141,21 @@ void test_new_sliteral_ctoken_without_null() {
         CU_ASSERT_EQUAL(ctoken->type, CTOKEN_STRING);
         CU_ASSERT_PTR_NULL(ctoken->ident_name);
         CU_ASSERT_EQUAL(ctoken->value_int, -1);
-        CU_ASSERT_EQUAL(memcmp(ctoken->sliteral->value, "string literal", 15), 0);
-        CU_ASSERT_EQUAL(ctoken->sliteral->size, 15);
+        CU_ASSERT_EQUAL(memcmp(ctoken->sliteral->value, sliteral_const, sliteral_size), 0);
+        CU_ASSERT_EQUAL(ctoken->sliteral->size, sliteral_size);
     }
 
     delete_ctoken(ctoken);
 }
 
 void test_new_sliteral_ctoken_with_null() {
-    char* sliteral_value = malloc(15 * sizeof(char));
-    memcpy(sliteral_value, "string\0literal", 15 * sizeof(char));
+    const char* sliteral_const = "string\0literal";
+    const int sliteral_size = 15;
 
-    StringLiteral* sliteral = new_sliteral(sliteral_value, 15);
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
     CToken* ctoken = new_sliteral_ctoken(CTOKEN_STRING, sliteral);
 
     for (int i = 0; i < 2; i++) {
@@ -158,8 +167,8 @@ void test_new_sliteral_ctoken_with_null() {
         CU_ASSERT_EQUAL(ctoken->type, CTOKEN_STRING);
         CU_ASSERT_PTR_NULL(ctoken->ident_name);
         CU_ASSERT_EQUAL(ctoken->value_int, -1);
-        CU_ASSERT_EQUAL(memcmp(ctoken->sliteral->value, "string\0literal", 15), 0);
-        CU_ASSERT_EQUAL(ctoken->sliteral->size, 15);
+        CU_ASSERT_EQUAL(memcmp(ctoken->sliteral->value, sliteral_const, sliteral_size), 0);
+        CU_ASSERT_EQUAL(ctoken->sliteral->size, sliteral_size);
     }
 
     delete_ctoken(ctoken);
