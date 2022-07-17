@@ -1,5 +1,6 @@
 #include "./ast/test_ast.h"
 #include "./ctoken/test_ctoken.h"
+#include "./dtype/test_dtype.h"
 #include "./literal/test_sliteral.h"
 #include "./liveseq/test_liveness.h"
 #include "./liveseq/test_liveseq.h"
@@ -24,6 +25,7 @@ int main(void) {
     add_test_suite_ast();
     add_test_suite_srt();
     add_test_suite_sliteral();
+    add_test_suite_dtype();
     add_test_suite_symboltable();
     add_test_suite_liveness();
     add_test_suite_liveseq();
