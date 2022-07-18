@@ -34,23 +34,23 @@ char* x64data_tostring(X64Data* x64data) {
 
     switch (x64data->type) {
         case X64_DATA_BYTE:
-            sprintf(data_str, "\t.byte %d\n", x64data->imm_value);
+            sprintf(data_str, "\t.byte\t%d\n", x64data->imm_value);
             break;
         case X64_DATA_WORD:
-            sprintf(data_str, "\t.word %d\n", x64data->imm_value);
+            sprintf(data_str, "\t.word\t%d\n", x64data->imm_value);
             break;
         case X64_DATA_LONG:
-            sprintf(data_str, "\t.long %d\n", x64data->imm_value);
+            sprintf(data_str, "\t.long\t%d\n", x64data->imm_value);
             break;
         case X64_DATA_QUAD:
-            sprintf(data_str, "\t.quad %d\n", x64data->imm_value);
+            sprintf(data_str, "\t.quad\t%d\n", x64data->imm_value);
             break;
         case X64_DATA_ZERO:
-            sprintf(data_str, "\t.zero %d\n", x64data->imm_value);
+            sprintf(data_str, "\t.zero\t%d\n", x64data->imm_value);
             break;
         case X64_DATA_STR: {
             char* display_str = sliteral_display_string(x64data->sliteral);
-            sprintf(data_str, "\t.ascii %s\n", display_str);
+            sprintf(data_str, "\t.ascii\t%s\n", display_str);
             free(display_str);
             break;
         }

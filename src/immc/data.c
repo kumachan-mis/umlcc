@@ -35,23 +35,23 @@ char* immcdata_tostring(ImmcData* immcdata) {
 
     switch (immcdata->type) {
         case IMMC_DATA_BYTE:
-            sprintf(data_str, "\tbyte %d\n", immcdata->imm_value);
+            sprintf(data_str, "\tbyte\t%d\n", immcdata->imm_value);
             break;
         case IMMC_DATA_WORD:
-            sprintf(data_str, "\tword %d\n", immcdata->imm_value);
+            sprintf(data_str, "\tword\t%d\n", immcdata->imm_value);
             break;
         case IMMC_DATA_LONG:
-            sprintf(data_str, "\tlong %d\n", immcdata->imm_value);
+            sprintf(data_str, "\tlong\t%d\n", immcdata->imm_value);
             break;
         case IMMC_DATA_QUAD:
-            sprintf(data_str, "\tquad %d\n", immcdata->imm_value);
+            sprintf(data_str, "\tquad\t%d\n", immcdata->imm_value);
             break;
         case IMMC_DATA_ZERO:
-            sprintf(data_str, "\tzero %d\n", immcdata->imm_value);
+            sprintf(data_str, "\tzero\t%d\n", immcdata->imm_value);
             break;
         case IMMC_DATA_STR: {
             char* display_str = sliteral_display_string(immcdata->sliteral);
-            sprintf(data_str, "\tstring %s\n", display_str);
+            sprintf(data_str, "\tstring\t%s\n", display_str);
             free(display_str);
             break;
         }

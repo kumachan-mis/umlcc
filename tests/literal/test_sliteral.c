@@ -13,7 +13,7 @@ void test_sliteral_display_string_mixed();
 void test_sliteral_display_string_elonged();
 
 CU_Suite* add_test_suite_sliteral() {
-    CU_Suite* suite = CU_add_suite("add_test_suite_sliteral", NULL, NULL);
+    CU_Suite* suite = CU_add_suite("test_suite_sliteral", NULL, NULL);
     CU_add_test(suite, "test_sliteral_copy_empty", test_sliteral_copy_empty);
     CU_add_test(suite, "test_sliteral_copy_without_null", test_sliteral_copy_without_null);
     CU_add_test(suite, "test_sliteral_copy_with_null", test_sliteral_copy_with_null);

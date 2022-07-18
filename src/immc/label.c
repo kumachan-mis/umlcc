@@ -47,6 +47,8 @@ char* immclabel_tostring(ImmcLabel* immclabel) {
             strcat(label_str, ":\n");
             break;
         default:
+            strcat(label_str, immclabel->name);
+            strcat(label_str, ":\n");
             break;
     }
 
