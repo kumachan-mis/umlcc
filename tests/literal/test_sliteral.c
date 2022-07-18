@@ -10,6 +10,7 @@ void test_sliteral_display_string_normal();
 void test_sliteral_display_string_escape();
 void test_sliteral_display_string_octal();
 void test_sliteral_display_string_mixed();
+void test_sliteral_display_string_elonged();
 
 CU_Suite* add_test_suite_sliteral() {
     CU_Suite* suite = CU_add_suite("add_test_suite_sliteral", NULL, NULL);
@@ -20,6 +21,8 @@ CU_Suite* add_test_suite_sliteral() {
     CU_add_test(suite, "test_sliteral_display_string_escape", test_sliteral_display_string_escape);
     CU_add_test(suite, "test_sliteral_display_string_octal", test_sliteral_display_string_octal);
     CU_add_test(suite, "test_sliteral_display_string_mixed", test_sliteral_display_string_mixed);
+    CU_add_test(suite, "test_sliteral_display_string_elonged",
+                test_sliteral_display_string_elonged);
     return suite;
 }
 
@@ -143,6 +146,23 @@ void test_sliteral_display_string_mixed() {
     const char* sliteral_const = "string\0literal\03\n";
     const int sliteral_size = 17;
     char* expected_display_string = "\"string\\000literal\\003\\n\\000\"";
+
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
+    char* display_string = sliteral_display_string(sliteral);
+
+    CU_ASSERT_STRING_EQUAL(display_string, expected_display_string);
+
+    free(display_string);
+    delete_sliteral(sliteral);
+}
+
+void test_sliteral_display_string_elonged() {
+    const char* sliteral_const = "\0\1\2\3\4\5\6";
+    const int sliteral_size = 8;
+    char* expected_display_string = "\"\\000\\001\\002\\003\\004\\005\\006\\000\"";
 
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
