@@ -1,7 +1,9 @@
-CC      := gcc
-CFLAGS  := -O3 -std=c99 -pedantic -W -Wall -Werror
+CC         := gcc
+COV        := gcov
+CFLAGS     := -O3 -std=c99 -pedantic -W -Wall -Werror
 
 BLD_DIR  := build
+COV_DIR  := cov
 BIN_DIR  := bin
 
 UMLCC    := umlcc
@@ -30,14 +32,16 @@ ASM_EXT  := .s
 INC_EXT  := .h
 OBJ_EXT  := .o
 DEP_EXT  := .d
+COV_EXT  := .cov
 
 MKDIR := mkdir -p
 SH    := bash
 RM    := rm -rf
 
-SRCS := $(wildcard $(SRC_DIR)/*$(SRC_EXT)) $(wildcard $(SRC_DIR)/**/*$(SRC_EXT))
-OBJS := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$(SRCS))
-DEPS := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(DEP_DIR)/%$(DEP_EXT),$(SRCS))
+SRCS  := $(wildcard $(SRC_DIR)/*$(SRC_EXT)) $(wildcard $(SRC_DIR)/**/*$(SRC_EXT))
+OBJS  := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$(SRCS))
+DEPS  := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(DEP_DIR)/%$(DEP_EXT),$(SRCS))
+COVS  := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(COV_DIR)/%$(COV_EXT),$(filter-out $(SRC_DIR)/$(SRC_MAIN)$(SRC_EXT),$(SRCS)))
 
 TESTS     := $(wildcard $(TEST_DIR)/*$(TEST_EXT)) $(wildcard $(TEST_DIR)/**/*$(TEST_EXT))
 TEST_OBJS := $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_OBJ_DIR)/%$(OBJ_EXT),$(TESTS))
@@ -47,17 +51,24 @@ SAMPLES     := $(wildcard $(SAMPLE_DIR)/*$(SRC_EXT))
 SAMPLE_ASMS := $(patsubst $(SAMPLE_DIR)/%$(SRC_EXT),$(SAMPLE_OUT)/%$(ASM_EXT),$(SAMPLES))
 
 .PRECIOUS: $(OBJS) $(DEPS) $(TEST_OBJS) $(TEST_DEPS)
-.PHONY: build debug-build unittest e2etest sample format clean clean-sample install-pre-commit
+.PHONY: build debug-build unittest unittest-with-coverage e2etest sample format clean clean-sample install-pre-commit
 
 build: $(BIN_DIR)/$(UMLCC)
 
 debug-build: CFLAGS += -g
 debug-build: $(BIN_DIR)/$(UMLCC)
 
-unittest: $(BIN_DIR)/$(TEST)
-	$^
+unittest:
+	$(MAKE) $(BIN_DIR)/$(TEST)
+	$(BIN_DIR)/$(TEST)
 
-e2etest: $(BIN_DIR)/$(UMLCC)
+unittest-with-coverage:
+	$(MAKE) $(BIN_DIR)/$(TEST) COVERAGE=true
+	$(BIN_DIR)/$(TEST)
+	$(MAKE) $(COVS)
+
+e2etest:
+	$(MAKE) $(BIN_DIR)/$(UMLCC)
 	$(SH) $(E2E_TEST)
 
 sample: $(SAMPLE_ASMS)
@@ -66,6 +77,9 @@ $(BIN_DIR)/$(UMLCC): $(OBJS)
 	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) $^ -o $@
 
+ifeq ($(COVERAGE),true)
+$(OBJ_DIR)/%$(OBJ_EXT): CFLAGS += -fprofile-arcs -ftest-coverage
+endif
 $(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
 	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -75,6 +89,9 @@ $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
 	$(CC) $(CFLAGS) -MP -MM $< -MF $@ \
 		-MT $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$<)
 
+ifeq ($(COVERAGE),true)
+$(BIN_DIR)/$(TEST): TEST_LIBS += -lgcov
+endif
 $(BIN_DIR)/$(TEST): $(filter-out $(OBJ_DIR)/$(SRC_MAIN)$(OBJ_EXT),$(OBJS)) $(TEST_OBJS)
 	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) $^ $(TEST_LIBS) -o $@
@@ -88,6 +105,10 @@ $(TEST_DEP_DIR)/%$(DEP_EXT): $(TEST_DIR)/%$(TEST_EXT)
 	$(CC) $(CFLAGS) -MP -MM $< -MF $@ \
 		-MT $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_OBJ_DIR)/%$(OBJ_EXT),$<)
 
+$(COV_DIR)/%$(COV_EXT): $(OBJ_DIR)/%$(OBJ_EXT)
+	$(MKDIR) $(dir $@)
+	$(COV) -rt $< >> $@
+
 $(SAMPLE_OUT)/%$(ASM_EXT): $(SAMPLE_DIR)/%$(SRC_EXT)
 	$(MKDIR) $(dir $@)
 	$(CC) $(SAMPLE_CFLAGS) -S $< -o $@
@@ -96,7 +117,7 @@ format:
 	find . -name *.h -o -name *.c | xargs clang-format -i
 
 clean:
-	$(RM) $(BIN_DIR) $(BLD_DIR)
+	$(RM) $(BIN_DIR) $(BLD_DIR) $(COV_DIR)
 	$(SH) $(E2E_CLEAN)
 
 clean-sample:
@@ -122,5 +143,9 @@ ifeq ($(MAKECMDGOALS),e2etest)
 endif
 
 ifeq ($(MAKECMDGOALS),unittest)
+-include $(DEPS) $(TEST_DEPS)
+endif
+
+ifeq ($(MAKECMDGOALS),unittest-with-coverage)
 -include $(DEPS) $(TEST_DEPS)
 endif
