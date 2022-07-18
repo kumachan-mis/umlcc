@@ -2,7 +2,6 @@
 #include "../../src/common/type.h"
 #include "../../src/map/map.h"
 
-#include <CUnit/Basic.h>
 #include <stdlib.h>
 
 void test_map_copy();

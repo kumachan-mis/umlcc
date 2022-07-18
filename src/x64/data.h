@@ -1,7 +1,7 @@
 #ifndef UMLCC_X64_DATA_H
 #define UMLCC_X64_DATA_H
 
-#include "../sliteral/sliteral.h"
+#include "../literal/sliteral.h"
 
 typedef enum X64DataType {
     X64_DATA_BYTE,
@@ -23,6 +23,5 @@ X64Data* new_str_x64data(X64DataType type, StringLiteral* sliteral);
 X64Data* x64data_copy(X64Data* x64data);
 char* x64data_tostring(X64Data* x64data);
 void delete_x64data(X64Data* x64data);
-X64DataType x64data_get_type(int size);
 
 #endif

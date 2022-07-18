@@ -3,7 +3,7 @@
 
 #include "../common/type.h"
 #include "../dtype/dtype.h"
-#include "../sliteral/sliteral.h"
+#include "../literal/sliteral.h"
 #include "../vector/vector.h"
 
 typedef enum SrtType {

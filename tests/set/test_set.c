@@ -2,7 +2,6 @@
 #include "../../src/common/type.h"
 #include "../../src/set/set.h"
 
-#include <CUnit/Basic.h>
 #include <stdlib.h>
 
 void test_set_copy();

@@ -142,7 +142,6 @@ typedef struct ImmcInst {
 
 ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* snd_src);
 ImmcInst* immcinst_copy(ImmcInst* immcinst);
-int immcinst_isjump(ImmcInst* immcinst);
 char* immcinst_tostring(ImmcInst* immcinst);
 void delete_immcinst(ImmcInst* immcinst);
 

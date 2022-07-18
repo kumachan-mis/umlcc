@@ -1,5 +1,10 @@
 {
     "C_Cpp.intelliSenseCacheSize": 0,
+    "[c]": {
+        "editor.wordBasedSuggestions": true,
+        "editor.suggest.insertMode": "insert",
+        "editor.rulers": [100]
+    },
     "files.associations": {
         "*.d": "makefile",
         "*.i": "asm-intel-x86-generic"

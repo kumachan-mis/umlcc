@@ -153,15 +153,30 @@ Vector* gen_scalar_initializer_immcode(Immcgen* immcgen) {
 Vector* gen_global_scalar_initializer_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
 
-    ImmcDataType type = immcdata_get_type(dtype_size(immcgen->initialized_dtype));
     Srt* srt = vector_at(immcgen->srt->children, 0);
-
+    // TODO: support expression for global initializer
     while (srt->type == SRT_CAST_EXPR) {
         srt = vector_at(srt->children, 0);
     }
 
-    // TODO: support expression for global initializer
-    vector_push(codes, new_imm_data_immc(type, srt->value_int));
+    int initialized_size = dtype_size(immcgen->initialized_dtype);
+    switch (initialized_size) {
+        case 1:
+            vector_push(codes, new_imm_data_immc(IMMC_DATA_BYTE, srt->value_int));
+            break;
+        case 2:
+            vector_push(codes, new_imm_data_immc(IMMC_DATA_WORD, srt->value_int));
+            break;
+        case 4:
+            vector_push(codes, new_imm_data_immc(IMMC_DATA_LONG, srt->value_int));
+            break;
+        case 8:
+            vector_push(codes, new_imm_data_immc(IMMC_DATA_QUAD, srt->value_int));
+            break;
+        default:
+            fprintf(stderr, "Error: unexpected global variable size %d\n", initialized_size);
+            exit(1);
+    }
 
     return codes;
 }

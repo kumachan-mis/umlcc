@@ -21,6 +21,7 @@ ImmcLabel* immclabel_copy(ImmcLabel* immclabel) {
 }
 
 char* immclabel_tostring(ImmcLabel* immclabel) {
+    // TODO: fix to prevent buffer overflow
     char* label_str = malloc(200 * sizeof(char));
     memset(label_str, 0, 200 * sizeof(char));
 
@@ -47,6 +48,8 @@ char* immclabel_tostring(ImmcLabel* immclabel) {
             strcat(label_str, ":\n");
             break;
         default:
+            strcat(label_str, immclabel->name);
+            strcat(label_str, ":\n");
             break;
     }
 

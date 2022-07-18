@@ -104,6 +104,7 @@ ImmcOpe* immcope_copy(ImmcOpe* immcope) {
 }
 
 char* immcope_tostring(ImmcOpe* immcope) {
+    // TODO: fix to prevent buffer overflow
     char* ope_str = malloc(50 * sizeof(char));
 
     switch (immcope->type) {
@@ -138,5 +139,6 @@ char* immcope_tostring(ImmcOpe* immcope) {
 
 void delete_immcope(ImmcOpe* immcope) {
     if (immcope->label_name != NULL) free(immcope->label_name);
+    if (immcope->sliteral != NULL) delete_sliteral(immcope->sliteral);
     free(immcope);
 }

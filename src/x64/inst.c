@@ -31,6 +31,7 @@ X64Inst* x64inst_copy(X64Inst* x64inst) {
 char* x64inst_tostring(X64Inst* x64inst) {
     char* x64instcode_tostring(X64Inst * x64inst);
 
+    // TODO: fix to prevent buffer overflow
     char* code_str = malloc(200 * sizeof(char));
     memset(code_str, 0, 200 * sizeof(char));
 
@@ -68,6 +69,7 @@ char* x64instcode_tostring(X64Inst* x64inst) {
         // two-suffixes instruction
         case X64_INST_MOVSXX:
         case X64_INST_CXTX: {
+            // TODO: fix to prevent buffer overflow
             char* instcode_str = malloc(50 * sizeof(char));
             char src_suffix = x64suffix_tochar(x64inst->src->suffix);
             char dst_suffix = x64suffix_tochar(x64inst->dst->suffix);
@@ -90,6 +92,7 @@ char* x64instcode_tostring(X64Inst* x64inst) {
         case X64_INST_SALX:
         case X64_INST_SARX:
         case X64_INST_CMPX: {
+            // TODO: fix to prevent buffer overflow
             char* instcode_str = malloc(50 * sizeof(char));
             char suffix = '\0';
             if (x64inst->src != NULL && (X64_OPERAND_SUFFIX <= x64inst->src->type &&

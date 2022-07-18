@@ -82,6 +82,7 @@ Srt* new_sliteral_srt(SrtType type, Dtype* dtype, StringLiteral* sliteral) {
 
 Srt* srt_copy(Srt* srt) {
     Srt* copied_srt = malloc(sizeof(Srt));
+    copied_srt->type = srt->type;
     copied_srt->dtype = NULL;
     if (srt->dtype != NULL) copied_srt->dtype = dtype_copy(srt->dtype);
     copied_srt->ident_name = NULL;
@@ -96,6 +97,7 @@ Srt* srt_copy(Srt* srt) {
 void delete_srt(Srt* srt) {
     if (srt->dtype != NULL) delete_dtype(srt->dtype);
     if (srt->ident_name != NULL) free(srt->ident_name);
+    if (srt->sliteral != NULL) delete_sliteral(srt->sliteral);
     delete_vector(srt->children);
     free(srt);
 }

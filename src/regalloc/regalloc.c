@@ -104,7 +104,7 @@ Vector* create_basic_blocks(Vector* external_immcs) {
     while (index < immcs_len) {
         while (index < immcs_len) {
             Immc* immc = vector_at(external_immcs, index);
-            if (immc->type == IMMC_INST && immcinst_isjump(immc->inst)) {
+            if (immc_isjumpinst(immc)) {
                 vector_push(block_immcs, immc_copy(immc));
                 index++;
                 next_block_immcs = new_vector(&t_immc);
@@ -150,7 +150,7 @@ Vector* connect_basic_blocks(Vector* basic_blocks) {
         BasicBlock* basic_block = vector_at(basic_blocks, block_id);
         Immc* tail_immc = vector_at(basic_block->immcs, vector_size(basic_block->immcs) - 1);
 
-        if (tail_immc->type == IMMC_INST && immcinst_isjump(tail_immc->inst)) {
+        if (immc_isjumpinst(tail_immc)) {
             int* block_id_ref = map_get(label_block_map, tail_immc->inst->dst->label_name);
             set_add(basic_block->succ, new_integer(*block_id_ref));
         }

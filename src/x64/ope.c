@@ -128,6 +128,7 @@ X64Ope* x64ope_copy(X64Ope* x64ope) {
 }
 
 char* x64ope_tostring(X64Ope* x64ope) {
+    // TODO: fix to prevent buffer overflow
     char* ope_str = malloc(50 * sizeof(char));
 
     switch (x64ope->type) {

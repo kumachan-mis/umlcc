@@ -1,7 +1,7 @@
 #ifndef UMLCC_IMMC_OPE_H
 #define UMLCC_IMMC_OPE_H
 
-#include "../sliteral/sliteral.h"
+#include "../literal/sliteral.h"
 #include "./suffix.h"
 
 typedef enum ImmcOpeType {

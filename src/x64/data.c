@@ -30,27 +30,28 @@ X64Data* x64data_copy(X64Data* x64data) {
 }
 
 char* x64data_tostring(X64Data* x64data) {
+    // TODO: fix to prevent buffer overflow
     char* data_str = malloc(200 * sizeof(char));
 
     switch (x64data->type) {
         case X64_DATA_BYTE:
-            sprintf(data_str, "\t.byte %d\n", x64data->imm_value);
+            sprintf(data_str, "\t.byte\t%d\n", x64data->imm_value);
             break;
         case X64_DATA_WORD:
-            sprintf(data_str, "\t.word %d\n", x64data->imm_value);
+            sprintf(data_str, "\t.word\t%d\n", x64data->imm_value);
             break;
         case X64_DATA_LONG:
-            sprintf(data_str, "\t.long %d\n", x64data->imm_value);
+            sprintf(data_str, "\t.long\t%d\n", x64data->imm_value);
             break;
         case X64_DATA_QUAD:
-            sprintf(data_str, "\t.quad %d\n", x64data->imm_value);
+            sprintf(data_str, "\t.quad\t%d\n", x64data->imm_value);
             break;
         case X64_DATA_ZERO:
-            sprintf(data_str, "\t.zero %d\n", x64data->imm_value);
+            sprintf(data_str, "\t.zero\t%d\n", x64data->imm_value);
             break;
         case X64_DATA_STR: {
             char* display_str = sliteral_display_string(x64data->sliteral);
-            sprintf(data_str, "\t.ascii %s\n", display_str);
+            sprintf(data_str, "\t.ascii\t%s\n", display_str);
             free(display_str);
             break;
         }
@@ -61,20 +62,6 @@ char* x64data_tostring(X64Data* x64data) {
 }
 
 void delete_x64data(X64Data* x64data) {
+    if (x64data->sliteral != NULL) delete_sliteral(x64data->sliteral);
     free(x64data);
-}
-
-X64DataType x64data_get_type(int size) {
-    switch (size) {
-        case 1:
-            return X64_DATA_BYTE;
-        case 2:
-            return X64_DATA_WORD;
-        case 4:
-            return X64_DATA_LONG;
-        case 8:
-            return X64_DATA_QUAD;
-        default:
-            return X64_DATA_ZERO;
-    }
 }

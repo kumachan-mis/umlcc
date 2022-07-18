@@ -3,10 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* immc_insts[] = {"load  ", "addr  ", "str   ", "store ", "ldarg ", "starg ", "stret ",
-                      "add   ", "sub   ", "mul   ", "div   ", "mod   ", "sal   ", "sar   ",
-                      "seteq ", "setneq", "jmp   ", "jeq   ", "jneq  ", "call  ", "enter ",
-                      "leave ", "prep  ", "clean ", "free  "};
+char* immc_insts[] = {"load", "addr", "str",   "store", "ldarg", "starg", "stret",  "add", "sub",
+                      "mul",  "div",  "mod",   "sal",   "sar",   "seteq", "setneq", "jmp", "jeq",
+                      "jneq", "call", "enter", "leave", "prep",  "clean", "free"};
 
 ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* snd_src) {
     ImmcInst* immcinst = malloc(sizeof(ImmcInst));
@@ -29,11 +28,8 @@ ImmcInst* immcinst_copy(ImmcInst* immcinst) {
     return copied_immcinst;
 }
 
-int immcinst_isjump(ImmcInst* immcinst) {
-    return IMMC_INST_JMP <= immcinst->type && immcinst->type <= IMMC_INST_JNEQ;
-}
-
 char* immcinst_tostring(ImmcInst* immcinst) {
+    // TODO: fix to prevent buffer overflow
     char* code_str = malloc(200 * sizeof(char));
     memset(code_str, 0, 200 * sizeof(char));
 

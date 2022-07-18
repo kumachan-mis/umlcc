@@ -1,5 +1,5 @@
 #include "./reader.h"
-#include "../sliteral/sliteral.h"
+#include "../literal/sliteral.h"
 
 #include <stdlib.h>
 #include <string.h>
