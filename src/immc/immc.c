@@ -57,6 +57,11 @@ Immc* immc_copy(Immc* immc) {
     return copied_immc;
 }
 
+int immc_isjumpinst(Immc* immc) {
+    return immc->type == IMMC_INST &&
+           (IMMC_INST_JMP <= immc->inst->type && immc->inst->type <= IMMC_INST_JNEQ);
+}
+
 char* immc_tostring(Immc* immc) {
     switch (immc->type) {
         case IMMC_INST:
