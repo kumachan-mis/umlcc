@@ -1,6 +1,7 @@
 #include "./ast/test_ast.h"
 #include "./ctoken/test_ctoken.h"
 #include "./dtype/test_dtype.h"
+#include "./immc/test_suffix.h"
 #include "./literal/test_sliteral.h"
 #include "./liveseq/test_liveness.h"
 #include "./liveseq/test_liveseq.h"
@@ -9,6 +10,7 @@
 #include "./srt/test_srt.h"
 #include "./symtab/test_symtab.h"
 #include "./vector/test_vector.h"
+#include "./x64/test_suffix.h"
 
 #include <CUnit/Basic.h>
 
@@ -31,6 +33,8 @@ int main(void) {
     add_test_suite_ctoken();
     add_test_suite_ast();
     add_test_suite_srt();
+    add_test_suite_immcsuffix();
+    add_test_suite_x64suffix();
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
