@@ -31,6 +31,7 @@ ImmcData* immcdata_copy(ImmcData* immcdata) {
 }
 
 char* immcdata_tostring(ImmcData* immcdata) {
+    // TODO: fix to prevent buffer overflow
     char* data_str = malloc(200 * sizeof(char));
 
     switch (immcdata->type) {

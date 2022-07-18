@@ -29,6 +29,7 @@ ImmcInst* immcinst_copy(ImmcInst* immcinst) {
 }
 
 char* immcinst_tostring(ImmcInst* immcinst) {
+    // TODO: fix to prevent buffer overflow
     char* code_str = malloc(200 * sizeof(char));
     memset(code_str, 0, 200 * sizeof(char));
 

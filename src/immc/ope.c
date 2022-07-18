@@ -104,6 +104,7 @@ ImmcOpe* immcope_copy(ImmcOpe* immcope) {
 }
 
 char* immcope_tostring(ImmcOpe* immcope) {
+    // TODO: fix to prevent buffer overflow
     char* ope_str = malloc(50 * sizeof(char));
 
     switch (immcope->type) {

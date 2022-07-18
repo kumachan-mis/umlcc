@@ -21,6 +21,7 @@ X64Label* x64label_copy(X64Label* x64label) {
 }
 
 char* x64label_tostring(X64Label* x64label) {
+    // TODO: fix to prevent buffer overflow
     char* label_str = malloc(200 * sizeof(char));
     memset(label_str, 0, 200 * sizeof(char));
 

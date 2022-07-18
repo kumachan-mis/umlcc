@@ -30,6 +30,7 @@ X64Data* x64data_copy(X64Data* x64data) {
 }
 
 char* x64data_tostring(X64Data* x64data) {
+    // TODO: fix to prevent buffer overflow
     char* data_str = malloc(200 * sizeof(char));
 
     switch (x64data->type) {
