@@ -26,24 +26,24 @@ void test_x64ope_tostring_jlabel();
 
 CU_Suite* add_test_suite_x64ope() {
     CU_Suite* suite = CU_add_suite("test_suite_x64ope", NULL, NULL);
-    CU_add_test(suite, "test_new_suffix_x64ope", test_new_suffix_x64ope);
-    CU_add_test(suite, "test_new_signed_x64ope", test_new_signed_x64ope);
-    CU_add_test(suite, "test_new_unsigned_x64ope", test_new_unsigned_x64ope);
-    CU_add_test(suite, "test_new_reg_x64ope", test_new_reg_x64ope);
-    CU_add_test(suite, "test_new_ptr_x64ope", test_new_ptr_x64ope);
-    CU_add_test(suite, "test_new_jptr_x64ope", test_new_jptr_x64ope);
-    CU_add_test(suite, "test_new_mem_x64ope", test_new_mem_x64ope);
-    CU_add_test(suite, "test_new_label_x64ope", test_new_label_x64ope);
-    CU_add_test(suite, "test_new_jlabel_x64ope", test_new_jlabel_x64ope);
-    CU_add_test(suite, "test_x64ope_tostring_suffix", test_x64ope_tostring_suffix);
-    CU_add_test(suite, "test_x64ope_tostring_signed", test_x64ope_tostring_signed);
-    CU_add_test(suite, "test_x64ope_tostring_unsigned", test_x64ope_tostring_unsigned);
-    CU_add_test(suite, "test_x64ope_tostring_reg", test_x64ope_tostring_reg);
-    CU_add_test(suite, "test_x64ope_tostring_ptr", test_x64ope_tostring_ptr);
-    CU_add_test(suite, "test_x64ope_tostring_jptr", test_x64ope_tostring_jptr);
-    CU_add_test(suite, "test_x64ope_tostring_mem", test_x64ope_tostring_mem);
-    CU_add_test(suite, "test_x64ope_tostring_label", test_x64ope_tostring_label);
-    CU_add_test(suite, "test_x64ope_tostring_jlabel", test_x64ope_tostring_jlabel);
+    CU_ADD_TEST(suite, test_new_suffix_x64ope);
+    CU_ADD_TEST(suite, test_new_signed_x64ope);
+    CU_ADD_TEST(suite, test_new_unsigned_x64ope);
+    CU_ADD_TEST(suite, test_new_reg_x64ope);
+    CU_ADD_TEST(suite, test_new_ptr_x64ope);
+    CU_ADD_TEST(suite, test_new_jptr_x64ope);
+    CU_ADD_TEST(suite, test_new_mem_x64ope);
+    CU_ADD_TEST(suite, test_new_label_x64ope);
+    CU_ADD_TEST(suite, test_new_jlabel_x64ope);
+    CU_ADD_TEST(suite, test_x64ope_tostring_suffix);
+    CU_ADD_TEST(suite, test_x64ope_tostring_signed);
+    CU_ADD_TEST(suite, test_x64ope_tostring_unsigned);
+    CU_ADD_TEST(suite, test_x64ope_tostring_reg);
+    CU_ADD_TEST(suite, test_x64ope_tostring_ptr);
+    CU_ADD_TEST(suite, test_x64ope_tostring_jptr);
+    CU_ADD_TEST(suite, test_x64ope_tostring_mem);
+    CU_ADD_TEST(suite, test_x64ope_tostring_label);
+    CU_ADD_TEST(suite, test_x64ope_tostring_jlabel);
     return suite;
 }
 

@@ -30,29 +30,29 @@ void test_set_equals_empty();
 
 CU_Suite* add_test_suite_set() {
     CU_Suite* suite = CU_add_suite("test_suite_set", NULL, NULL);
-    CU_add_test(suite, "test_set_copy", test_set_copy);
-    CU_add_test(suite, "test_set_add", test_set_add);
-    CU_add_test(suite, "test_set_remove", test_set_remove);
-    CU_add_test(suite, "test_set_iter", test_set_iter);
-    CU_add_test(suite, "test_set_intersection", test_set_intersection);
-    CU_add_test(suite, "test_set_intersection_empty", test_set_intersection_empty);
-    CU_add_test(suite, "test_set_intersection_super", test_set_intersection_super);
-    CU_add_test(suite, "test_set_intersection_sub", test_set_intersection_sub);
-    CU_add_test(suite, "test_set_intersection_foreign", test_set_intersection_foreign);
-    CU_add_test(suite, "test_set_union", test_set_union);
-    CU_add_test(suite, "test_set_union_empty", test_set_union_empty);
-    CU_add_test(suite, "test_set_union_super", test_set_union_super);
-    CU_add_test(suite, "test_set_union_sub", test_set_union_sub);
-    CU_add_test(suite, "test_set_union_foreign", test_set_union_foreign);
-    CU_add_test(suite, "test_set_difference", test_set_difference);
-    CU_add_test(suite, "test_set_difference_empty", test_set_difference_empty);
-    CU_add_test(suite, "test_set_difference_super", test_set_difference_super);
-    CU_add_test(suite, "test_set_difference_sub", test_set_difference_sub);
-    CU_add_test(suite, "test_set_difference_foreign", test_set_difference_foreign);
-    CU_add_test(suite, "test_set_issubset", test_set_issubset);
-    CU_add_test(suite, "test_set_issubset_empty", test_set_issubset_empty);
-    CU_add_test(suite, "test_set_equals", test_set_equals);
-    CU_add_test(suite, "test_set_equals_empty", test_set_equals_empty);
+    CU_ADD_TEST(suite, test_set_copy);
+    CU_ADD_TEST(suite, test_set_add);
+    CU_ADD_TEST(suite, test_set_remove);
+    CU_ADD_TEST(suite, test_set_iter);
+    CU_ADD_TEST(suite, test_set_intersection);
+    CU_ADD_TEST(suite, test_set_intersection_empty);
+    CU_ADD_TEST(suite, test_set_intersection_super);
+    CU_ADD_TEST(suite, test_set_intersection_sub);
+    CU_ADD_TEST(suite, test_set_intersection_foreign);
+    CU_ADD_TEST(suite, test_set_union);
+    CU_ADD_TEST(suite, test_set_union_empty);
+    CU_ADD_TEST(suite, test_set_union_super);
+    CU_ADD_TEST(suite, test_set_union_sub);
+    CU_ADD_TEST(suite, test_set_union_foreign);
+    CU_ADD_TEST(suite, test_set_difference);
+    CU_ADD_TEST(suite, test_set_difference_empty);
+    CU_ADD_TEST(suite, test_set_difference_super);
+    CU_ADD_TEST(suite, test_set_difference_sub);
+    CU_ADD_TEST(suite, test_set_difference_foreign);
+    CU_ADD_TEST(suite, test_set_issubset);
+    CU_ADD_TEST(suite, test_set_issubset_empty);
+    CU_ADD_TEST(suite, test_set_equals);
+    CU_ADD_TEST(suite, test_set_equals_empty);
     return suite;
 }
 
@@ -72,10 +72,10 @@ void test_set_copy() {
     Set* copied_set = set_copy(set);
     delete_set(set);
 
-    CU_ASSERT(set_contains(copied_set, "two"));
-    CU_ASSERT(set_contains(copied_set, "one"));
-    CU_ASSERT(set_contains(copied_set, "four"));
-    CU_ASSERT(!set_contains(copied_set, "fou"));
+    CU_ASSERT_TRUE(set_contains(copied_set, "two"));
+    CU_ASSERT_TRUE(set_contains(copied_set, "one"));
+    CU_ASSERT_TRUE(set_contains(copied_set, "four"));
+    CU_ASSERT_FALSE(set_contains(copied_set, "fou"));
 
     delete_set(copied_set);
 }
@@ -96,22 +96,22 @@ void test_set_add() {
     item = new_integer(3);
     set_add(set, item);
 
-    CU_ASSERT(set_contains(set, item));
+    CU_ASSERT_TRUE(set_contains(set, item));
 
     item = new_integer(1);
-    CU_ASSERT(set_contains(set, item));
+    CU_ASSERT_TRUE(set_contains(set, item));
     free(item);
 
     item = new_integer(2);
-    CU_ASSERT(set_contains(set, item));
+    CU_ASSERT_TRUE(set_contains(set, item));
     free(item);
 
     item = new_integer(3);
-    CU_ASSERT(set_contains(set, item));
+    CU_ASSERT_TRUE(set_contains(set, item));
     free(item);
 
     item = new_integer(4);
-    CU_ASSERT(!set_contains(set, item));
+    CU_ASSERT_FALSE(set_contains(set, item));
     free(item);
 
     delete_set(set);
@@ -139,19 +139,19 @@ void test_set_remove() {
     free(item);
 
     item = new_integer(-1);
-    CU_ASSERT(set_contains(set, item));
+    CU_ASSERT_TRUE(set_contains(set, item));
     free(item);
 
     item = new_integer(1);
-    CU_ASSERT(set_contains(set, item));
+    CU_ASSERT_TRUE(set_contains(set, item));
     free(item);
 
     item = new_integer(2);
-    CU_ASSERT(!set_contains(set, item));
+    CU_ASSERT_FALSE(set_contains(set, item));
     free(item);
 
     item = new_integer(3);
-    CU_ASSERT(!set_contains(set, item));
+    CU_ASSERT_FALSE(set_contains(set, item));
     free(item);
 
     delete_set(set);
@@ -765,22 +765,22 @@ void test_set_issubset() {
     set_add(set, item);
 
     Set* other = new_set(&t_hashable_integer);
-    CU_ASSERT(set_issubset(set, other));
+    CU_ASSERT_TRUE(set_issubset(set, other));
 
     item = new_integer(2);
     set_add(other, item);
 
-    CU_ASSERT(set_issubset(set, other));
+    CU_ASSERT_TRUE(set_issubset(set, other));
 
     item = new_integer(3);
     set_add(other, item);
 
-    CU_ASSERT(set_issubset(set, other));
+    CU_ASSERT_TRUE(set_issubset(set, other));
 
     item = new_integer(6);
     set_add(other, item);
 
-    CU_ASSERT(!set_issubset(set, other));
+    CU_ASSERT_FALSE(set_issubset(set, other));
 
     delete_set(set);
     delete_set(other);
@@ -791,12 +791,12 @@ void test_set_issubset_empty() {
     int* item = NULL;
 
     Set* other = new_set(&t_hashable_integer);
-    CU_ASSERT(set_issubset(set, other));
+    CU_ASSERT_TRUE(set_issubset(set, other));
 
     item = new_integer(0);
     set_add(other, item);
 
-    CU_ASSERT(!set_issubset(set, other));
+    CU_ASSERT_FALSE(set_issubset(set, other));
 
     delete_set(set);
     delete_set(other);
@@ -816,22 +816,22 @@ void test_set_equals() {
     set_add(set, item);
 
     Set* other = new_set(&t_hashable_integer);
-    CU_ASSERT(set_issubset(set, other));
+    CU_ASSERT_TRUE(set_issubset(set, other));
 
     item = new_integer(2);
     set_add(other, item);
 
-    CU_ASSERT(!set_equals(set, other));
+    CU_ASSERT_FALSE(set_equals(set, other));
 
     item = new_integer(5);
     set_add(other, item);
 
-    CU_ASSERT(!set_equals(set, other));
+    CU_ASSERT_FALSE(set_equals(set, other));
 
     item = new_integer(4);
     set_add(other, item);
 
-    CU_ASSERT(set_equals(set, other));
+    CU_ASSERT_TRUE(set_equals(set, other));
 
     delete_set(set);
     delete_set(other);
@@ -842,12 +842,12 @@ void test_set_equals_empty() {
     int* item = NULL;
 
     Set* other = new_set(&t_hashable_integer);
-    CU_ASSERT(set_equals(set, other));
+    CU_ASSERT_TRUE(set_equals(set, other));
 
     item = new_integer(0);
     set_add(other, item);
 
-    CU_ASSERT(!set_equals(set, other));
+    CU_ASSERT_FALSE(set_equals(set, other));
 
     delete_set(set);
     delete_set(other);

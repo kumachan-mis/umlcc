@@ -12,12 +12,12 @@ void test_new_sliteral_ast();
 
 CU_Suite* add_test_suite_ast() {
     CU_Suite* suite = CU_add_suite("test_suite_ast", NULL, NULL);
-    CU_add_test(suite, "test_new_ast", test_new_ast);
-    CU_add_test(suite, "test_new_identifier_ast_ident", test_new_identifier_ast_ident);
-    CU_add_test(suite, "test_new_identifier_ast_typedefname", test_new_identifier_ast_typedefname);
-    CU_add_test(suite, "test_new_integer_ast_int", test_new_integer_ast_int);
-    CU_add_test(suite, "test_new_integer_ast_char", test_new_integer_ast_char);
-    CU_add_test(suite, "test_new_sliteral_ast", test_new_sliteral_ast);
+    CU_ADD_TEST(suite, test_new_ast);
+    CU_ADD_TEST(suite, test_new_identifier_ast_ident);
+    CU_ADD_TEST(suite, test_new_identifier_ast_typedefname);
+    CU_ADD_TEST(suite, test_new_integer_ast_int);
+    CU_ADD_TEST(suite, test_new_integer_ast_char);
+    CU_ADD_TEST(suite, test_new_sliteral_ast);
     return suite;
 }
 

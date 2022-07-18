@@ -8,10 +8,10 @@ void test_immcsuffix_greater();
 
 CU_Suite* add_test_suite_immcsuffix() {
     CU_Suite* suite = CU_add_suite("test_suite_immcsuffix", NULL, NULL);
-    CU_add_test(suite, "test_immcsuffix_get", test_immcsuffix_get);
-    CU_add_test(suite, "test_immcsuffix_tosize", test_immcsuffix_tosize);
-    CU_add_test(suite, "test_immcsuffix_tochar", test_immcsuffix_tochar);
-    CU_add_test(suite, "test_immcsuffix_greater", test_immcsuffix_greater);
+    CU_ADD_TEST(suite, test_immcsuffix_get);
+    CU_ADD_TEST(suite, test_immcsuffix_tosize);
+    CU_ADD_TEST(suite, test_immcsuffix_tochar);
+    CU_ADD_TEST(suite, test_immcsuffix_greater);
     return suite;
 }
 

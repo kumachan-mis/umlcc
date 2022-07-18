@@ -8,10 +8,10 @@ void test_x64suffix_greater();
 
 CU_Suite* add_test_suite_x64suffix() {
     CU_Suite* suite = CU_add_suite("test_suite_x64suffix", NULL, NULL);
-    CU_add_test(suite, "test_x64suffix_get", test_x64suffix_get);
-    CU_add_test(suite, "test_x64suffix_tosize", test_x64suffix_tosize);
-    CU_add_test(suite, "test_x64suffix_tochar", test_x64suffix_tochar);
-    CU_add_test(suite, "test_x64suffix_greater", test_x64suffix_greater);
+    CU_ADD_TEST(suite, test_x64suffix_get);
+    CU_ADD_TEST(suite, test_x64suffix_tosize);
+    CU_ADD_TEST(suite, test_x64suffix_tochar);
+    CU_ADD_TEST(suite, test_x64suffix_greater);
     return suite;
 }
 

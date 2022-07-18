@@ -19,19 +19,19 @@ void test_immc_tostring_label();
 
 CU_Suite* add_test_suite_immc() {
     CU_Suite* suite = CU_add_suite("test_suite_immc", NULL, NULL);
-    CU_add_test(suite, "test_new_inst_immc_1arg", test_new_inst_immc_1arg);
-    CU_add_test(suite, "test_new_inst_immc_2arg", test_new_inst_immc_2arg);
-    CU_add_test(suite, "test_new_inst_immc_3arg", test_new_inst_immc_3arg);
-    CU_add_test(suite, "test_new_imm_data_immc", test_new_imm_data_immc);
-    CU_add_test(suite, "test_new_str_data_immc", test_new_str_data_immc);
-    CU_add_test(suite, "test_new_label_immc", test_new_label_immc);
-    CU_add_test(suite, "test_immc_isjumpinst", test_immc_isjumpinst);
-    CU_add_test(suite, "test_immc_tostring_1arg_inst", test_immc_tostring_1arg_inst);
-    CU_add_test(suite, "test_immc_tostring_2arg_inst", test_immc_tostring_2arg_inst);
-    CU_add_test(suite, "test_immc_tostring_3arg_inst", test_immc_tostring_3arg_inst);
-    CU_add_test(suite, "test_immc_tostring_imm_data", test_immc_tostring_imm_data);
-    CU_add_test(suite, "test_immc_tostring_str_data", test_immc_tostring_str_data);
-    CU_add_test(suite, "test_immc_tostring_label", test_immc_tostring_label);
+    CU_ADD_TEST(suite, test_new_inst_immc_1arg);
+    CU_ADD_TEST(suite, test_new_inst_immc_2arg);
+    CU_ADD_TEST(suite, test_new_inst_immc_3arg);
+    CU_ADD_TEST(suite, test_new_imm_data_immc);
+    CU_ADD_TEST(suite, test_new_str_data_immc);
+    CU_ADD_TEST(suite, test_new_label_immc);
+    CU_ADD_TEST(suite, test_immc_isjumpinst);
+    CU_ADD_TEST(suite, test_immc_tostring_1arg_inst);
+    CU_ADD_TEST(suite, test_immc_tostring_2arg_inst);
+    CU_ADD_TEST(suite, test_immc_tostring_3arg_inst);
+    CU_ADD_TEST(suite, test_immc_tostring_imm_data);
+    CU_ADD_TEST(suite, test_immc_tostring_str_data);
+    CU_ADD_TEST(suite, test_immc_tostring_label);
     return suite;
 }
 
