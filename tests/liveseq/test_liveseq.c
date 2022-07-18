@@ -11,12 +11,12 @@ void test_liveseq_redef_without_interval();
 
 CU_Suite* add_test_suite_liveseq() {
     CU_Suite* suite = CU_add_suite("test_suite_liveseq", NULL, NULL);
-    CU_add_test(suite, "test_liveseq_copy", test_liveseq_copy);
-    CU_add_test(suite, "test_liveseq_empty", test_liveseq_empty);
-    CU_add_test(suite, "test_liveseq_unused_liveness", test_liveseq_unused_liveness);
-    CU_add_test(suite, "test_liveseq_starts_with_zero", test_liveseq_starts_with_zero);
-    CU_add_test(suite, "test_liveseq_starts_with_nonzero", test_liveseq_starts_with_nonzero);
-    CU_add_test(suite, "test_liveseq_redef_without_interval", test_liveseq_redef_without_interval);
+    CU_ADD_TEST(suite, test_liveseq_copy);
+    CU_ADD_TEST(suite, test_liveseq_empty);
+    CU_ADD_TEST(suite, test_liveseq_unused_liveness);
+    CU_ADD_TEST(suite, test_liveseq_starts_with_zero);
+    CU_ADD_TEST(suite, test_liveseq_starts_with_nonzero);
+    CU_ADD_TEST(suite, test_liveseq_redef_without_interval);
     return suite;
 }
 

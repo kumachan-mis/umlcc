@@ -13,12 +13,12 @@ void test_map_iter();
 
 CU_Suite* add_test_suite_map() {
     CU_Suite* suite = CU_add_suite("test_suite_map", NULL, NULL);
-    CU_add_test(suite, "test_map_copy", test_map_copy);
-    CU_add_test(suite, "test_map_get_with_default", test_map_get_with_default);
-    CU_add_test(suite, "test_map_add", test_map_add);
-    CU_add_test(suite, "test_map_remove", test_map_remove);
-    CU_add_test(suite, "test_map_contains", test_map_contains);
-    CU_add_test(suite, "test_map_iter", test_map_iter);
+    CU_ADD_TEST(suite, test_map_copy);
+    CU_ADD_TEST(suite, test_map_get_with_default);
+    CU_ADD_TEST(suite, test_map_add);
+    CU_ADD_TEST(suite, test_map_remove);
+    CU_ADD_TEST(suite, test_map_contains);
+    CU_ADD_TEST(suite, test_map_iter);
     return suite;
 }
 
@@ -177,11 +177,11 @@ void test_map_contains() {
     map_add(map, key, value);
 
     key = new_integer(7);
-    CU_ASSERT(map_contains(map, key));
+    CU_ASSERT_TRUE(map_contains(map, key));
     free(key);
 
     key = new_integer(8);
-    CU_ASSERT(!map_contains(map, key));
+    CU_ASSERT_FALSE(map_contains(map, key));
     free(key);
 
     delete_map(map);

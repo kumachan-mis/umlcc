@@ -11,11 +11,11 @@ void test_new_sliteral_ctoken();
 
 CU_Suite* add_test_suite_ctoken() {
     CU_Suite* suite = CU_add_suite("test_suite_ctoken", NULL, NULL);
-    CU_add_test(suite, "test_new_ctoken", test_new_ctoken);
-    CU_add_test(suite, "test_new_identifier_ctoken", test_new_identifier_ctoken);
-    CU_add_test(suite, "test_new_integer_ctoken_int", test_new_integer_ctoken_int);
-    CU_add_test(suite, "test_new_integer_ctoken_char", test_new_integer_ctoken_char);
-    CU_add_test(suite, "test_new_sliteral_ctoken", test_new_sliteral_ctoken);
+    CU_ADD_TEST(suite, test_new_ctoken);
+    CU_ADD_TEST(suite, test_new_identifier_ctoken);
+    CU_ADD_TEST(suite, test_new_integer_ctoken_int);
+    CU_ADD_TEST(suite, test_new_integer_ctoken_char);
+    CU_ADD_TEST(suite, test_new_sliteral_ctoken);
     return suite;
 }
 

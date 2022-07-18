@@ -19,18 +19,18 @@ void test_vector_extend_empty();
 
 CU_Suite* add_test_suite_vector() {
     CU_Suite* suite = CU_add_suite("test_suite_vector", NULL, NULL);
-    CU_add_test(suite, "test_vector_copy", test_vector_copy);
-    CU_add_test(suite, "test_vector_push", test_vector_push);
-    CU_add_test(suite, "test_vector_pop", test_vector_pop);
-    CU_add_test(suite, "test_vector_fill_all", test_vector_fill_all);
-    CU_add_test(suite, "test_vector_fill_noeffect", test_vector_fill_noeffect);
-    CU_add_test(suite, "test_vector_fill_expand", test_vector_fill_expand);
-    CU_add_test(suite, "test_vector_set_success", test_vector_set_success);
-    CU_add_test(suite, "test_vector_set_fail", test_vector_set_fail);
-    CU_add_test(suite, "test_vector_erase_success", test_vector_erase_success);
-    CU_add_test(suite, "test_vector_erase_fail", test_vector_erase_fail);
-    CU_add_test(suite, "test_vector_extend", test_vector_extend);
-    CU_add_test(suite, "test_vector_extend_empty", test_vector_extend_empty);
+    CU_ADD_TEST(suite, test_vector_copy);
+    CU_ADD_TEST(suite, test_vector_push);
+    CU_ADD_TEST(suite, test_vector_pop);
+    CU_ADD_TEST(suite, test_vector_fill_all);
+    CU_ADD_TEST(suite, test_vector_fill_noeffect);
+    CU_ADD_TEST(suite, test_vector_fill_expand);
+    CU_ADD_TEST(suite, test_vector_set_success);
+    CU_ADD_TEST(suite, test_vector_set_fail);
+    CU_ADD_TEST(suite, test_vector_erase_success);
+    CU_ADD_TEST(suite, test_vector_erase_fail);
+    CU_ADD_TEST(suite, test_vector_extend);
+    CU_ADD_TEST(suite, test_vector_extend_empty);
     return suite;
 }
 

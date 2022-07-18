@@ -10,10 +10,10 @@ void test_symboltable_scoped();
 
 CU_Suite* add_test_suite_symboltable() {
     CU_Suite* suite = CU_add_suite("test_suite_symboltable", NULL, NULL);
-    CU_add_test(suite, "test_symboltable_define_memory", test_symboltable_define_memory);
-    CU_add_test(suite, "test_symboltable_define_label", test_symboltable_define_label);
-    CU_add_test(suite, "test_symboltable_duplicated", test_symboltable_duplicated);
-    CU_add_test(suite, "test_symboltable_scoped", test_symboltable_scoped);
+    CU_ADD_TEST(suite, test_symboltable_define_memory);
+    CU_ADD_TEST(suite, test_symboltable_define_label);
+    CU_ADD_TEST(suite, test_symboltable_duplicated);
+    CU_ADD_TEST(suite, test_symboltable_scoped);
     return suite;
 }
 

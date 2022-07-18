@@ -38,48 +38,40 @@ void test_dtype_size();
 
 CU_Suite* add_test_suite_dtype() {
     CU_Suite* suite = CU_add_suite("test_suite_dtype", NULL, NULL);
-    CU_add_test(suite, "test_new_integer_dtype_int", test_new_integer_dtype_int);
-    CU_add_test(suite, "test_new_integer_dtype_char", test_new_integer_dtype_char);
-    CU_add_test(suite, "test_new_pointer_dtype", test_new_pointer_dtype);
-    CU_add_test(suite, "test_new_array_dtype", test_new_array_dtype);
-    CU_add_test(suite, "test_new_function_dtype", test_new_function_dtype);
-    CU_add_test(suite, "test_new_decoration_dtype", test_new_decoration_dtype);
-    CU_add_test(suite, "test_socket_pointer_dtype", test_socket_pointer_dtype);
-    CU_add_test(suite, "test_socket_array_dtype", test_socket_array_dtype);
-    CU_add_test(suite, "test_socket_function_dtype", test_socket_function_dtype);
-    CU_add_test(suite, "test_socket_decoration_dtype", test_socket_decoration_dtype);
-    CU_add_test(suite, "test_socket_nested_dtype", test_socket_nested_dtype);
-    CU_add_test(suite, "test_socket_null_dtype", test_socket_null_dtype);
-    CU_add_test(suite, "test_dtype_equals_int", test_dtype_equals_int);
-    CU_add_test(suite, "test_dtype_equals_char", test_dtype_equals_char);
-    CU_add_test(suite, "test_dtype_equals_pointer", test_dtype_equals_pointer);
-    CU_add_test(suite, "test_dtype_equals_array", test_dtype_equals_array);
-    CU_add_test(suite, "test_dtype_equals_function", test_dtype_equals_function);
-    CU_add_test(suite, "test_dtype_equals_decoration", test_dtype_equals_decoration);
-    CU_add_test(suite, "test_dtype_equals_diff_type", test_dtype_equals_diff_type);
-    CU_add_test(suite, "test_dtype_equals_pointer_diff_to_dtype",
-                test_dtype_equals_pointer_diff_to_dtype);
-    CU_add_test(suite, "test_dtype_equals_array_diff_of_dtype",
-                test_dtype_equals_array_diff_of_dtype);
-    CU_add_test(suite, "test_dtype_equals_array_diff_size", test_dtype_equals_array_diff_size);
-    CU_add_test(suite, "test_dtype_equals_function_diff_num_params",
-                test_dtype_equals_function_diff_num_params);
-    CU_add_test(suite, "test_dtype_equals_function_diff_param_dtype",
-                test_dtype_equals_function_diff_param_dtype);
-    CU_add_test(suite, "test_dtype_equals_function_diff_param_name",
-                test_dtype_equals_function_diff_param_name);
-    CU_add_test(suite, "test_dtype_equals_function_diff_param_order",
-                test_dtype_equals_function_diff_param_order);
-    CU_add_test(suite, "test_dtype_equals_decoration_diff_deco",
-                test_dtype_equals_decoration_diff_deco);
-    CU_add_test(suite, "test_dtype_equals_decoration_diff_deco_dtype",
-                test_dtype_equals_decoration_diff_deco_dtype);
-    CU_add_test(suite, "test_dtype_isinteger", test_dtype_isinteger);
-    CU_add_test(suite, "test_dtype_isarithmetic", test_dtype_isarithmetic);
-    CU_add_test(suite, "test_dtype_isscalar", test_dtype_isscalar);
-    CU_add_test(suite, "test_dtype_isaggregate", test_dtype_isaggregate);
-    CU_add_test(suite, "test_dtype_isobject", test_dtype_isobject);
-    CU_add_test(suite, "test_dtype_size", test_dtype_size);
+    CU_ADD_TEST(suite, test_new_integer_dtype_int);
+    CU_ADD_TEST(suite, test_new_integer_dtype_char);
+    CU_ADD_TEST(suite, test_new_pointer_dtype);
+    CU_ADD_TEST(suite, test_new_array_dtype);
+    CU_ADD_TEST(suite, test_new_function_dtype);
+    CU_ADD_TEST(suite, test_new_decoration_dtype);
+    CU_ADD_TEST(suite, test_socket_pointer_dtype);
+    CU_ADD_TEST(suite, test_socket_array_dtype);
+    CU_ADD_TEST(suite, test_socket_function_dtype);
+    CU_ADD_TEST(suite, test_socket_decoration_dtype);
+    CU_ADD_TEST(suite, test_socket_nested_dtype);
+    CU_ADD_TEST(suite, test_socket_null_dtype);
+    CU_ADD_TEST(suite, test_dtype_equals_int);
+    CU_ADD_TEST(suite, test_dtype_equals_char);
+    CU_ADD_TEST(suite, test_dtype_equals_pointer);
+    CU_ADD_TEST(suite, test_dtype_equals_array);
+    CU_ADD_TEST(suite, test_dtype_equals_function);
+    CU_ADD_TEST(suite, test_dtype_equals_decoration);
+    CU_ADD_TEST(suite, test_dtype_equals_diff_type);
+    CU_ADD_TEST(suite, test_dtype_equals_pointer_diff_to_dtype);
+    CU_ADD_TEST(suite, test_dtype_equals_array_diff_of_dtype);
+    CU_ADD_TEST(suite, test_dtype_equals_array_diff_size);
+    CU_ADD_TEST(suite, test_dtype_equals_function_diff_num_params);
+    CU_ADD_TEST(suite, test_dtype_equals_function_diff_param_dtype);
+    CU_ADD_TEST(suite, test_dtype_equals_function_diff_param_name);
+    CU_ADD_TEST(suite, test_dtype_equals_function_diff_param_order);
+    CU_ADD_TEST(suite, test_dtype_equals_decoration_diff_deco);
+    CU_ADD_TEST(suite, test_dtype_equals_decoration_diff_deco_dtype);
+    CU_ADD_TEST(suite, test_dtype_isinteger);
+    CU_ADD_TEST(suite, test_dtype_isarithmetic);
+    CU_ADD_TEST(suite, test_dtype_isscalar);
+    CU_ADD_TEST(suite, test_dtype_isaggregate);
+    CU_ADD_TEST(suite, test_dtype_isobject);
+    CU_ADD_TEST(suite, test_dtype_size);
     return suite;
 }
 

@@ -20,20 +20,20 @@ void test_immcope_tostring_str();
 
 CU_Suite* add_test_suite_immcope() {
     CU_Suite* suite = CU_add_suite("test_suite_immcope", NULL, NULL);
-    CU_add_test(suite, "test_new_imm_immcope", test_new_imm_immcope);
-    CU_add_test(suite, "test_new_arg_immcope", test_new_arg_immcope);
-    CU_add_test(suite, "test_new_reg_immcope", test_new_reg_immcope);
-    CU_add_test(suite, "test_new_ptr_immcope", test_new_ptr_immcope);
-    CU_add_test(suite, "test_new_mem_immcope", test_new_mem_immcope);
-    CU_add_test(suite, "test_new_label_immcope", test_new_label_immcope);
-    CU_add_test(suite, "test_new_str_immcope", test_new_str_immcope);
-    CU_add_test(suite, "test_immcope_tostring_imm", test_immcope_tostring_imm);
-    CU_add_test(suite, "test_immcope_tostring_arg", test_immcope_tostring_arg);
-    CU_add_test(suite, "test_immcope_tostring_reg", test_immcope_tostring_reg);
-    CU_add_test(suite, "test_immcope_tostring_ptr", test_immcope_tostring_ptr);
-    CU_add_test(suite, "test_immcope_tostring_mem", test_immcope_tostring_mem);
-    CU_add_test(suite, "test_immcope_tostring_label", test_immcope_tostring_label);
-    CU_add_test(suite, "test_immcope_tostring_str", test_immcope_tostring_str);
+    CU_ADD_TEST(suite, test_new_imm_immcope);
+    CU_ADD_TEST(suite, test_new_arg_immcope);
+    CU_ADD_TEST(suite, test_new_reg_immcope);
+    CU_ADD_TEST(suite, test_new_ptr_immcope);
+    CU_ADD_TEST(suite, test_new_mem_immcope);
+    CU_ADD_TEST(suite, test_new_label_immcope);
+    CU_ADD_TEST(suite, test_new_str_immcope);
+    CU_ADD_TEST(suite, test_immcope_tostring_imm);
+    CU_ADD_TEST(suite, test_immcope_tostring_arg);
+    CU_ADD_TEST(suite, test_immcope_tostring_reg);
+    CU_ADD_TEST(suite, test_immcope_tostring_ptr);
+    CU_ADD_TEST(suite, test_immcope_tostring_mem);
+    CU_ADD_TEST(suite, test_immcope_tostring_label);
+    CU_ADD_TEST(suite, test_immcope_tostring_str);
     return suite;
 }
 

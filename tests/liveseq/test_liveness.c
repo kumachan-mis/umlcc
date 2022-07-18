@@ -6,8 +6,8 @@ void test_liveness_copy();
 
 CU_Suite* add_test_suite_liveness() {
     CU_Suite* suite = CU_add_suite("test_suite_liveness", NULL, NULL);
-    CU_add_test(suite, "test_new_liveness", test_new_liveness);
-    CU_add_test(suite, "test_liveness_copy", test_liveness_copy);
+    CU_ADD_TEST(suite, test_new_liveness);
+    CU_ADD_TEST(suite, test_liveness_copy);
     return suite;
 }
 
