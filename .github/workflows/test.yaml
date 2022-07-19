@@ -13,17 +13,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
              sudo apt-get update
              export DEBIAN_FRONTEND=noninteractive
              sudo apt-get -y install --no-install-recommends libcunit1 libcunit1-dev
       
-      - name: Show GCC Version
+      - name: Show gcc version
         run: gcc --version
-
-      - name: Run Unit Test
-        run: make unittest
       
-      - name: Run End-to-End Test
-        run: make e2etest
+      - name: Show gcov version
+        run: gcov --version
+
+      - name: Run unit test with coverage
+        run: make clean unittest-with-coverage
+      
+      - name: Run end-to-end test
+        run: make clean e2etest

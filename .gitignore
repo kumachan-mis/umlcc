@@ -5,6 +5,7 @@
 ### Project Specific Settings ###
 build/
 bin/
+cov/
 sample-out/
 test-fixtures/**/*.s
 test-fixtures/**/*.i
