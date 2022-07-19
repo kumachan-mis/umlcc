@@ -19,11 +19,14 @@ jobs:
              export DEBIAN_FRONTEND=noninteractive
              sudo apt-get -y install --no-install-recommends libcunit1 libcunit1-dev
       
-      - name: Show GCC Version
+      - name: show gcc version
         run: gcc --version
-
-      - name: Run Unit Test
-        run: make unittest
       
-      - name: Run End-to-End Test
+      - name: show gcov version
+        run: gcov --version
+
+      - name: run unit test with coverage
+        run: make unittest-with-coverage
+      
+      - name: run end-to-end test
         run: make e2etest
