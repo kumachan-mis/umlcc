@@ -356,10 +356,10 @@ void test_vector_extend() {
     Vector* other = new_vector(&t_integer);
 
     item = new_integer(2);
-    vector_push(vector, item);
+    vector_push(other, item);
 
     item = new_integer(4);
-    vector_push(vector, item);
+    vector_push(other, item);
 
     vector_extend(vector, other);
 

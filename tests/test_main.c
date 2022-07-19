@@ -10,6 +10,7 @@
 #include "./map/test_map.h"
 #include "./set/test_set.h"
 #include "./srt/test_srt.h"
+#include "./symtab/test_symbol.h"
 #include "./symtab/test_symtab.h"
 #include "./vector/test_vector.h"
 #include "./x64/test_ope.h"
@@ -29,6 +30,7 @@ int main(void) {
     // cross-sectional data structure tests
     add_test_suite_sliteral();
     add_test_suite_dtype();
+    add_test_suite_symbol();
     add_test_suite_symboltable();
     add_test_suite_liveness();
     add_test_suite_liveseq();
