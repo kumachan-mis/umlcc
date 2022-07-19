@@ -4,11 +4,12 @@ CFLAGS     := -O3 -std=c99 -pedantic -W -Wall -Werror
 BLD_DIR  := build
 BIN_DIR  := bin
 
-UMLCC    := umlcc
-SRC_MAIN := main
-SRC_DIR  := src
-OBJ_DIR  := $(BLD_DIR)/src/object
-DEP_DIR  := $(BLD_DIR)/src/depend
+UMLCC      := umlcc
+SRC_MAIN   := main
+SRC_DIR    := src
+OBJ_DIR    := $(BLD_DIR)/src/object
+COBJ_DIR   := $(BLD_DIR)/src/cobject
+DEP_DIR    := $(BLD_DIR)/src/depend
 
 TEST_LIBS    := -lcunit
 TEST         := test_umlcc
@@ -39,6 +40,7 @@ RM    := rm -rf
 
 SRCS  := $(wildcard $(SRC_DIR)/*$(SRC_EXT)) $(wildcard $(SRC_DIR)/**/*$(SRC_EXT))
 OBJS  := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$(SRCS))
+COBJS := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(COBJ_DIR)/%$(OBJ_EXT),$(SRCS))
 DEPS  := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(DEP_DIR)/%$(DEP_EXT),$(SRCS))
 
 TESTS     := $(wildcard $(TEST_DIR)/*$(TEST_EXT)) $(wildcard $(TEST_DIR)/**/*$(TEST_EXT))
@@ -77,9 +79,11 @@ $(BIN_DIR)/$(UMLCC): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
 ifeq ($(COVERAGE),true)
-$(OBJ_DIR)/%$(OBJ_EXT): CFLAGS += -fprofile-arcs -ftest-coverage
-endif
+$(COBJ_DIR)/%$(OBJ_EXT): CFLAGS += -fprofile-arcs -ftest-coverage
+$(COBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
+else
 $(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
+endif
 	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -90,8 +94,10 @@ $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
 
 ifeq ($(COVERAGE),true)
 $(BIN_DIR)/$(TEST): TEST_LIBS += -lgcov
-endif
+$(BIN_DIR)/$(TEST): $(filter-out $(COBJ_DIR)/$(SRC_MAIN)$(OBJ_EXT),$(COBJS)) $(TEST_OBJS)
+else
 $(BIN_DIR)/$(TEST): $(filter-out $(OBJ_DIR)/$(SRC_MAIN)$(OBJ_EXT),$(OBJS)) $(TEST_OBJS)
+endif
 	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) $^ $(TEST_LIBS) -o $@
 

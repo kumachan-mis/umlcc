@@ -26,7 +26,7 @@ jobs:
         run: gcov --version
 
       - name: Run unit test with coverage
-        run: make clean unittest-with-coverage
+        run: make unittest-with-coverage
       
       - name: Run end-to-end test
-        run: make clean e2etest
+        run: make e2etest
