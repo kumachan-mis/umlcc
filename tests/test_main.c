@@ -4,6 +4,7 @@
 #include "./immc/test_immc.h"
 #include "./immc/test_ope.h"
 #include "./immc/test_suffix.h"
+#include "./literal/test_iliteral.h"
 #include "./literal/test_sliteral.h"
 #include "./liveseq/test_liveness.h"
 #include "./liveseq/test_liveseq.h"
@@ -28,6 +29,7 @@ int main(void) {
     add_test_suite_set();
 
     // cross-sectional data structure tests
+    add_test_suite_iliteral();
     add_test_suite_sliteral();
     add_test_suite_dtype();
     add_test_suite_symbol();
