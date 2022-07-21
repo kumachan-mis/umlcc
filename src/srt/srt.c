@@ -14,7 +14,7 @@ Srt* new_srt(SrtType type, int num_children, ...) {
     srt->type = type;
     srt->dtype = NULL;
     srt->ident_name = NULL;
-    srt->value_int = -1;
+    srt->iliteral = NULL;
     srt->sliteral = NULL;
     srt->children = new_vector(&t_srt);
 
@@ -33,7 +33,7 @@ Srt* new_dtyped_srt(SrtType type, Dtype* dtype, int num_children, ...) {
     srt->type = type;
     srt->dtype = dtype;
     srt->ident_name = NULL;
-    srt->value_int = -1;
+    srt->iliteral = NULL;
     srt->sliteral = NULL;
     srt->children = new_vector(&t_srt);
 
@@ -52,18 +52,18 @@ Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name) {
     srt->type = type;
     srt->dtype = dtype;
     srt->ident_name = ident_name;
-    srt->value_int = -1;
+    srt->iliteral = NULL;
     srt->sliteral = NULL;
     srt->children = new_vector(&t_srt);
     return srt;
 }
 
-Srt* new_integer_srt(SrtType type, Dtype* dtype, int value) {
+Srt* new_iliteral_srt(SrtType type, Dtype* dtype, IntegerLiteral* iliteral) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
     srt->dtype = dtype;
     srt->ident_name = NULL;
-    srt->value_int = value;
+    srt->iliteral = iliteral;
     srt->sliteral = NULL;
     srt->children = new_vector(&t_srt);
     return srt;
@@ -74,7 +74,7 @@ Srt* new_sliteral_srt(SrtType type, Dtype* dtype, StringLiteral* sliteral) {
     srt->type = type;
     srt->dtype = dtype;
     srt->ident_name = NULL;
-    srt->value_int = -1;
+    srt->iliteral = NULL;
     srt->sliteral = sliteral;
     srt->children = new_vector(&t_srt);
     return srt;
@@ -87,7 +87,8 @@ Srt* srt_copy(Srt* srt) {
     if (srt->dtype != NULL) copied_srt->dtype = dtype_copy(srt->dtype);
     copied_srt->ident_name = NULL;
     if (srt->ident_name != NULL) copied_srt->ident_name = new_string(srt->ident_name);
-    copied_srt->value_int = srt->value_int;
+    copied_srt->iliteral = NULL;
+    if (srt->iliteral != NULL) copied_srt->iliteral = iliteral_copy(srt->iliteral);
     copied_srt->sliteral = NULL;
     if (srt->sliteral != NULL) copied_srt->sliteral = sliteral_copy(srt->sliteral);
     copied_srt->children = vector_copy(srt->children);
@@ -97,6 +98,7 @@ Srt* srt_copy(Srt* srt) {
 void delete_srt(Srt* srt) {
     if (srt->dtype != NULL) delete_dtype(srt->dtype);
     if (srt->ident_name != NULL) free(srt->ident_name);
+    if (srt->iliteral != NULL) delete_iliteral(srt->iliteral);
     if (srt->sliteral != NULL) delete_sliteral(srt->sliteral);
     delete_vector(srt->children);
     free(srt);

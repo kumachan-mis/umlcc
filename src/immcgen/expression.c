@@ -396,7 +396,7 @@ Vector* gen_primary_expr_immcode(Immcgen* immcgen) {
         }
         case SRT_INT_EXPR:
         case SRT_CHAR_EXPR:
-            src = new_imm_immcope(IMMC_SUFFIX_LONG, srt->value_int);
+            src = new_imm_immcope(IMMC_SUFFIX_LONG, srt->iliteral->signed_value);
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);

@@ -6,8 +6,8 @@
 void test_new_ast();
 void test_new_identifier_ast_ident();
 void test_new_identifier_ast_typedefname();
-void test_new_integer_ast_int();
-void test_new_integer_ast_char();
+void test_new_iliteral_ast_int();
+void test_new_iliteral_ast_char();
 void test_new_sliteral_ast();
 
 CU_Suite* add_test_suite_ast() {
@@ -15,8 +15,8 @@ CU_Suite* add_test_suite_ast() {
     CU_ADD_TEST(suite, test_new_ast);
     CU_ADD_TEST(suite, test_new_identifier_ast_ident);
     CU_ADD_TEST(suite, test_new_identifier_ast_typedefname);
-    CU_ADD_TEST(suite, test_new_integer_ast_int);
-    CU_ADD_TEST(suite, test_new_integer_ast_char);
+    CU_ADD_TEST(suite, test_new_iliteral_ast_int);
+    CU_ADD_TEST(suite, test_new_iliteral_ast_char);
     CU_ADD_TEST(suite, test_new_sliteral_ast);
     return suite;
 }
@@ -93,7 +93,7 @@ void test_new_identifier_ast_typedefname() {
     delete_ast(ast);
 }
 
-void test_new_integer_ast_int() {
+void test_new_iliteral_ast_int() {
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 6);
     Ast* ast = new_iliteral_ast(AST_INT_EXPR, iliteral);
 
@@ -116,7 +116,7 @@ void test_new_integer_ast_int() {
     delete_ast(ast);
 }
 
-void test_new_integer_ast_char() {
+void test_new_iliteral_ast_char() {
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 89);
     Ast* ast = new_iliteral_ast(AST_CHAR_EXPR, iliteral);
 
