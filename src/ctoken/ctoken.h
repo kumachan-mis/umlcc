@@ -2,6 +2,7 @@
 #define UMLCC_CTOKEN_H
 
 #include "../common/type.h"
+#include "../literal/iliteral.h"
 #include "../literal/sliteral.h"
 
 typedef enum CTokenType {
@@ -46,7 +47,7 @@ typedef enum CTokenType {
 typedef struct CToken {
     CTokenType type;
     char* ident_name;
-    int value_int;
+    IntegerLiteral* iliteral;
     StringLiteral* sliteral;
 } CToken;
 
@@ -54,7 +55,7 @@ extern BaseType t_ctoken;
 
 CToken* new_ctoken(CTokenType type);
 CToken* new_identifier_ctoken(CTokenType type, char* name);
-CToken* new_integer_ctoken(CTokenType type, int value);
+CToken* new_iliteral_ctoken(CTokenType type, IntegerLiteral* iliteral);
 CToken* new_sliteral_ctoken(CTokenType type, StringLiteral* sliteral);
 CToken* ctoken_copy(CToken* ctoken);
 void delete_ctoken(CToken* ctoken);

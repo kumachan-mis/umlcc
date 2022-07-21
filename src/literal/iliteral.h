@@ -1,5 +1,5 @@
-#ifndef UMLCC_LITERAL_SLITERAL_H
-#define UMLCC_LITERAL_SLITERAL_H
+#ifndef UMLCC_LITERAL_ILITERAL_H
+#define UMLCC_LITERAL_ILITERAL_H
 
 #include "../common/type.h"
 

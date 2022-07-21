@@ -50,14 +50,19 @@ CToken* read_integer_constant(Lexer* lexer) {
     int snd = fgetc(lexer->file_ptr);
 
     if (fst == '0' && (snd == 'x' || snd == 'X')) {
-        return new_integer_ctoken(CTOKEN_INT, read_hexadecimal_constant(lexer));
+        int value = read_hexadecimal_constant(lexer);
+        return new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, value));
     }
 
     ungetc(snd, lexer->file_ptr);
     ungetc(fst, lexer->file_ptr);
 
-    if (fst == '0') return new_integer_ctoken(CTOKEN_INT, read_octal_constant(lexer));
-    return new_integer_ctoken(CTOKEN_INT, read_decimal_constant(lexer));
+    if (fst == '0') {
+        int value = read_octal_constant(lexer);
+        return new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, value));
+    }
+    int value = read_decimal_constant(lexer);
+    return new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, value));
 }
 
 int read_decimal_constant(Lexer* lexer) {
@@ -153,7 +158,7 @@ CToken* read_character_constant(Lexer* lexer) {
         }
     }
 
-    return new_integer_ctoken(CTOKEN_CHAR, c);
+    return new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, c));
 }
 
 CToken* read_string_literal(Lexer* lexer) {
