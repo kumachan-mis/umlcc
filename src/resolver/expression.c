@@ -328,9 +328,11 @@ Srt* resolve_primary_expr(Resolver* resolver) {
             return new_identifier_srt(SRT_IDENT_EXPR, ident_dtype, ident_name);
         }
         case AST_INT_EXPR:
-            return new_integer_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), ast->value_int);
+            return new_integer_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                   ast->iliteral->signed_value);
         case AST_CHAR_EXPR:
-            return new_integer_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT), ast->value_int);
+            return new_integer_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT),
+                                   ast->iliteral->signed_value);
         case AST_STRING_EXPR: {
             int size = ast->sliteral->size;
 
