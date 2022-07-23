@@ -1,5 +1,4 @@
 #include "./util.h"
-#include "../ast/ast.h"
 
 #include <stdio.h>
 #include <stdlib.h>

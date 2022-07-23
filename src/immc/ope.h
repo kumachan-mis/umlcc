@@ -1,35 +1,38 @@
 #ifndef UMLCC_IMMC_OPE_H
 #define UMLCC_IMMC_OPE_H
 
+#include "../literal/iliteral.h"
 #include "../literal/sliteral.h"
 #include "./suffix.h"
 
 typedef enum ImmcOpeType {
-    IMMC_OPERAND_IMM,
     IMMC_OPERAND_ARG,
     IMMC_OPERAND_REG,
     IMMC_OPERAND_PTR,
     IMMC_OPERAND_MEM,
     IMMC_OPERAND_LABEL,
+    IMMC_OPERAND_INT,
     IMMC_OPERAND_STR,
 } ImmcOpeType;
 
 typedef struct ImmcOpe {
     ImmcOpeType type;
     ImmcSuffix suffix;
-    int imm_value;
     int reg_id;
     int mem_offset;
     char* label_name;
+    IntegerLiteral* iliteral;
     StringLiteral* sliteral;
 } ImmcOpe;
 
-ImmcOpe* new_imm_immcope(ImmcSuffix suffix, int imm_value);
-ImmcOpe* new_arg_immcope(ImmcSuffix suffix, int imm_value);
+ImmcOpe* new_arg_immcope(ImmcSuffix suffix, int reg_id);
 ImmcOpe* new_reg_immcope(ImmcSuffix suffix, int reg_id);
 ImmcOpe* new_ptr_immcope(int reg_id);
 ImmcOpe* new_mem_immcope(int mem_offset);
 ImmcOpe* new_label_immcope(char* label_name);
+ImmcOpe* new_int_immcope(ImmcSuffix suffix, IntegerLiteral* iliteral);
+ImmcOpe* new_signed_immcope(ImmcSuffix suffix, IntegerLiteralType type, long long value);
+ImmcOpe* new_unsigned_immcope(ImmcSuffix suffix, IntegerLiteralType type, unsigned long long value);
 ImmcOpe* new_str_immcope(StringLiteral* sliteral);
 ImmcOpe* immcope_copy(ImmcOpe* immcope);
 char* immcope_tostring(ImmcOpe* immcope);

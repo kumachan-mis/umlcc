@@ -21,10 +21,10 @@ Vector* gen_add_x64code(X64gen* x64gen) {
 
     X64Suffix suffix = X64_SUFFIX_NONE;
     switch (immc_snd_src->type) {
-        case IMMC_OPERAND_IMM: {
+        case IMMC_OPERAND_INT: {
             suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
             X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
-            X64Ope* snd_src = new_signed_x64ope(suffix, immc_snd_src->imm_value);
+            X64Ope* snd_src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
             vector_push(codes, new_inst_x64(X64_INST_ADDX, snd_src, fst_src));
             break;
         }
@@ -65,10 +65,10 @@ Vector* gen_sub_x64code(X64gen* x64gen) {
 
     X64Suffix suffix = X64_SUFFIX_NONE;
     switch (immc_snd_src->type) {
-        case IMMC_OPERAND_IMM: {
+        case IMMC_OPERAND_INT: {
             suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
             X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
-            X64Ope* snd_src = new_signed_x64ope(suffix, immc_snd_src->imm_value);
+            X64Ope* snd_src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
             vector_push(codes, new_inst_x64(X64_INST_SUBX, snd_src, fst_src));
             break;
         }
@@ -109,11 +109,11 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
 
     X64Suffix suffix = X64_SUFFIX_NONE;
     switch (immc_snd_src->type) {
-        case IMMC_OPERAND_IMM: {
+        case IMMC_OPERAND_INT: {
             suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
             append_mov_code(codes, fst_src_id, suffix, AX_REG_ID, suffix);
             X64Ope* fst_src = new_reg_x64ope(suffix, AX_REG_ID);
-            X64Ope* snd_src = new_signed_x64ope(suffix, immc_snd_src->imm_value);
+            X64Ope* snd_src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
             vector_push(codes, new_inst_x64(X64_INST_IMULX, snd_src, fst_src));
             break;
         }
@@ -163,12 +163,12 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
 
     X64Suffix suffix = X64_SUFFIX_NONE;
     switch (immc_snd_src->type) {
-        case IMMC_OPERAND_IMM: {
+        case IMMC_OPERAND_INT: {
             snd_src_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
             suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
             append_mov_code(codes, fst_src_id, suffix, AX_REG_ID, suffix);
             X64Ope* dst = new_reg_x64ope(suffix, snd_src_id);
-            X64Ope* src = new_signed_x64ope(suffix, immc_snd_src->imm_value);
+            X64Ope* src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
             vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
             break;
         }

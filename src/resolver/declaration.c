@@ -1,5 +1,6 @@
 #include "./declaration.h"
 #include "../common/type.h"
+#include "../literal/iliteral.h"
 #include "./conversion.h"
 #include "./expression.h"
 
@@ -153,11 +154,11 @@ Srt* resolve_declarator(Resolver* resolver) {
                 break;
             }
             case AST_ARRAY_DECLOR: {
-                // TODO: support expression for array size
+                // TODO: support unsigned value and expression for array size
                 resolver->ast = vector_at(ast_ptr->children, 1);
-                Srt* array_size_srt = resolve_expr(resolver);
-                Dtype* socket_dtype = new_socket_array_dtype(array_size_srt->value_int);
-                delete_srt(array_size_srt);
+                Srt* size_srt = resolve_expr(resolver);
+                Dtype* socket_dtype = new_socket_array_dtype(size_srt->iliteral->signed_value);
+                delete_srt(size_srt);
                 dtype = dtype_connect(socket_dtype, dtype);
                 ast_ptr = vector_at(ast_ptr->children, 0);
                 break;
@@ -344,7 +345,8 @@ Srt* resolve_scalar_initializer(Resolver* resolver) {
 Srt* resolve_zero_scalar_initializer(Resolver* resolver) {
     Dtype* dtype = resolver->initialized_dtype;
 
-    Srt* srt = new_integer_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), 0);
+    IntegerLiteral* zero_iliteral = new_signed_iliteral(INTEGER_INT, 0);
+    Srt* srt = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), zero_iliteral);
     if (!dtype_equals(dtype, srt->dtype)) {
         srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(dtype), 1, srt);
     }

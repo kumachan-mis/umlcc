@@ -3,6 +3,7 @@
 
 #include "../common/type.h"
 #include "../dtype/dtype.h"
+#include "../literal/iliteral.h"
 #include "../literal/sliteral.h"
 #include "../vector/vector.h"
 
@@ -64,7 +65,7 @@ typedef struct Srt {
     SrtType type;
     Dtype* dtype;
     char* ident_name;
-    int value_int;
+    IntegerLiteral* iliteral;
     StringLiteral* sliteral;
     Vector* children;
 } Srt;
@@ -74,7 +75,7 @@ extern BaseType t_srt;
 Srt* new_srt(SrtType type, int num_children, ...);
 Srt* new_dtyped_srt(SrtType type, Dtype* dtype, int num_children, ...);
 Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name);
-Srt* new_integer_srt(SrtType type, Dtype* dtype, int value);
+Srt* new_iliteral_srt(SrtType type, Dtype* dtype, IntegerLiteral* iliteral);
 Srt* new_sliteral_srt(SrtType type, Dtype* dtype, StringLiteral* sliteral);
 Srt* srt_copy(Srt* srt);
 void delete_srt(Srt* srt);

@@ -94,13 +94,13 @@ Vector* gen_function_x64code(X64gen* x64gen) {
         vector_push(head_codes, new_inst_x64(X64_INST_PUSHX, src, NULL));
     }
     if (evacuation_count % 2 == 1) {
-        X64Ope* src = new_signed_x64ope(X64_SUFFIX_QUAD, 8);
+        X64Ope* src = new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8);
         X64Ope* dst = new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID);
         vector_push(head_codes, new_inst_x64(X64_INST_SUBX, src, dst));
     }
 
     if (evacuation_count % 2 == 1) {
-        X64Ope* src = new_signed_x64ope(X64_SUFFIX_QUAD, 8);
+        X64Ope* src = new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8);
         X64Ope* dst = new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID);
         vector_push(head_codes, new_inst_x64(X64_INST_ADDX, src, dst));
     }

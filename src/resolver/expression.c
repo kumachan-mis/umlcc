@@ -327,10 +327,16 @@ Srt* resolve_primary_expr(Resolver* resolver) {
             char* ident_name = new_string(symbol->name);
             return new_identifier_srt(SRT_IDENT_EXPR, ident_dtype, ident_name);
         }
-        case AST_INT_EXPR:
-            return new_integer_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), ast->value_int);
-        case AST_CHAR_EXPR:
-            return new_integer_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT), ast->value_int);
+        case AST_INT_EXPR: {
+            Dtype* dtype = new_integer_dtype(DTYPE_INT);
+            IntegerLiteral* iliteral = iliteral_copy(ast->iliteral);
+            return new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
+        }
+        case AST_CHAR_EXPR: {
+            Dtype* dtype = new_integer_dtype(DTYPE_INT);
+            IntegerLiteral* iliteral = iliteral_copy(ast->iliteral);
+            return new_iliteral_srt(SRT_CHAR_EXPR, dtype, iliteral);
+        }
         case AST_STRING_EXPR: {
             int size = ast->sliteral->size;
 

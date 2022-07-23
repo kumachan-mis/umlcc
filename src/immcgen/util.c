@@ -33,7 +33,7 @@ void append_child_immcode(Immcgen* immcgen, Vector* codes, int index) {
     immcgen->srt = srt;
 }
 
-ImmcOpe* gen_child_imm_immcope(Immcgen* immcgen, Vector* codes, int index) {
+ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
     Srt* srt = immcgen->srt;
     Srt* child = vector_at(srt->children, index);
 
@@ -48,7 +48,7 @@ ImmcOpe* gen_child_imm_immcope(Immcgen* immcgen, Vector* codes, int index) {
     if (child->type == SRT_INT_EXPR || child->type == SRT_CHAR_EXPR) {
         immcgen->srt = srt;
         if (suffix == IMMC_SUFFIX_NONE) suffix = immcsuffix_get(dtype_size(child->dtype));
-        return new_imm_immcope(suffix, child->value_int);
+        return new_int_immcope(suffix, iliteral_copy(child->iliteral));
     }
 
     append_child_immcode(immcgen, codes, index);
@@ -65,7 +65,7 @@ ImmcOpe* gen_child_imm_immcope(Immcgen* immcgen, Vector* codes, int index) {
 }
 
 ImmcOpe* gen_child_reg_immcope(Immcgen* immcgen, Vector* codes, int index) {
-    ImmcOpe* immc_ope = gen_child_imm_immcope(immcgen, codes, index);
+    ImmcOpe* immc_ope = gen_child_int_immcope(immcgen, codes, index);
     if (immc_ope->type == IMMC_OPERAND_REG) return immc_ope;
 
     immcgen->virtual_reg_suffix = immc_ope->suffix;

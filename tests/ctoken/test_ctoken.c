@@ -5,16 +5,16 @@
 
 void test_new_ctoken();
 void test_new_identifier_ctoken();
-void test_new_integer_ctoken_int();
-void test_new_integer_ctoken_char();
+void test_new_iliteral_ctoken_int();
+void test_new_iliteral_ctoken_char();
 void test_new_sliteral_ctoken();
 
 CU_Suite* add_test_suite_ctoken() {
     CU_Suite* suite = CU_add_suite("test_suite_ctoken", NULL, NULL);
     CU_ADD_TEST(suite, test_new_ctoken);
     CU_ADD_TEST(suite, test_new_identifier_ctoken);
-    CU_ADD_TEST(suite, test_new_integer_ctoken_int);
-    CU_ADD_TEST(suite, test_new_integer_ctoken_char);
+    CU_ADD_TEST(suite, test_new_iliteral_ctoken_int);
+    CU_ADD_TEST(suite, test_new_iliteral_ctoken_char);
     CU_ADD_TEST(suite, test_new_sliteral_ctoken);
     return suite;
 }
@@ -30,7 +30,7 @@ void test_new_ctoken() {
         }
         CU_ASSERT_EQUAL(ctoken->type, CTOKEN_SEMICOLON);
         CU_ASSERT_PTR_NULL(ctoken->ident_name);
-        CU_ASSERT_EQUAL(ctoken->value_int, -1);
+        CU_ASSERT_PTR_NULL(ctoken->iliteral);
         CU_ASSERT_PTR_NULL(ctoken->sliteral);
     }
 
@@ -48,15 +48,16 @@ void test_new_identifier_ctoken() {
         }
         CU_ASSERT_EQUAL(ctoken->type, CTOKEN_IDENT);
         CU_ASSERT_STRING_EQUAL(ctoken->ident_name, "ident");
-        CU_ASSERT_EQUAL(ctoken->value_int, -1);
+        CU_ASSERT_PTR_NULL(ctoken->iliteral);
         CU_ASSERT_PTR_NULL(ctoken->sliteral);
     }
 
     delete_ctoken(ctoken);
 }
 
-void test_new_integer_ctoken_int() {
-    CToken* ctoken = new_integer_ctoken(CTOKEN_INT, 6);
+void test_new_iliteral_ctoken_int() {
+    IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 6);
+    CToken* ctoken = new_iliteral_ctoken(CTOKEN_INT, iliteral);
 
     for (int i = 0; i < 2; i++) {
         if (i > 0) {
@@ -66,15 +67,19 @@ void test_new_integer_ctoken_int() {
         }
         CU_ASSERT_EQUAL(ctoken->type, CTOKEN_INT);
         CU_ASSERT_PTR_NULL(ctoken->ident_name);
-        CU_ASSERT_EQUAL(ctoken->value_int, 6);
+        CU_ASSERT_EQUAL(ctoken->iliteral->type, INTEGER_INT);
+        CU_ASSERT_FALSE(ctoken->iliteral->is_unsigned);
+        CU_ASSERT_EQUAL(ctoken->iliteral->signed_value, 6);
+        CU_ASSERT_EQUAL(ctoken->iliteral->unsigned_value, 0ULL);
         CU_ASSERT_PTR_NULL(ctoken->sliteral);
     }
 
     delete_ctoken(ctoken);
 }
 
-void test_new_integer_ctoken_char() {
-    CToken* ctoken = new_integer_ctoken(CTOKEN_CHAR, 89);
+void test_new_iliteral_ctoken_char() {
+    IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 89);
+    CToken* ctoken = new_iliteral_ctoken(CTOKEN_CHAR, iliteral);
 
     for (int i = 0; i < 2; i++) {
         if (i > 0) {
@@ -84,7 +89,10 @@ void test_new_integer_ctoken_char() {
         }
         CU_ASSERT_EQUAL(ctoken->type, CTOKEN_CHAR);
         CU_ASSERT_PTR_NULL(ctoken->ident_name);
-        CU_ASSERT_EQUAL(ctoken->value_int, 89);
+        CU_ASSERT_EQUAL(ctoken->iliteral->type, INTEGER_INT);
+        CU_ASSERT_FALSE(ctoken->iliteral->is_unsigned);
+        CU_ASSERT_EQUAL(ctoken->iliteral->signed_value, 89);
+        CU_ASSERT_EQUAL(ctoken->iliteral->unsigned_value, 0ULL);
         CU_ASSERT_PTR_NULL(ctoken->sliteral);
     }
 
@@ -109,7 +117,7 @@ void test_new_sliteral_ctoken() {
         }
         CU_ASSERT_EQUAL(ctoken->type, CTOKEN_STRING);
         CU_ASSERT_PTR_NULL(ctoken->ident_name);
-        CU_ASSERT_EQUAL(ctoken->value_int, -1);
+        CU_ASSERT_PTR_NULL(ctoken->iliteral);
         CU_ASSERT_EQUAL(memcmp(ctoken->sliteral->value, sliteral_const, sliteral_size), 0);
         CU_ASSERT_EQUAL(ctoken->sliteral->size, sliteral_size);
     }

@@ -230,11 +230,11 @@ Ast* parse_primary_expr(Parser* parser) {
             break;
         case CTOKEN_INT:
             parser->index++;
-            ast = new_integer_ast(AST_INT_EXPR, ctoken->value_int);
+            ast = new_iliteral_ast(AST_INT_EXPR, iliteral_copy(ctoken->iliteral));
             break;
         case CTOKEN_CHAR:
             parser->index++;
-            ast = new_integer_ast(AST_CHAR_EXPR, ctoken->value_int);
+            ast = new_iliteral_ast(AST_CHAR_EXPR, iliteral_copy(ctoken->iliteral));
             break;
         case CTOKEN_STRING:
             parser->index++;

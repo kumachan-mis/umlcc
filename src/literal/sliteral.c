@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-BaseType t_strliteral = {
+BaseType t_sliteral = {
     .copy_object = (void* (*)(void*))sliteral_copy,
     .delete_object = (void (*)(void*))delete_sliteral,
 };

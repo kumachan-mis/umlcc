@@ -3,9 +3,9 @@
 
 #include <stdlib.h>
 
-void test_sliteral_copy_empty();
-void test_sliteral_copy_without_null();
-void test_sliteral_copy_with_null();
+void test_new_sliteral_empty();
+void test_new_sliteral_without_null();
+void test_new_sliteral_with_null();
 void test_sliteral_zero_padding_copy_empty();
 void test_sliteral_zero_padding_copy_without_null();
 void test_sliteral_zero_padding_copy_with_null();
@@ -18,9 +18,9 @@ void test_sliteral_display_string_zero_padding();
 
 CU_Suite* add_test_suite_sliteral() {
     CU_Suite* suite = CU_add_suite("test_suite_sliteral", NULL, NULL);
-    CU_ADD_TEST(suite, test_sliteral_copy_empty);
-    CU_ADD_TEST(suite, test_sliteral_copy_without_null);
-    CU_ADD_TEST(suite, test_sliteral_copy_with_null);
+    CU_ADD_TEST(suite, test_new_sliteral_empty);
+    CU_ADD_TEST(suite, test_new_sliteral_without_null);
+    CU_ADD_TEST(suite, test_new_sliteral_with_null);
     CU_ADD_TEST(suite, test_sliteral_zero_padding_copy_empty);
     CU_ADD_TEST(suite, test_sliteral_zero_padding_copy_without_null);
     CU_ADD_TEST(suite, test_sliteral_zero_padding_copy_with_null);
@@ -33,7 +33,7 @@ CU_Suite* add_test_suite_sliteral() {
     return suite;
 }
 
-void test_sliteral_copy_empty() {
+void test_new_sliteral_empty() {
     const char* sliteral_const = "";
     const int sliteral_size = 1;
 
@@ -41,16 +41,21 @@ void test_sliteral_copy_empty() {
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
-    StringLiteral* copied_sliteral = sliteral_copy(sliteral);
+
+    for (int i = 0; i < 2; i++) {
+        if (i > 0) {
+            StringLiteral* copied_sliteral = sliteral_copy(sliteral);
+            delete_sliteral(sliteral);
+            sliteral = copied_sliteral;
+        }
+        CU_ASSERT_EQUAL(memcmp(sliteral->value, sliteral_const, sliteral_size), 0);
+        CU_ASSERT_EQUAL(sliteral->size, sliteral_size);
+    }
+
     delete_sliteral(sliteral);
-
-    CU_ASSERT_EQUAL(memcmp(copied_sliteral->value, sliteral_const, sliteral_size), 0);
-    CU_ASSERT_EQUAL(copied_sliteral->size, sliteral_size);
-
-    delete_sliteral(copied_sliteral);
 }
 
-void test_sliteral_copy_without_null() {
+void test_new_sliteral_without_null() {
     const char* sliteral_const = "test: sliteral copy (without null-char)";
     const int sliteral_size = 40;
 
@@ -58,16 +63,21 @@ void test_sliteral_copy_without_null() {
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
-    StringLiteral* copied_sliteral = sliteral_copy(sliteral);
+
+    for (int i = 0; i < 2; i++) {
+        if (i > 0) {
+            StringLiteral* copied_sliteral = sliteral_copy(sliteral);
+            delete_sliteral(sliteral);
+            sliteral = copied_sliteral;
+        }
+        CU_ASSERT_EQUAL(memcmp(sliteral->value, sliteral_const, sliteral_size), 0);
+        CU_ASSERT_EQUAL(sliteral->size, sliteral_size);
+    }
+
     delete_sliteral(sliteral);
-
-    CU_ASSERT_EQUAL(memcmp(copied_sliteral->value, sliteral_const, sliteral_size), 0);
-    CU_ASSERT_EQUAL(copied_sliteral->size, sliteral_size);
-
-    delete_sliteral(copied_sliteral);
 }
 
-void test_sliteral_copy_with_null() {
+void test_new_sliteral_with_null() {
     const char* sliteral_const = "test: sliteral copy\0(with\0\0\0 null-char)";
     const int sliteral_size = 40;
 
@@ -75,13 +85,18 @@ void test_sliteral_copy_with_null() {
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
-    StringLiteral* copied_sliteral = sliteral_copy(sliteral);
+
+    for (int i = 0; i < 2; i++) {
+        if (i > 0) {
+            StringLiteral* copied_sliteral = sliteral_copy(sliteral);
+            delete_sliteral(sliteral);
+            sliteral = copied_sliteral;
+        }
+        CU_ASSERT_EQUAL(memcmp(sliteral->value, sliteral_const, sliteral_size), 0);
+        CU_ASSERT_EQUAL(sliteral->size, sliteral_size);
+    }
+
     delete_sliteral(sliteral);
-
-    CU_ASSERT_EQUAL(memcmp(copied_sliteral->value, sliteral_const, sliteral_size), 0);
-    CU_ASSERT_EQUAL(copied_sliteral->size, sliteral_size);
-
-    delete_sliteral(copied_sliteral);
 }
 
 void test_sliteral_zero_padding_copy_empty() {
