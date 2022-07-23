@@ -161,23 +161,18 @@ Vector* gen_global_scalar_initializer_immcode(Immcgen* immcgen) {
     }
 
     int initialized_size = dtype_size(immcgen->initialized_dtype);
-    IntegerLiteral* iliteral = NULL;
     switch (initialized_size) {
         case 1:
-            iliteral = iliteral_copy(srt->iliteral);
-            vector_push(codes, new_int_data_immc(IMMC_DATA_BYTE, iliteral));
+            vector_push(codes, new_int_data_immc(IMMC_DATA_BYTE, iliteral_copy(srt->iliteral)));
             break;
         case 2:
-            iliteral = iliteral_copy(srt->iliteral);
-            vector_push(codes, new_int_data_immc(IMMC_DATA_WORD, iliteral));
+            vector_push(codes, new_int_data_immc(IMMC_DATA_WORD, iliteral_copy(srt->iliteral)));
             break;
         case 4:
-            iliteral = iliteral_copy(srt->iliteral);
-            vector_push(codes, new_int_data_immc(IMMC_DATA_LONG, iliteral));
+            vector_push(codes, new_int_data_immc(IMMC_DATA_LONG, iliteral_copy(srt->iliteral)));
             break;
         case 8:
-            iliteral = iliteral_copy(srt->iliteral);
-            vector_push(codes, new_int_data_immc(IMMC_DATA_QUAD, iliteral));
+            vector_push(codes, new_int_data_immc(IMMC_DATA_QUAD, iliteral_copy(srt->iliteral)));
             break;
         default:
             fprintf(stderr, "Error: unexpected global variable size %d\n", initialized_size);
