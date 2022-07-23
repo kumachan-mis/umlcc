@@ -95,12 +95,14 @@ char* x64instcode_tostring(X64Inst* x64inst) {
             // TODO: fix to prevent buffer overflow
             char* instcode_str = malloc(50 * sizeof(char));
             char suffix = '\0';
-            if (x64inst->src != NULL && (X64_OPERAND_SUFFIX <= x64inst->src->type &&
-                                         x64inst->src->type <= X64_OPERAND_REG)) {
+            if (x64inst->src != NULL &&
+                (x64inst->src->type == X64_OPERAND_SUFFIX ||
+                 x64inst->src->type == X64_OPERAND_REG || x64inst->src->type == X64_OPERAND_INT)) {
                 suffix = x64suffix_tochar(x64inst->src->suffix);
             }
-            if (x64inst->dst != NULL && (X64_OPERAND_SUFFIX <= x64inst->dst->type &&
-                                         x64inst->dst->type <= X64_OPERAND_REG)) {
+            if (x64inst->dst != NULL &&
+                (x64inst->dst->type == X64_OPERAND_SUFFIX ||
+                 x64inst->dst->type == X64_OPERAND_REG || x64inst->dst->type == X64_OPERAND_INT)) {
                 suffix = x64suffix_tochar(x64inst->dst->suffix);
             }
             sprintf(instcode_str, inst_format, suffix);

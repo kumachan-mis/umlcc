@@ -21,7 +21,7 @@ Vector* gen_load_x64code(X64gen* x64gen) {
         case IMMC_OPERAND_INT: {
             X64Suffix src_suffix = x64suffix_get(immcsuffix_tosize(immc_src->suffix));
             X64Ope* dst = new_reg_x64ope(dst_suffix, dst_id);
-            X64Ope* src = new_signed_x64ope(src_suffix, immc_src->iliteral->signed_value);
+            X64Ope* src = new_int_x64ope(src_suffix, iliteral_copy(immc_src->iliteral));
             vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
             break;
         }
@@ -112,7 +112,7 @@ Vector* gen_str_x64code(X64gen* x64gen) {
         }
 
         X64Ope* imm_dst = new_reg_x64ope(X64_SUFFIX_QUAD, tmp_reg_id);
-        X64Ope* imm_src = new_unsigned_x64ope(X64_SUFFIX_QUAD, unit_value);
+        X64Ope* imm_src = new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_LONGLONG, unit_value);
         vector_push(codes, new_inst_x64(X64_INST_MOVABSX, imm_src, imm_dst));
 
         X64Ope* mem_dst = new_mem_x64ope(mem_offset);
@@ -138,7 +138,7 @@ Vector* gen_str_x64code(X64gen* x64gen) {
             }
 
             X64Ope* dst = new_mem_x64ope(mem_offset);
-            X64Ope* src = new_unsigned_x64ope(suffix, unit_value);
+            X64Ope* src = new_unsigned_x64ope(suffix, INTEGER_LONGLONG, unit_value);
             vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
             break;
         }
@@ -152,7 +152,7 @@ Vector* gen_str_x64code(X64gen* x64gen) {
             }
 
             X64Ope* imm_dst = new_reg_x64ope(X64_SUFFIX_QUAD, tmp_reg_id);
-            X64Ope* imm_src = new_unsigned_x64ope(X64_SUFFIX_QUAD, unit_value);
+            X64Ope* imm_src = new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_LONGLONG, unit_value);
             vector_push(codes, new_inst_x64(X64_INST_MOVABSX, imm_src, imm_dst));
 
             X64Ope* mem_dst = new_mem_x64ope(mem_offset);
@@ -195,7 +195,7 @@ Vector* gen_store_x64code(X64gen* x64gen) {
     switch (immc_src->type) {
         case IMMC_OPERAND_INT: {
             X64Suffix src_suffix = x64suffix_get(immcsuffix_tosize(immc_src->suffix));
-            src = new_signed_x64ope(src_suffix, immc_src->iliteral->signed_value);
+            src = new_int_x64ope(src_suffix, iliteral_copy(immc_src->iliteral));
             break;
         }
         case IMMC_OPERAND_REG: {
@@ -256,7 +256,7 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
 
     switch (immc_src->type) {
         case IMMC_OPERAND_INT: {
-            X64Ope* src = new_signed_x64ope(X64_SUFFIX_QUAD, immc_src->iliteral->signed_value);
+            X64Ope* src = new_int_x64ope(X64_SUFFIX_QUAD, iliteral_copy(immc_src->iliteral));
             vector_push(codes, new_inst_x64(X64_INST_PUSHX, src, NULL));
             break;
         }
