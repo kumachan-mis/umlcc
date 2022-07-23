@@ -31,6 +31,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
         DParam* dparam = vector_at(params, i);
+
         char* symbol_name = new_string(dparam->ident_name);
         Dtype* symbol_dtype = dtype_copy(dparam->dtype);
         Symbol* symbol = symboltable_define_memory(immcgen->local_table, symbol_name, symbol_dtype);
@@ -47,7 +48,9 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
 
     char* label_name = new_string(declarator_srt->ident_name);
     vector_push(codes, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, label_name));
-    ImmcOpe* memory_size = new_imm_immcope(IMMC_SUFFIX_QUAD, immcgen->local_table->memory_size);
+
+    IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, immcgen->local_table->memory_size);
+    ImmcOpe* memory_size = new_int_immcope(IMMC_SUFFIX_QUAD, iliteral);
     vector_push(codes, new_inst_immc(IMMC_INST_ENTER, NULL, memory_size, NULL));
 
     vector_extend(codes, param_codes);

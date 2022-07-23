@@ -34,7 +34,8 @@ Vector* gen_global_init_decl_immcode(Immcgen* immcgen) {
     vector_push(codes, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, label_name));
 
     if (vector_size(immcgen->srt->children) == 1) {
-        vector_push(codes, new_imm_data_immc(IMMC_DATA_ZERO, dtype_size(decl_srt->dtype)));
+        IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, dtype_size(decl_srt->dtype));
+        vector_push(codes, new_int_data_immc(IMMC_DATA_ZERO, iliteral));
         return codes;
     }
 
@@ -160,18 +161,23 @@ Vector* gen_global_scalar_initializer_immcode(Immcgen* immcgen) {
     }
 
     int initialized_size = dtype_size(immcgen->initialized_dtype);
+    IntegerLiteral* iliteral = NULL;
     switch (initialized_size) {
         case 1:
-            vector_push(codes, new_imm_data_immc(IMMC_DATA_BYTE, srt->iliteral->signed_value));
+            iliteral = iliteral_copy(srt->iliteral);
+            vector_push(codes, new_int_data_immc(IMMC_DATA_BYTE, iliteral));
             break;
         case 2:
-            vector_push(codes, new_imm_data_immc(IMMC_DATA_WORD, srt->iliteral->signed_value));
+            iliteral = iliteral_copy(srt->iliteral);
+            vector_push(codes, new_int_data_immc(IMMC_DATA_WORD, iliteral));
             break;
         case 4:
-            vector_push(codes, new_imm_data_immc(IMMC_DATA_LONG, srt->iliteral->signed_value));
+            iliteral = iliteral_copy(srt->iliteral);
+            vector_push(codes, new_int_data_immc(IMMC_DATA_LONG, iliteral));
             break;
         case 8:
-            vector_push(codes, new_imm_data_immc(IMMC_DATA_QUAD, srt->iliteral->signed_value));
+            iliteral = iliteral_copy(srt->iliteral);
+            vector_push(codes, new_int_data_immc(IMMC_DATA_QUAD, iliteral));
             break;
         default:
             fprintf(stderr, "Error: unexpected global variable size %d\n", initialized_size);
@@ -185,7 +191,7 @@ Vector* gen_local_scalar_initializer_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
 
     ImmcOpe* dst = new_mem_immcope(immcgen->initialized_offset);
-    ImmcOpe* src = gen_child_imm_immcope(immcgen, codes, 0);
+    ImmcOpe* src = gen_child_int_immcope(immcgen, codes, 0);
 
     vector_push(codes, new_inst_immc(IMMC_INST_STORE, dst, src, NULL));
     immcgen->initialized_offset -= dtype_size(immcgen->initialized_dtype);

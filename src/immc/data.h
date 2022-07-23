@@ -1,6 +1,7 @@
 #ifndef UMLCC_IMMC_DATA_H
 #define UMLCC_IMMC_DATA_H
 
+#include "../literal/iliteral.h"
 #include "../literal/sliteral.h"
 
 typedef enum ImmcDataType {
@@ -14,11 +15,11 @@ typedef enum ImmcDataType {
 
 typedef struct ImmcData {
     ImmcDataType type;
-    int imm_value;
+    IntegerLiteral* iliteral;
     StringLiteral* sliteral;
 } ImmcData;
 
-ImmcData* new_imm_immcdata(ImmcDataType type, int value);
+ImmcData* new_int_immcdata(ImmcDataType type, IntegerLiteral* iliteral);
 ImmcData* new_str_immcdata(ImmcDataType type, StringLiteral* sliteral);
 ImmcData* immcdata_copy(ImmcData* immcdata);
 char* immcdata_tostring(ImmcData* immcdata);
