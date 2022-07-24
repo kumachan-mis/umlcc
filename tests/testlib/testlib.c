@@ -24,6 +24,26 @@ int testlib_ctokens_equals(Vector* actual, Vector* expected) {
     return 1;
 }
 
+int testlib_ast_equals(Ast* actual, Ast* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    if (actual->type != expected->type ||
+        !testlib_string_equals(actual->ident_name, expected->ident_name) ||
+        !testlib_iliteral_equals(actual->iliteral, expected->iliteral) ||
+        !testlib_sliteral_equals(actual->sliteral, expected->sliteral) ||
+        vector_size(actual->children) != vector_size(expected->children)) {
+        return 0;
+    }
+
+    int num_children = vector_size(expected->children);
+    for (int i = 0; i < num_children; i++) {
+        Ast* actual_child = vector_at(actual->children, i);
+        Ast* expected_child = vector_at(expected->children, i);
+        if (!testlib_ast_equals(actual_child, expected_child)) return 0;
+    }
+    return 1;
+}
+
 int testlib_ctoken_equals(CToken* actual, CToken* expected) {
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
