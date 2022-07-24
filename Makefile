@@ -32,6 +32,8 @@ TEST_EXT := .c
 ASM_EXT  := .s
 INC_EXT  := .h
 OBJ_EXT  := .o
+GCDA_EXT := .gcda
+GCNO_EXT := .gcno
 DEP_EXT  := .d
 
 MKDIR := mkdir -p
@@ -81,11 +83,15 @@ $(BIN_DIR)/$(UMLCC): $(OBJS)
 ifeq ($(COVERAGE),true)
 $(COBJ_DIR)/%$(OBJ_EXT): CFLAGS += -fprofile-arcs -ftest-coverage
 $(COBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
+	$(MKDIR) $(dir $@)
+	$(RM) $(patsubst $(COBJ_DIR)/%$(OBJ_EXT),$(COBJ_DIR)/%$(GCDA_EXT),$@) \
+		  $(patsubst $(COBJ_DIR)/%$(OBJ_EXT),$(COBJ_DIR)/%$(GCNO_EXT),$@)
+	$(CC) $(CFLAGS) -c $< -o $@
 else
 $(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
-endif
 	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
+endif
 
 $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
 	$(MKDIR) $(dir $@)
