@@ -4,6 +4,7 @@
 #include "./immc/test_immc.h"
 #include "./immc/test_ope.h"
 #include "./immc/test_suffix.h"
+#include "./lexer/test_lexer.h"
 #include "./literal/test_iliteral.h"
 #include "./literal/test_sliteral.h"
 #include "./liveseq/test_liveness.h"
@@ -47,6 +48,9 @@ int main(void) {
     add_test_suite_x64suffix();
     add_test_suite_x64ope();
     add_test_suite_x64();
+
+    // compiler step tests
+    add_test_suite_lexer();
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
