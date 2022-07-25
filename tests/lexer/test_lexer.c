@@ -20,8 +20,7 @@ void test_read_octal_character_constant();
 void test_read_hexadecimal_character_constant();
 void test_read_string_literal();
 
-void run_lexer_test(const char* __restrict__ test_id, const char* __restrict__ input,
-                    Vector* __restrict__ expected);
+void run_lexer_test(const char* __restrict__ input, Vector* __restrict__ expected);
 
 CU_Suite* add_test_suite_lexer() {
     CU_Suite* suite = CU_add_suite("test_suite_lexer", NULL, NULL);
@@ -69,7 +68,7 @@ void test_read_function_definition() {
     vector_push(expected, new_ctoken(CTOKEN_RBRACE));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -89,7 +88,7 @@ void test_read_declaration_without_init() {
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -114,7 +113,7 @@ void test_read_declaration_with_init() {
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -129,7 +128,7 @@ void test_read_assignment_expr() {
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -148,7 +147,7 @@ void test_read_logical_expr() {
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -167,7 +166,7 @@ void test_read_equality_expr() {
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -186,7 +185,7 @@ void test_read_additive_expr() {
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -209,7 +208,7 @@ void test_read_multiplicative_expr() {
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -233,7 +232,7 @@ void test_read_unary_expr() {
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -259,7 +258,7 @@ void test_read_postfix_expr() {
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -277,7 +276,7 @@ void test_read_decimal_integer_constant() {
                 new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2147483647)));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -295,7 +294,7 @@ void test_read_octal_integer_constant() {
                 new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 017777777777)));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -315,7 +314,7 @@ void test_read_hexadecimal_integer_constant() {
                 new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0x7FFFFFFF)));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -342,7 +341,7 @@ void test_read_character_constant() {
     vector_push(expected, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, '\r')));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -356,7 +355,7 @@ void test_read_octal_character_constant() {
     vector_push(expected, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, 0107)));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -376,7 +375,7 @@ void test_read_hexadecimal_character_constant() {
     vector_push(expected, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, 0x0)));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
@@ -392,26 +391,23 @@ void test_read_string_literal() {
                 new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(new_string("str\tliteral"), 12)));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
-    run_lexer_test(__func__, input, expected);
+    run_lexer_test(input, expected);
 
     delete_vector(expected);
 }
 
-void run_lexer_test(const char* __restrict__ test_id, const char* __restrict__ input,
-                    Vector* __restrict__ expected) {
-    FILE* wfile_ptr = fopen(test_id, "w");
-    fprintf(wfile_ptr, "%s", input);
-    fclose(wfile_ptr);
+void run_lexer_test(const char* __restrict__ input, Vector* __restrict__ expected) {
+    FILE* file_ptr = tmpfile();
+    fprintf(file_ptr, "%s", input);
+    rewind(file_ptr);
 
-    FILE* rfile_ptr = fopen(test_id, "r");
-    Lexer* lexer = new_lexer(rfile_ptr);
+    Lexer* lexer = new_lexer(file_ptr);
     Vector* actual = lexer_read_ctokens(lexer);
 
     CU_ASSERT_TRUE(testlib_ctokens_equals(actual, expected));
 
     delete_vector(actual);
     delete_lexer(lexer);
-    fclose(rfile_ptr);
 
-    remove(test_id);
+    fclose(file_ptr);
 }
