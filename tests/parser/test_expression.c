@@ -22,6 +22,7 @@ void test_parse_ident_expr();
 void test_parse_iliteral_expr_int();
 void test_parse_iliteral_expr_char();
 void test_parse_sliteral_expr();
+void test_parse_parenthesized_expr();
 
 void run_expr_parser_test(Vector* __restrict__ input, Ast* __restrict__ expected);
 
@@ -46,6 +47,7 @@ CU_Suite* add_test_suite_expr_parser() {
     CU_ADD_TEST(suite, test_parse_iliteral_expr_int);
     CU_ADD_TEST(suite, test_parse_iliteral_expr_char);
     CU_ADD_TEST(suite, test_parse_sliteral_expr);
+    CU_ADD_TEST(suite, test_parse_parenthesized_expr);
     return suite;
 }
 
@@ -438,6 +440,27 @@ void test_parse_sliteral_expr() {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Ast* expected = new_sliteral_ast(AST_STRING_EXPR, new_sliteral(new_string("Hello"), 6));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_parenthesized_expr() {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_EXCLAM));
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, 88)));
+    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected =
+        new_ast(AST_LNOT_EXPR, 1,           // non-terminal
+                new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                        new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
+                        new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 88))));
 
     run_expr_parser_test(input, expected);
 
