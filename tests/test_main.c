@@ -11,6 +11,7 @@
 #include "./liveseq/test_liveseq.h"
 #include "./map/test_map.h"
 #include "./parser/test_expression.h"
+#include "./parser/test_statement.h"
 #include "./set/test_set.h"
 #include "./srt/test_srt.h"
 #include "./symtab/test_symbol.h"
@@ -53,6 +54,7 @@ int main(void) {
     // compiler step tests
     add_test_suite_lexer();
     add_test_suite_expr_parser();
+    add_test_suite_stmt_parser();
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
