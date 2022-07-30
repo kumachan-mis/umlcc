@@ -2,6 +2,8 @@
 #include "../../src/resolver/expression.h"
 #include "../testlib/testlib.h"
 
+void test_resolve_call_expr();
+void test_resolve_subscription_expr();
 void test_resolve_ident_expr_local();
 void test_resolve_ident_expr_global();
 void test_resolve_iliteral_expr_int();
@@ -14,12 +16,70 @@ void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ g
 
 CU_Suite* add_test_suite_expr_resolver() {
     CU_Suite* suite = CU_add_suite("test_suite_expr_resolver", NULL, NULL);
+    CU_ADD_TEST(suite, test_resolve_call_expr);
+    CU_ADD_TEST(suite, test_resolve_subscription_expr);
     CU_ADD_TEST(suite, test_resolve_ident_expr_local);
     CU_ADD_TEST(suite, test_resolve_ident_expr_global);
     CU_ADD_TEST(suite, test_resolve_iliteral_expr_int);
     CU_ADD_TEST(suite, test_resolve_iliteral_expr_char);
     CU_ADD_TEST(suite, test_resolve_sliteral_expr);
     return suite;
+}
+
+void test_resolve_call_expr() {
+    Ast* input =
+        new_ast(AST_CALL_EXPR, 2, // non-terminal
+                new_identifier_ast(AST_IDENT_EXPR, new_string("function")),
+                new_ast(AST_ARG_LIST, 2, // non-terminal
+                        new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
+                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))));
+
+    SymbolTable* local_table = new_symboltable();
+    Vector* params = new_vector(&t_dparam);
+    vector_push(params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(params, new_dparam(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    Dtype* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("function"), func_dtype);
+    symboltable_define_memory(local_table, new_string("a"), new_integer_dtype(DTYPE_CHAR));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_CALL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+        new_dtyped_srt(
+            SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(func_dtype)), 1, // non-terminal
+            new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(func_dtype), new_string("function"))),
+        new_srt(SRT_ARG_LIST, 2,                                               // non-terminal
+                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR),
+                                                  new_string("a"))),
+                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                 new_signed_iliteral(INTEGER_INT, 3))));
+
+    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_subscription_expr() {
+    Ast* input = new_ast(AST_SUBSC_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("array")),
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
+    SymbolTable* local_table = new_symboltable();
+    Dtype* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
+    symboltable_define_memory(local_table, new_string("array"), array_dtype);
+
+    Srt* expected = new_dtyped_srt(
+        SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+        new_dtyped_srt(
+            SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2, // non-terminal
+            new_dtyped_srt(
+                SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+                new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("array"))),
+            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                             new_signed_iliteral(INTEGER_INT, 0))));
+
+    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
 }
 
 void test_resolve_ident_expr_local() {
