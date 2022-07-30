@@ -1,0 +1,116 @@
+#include "./test_expression.h"
+#include "../../src/resolver/expression.h"
+#include "../testlib/testlib.h"
+
+void test_resolve_ident_expr_local();
+void test_resolve_ident_expr_global();
+void test_resolve_iliteral_expr_int();
+void test_resolve_iliteral_expr_char();
+void test_resolve_sliteral_expr();
+
+void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ global_table,
+                            SymbolTable* __restrict__ local_table, Srt* __restrict__ expected,
+                            Srt* __restrict__ expected_trans_unit);
+
+CU_Suite* add_test_suite_expr_resolver() {
+    CU_Suite* suite = CU_add_suite("test_suite_expr_resolver", NULL, NULL);
+    CU_ADD_TEST(suite, test_resolve_ident_expr_local);
+    CU_ADD_TEST(suite, test_resolve_ident_expr_global);
+    CU_ADD_TEST(suite, test_resolve_iliteral_expr_int);
+    CU_ADD_TEST(suite, test_resolve_iliteral_expr_char);
+    CU_ADD_TEST(suite, test_resolve_sliteral_expr);
+    return suite;
+}
+
+void test_resolve_ident_expr_local() {
+    Ast* input = new_identifier_ast(AST_IDENT_EXPR, new_string("local"));
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("local"), new_integer_dtype(DTYPE_CHAR));
+
+    Srt* expected =
+        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("local"));
+
+    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_ident_expr_global() {
+    Ast* input = new_identifier_ast(AST_IDENT_EXPR, new_string("global"));
+    SymbolTable* global_table = new_symboltable();
+    symboltable_define_label(global_table, new_string("global"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected =
+        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("global"));
+
+    run_expr_resolver_test(input, NULL, global_table, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_iliteral_expr_int() {
+    Ast* input = new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3));
+
+    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                     new_signed_iliteral(INTEGER_INT, 3));
+
+    run_expr_resolver_test(input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_iliteral_expr_char() {
+    Ast* input = new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 89));
+
+    Srt* expected = new_iliteral_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT),
+                                     new_signed_iliteral(INTEGER_INT, 89));
+
+    run_expr_resolver_test(input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_sliteral_expr() {
+    Ast* input = new_sliteral_ast(AST_STRING_EXPR, new_sliteral(new_string("Hello"), 6));
+
+    Srt* expected = new_identifier_srt(
+        SRT_IDENT_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), new_string("LC0"));
+
+    Srt* expected_trans_unit = new_srt(
+        SRT_TRAS_UNIT, 1, // non-terminal
+        new_srt(
+            SRT_DECL_LIST, 1,         // non-terminal
+            new_srt(SRT_INIT_DECL, 2, // non-terminal
+                    new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6),
+                                       new_string("LC0")),
+                    new_srt(SRT_INIT, 1, // non-terminal
+                            new_sliteral_srt(SRT_STRING_EXPR,
+                                             new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6),
+                                             new_sliteral(new_string("Hello"), 6))))));
+
+    run_expr_resolver_test(input, NULL, NULL, expected, expected_trans_unit);
+
+    delete_srt(expected);
+}
+
+void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ global_table,
+                            SymbolTable* __restrict__ local_table, Srt* __restrict__ expected,
+                            Srt* __restrict__ expected_trans_unit) {
+    Resolver* resolver = new_resolver(input);
+    resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
+    if (global_table != NULL) {
+        delete_symboltable(resolver->global_table);
+        resolver->global_table = global_table;
+    }
+    if (local_table != NULL) resolver->local_table = local_table;
+
+    Srt* actual = resolve_expr(resolver);
+
+    CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+    if (expected_trans_unit != NULL) {
+        CU_ASSERT_TRUE(testlib_srt_equals(resolver->trans_unit_srt, expected_trans_unit));
+    }
+
+    delete_srt(actual);
+    delete_resolver(resolver);
+}

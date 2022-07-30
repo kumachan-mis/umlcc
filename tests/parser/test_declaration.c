@@ -14,7 +14,7 @@ void test_parse_list_init_empty();
 void test_parse_list_init_without_trailing_comma();
 void test_parse_list_init_with_trailing_comma();
 
-void run_decl_parser_test(Vector* __restrict__ input, Set* typedef_names_set,
+void run_decl_parser_test(Vector* __restrict__ input, Set* __restrict__ typedef_names_set,
                           Ast* __restrict__ expected);
 
 CU_Suite* add_test_suite_decl_parser() {
@@ -367,7 +367,7 @@ void test_parse_list_init_with_trailing_comma() {
     delete_ast(expected);
 }
 
-void run_decl_parser_test(Vector* __restrict__ input, Set* typedef_names_set,
+void run_decl_parser_test(Vector* __restrict__ input, Set* __restrict__ typedef_names_set,
                           Ast* __restrict__ expected) {
     Parser* parser = new_parser(input);
     if (typedef_names_set != NULL) {
