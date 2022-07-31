@@ -50,19 +50,19 @@ Srt* resolve_assignment_expr(Resolver* resolver) {
 
     resolver->ast = vector_at(ast->children, 0);
     Srt* lhs_srt = resolve_expr(resolver);
-    lhs_srt = convert_to_ptr(lhs_srt);
 
     resolver->ast = vector_at(ast->children, 1);
     Srt* rhs_srt = resolve_expr(resolver);
     rhs_srt = convert_to_ptr_if_array(rhs_srt);
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
-    if (!dtype_equals(rhs_srt->dtype, lhs_srt->dtype->pointer->to_dtype)) {
-        Dtype* dtype = dtype_copy(lhs_srt->dtype->pointer->to_dtype);
-        lhs_srt = new_dtyped_srt(SRT_CAST_EXPR, dtype, 1, lhs_srt);
+    if (!dtype_equals(rhs_srt->dtype, lhs_srt->dtype)) {
+        Dtype* dtype = dtype_copy(lhs_srt->dtype);
+        rhs_srt = new_dtyped_srt(SRT_CAST_EXPR, dtype, 1, rhs_srt);
     }
 
-    Dtype* dtype = dtype_copy(lhs_srt->dtype->pointer->to_dtype);
+    Dtype* dtype = dtype_copy(lhs_srt->dtype);
+    lhs_srt = convert_to_ptr(lhs_srt);
     resolver->ast = ast;
 
     return new_dtyped_srt(SRT_ASSIGN_EXPR, dtype, 2, lhs_srt, rhs_srt);
