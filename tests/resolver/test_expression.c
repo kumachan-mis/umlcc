@@ -646,8 +646,13 @@ void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ g
     Srt* actual = resolve_expr(resolver);
 
     CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+
     if (expected_trans_unit != NULL) {
         CU_ASSERT_TRUE(testlib_srt_equals(resolver->trans_unit_srt, expected_trans_unit));
+    } else {
+        expected_trans_unit = new_srt(SRT_TRAS_UNIT, 0);
+        CU_ASSERT_TRUE(testlib_srt_equals(resolver->trans_unit_srt, expected_trans_unit));
+        delete_srt(expected_trans_unit);
     }
 
     delete_srt(actual);
