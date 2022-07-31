@@ -177,7 +177,7 @@ Srt* resolve_additive_expr(Resolver* resolver) {
         Dtype* dtype = new_integer_dtype(DTYPE_INT);
         switch (ast->type) {
             case AST_SUB_EXPR:
-                return new_dtyped_srt(SRT_PDIFF_EXPR, dtype, 2, rhs_srt, lhs_srt);
+                return new_dtyped_srt(SRT_PDIFF_EXPR, dtype, 2, lhs_srt, rhs_srt);
             default:
                 fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
                 exit(1);
