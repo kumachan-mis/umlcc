@@ -2,6 +2,9 @@
 #include "../../src/resolver/expression.h"
 #include "../testlib/testlib.h"
 
+void test_resolve_address_expr();
+void test_resolve_indirection_expr();
+void test_resolve_logical_not_expr();
 void test_resolve_call_expr();
 void test_resolve_subscription_expr();
 void test_resolve_ident_expr_local();
@@ -16,6 +19,9 @@ void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ g
 
 CU_Suite* add_test_suite_expr_resolver() {
     CU_Suite* suite = CU_add_suite("test_suite_expr_resolver", NULL, NULL);
+    CU_ADD_TEST(suite, test_resolve_address_expr);
+    CU_ADD_TEST(suite, test_resolve_indirection_expr);
+    CU_ADD_TEST(suite, test_resolve_logical_not_expr);
     CU_ADD_TEST(suite, test_resolve_call_expr);
     CU_ADD_TEST(suite, test_resolve_subscription_expr);
     CU_ADD_TEST(suite, test_resolve_ident_expr_local);
@@ -24,6 +30,72 @@ CU_Suite* add_test_suite_expr_resolver() {
     CU_ADD_TEST(suite, test_resolve_iliteral_expr_char);
     CU_ADD_TEST(suite, test_resolve_sliteral_expr);
     return suite;
+}
+
+void test_resolve_address_expr() {
+    Ast* input =
+        new_ast(AST_ADDR_EXPR, 1,          // non-terminal
+                new_ast(AST_SUBSC_EXPR, 2, // non-terminal
+                        new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
+                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))));
+
+    SymbolTable* local_table = new_symboltable();
+    Dtype* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
+    Dtype* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("a"), array_dtype);
+
+    Srt* expected = new_dtyped_srt(
+        SRT_ADDR_EXPR, dtype_copy(pointer_dtype), 1, // non-terminal
+        new_dtyped_srt(
+            SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+            new_dtyped_srt(
+                SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2, // non-terminal
+                new_dtyped_srt(
+                    SRT_ADDR_EXPR, dtype_copy(pointer_dtype), 1, // non-terminal
+                    new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("a"))),
+                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                 new_signed_iliteral(INTEGER_INT, 1)))));
+
+    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_indirection_expr() {
+    Ast* input = new_ast(AST_INDIR_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("ptr")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("ptr"),
+                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                           new_string("ptr")));
+
+    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_logical_not_expr() {
+    Ast* input = new_ast(AST_LNOT_EXPR, 1,         // non-terminal
+                         new_ast(AST_LNOT_EXPR, 1, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("flag"))));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("flag"), new_integer_dtype(DTYPE_CHAR));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_LNOT_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+        new_dtyped_srt(
+            SRT_LNOT_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("flag"))));
+
+    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
 }
 
 void test_resolve_call_expr() {
@@ -63,19 +135,20 @@ void test_resolve_subscription_expr() {
     Ast* input = new_ast(AST_SUBSC_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("array")),
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
+
     SymbolTable* local_table = new_symboltable();
     Dtype* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
+    Dtype* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("array"), array_dtype);
 
     Srt* expected = new_dtyped_srt(
-        SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
-        new_dtyped_srt(
-            SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2, // non-terminal
-            new_dtyped_srt(
-                SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
-                new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("array"))),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                             new_signed_iliteral(INTEGER_INT, 0))));
+        SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1,                           // non-terminal
+        new_dtyped_srt(SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2,                // non-terminal
+                       new_dtyped_srt(SRT_ADDR_EXPR, dtype_copy(pointer_dtype), 1, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype),
+                                                         new_string("array"))),
+                       new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                        new_signed_iliteral(INTEGER_INT, 0))));
 
     run_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -84,6 +157,7 @@ void test_resolve_subscription_expr() {
 
 void test_resolve_ident_expr_local() {
     Ast* input = new_identifier_ast(AST_IDENT_EXPR, new_string("local"));
+
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("local"), new_integer_dtype(DTYPE_CHAR));
 
@@ -97,6 +171,7 @@ void test_resolve_ident_expr_local() {
 
 void test_resolve_ident_expr_global() {
     Ast* input = new_identifier_ast(AST_IDENT_EXPR, new_string("global"));
+
     SymbolTable* global_table = new_symboltable();
     symboltable_define_label(global_table, new_string("global"), new_integer_dtype(DTYPE_INT));
 
