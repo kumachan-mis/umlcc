@@ -1,3 +1,4 @@
+char put_char(char c);
 int put_int(int x);
 int put_str(char* x);
 
@@ -6,7 +7,16 @@ int main() {
     char w = (x * y) / z;
     put_int(w);
 
-    char c1 = 'a', c2 = 'ab';
+    char c1, c2;
+    c1 = 'a';
+    c2 = 'ab';
+    put_char(c1);
+    put_char(c2);
+    put_int(c1 == c2);
+    c1 = 'b';
+    c2 = 'ba';
+    put_char(c1);
+    put_char(c2);
     put_int(c1 == c2);
 
     char null_char = '\0';

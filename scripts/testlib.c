@@ -1,5 +1,10 @@
 #include <stdio.h>
 
+char put_char(char c) {
+    printf("%c\n", c);
+    return c;
+}
+
 int put_int(int x) {
     printf("%d\n", x);
     return x;

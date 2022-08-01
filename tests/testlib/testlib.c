@@ -1,15 +1,7 @@
 #include "./testlib.h"
-#include "../../src/ctoken/ctoken.h"
-#include "../../src/literal/iliteral.h"
-#include "../../src/literal/sliteral.h"
 
 #include <stdlib.h>
 #include <string.h>
-
-int testlib_ctoken_equals(CToken* actual, CToken* expected);
-int testlib_iliteral_equals(IntegerLiteral* actual, IntegerLiteral* expected);
-int testlib_sliteral_equals(StringLiteral* actual, StringLiteral* expected);
-int testlib_string_equals(char* actual, char* expected);
 
 int testlib_ctokens_equals(Vector* actual, Vector* expected) {
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
@@ -22,6 +14,15 @@ int testlib_ctokens_equals(Vector* actual, Vector* expected) {
         if (!testlib_ctoken_equals(actual_ctoken, expected_ctoken)) return 0;
     }
     return 1;
+}
+
+int testlib_ctoken_equals(CToken* actual, CToken* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->type == expected->type &&
+            testlib_string_equals(actual->ident_name, expected->ident_name) &&
+            testlib_iliteral_equals(actual->iliteral, expected->iliteral) &&
+            testlib_sliteral_equals(actual->sliteral, expected->sliteral));
 }
 
 int testlib_ast_equals(Ast* actual, Ast* expected) {
@@ -44,13 +45,85 @@ int testlib_ast_equals(Ast* actual, Ast* expected) {
     return 1;
 }
 
-int testlib_ctoken_equals(CToken* actual, CToken* expected) {
+int testlib_srt_equals(Srt* actual, Srt* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    if (actual->type != expected->type || !testlib_dtype_equals(actual->dtype, expected->dtype) ||
+        !testlib_string_equals(actual->ident_name, expected->ident_name) ||
+        !testlib_iliteral_equals(actual->iliteral, expected->iliteral) ||
+        !testlib_sliteral_equals(actual->sliteral, expected->sliteral) ||
+        vector_size(actual->children) != vector_size(expected->children)) {
+        return 0;
+    }
+
+    int num_children = vector_size(expected->children);
+    for (int i = 0; i < num_children; i++) {
+        Srt* actual_child = vector_at(actual->children, i);
+        Srt* expected_child = vector_at(expected->children, i);
+        if (!testlib_srt_equals(actual_child, expected_child)) return 0;
+    }
+    return 1;
+}
+
+int testlib_dtype_equals(Dtype* actual, Dtype* expected) {
+    int testlib_dpointer_equals(DPointer * actual, DPointer * expected);
+    int testlib_darray_equals(DArray * actual, DArray * expected);
+    int testlib_dfunction_equals(DFunction * actual, DFunction * expected);
+    int testlib_ddecoration_equals(DDecoration * actual, DDecoration * expected);
+
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
     return (actual->type == expected->type &&
-            testlib_string_equals(actual->ident_name, expected->ident_name) &&
-            testlib_iliteral_equals(actual->iliteral, expected->iliteral) &&
-            testlib_sliteral_equals(actual->sliteral, expected->sliteral));
+            testlib_dpointer_equals(actual->pointer, expected->pointer) &&
+            testlib_darray_equals(actual->array, expected->array) &&
+            testlib_dfunction_equals(actual->function, expected->function) &&
+            testlib_ddecoration_equals(actual->decoration, expected->decoration));
+}
+
+int testlib_dpointer_equals(DPointer* actual, DPointer* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return testlib_dtype_equals(actual->to_dtype, expected->to_dtype);
+}
+
+int testlib_darray_equals(DArray* actual, DArray* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (testlib_dtype_equals(actual->of_dtype, expected->of_dtype) &&
+            actual->size == expected->size);
+}
+
+int testlib_dfunction_equals(DFunction* actual, DFunction* expected) {
+    int testlib_dparam_equals(DParam * actual, DParam * expected);
+
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    if (!testlib_dtype_equals(actual->return_dtype, expected->return_dtype) ||
+        vector_size(actual->params) != vector_size(expected->params)) {
+        return 0;
+    }
+
+    int num_params = vector_size(expected->params);
+    for (int i = 0; i < num_params; i++) {
+        DParam* actual_param = vector_at(actual->params, i);
+        DParam* expected_param = vector_at(expected->params, i);
+        if (!testlib_dparam_equals(actual_param, expected_param)) return 0;
+    }
+    return 1;
+}
+
+int testlib_dparam_equals(DParam* actual, DParam* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (testlib_dtype_equals(actual->dtype, expected->dtype) &&
+            testlib_string_equals(actual->ident_name, expected->ident_name));
+}
+
+int testlib_ddecoration_equals(DDecoration* actual, DDecoration* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->typedef_flag == expected->typedef_flag &&
+            testlib_dtype_equals(actual->deco_dtype, expected->deco_dtype));
 }
 
 int testlib_iliteral_equals(IntegerLiteral* actual, IntegerLiteral* expected) {
