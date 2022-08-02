@@ -182,10 +182,6 @@ void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ l
 
     CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
 
-    Srt* expected_trans_unit = new_srt(SRT_TRAS_UNIT, 0);
-    CU_ASSERT_TRUE(testlib_srt_equals(resolver->trans_unit_srt, expected_trans_unit));
-    delete_srt(expected_trans_unit);
-
     delete_srt(actual);
     delete_resolver(resolver);
 }
