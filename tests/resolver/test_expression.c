@@ -26,8 +26,8 @@ void test_resolve_iliteral_expr_int();
 void test_resolve_iliteral_expr_char();
 void test_resolve_sliteral_expr();
 
-void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ global_table,
-                            SymbolTable* __restrict__ local_table, Srt* __restrict__ expected,
+void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
+                            SymbolTable* __restrict__ global_table, Srt* __restrict__ expected,
                             Srt* __restrict__ expected_trans_unit);
 
 CU_Suite* add_test_suite_expr_resolver() {
@@ -632,8 +632,8 @@ void test_resolve_sliteral_expr() {
     delete_srt(expected_trans_unit);
 }
 
-void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ global_table,
-                            SymbolTable* __restrict__ local_table, Srt* __restrict__ expected,
+void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
+                            SymbolTable* __restrict__ global_table, Srt* __restrict__ expected,
                             Srt* __restrict__ expected_trans_unit) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);

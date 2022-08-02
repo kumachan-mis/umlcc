@@ -8,8 +8,8 @@ void test_resolve_compound_stmt_empty();
 void test_resolve_return_stmt();
 void test_resolve_expression_stmt();
 
-void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ global_table,
-                            SymbolTable* __restrict__ local_table, Srt* __restrict__ expected);
+void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
+                            SymbolTable* __restrict__ global_table, Srt* __restrict__ expected);
 
 CU_Suite* add_test_suite_stmt_resolver() {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver", NULL, NULL);
@@ -168,8 +168,8 @@ void test_resolve_expression_stmt() {
     delete_srt(expected);
 }
 
-void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ global_table,
-                            SymbolTable* __restrict__ local_table, Srt* __restrict__ expected) {
+void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
+                            SymbolTable* __restrict__ global_table, Srt* __restrict__ expected) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
     if (global_table != NULL) {
@@ -181,6 +181,10 @@ void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ g
     Srt* actual = resolve_stmt(resolver);
 
     CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+
+    Srt* expected_trans_unit = new_srt(SRT_TRAS_UNIT, 0);
+    CU_ASSERT_TRUE(testlib_srt_equals(resolver->trans_unit_srt, expected_trans_unit));
+    delete_srt(expected_trans_unit);
 
     delete_srt(actual);
     delete_resolver(resolver);
