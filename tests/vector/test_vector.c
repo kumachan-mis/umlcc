@@ -12,6 +12,8 @@ void test_vector_fill_noeffect();
 void test_vector_fill_expand();
 void test_vector_set_success();
 void test_vector_set_fail();
+void test_vector_insert_success();
+void test_vector_insert_fail();
 void test_vector_erase_success();
 void test_vector_erase_fail();
 void test_vector_extend();
@@ -27,6 +29,8 @@ CU_Suite* add_test_suite_vector() {
     CU_ADD_TEST(suite, test_vector_fill_expand);
     CU_ADD_TEST(suite, test_vector_set_success);
     CU_ADD_TEST(suite, test_vector_set_fail);
+    CU_ADD_TEST(suite, test_vector_insert_success);
+    CU_ADD_TEST(suite, test_vector_insert_fail);
     CU_ADD_TEST(suite, test_vector_erase_success);
     CU_ADD_TEST(suite, test_vector_erase_fail);
     CU_ADD_TEST(suite, test_vector_extend);
@@ -273,6 +277,56 @@ void test_vector_set_fail() {
 
     item = vector_at(vector, 4);
     CU_ASSERT_PTR_NULL(item);
+
+    delete_vector(vector);
+}
+
+void test_vector_insert_success() {
+    Vector* vector = new_vector(&t_integer);
+    int* item = NULL;
+
+    item = new_integer(5);
+    vector_insert(vector, 0, item);
+
+    item = new_integer(2);
+    vector_insert(vector, 1, item);
+
+    item = new_integer(7);
+    vector_insert(vector, 1, item);
+
+    CU_ASSERT_EQUAL(vector_size(vector), 3);
+
+    item = vector_at(vector, 0);
+    CU_ASSERT_EQUAL(*item, 5);
+
+    item = vector_at(vector, 1);
+    CU_ASSERT_EQUAL(*item, 7);
+
+    item = vector_at(vector, 2);
+    CU_ASSERT_EQUAL(*item, 2);
+
+    delete_vector(vector);
+}
+
+void test_vector_insert_fail() {
+    Vector* vector = new_vector(&t_integer);
+    int* item = NULL;
+
+    item = new_integer(5);
+    vector_push(vector, item);
+
+    item = new_integer(1);
+    vector_insert(vector, -1, item);
+    free(item);
+
+    item = new_integer(2);
+    vector_insert(vector, 2, item);
+    free(item);
+
+    CU_ASSERT_EQUAL(vector_size(vector), 1);
+
+    item = vector_at(vector, 0);
+    CU_ASSERT_EQUAL(*item, 5);
 
     delete_vector(vector);
 }

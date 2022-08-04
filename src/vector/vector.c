@@ -79,6 +79,21 @@ int vector_set(Vector* vector, int index, void* item) {
     return 1;
 }
 
+void vector_insert(Vector* vector, int index, void* item) {
+    if (0 > index || index > vector->size) return;
+
+    if (vector->size >= vector->capacity) {
+        vector->container = realloc(vector->container, 2 * vector->capacity * sizeof(void*));
+        vector->capacity *= 2;
+    }
+
+    for (int i = vector->size; i > index; i--) {
+        vector->container[i] = vector->container[i - 1];
+    }
+    vector->container[index] = item;
+    vector->size++;
+}
+
 void vector_erase(Vector* vector, int index) {
     if (0 > index || index >= vector->size) return;
 
