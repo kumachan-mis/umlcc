@@ -119,14 +119,15 @@ Ast* parse_pointer(Parser* parser) {
 
 Ast* parse_direct_declarator(Parser* parser) {
     Ast* ast = NULL;
+    Ast* ident_ast = NULL;
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     switch (ctoken->type) {
         case CTOKEN_IDENT:
             parser->index++;
-            ast = new_identifier_ast(AST_IDENT_DECLOR, new_string(ctoken->ident_name));
+            ident_ast = new_identifier_ast(AST_IDENT_DECLOR, new_string(ctoken->ident_name));
             if (parser->typedef_flag) {
-                set_add(parser->typedef_names_set, new_string(ast->ident_name));
+                set_add(parser->typedef_names_set, new_string(ident_ast->ident_name));
             }
             break;
         default:
@@ -134,26 +135,38 @@ Ast* parse_direct_declarator(Parser* parser) {
             exit(1);
     }
 
+    Ast* ast_ptr = NULL;
     int terminated = 0;
     while (!terminated) {
         ctoken = vector_at(parser->ctokens, parser->index);
         switch (ctoken->type) {
-            case CTOKEN_LBRACKET:
+            case CTOKEN_LBRACKET: {
                 parser->index++;
-                ast = new_ast(AST_ARRAY_DECLOR, 2, ast, parse_assignment_expr(parser));
+                Ast* child = new_ast(AST_ARRAY_DECLOR, 1, parse_assignment_expr(parser));
+                if (ast == NULL) ast = child;
+                if (ast_ptr != NULL) vector_insert(ast_ptr->children, 0, child);
+                ast_ptr = child;
                 consume_ctoken(parser, CTOKEN_RBRACKET);
                 break;
-            case CTOKEN_LPALEN:
+            }
+            case CTOKEN_LPALEN: {
                 parser->index++;
-                ast = new_ast(AST_FUNC_DECLOR, 2, ast, parse_parameter_list(parser));
+                Ast* child = new_ast(AST_FUNC_DECLOR, 1, parse_parameter_list(parser));
+                if (ast == NULL) ast = child;
+                if (ast_ptr != NULL) vector_insert(ast_ptr->children, 0, child);
+                ast_ptr = child;
                 consume_ctoken(parser, CTOKEN_RPALEN);
                 break;
+            }
             default:
                 terminated = 1;
                 break;
         }
     }
 
+    if (ast == NULL) return ident_ast;
+
+    vector_insert(ast_ptr->children, 0, ident_ast);
     return ast;
 }
 

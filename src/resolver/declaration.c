@@ -141,6 +141,7 @@ Srt* resolve_init_declarator(Resolver* resolver) {
 
 Srt* resolve_declarator(Resolver* resolver) {
     Dtype* dtype = NULL;
+    Dtype* socket_dtype = NULL;
     Ast* ast = resolver->ast;
 
     Ast* ast_ptr = ast;
@@ -148,8 +149,9 @@ Srt* resolve_declarator(Resolver* resolver) {
     while (1) {
         switch (ast_ptr->type) {
             case AST_PTR_DECLOR: {
-                Dtype* socket_dtype = new_socket_pointer_dtype();
-                dtype = dtype_connect(socket_dtype, dtype);
+                Dtype* plug_dtype = new_socket_pointer_dtype();
+                dtype = dtype_connect(socket_dtype, plug_dtype);
+                socket_dtype = plug_dtype;
                 ast_ptr = vector_at(ast_ptr->children, 0);
                 break;
             }
@@ -157,16 +159,18 @@ Srt* resolve_declarator(Resolver* resolver) {
                 // TODO: support unsigned value and expression for array size
                 resolver->ast = vector_at(ast_ptr->children, 1);
                 Srt* size_srt = resolve_expr(resolver);
-                Dtype* socket_dtype = new_socket_array_dtype(size_srt->iliteral->signed_value);
+                Dtype* plug_dtype = new_socket_array_dtype(size_srt->iliteral->signed_value);
                 delete_srt(size_srt);
-                dtype = dtype_connect(socket_dtype, dtype);
+                dtype = dtype_connect(socket_dtype, plug_dtype);
+                socket_dtype = plug_dtype;
                 ast_ptr = vector_at(ast_ptr->children, 0);
                 break;
             }
             case AST_FUNC_DECLOR: {
                 resolver->ast = vector_at(ast_ptr->children, 1);
-                Dtype* socket_dtype = new_socket_function_dtype(resolve_parameter_list(resolver));
-                dtype = dtype_connect(socket_dtype, dtype);
+                Dtype* plug_dtype = new_socket_function_dtype(resolve_parameter_list(resolver));
+                dtype = dtype_connect(socket_dtype, plug_dtype);
+                socket_dtype = plug_dtype;
                 ast_ptr = vector_at(ast_ptr->children, 0);
                 break;
             }
