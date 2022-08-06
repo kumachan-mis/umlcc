@@ -1,5 +1,4 @@
 {
-    "C_Cpp.intelliSenseCacheSize": 0,
     "[c]": {
         "editor.wordBasedSuggestions": true,
         "editor.suggest.insertMode": "insert",
