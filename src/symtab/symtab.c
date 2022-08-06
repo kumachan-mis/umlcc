@@ -12,6 +12,17 @@ SymbolTable* new_symboltable() {
     return table;
 }
 
+SymbolTable* symboltable_copy(SymbolTable* table) {
+    SymbolTable* copied_table = malloc(sizeof(SymbolTable));
+    copied_table->symbol_map = map_copy(table->symbol_map);
+    copied_table->memory_size = table->memory_size;
+    copied_table->outer_scope = NULL;
+    if (table->outer_scope != NULL) {
+        copied_table->outer_scope = symboltable_copy(table->outer_scope);
+    }
+    return copied_table;
+}
+
 int symboltable_can_define(SymbolTable* table, char* name) {
     return map_get(table->symbol_map, name) == NULL;
 }

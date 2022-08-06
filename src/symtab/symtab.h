@@ -11,6 +11,7 @@ typedef struct SymbolTable {
 } SymbolTable;
 
 SymbolTable* new_symboltable();
+SymbolTable* symboltable_copy(SymbolTable* table);
 int symboltable_can_define(SymbolTable* table, char* name);
 Symbol* symboltable_define_memory(SymbolTable* table, char* name, Dtype* dtype);
 Symbol* symboltable_define_label(SymbolTable* table, char* name, Dtype* dtype);
