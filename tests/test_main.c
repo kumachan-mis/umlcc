@@ -14,6 +14,7 @@
 #include "./parser/test_expression.h"
 #include "./parser/test_external.h"
 #include "./parser/test_statement.h"
+#include "./resolver/test_declaration.h"
 #include "./resolver/test_expression.h"
 #include "./resolver/test_statement.h"
 #include "./set/test_set.h"
@@ -63,6 +64,7 @@ int main(void) {
     add_test_suite_external_parser();
     add_test_suite_expr_resolver();
     add_test_suite_stmt_resolver();
+    add_test_suite_decl_resolver();
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

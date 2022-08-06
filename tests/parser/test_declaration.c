@@ -8,6 +8,7 @@ void test_parse_int_decl();
 void test_parse_pointer_decl();
 void test_parse_array_decl();
 void test_parse_function_decl();
+void test_parse_parameter_decl();
 void test_parse_typedef_decl();
 void test_parse_expr_init();
 void test_parse_list_init_empty();
@@ -24,6 +25,7 @@ CU_Suite* add_test_suite_decl_parser() {
     CU_ADD_TEST(suite, test_parse_pointer_decl);
     CU_ADD_TEST(suite, test_parse_array_decl);
     CU_ADD_TEST(suite, test_parse_function_decl);
+    CU_ADD_TEST(suite, test_parse_parameter_decl);
     CU_ADD_TEST(suite, test_parse_typedef_decl);
     CU_ADD_TEST(suite, test_parse_expr_init);
     CU_ADD_TEST(suite, test_parse_list_init_empty);
@@ -146,8 +148,8 @@ void test_parse_array_decl() {
                             new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
                                     new_identifier_ast(AST_IDENT_DECLOR, new_string("c")),
                                     new_iliteral_ast(AST_INT_EXPR,
-                                                     new_signed_iliteral(INTEGER_INT, 6))),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))))));
+                                                     new_signed_iliteral(INTEGER_INT, 3))),
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6))))));
 
     run_decl_parser_test(input, NULL, expected);
 
@@ -218,6 +220,67 @@ void test_parse_function_decl() {
     delete_ast(expected);
 }
 
+void test_parse_parameter_decl() {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("func")));
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACKET));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 5)));
+    vector_push(input, new_ctoken(CTOKEN_RBRACKET));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("p")));
+    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(
+        AST_DECL, 2,                    // non-terminal
+        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                new_ast(AST_TYPE_INT, 0)),
+        new_ast(
+            AST_INIT_DECLOR_LIST, 1, // non-terminal
+            new_ast(
+                AST_INIT_DECLOR, 1, // non-terminal
+                new_ast(
+                    AST_FUNC_DECLOR, 2, // non-terminal
+                    new_identifier_ast(AST_IDENT_DECLOR, new_string("func")),
+                    new_ast(
+                        AST_PARAM_LIST, 2,                      // non-terminal
+                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                        new_ast(AST_TYPE_INT, 0)),
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("a")),
+                                        new_iliteral_ast(AST_INT_EXPR,
+                                                         new_signed_iliteral(INTEGER_INT, 5)))),
+                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                        new_ast(AST_TYPE_CHAR, 0)),
+                                new_ast(
+                                    AST_FUNC_DECLOR, 2,        // non-terminal
+                                    new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("f"))),
+                                    new_ast(AST_PARAM_LIST, 1,                      // non-terminal
+                                            new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                    new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                            new_ast(AST_TYPE_INT, 0)),
+                                                    new_identifier_ast(AST_IDENT_DECLOR,
+                                                                       new_string("p")))))))))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
 void test_parse_typedef_decl() {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("test_type")));
@@ -244,7 +307,7 @@ void test_parse_typedef_decl() {
 void test_parse_expr_init() {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("init")));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("scalar")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL));
@@ -259,7 +322,7 @@ void test_parse_expr_init() {
         new_ast(
             AST_INIT_DECLOR_LIST, 1,    // non-terminal
             new_ast(AST_INIT_DECLOR, 2, // non-terminal
-                    new_identifier_ast(AST_IDENT_DECLOR, new_string("init")),
+                    new_identifier_ast(AST_IDENT_DECLOR, new_string("scalar")),
                     new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                             new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
