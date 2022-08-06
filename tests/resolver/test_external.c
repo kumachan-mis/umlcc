@@ -1,43 +1,19 @@
 #include "./test_external.h"
-#include "../../src/ctoken/ctoken.h"
-#include "../../src/parser/parser.h"
+#include "../../src/resolver/resolver.h"
 #include "../testlib/testlib.h"
 
-void test_parse_transration_unit();
+void test_resolve_transration_unit();
 
-void run_parser_test(Vector* __restrict__ input, Ast* __restrict__ expected);
+void run_resolver_test(Ast* __restrict__ input, Srt* __restrict__ expected);
 
-CU_Suite* add_test_suite_external_parser() {
-    CU_Suite* suite = CU_add_suite("test_suite_external_parser", NULL, NULL);
-    CU_ADD_TEST(suite, test_parse_transration_unit);
+CU_Suite* add_test_suite_external_resolver() {
+    CU_Suite* suite = CU_add_suite("test_suite_external_resolver", NULL, NULL);
+    CU_ADD_TEST(suite, test_resolve_transration_unit);
     return suite;
 }
 
-void test_parse_transration_unit() {
-    Vector* input = new_vector(&t_ctoken);
-    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("incriment")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
-    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
-    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("decriment")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
-    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_LBRACE));
-    vector_push(input, new_ctoken(CTOKEN_KEYWORD_RETURN));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
-    vector_push(input, new_ctoken(CTOKEN_MINUS));
-    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
-    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
-    vector_push(input, new_ctoken(CTOKEN_RBRACE));
-    vector_push(input, new_ctoken(CTOKEN_EOF));
-
-    Ast* expected = new_ast(
+void test_resolve_transration_unit() {
+    Ast* input = new_ast(
         AST_TRAS_UNIT, 2,
         new_ast(
             AST_DECL, 2,                    // non-terminal
@@ -72,17 +48,41 @@ void test_parse_transration_unit() {
 
     );
 
-    run_parser_test(input, expected);
+    Vector* incr_params = new_vector(&t_dparam);
+    vector_push(incr_params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    Dtype* incr_dtype = new_function_dtype(incr_params, new_integer_dtype(DTYPE_INT));
 
-    delete_ast(expected);
+    Vector* decr_params = new_vector(&t_dparam);
+    vector_push(decr_params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    Dtype* decr_dtype = new_function_dtype(decr_params, new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_srt(
+        SRT_TRAS_UNIT, 2,
+        new_srt(SRT_DECL_LIST, 1,
+                new_srt(SRT_INIT_DECL, 1,
+                        new_identifier_srt(SRT_DECL, incr_dtype, new_string("incriment")))),
+        new_srt(SRT_FUNC_DEF, 2, new_identifier_srt(SRT_DECL, decr_dtype, new_string("decriment")),
+                new_srt(SRT_CMPD_STMT, 1,
+                        new_srt(SRT_RET_STMT, 1,
+                                new_dtyped_srt(
+                                    SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2,
+                                    new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                       new_string("x")),
+                                    new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                     new_signed_iliteral(INTEGER_INT, 1)))))));
+
+    run_resolver_test(input, expected);
+
+    delete_srt(expected);
 }
 
-void run_parser_test(Vector* __restrict__ input, Ast* __restrict__ expected) {
-    Parser* parser = new_parser(input);
-    Ast* actual = parser_create_ast(parser);
+void run_resolver_test(Ast* __restrict__ input, Srt* __restrict__ expected) {
+    Resolver* resolver = new_resolver(input);
 
-    CU_ASSERT_TRUE(testlib_ast_equals(actual, expected));
+    Srt* actual = resolver_resolve_semantics(resolver);
 
-    delete_ast(actual);
-    delete_parser(parser);
+    CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+
+    delete_srt(actual);
+    delete_resolver(resolver);
 }
