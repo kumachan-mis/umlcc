@@ -38,6 +38,7 @@ print_gcov () {
         fi
 
         echo -e "${left}:${color}${integer_part}.${fractional_part}%${END}${right}"
+        echo
     done <<< "${gcov_summary}"
 }
 
