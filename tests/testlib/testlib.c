@@ -65,6 +65,66 @@ int testlib_srt_equals(Srt* actual, Srt* expected) {
     return 1;
 }
 
+int testlib_immcs_equals(Vector* actual, Vector* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+    if (vector_size(actual) != vector_size(expected)) return 0;
+
+    int num_immcs = vector_size(expected);
+    for (int i = 0; i < num_immcs; i++) {
+        Immc* actual_immc = vector_at(actual, i);
+        Immc* expected_immc = vector_at(expected, i);
+        if (!testlib_immc_equals(actual_immc, expected_immc)) return 0;
+    }
+    return 1;
+}
+
+int testlib_immc_equals(Immc* actual, Immc* expected) {
+    int testlib_immcinst_equals(ImmcInst * actual, ImmcInst * expected);
+    int testlib_immcdata_equals(ImmcData * actual, ImmcData * expected);
+    int testlib_immclabel_equals(ImmcLabel * actual, ImmcLabel * expected);
+
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->type == expected->type &&
+            testlib_immcinst_equals(actual->inst, expected->inst) &&
+            testlib_immcdata_equals(actual->data, expected->data) &&
+            testlib_immclabel_equals(actual->label, expected->label));
+}
+
+int testlib_immcinst_equals(ImmcInst* actual, ImmcInst* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->type == expected->type &&
+            testlib_immcope_equals(actual->fst_src, expected->fst_src) &&
+            testlib_immcope_equals(actual->snd_src, expected->snd_src) &&
+            testlib_immcope_equals(actual->dst, expected->dst));
+}
+
+int testlib_immcdata_equals(ImmcData* actual, ImmcData* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->type == expected->type &&
+            testlib_iliteral_equals(actual->iliteral, expected->iliteral) &&
+            testlib_sliteral_equals(actual->sliteral, expected->sliteral));
+}
+
+int testlib_immclabel_equals(ImmcLabel* actual, ImmcLabel* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->type == expected->type && actual->visibility == expected->visibility &&
+            testlib_string_equals(actual->name, expected->name));
+}
+
+int testlib_immcope_equals(ImmcOpe* actual, ImmcOpe* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->type == expected->type && actual->suffix == expected->suffix &&
+            actual->reg_id == expected->reg_id && actual->mem_offset == expected->mem_offset &&
+            testlib_string_equals(actual->label_name, expected->label_name) &&
+            testlib_iliteral_equals(actual->iliteral, expected->iliteral) &&
+            testlib_sliteral_equals(actual->sliteral, expected->sliteral));
+}
+
 int testlib_dtype_equals(Dtype* actual, Dtype* expected) {
     int testlib_dpointer_equals(DPointer * actual, DPointer * expected);
     int testlib_darray_equals(DArray * actual, DArray * expected);
