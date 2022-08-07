@@ -353,8 +353,8 @@ Vector* gen_call_expr_immcode(Immcgen* immcgen) {
 
     immcgen->srt = param_srt;
     for (int i = num_args - 1; i >= 0; i--) {
-        ImmcOpe* dst = new_arg_immcope(immcgen->virtual_reg_suffix, i);
         ImmcOpe* src = gen_child_int_immcope(immcgen, codes, i);
+        ImmcOpe* dst = new_arg_immcope(src->suffix, i);
         vector_push(codes, new_inst_immc(IMMC_INST_STARG, dst, src, NULL));
     }
     immcgen->srt = srt;
