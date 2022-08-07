@@ -37,7 +37,6 @@ GCNO_EXT := .gcno
 DEP_EXT  := .d
 
 MKDIR := mkdir -p
-SH    := bash
 RM    := rm -rf
 
 SRCS  := $(wildcard $(SRC_DIR)/*$(SRC_EXT)) $(wildcard $(SRC_DIR)/**/*$(SRC_EXT))
@@ -65,36 +64,35 @@ unittest:
 	$(BIN_DIR)/$(TEST)
 
 unittest-with-coverage:
-	$(RM) $(BIN_DIR)/$(TEST)
 	$(MAKE) $(BIN_DIR)/$(TEST) COVERAGE=true
 	$(BIN_DIR)/$(TEST)
-	$(SH) $(TEST_COV)
+	$(TEST_COV)
 
 e2etest:
 	$(MAKE) $(BIN_DIR)/$(UMLCC)
-	$(SH) $(E2E_TEST)
+	$(E2E_TEST)
 
 sample: $(SAMPLE_ASMS)
 
 $(BIN_DIR)/$(UMLCC): $(OBJS)
-	$(MKDIR) $(dir $@)
+	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) $^ -o $@
 
 ifeq ($(COVERAGE),true)
 $(COBJ_DIR)/%$(OBJ_EXT): CFLAGS += -fprofile-arcs -ftest-coverage
 $(COBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
-	$(MKDIR) $(dir $@)
-	$(RM) $(patsubst $(COBJ_DIR)/%$(OBJ_EXT),$(COBJ_DIR)/%$(GCDA_EXT),$@) \
+	@$(MKDIR) $(dir $@)
+	@$(RM) $(patsubst $(COBJ_DIR)/%$(OBJ_EXT),$(COBJ_DIR)/%$(GCDA_EXT),$@) \
 		  $(patsubst $(COBJ_DIR)/%$(OBJ_EXT),$(COBJ_DIR)/%$(GCNO_EXT),$@)
 	$(CC) $(CFLAGS) -c $< -o $@
 else
 $(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
-	$(MKDIR) $(dir $@)
+	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 endif
 
 $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
-	$(MKDIR) $(dir $@)
+	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -MP -MM $< -MF $@ \
 		-MT $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$<)
 
@@ -104,29 +102,29 @@ $(BIN_DIR)/$(TEST): $(filter-out $(COBJ_DIR)/$(SRC_MAIN)$(OBJ_EXT),$(COBJS)) $(T
 else
 $(BIN_DIR)/$(TEST): $(filter-out $(OBJ_DIR)/$(SRC_MAIN)$(OBJ_EXT),$(OBJS)) $(TEST_OBJS)
 endif
-	$(MKDIR) $(dir $@)
+	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) $^ $(TEST_LIBS) -o $@
 
 $(TEST_OBJ_DIR)/%$(OBJ_EXT): $(TEST_DIR)/%$(TEST_EXT) $(TEST_DEP_DIR)/%$(DEP_EXT)
-	$(MKDIR) $(dir $@)
+	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(TEST_DEP_DIR)/%$(DEP_EXT): $(TEST_DIR)/%$(TEST_EXT)
-	$(MKDIR) $(dir $@)
+	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -MP -MM $< -MF $@ \
 		-MT $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_OBJ_DIR)/%$(OBJ_EXT),$<)
 
 $(SAMPLE_OUT)/%$(ASM_EXT): $(SAMPLE_DIR)/%$(SRC_EXT)
-	$(MKDIR) $(dir $@)
+	@$(MKDIR) $(dir $@)
 	$(CC) $(SAMPLE_CFLAGS) -S $< -o $@
 
 format:
-	find . -name *.h -o -name *.c | xargs clang-format -i
+	@clang-format -i $(shell find . -name *.h -o -name *.c)
 
 clean:
 	$(RM) $(BIN_DIR) $(BLD_DIR)
-	$(SH) $(TEST_COV_CLEAN)
-	$(SH) $(E2E_CLEAN)
+	$(TEST_COV_CLEAN)
+	$(E2E_CLEAN)
 
 clean-sample:
 	$(RM) $(SAMPLE_OUT)
