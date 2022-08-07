@@ -1,4 +1,8 @@
 #!/bin/bash
 
-git diff --name-only --cached --diff-filter=d | grep -E "^.*\.[ch]$" | xargs clang-format -i
-git add $(git diff --name-only --cached --diff-filter=d)
+c_commit_files=$(git diff --name-only --cached --diff-filter=d | grep -E "^.*\.[ch]$")
+
+if [ "${c_commit_files}" != "" ]; then
+    clang-format -i ${c_commit_files}
+    git add ${c_commit_files}
+fi

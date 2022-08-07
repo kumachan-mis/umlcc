@@ -1,0 +1,8 @@
+{
+    "gcovArgs": ["-r"],
+    "colorThreshold": {
+        "red": 50,
+        "yellow": 80,
+        "green": 100
+    }
+}

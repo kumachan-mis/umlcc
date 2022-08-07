@@ -13,6 +13,10 @@ BINARY=main.out
 EXPECTED=expected.txt
 ACTUAL=actual.txt
 
+RED="\e[1;31m"
+GREEN="\e[1;32m"
+END="\e[0m"
+
 if [ ! -f ${TARGET} ]
 then
     printf "Build umlcc before running end-to-end test\n"
@@ -24,12 +28,12 @@ exit_code=0
 for fixture_dir in ${FIXTURES_DIR}/*
 do
     testcase=$(basename ${fixture_dir})
-    printf "TEST: %s\n" ${testcase}
+    echo "TEST: ${testcase}"
 
     if [ ! -f ${fixture_dir}/${INPUT} ] || [ ! -f ${fixture_dir}/${EXPECTED} ]
     then
-        printf "SKIP (no test files)\n"
-        printf "\n"
+        echo "SKIP (no test files)"
+        echo
         continue
     fi
 
@@ -46,16 +50,16 @@ do
     gcc -o ${binary} ${output} ${TESTLIB}
     ${binary} > ${actual}
 
-    test_diff=$(diff -u ${expected} ${actual})
+    test_diff=$(git diff --color ${expected} ${actual})
     if [ "${test_diff}" = "" ]
     then
-        printf "\033[0;32mPASS\033[0m\n"
+        echo -e "${GREEN}PASS${END}"
     else
-        printf "\033[0;31mFAIL\033[0m\n"
-        printf "%s\n" "${test_diff}"
+        echo -e "${RED}FAIL${END}"
+        echo "${test_diff}"
         exit_code=1
     fi
-    printf "\n"
+    echo
 done
 
 exit ${exit_code}
