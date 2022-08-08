@@ -178,7 +178,7 @@ void test_resolve_logical_and_expr() {
     Dtype* param_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     vector_push(params, new_dparam(new_string("target"), param_dtype));
     Dtype* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
-    symboltable_define_memory(local_table, new_string("validate"), func_dtype);
+    symboltable_define_label(local_table, new_string("validate"), func_dtype);
 
     Srt* expected = new_dtyped_srt(
         SRT_LAND_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
@@ -325,13 +325,13 @@ void test_resolve_pointer_subtract_expr() {
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("ptr"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
+                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     // In current implementation,
     // if a pointer is placed on the right side of additive operator, the operands will be swaped
     Srt* expected = new_dtyped_srt(
-        SRT_PSUB_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 2, // non-terminal
-        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)),
+        SRT_PSUB_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2, // non-terminal
+        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
                            new_string("ptr")),
         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                          new_signed_iliteral(INTEGER_INT, 4)));
