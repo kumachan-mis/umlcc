@@ -2,7 +2,7 @@
 #define UMLCC_REGALLOC_H
 
 #include "../vector/vector.h"
-#include "./allocimmcs.h"
+#include "./regallocret.h"
 
 typedef struct RegAlloc {
     Vector* immcs;
@@ -11,7 +11,7 @@ typedef struct RegAlloc {
 } RegAlloc;
 
 RegAlloc* new_regalloc(Vector* immcs, int num_regs);
-AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc);
+RegAllocReturn* regalloc_allocate_regs(RegAlloc* regalloc);
 void delete_regalloc(RegAlloc* regalloc);
 
 #endif

@@ -102,11 +102,11 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     if (evacuation_count % 2 == 1) {
         X64Ope* src = new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8);
         X64Ope* dst = new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID);
-        vector_push(head_codes, new_inst_x64(X64_INST_ADDX, src, dst));
+        vector_push(tail_codes, new_inst_x64(X64_INST_ADDX, src, dst));
     }
     for (int i = evacuation_count - 1; i >= 0; i--) {
         X64Ope* src = new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[i]);
-        vector_push(head_codes, new_inst_x64(X64_INST_POPX, src, NULL));
+        vector_push(tail_codes, new_inst_x64(X64_INST_POPX, src, NULL));
     }
 
     sub_codes = gen_inst_x64code(x64gen);
