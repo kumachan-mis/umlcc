@@ -6,6 +6,7 @@
 #include "./immc/test_suffix.h"
 #include "./immcgen/test_declaration.h"
 #include "./immcgen/test_expression.h"
+#include "./immcgen/test_external.h"
 #include "./immcgen/test_statement.h"
 #include "./lexer/test_lexer.h"
 #include "./literal/test_iliteral.h"
@@ -73,6 +74,7 @@ int main(void) {
     add_test_suite_expr_immcgen();
     add_test_suite_stmt_immcgen();
     add_test_suite_decl_immcgen();
+    add_test_suite_exteral_immcgen();
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
