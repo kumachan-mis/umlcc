@@ -58,20 +58,18 @@ int main(int argc, char* argv[]) {
     delete_immcgen(immcgen);
 
     RegAlloc* regalloc = new_regalloc(immcs, NUM_CALLER_SAVED_REGS);
-    AllocImmcs* allocimmcs = regalloc_allocate_regs(regalloc);
+    RegAllocReturn* regallocret = regalloc_allocate_regs(regalloc);
     delete_regalloc(regalloc);
 
-    Vector *allocated_immcs = NULL, *liveseqs = NULL;
-    allocimmcs_move(allocimmcs, &allocated_immcs, &liveseqs);
-
-    int immcs_len = vector_size(allocated_immcs);
+    int immcs_len = vector_size(regallocret->immcs);
     for (int i = 0; i < immcs_len; i++) {
-        char* immc_str = immc_tostring(vector_at(allocated_immcs, i));
+        char* immc_str = immc_tostring(vector_at(regallocret->immcs, i));
         fprintf(imm, "%s", immc_str);
         free(immc_str);
     }
 
-    X64gen* x64gen = new_x64gen(allocated_immcs, liveseqs);
+    X64gen* x64gen = new_x64gen(regallocret->immcs, regallocret->liveseqs);
+    regallocret_close(regallocret);
     Vector* x64codes = x64gen_generate_x64code(x64gen);
     delete_x64gen(x64gen);
 

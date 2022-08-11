@@ -23,7 +23,7 @@ RegAlloc* new_regalloc(Vector* immcs, int num_real_regs) {
     return regalloc;
 }
 
-AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc) {
+RegAllocReturn* regalloc_allocate_regs(RegAlloc* regalloc) {
     Vector* allocated_immcs = new_vector(&t_immc);
     Vector* liveseqs = new_vector(&t_liveseq);
 
@@ -59,7 +59,7 @@ AllocImmcs* regalloc_allocate_regs(RegAlloc* regalloc) {
         regalloc->immc_offset += external_immcs_len;
     }
 
-    return new_allocimmcs(allocated_immcs, liveseqs);
+    return new_regallocret(allocated_immcs, liveseqs);
 }
 
 Vector* dequeue_external_immcs(RegAlloc* regalloc) {
