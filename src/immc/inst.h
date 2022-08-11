@@ -7,7 +7,7 @@ typedef enum ImmcInstType {
     // data transfar instructions
     IMMC_INST_LOAD,
     // - load fst_src value to dst.
-    // load dst(reg), fst_src(imm)
+    // load dst(reg), fst_src(int)
     // - load value from register.
     // load dst(reg), fst_src(reg)
     // - load value at memory fst_src points to dst.
@@ -26,15 +26,15 @@ typedef enum ImmcInstType {
     // str dst(mem), fst_src(str)
     IMMC_INST_STORE,
     // - store fst_src value to memory dst points to.
-    // store dst(ptr), fst_src(imm)
+    // store dst(ptr), fst_src(int)
     // - store value of fst_src to memory dst points to.
     // store dst(ptr), fst_src(reg)
     // - store fst_src value to dst in memory.
-    // store dst(mem), fst_src(imm)
+    // store dst(mem), fst_src(int)
     // - store value of fst_src to dst in memory.
     // store dst(mem), fst_src(reg)
     // - store fst_src value to dst label.
-    // store dst(label), fst_src(imm)
+    // store dst(label), fst_src(int)
     // - store value of fst_src to dst label.
     // store dst(label), fst_src(reg)
     IMMC_INST_LDARG,
@@ -42,56 +42,57 @@ typedef enum ImmcInstType {
     // ldarg dst(mem), fst_src(arg)
     IMMC_INST_STARG,
     // - store fst_src to dst-th argument of function.
-    // starg dst(arg), fst_src(imm)
+    // starg dst(arg), fst_src(int)
     // - store fst_src to dst-th argument of function.
     // starg dst(arg), fst_src(reg)
     IMMC_INST_STRET,
     // - store fst_src to return value of function.
     // stret           fst_src(reg)
+    // stret           fst_src(int)
 
     // arithmetic instructions
     IMMC_INST_ADD,
     // - add fst_src and snd_src.
-    // add dst(reg), fst_src(reg), snd_src(imm)
+    // add dst(reg), fst_src(reg), snd_src(int)
     // - add fst_src and snd_src.
     // add dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_SUB,
     // - subtract snd_src from fst_src.
-    // sub dst(reg), fst_src(reg), snd_src(imm)
+    // sub dst(reg), fst_src(reg), snd_src(int)
     // - subtract snd_src from fst_src.
     // sub dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_MUL,
     // - multiply fst_src and snd_src.
-    // mul dst(reg), fst_src(reg), snd_src(imm)
+    // mul dst(reg), fst_src(reg), snd_src(int)
     // - multiply fst_src and snd_src.
     // mul dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_DIV,
     // - divide fst_src by snd_src.
-    // div dst(reg), fst_src(reg), snd_src(imm)
+    // div dst(reg), fst_src(reg), snd_src(int)
     // - divide fst_src by snd_src.
     // div dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_MOD,
     // - modulo fst_src by snd_src.
-    // mod dst(reg), fst_src(reg), snd_src(imm)
+    // mod dst(reg), fst_src(reg), snd_src(int)
     // - modulo fst_src by snd_src.
     // mod dst(reg), fst_src(reg), snd_src(reg)
 
     // shift/rotate instructions
     IMMC_INST_SAL,
     // - arithmetic shift-left fst_src to snd_src bit positions
-    // sal dst(reg), fst_src(reg), snd_src(imm)
+    // sal dst(reg), fst_src(reg), snd_src(int)
     IMMC_INST_SAR,
     // - arithmetic shift-right fst_src to snd_src bit positions
-    // sar dst(reg), fst_src(reg), snd_src(imm)
+    // sar dst(reg), fst_src(reg), snd_src(int)
 
     // bit/byte instructions
     IMMC_INST_SETEQ,
     // - set dst to 1 if fst_src equals to snd_src, 0 otherwise.
-    // seteq dst(reg), fst_src(reg), snd_src(imm)
+    // seteq dst(reg), fst_src(reg), snd_src(int)
     // seteq dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_SETNEQ,
     // - set dst to 1 if fst_src does not equal to snd_src, 0 otherwise.
-    // setneq dst(reg), fst_src(reg), snd_src(imm)
+    // setneq dst(reg), fst_src(reg), snd_src(int)
     // setneq dst(reg), fst_src(reg), snd_src(reg)
 
     // control transfar instructions
@@ -100,37 +101,37 @@ typedef enum ImmcInstType {
     // jmp dst(label)
     IMMC_INST_JEQ,
     // - jump to dst label if fst_src equals to snd_src.
-    // jeq dst(label), fst_src(reg), snd_src(imm)
+    // jeq dst(label), fst_src(reg), snd_src(int)
     // jeq dst(label), fst_src(reg), snd_src(reg)
     IMMC_INST_JNEQ,
     // - jump to dst label if fst_src does not equal to snd_src.
-    // jneq dst(label), fst_src(reg), snd_src(imm)
+    // jneq dst(label), fst_src(reg), snd_src(int)
     // jneq dst(label), fst_src(reg), snd_src(reg)
     IMMC_INST_CALL,
     // - call function at address of fst_src, which takes snd_src-params.
     //   (return value is stored to dst)
-    // call dst(reg), fst_src(ptr), snd_src(imm)
+    // call dst(reg), fst_src(ptr), snd_src(int)
     // - call function named fst_src, which takes snd_src-params.
     //   (return value is stored to dst)
-    // call dst(reg), fst_src(label), snd_src(imm)
+    // call dst(reg), fst_src(label), snd_src(int)
     IMMC_INST_ENTER,
     // - enter function which needs fst_src-bytes local memory.
-    // enter           fst_src(imm)
+    // enter           fst_src(int)
     IMMC_INST_LEAVE,
     // - leave function which needed fst_src-bytes local memory.
-    // leave           fst_src(imm)
+    // leave           fst_src(int)
 
     // misc instructions
     IMMC_INST_PREP,
     // - prepare for function call which takes fst_src-params.
     //   immediate code DOES NOT define what to do in this instruction.
     //   it gives chance to do "anything" before setting argments to object code.
-    // prep           fst_src(imm)
+    // prep           fst_src(int)
     IMMC_INST_CLEAN,
     // - clean up for function call which takes fst_src-params.
     //   immediate code DOES NOT define what to do in this instruction.
     //   it gives chance to do "anything" after calling function to object code.
-    // clean           fst_src(imm)
+    // clean           fst_src(int)
 } ImmcInstType;
 
 typedef struct ImmcInst {

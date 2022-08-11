@@ -281,8 +281,23 @@ Vector* gen_stret_x64code(X64gen* x64gen) {
 
     ImmcOpe* immc_ret = immc->inst->fst_src;
     X64Suffix ret_suffix = x64suffix_get(immcsuffix_tosize(immc_ret->suffix));
-    int ret_id = CALLER_SAVED_REG_IDS[immc_ret->reg_id];
-    append_mov_code(codes, ret_id, ret_suffix, AX_REG_ID, ret_suffix);
+
+    switch (immc_ret->type) {
+        case IMMC_OPERAND_INT: {
+            X64Ope* dst = new_reg_x64ope(ret_suffix, AX_REG_ID);
+            X64Ope* src = new_int_x64ope(ret_suffix, iliteral_copy(immc_ret->iliteral));
+            vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
+            break;
+        }
+        case IMMC_OPERAND_REG: {
+            int ret_id = CALLER_SAVED_REG_IDS[immc_ret->reg_id];
+            append_mov_code(codes, ret_id, ret_suffix, AX_REG_ID, ret_suffix);
+            break;
+        }
+        default:
+            fprintf(stderr, "Error: unexpected operand %d\n", immc_ret->type);
+            exit(1);
+    }
 
     liveseqs_next(x64gen->liveseqs);
     return codes;

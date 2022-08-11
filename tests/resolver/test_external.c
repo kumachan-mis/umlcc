@@ -44,9 +44,7 @@ void test_resolve_transration_unit() {
                                 new_ast(AST_SUB_EXPR, 2, // non-terminal
                                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                                         new_iliteral_ast(AST_INT_EXPR,
-                                                         new_signed_iliteral(INTEGER_INT, 1))))))
-
-    );
+                                                         new_signed_iliteral(INTEGER_INT, 1)))))));
 
     Vector* incr_params = new_vector(&t_dparam);
     vector_push(incr_params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
@@ -57,15 +55,16 @@ void test_resolve_transration_unit() {
     Dtype* decr_dtype = new_function_dtype(decr_params, new_integer_dtype(DTYPE_INT));
 
     Srt* expected = new_srt(
-        SRT_TRAS_UNIT, 2,
-        new_srt(SRT_DECL_LIST, 1,
-                new_srt(SRT_INIT_DECL, 1,
+        SRT_TRAS_UNIT, 2,                 // non-terminal
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
                         new_identifier_srt(SRT_DECL, incr_dtype, new_string("incriment")))),
-        new_srt(SRT_FUNC_DEF, 2, new_identifier_srt(SRT_DECL, decr_dtype, new_string("decriment")),
-                new_srt(SRT_CMPD_STMT, 1,
-                        new_srt(SRT_RET_STMT, 1,
+        new_srt(SRT_FUNC_DEF, 2, // non-terminal
+                new_identifier_srt(SRT_DECL, decr_dtype, new_string("decriment")),
+                new_srt(SRT_CMPD_STMT, 1,        // non-terminal
+                        new_srt(SRT_RET_STMT, 1, // non-terminal
                                 new_dtyped_srt(
-                                    SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2,
+                                    SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
                                     new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
                                                        new_string("x")),
                                     new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
