@@ -341,8 +341,9 @@ void test_resolve_scalar_init() {
     Ast* global_input = ast_copy(local_input);
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_label(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
-    SymbolTable* global_table = symboltable_copy(local_table);
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+    SymbolTable* global_table = new_symboltable();
+    symboltable_define_label(global_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
