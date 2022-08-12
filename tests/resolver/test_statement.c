@@ -2,8 +2,8 @@
 #include "../../src/resolver/statement.h"
 #include "../testlib/testlib.h"
 
-void test_resolve_compound_stmt_vardef();
-void test_resolve_compound_stmt_typedef();
+void test_resolve_compound_stmt_integer_vardef();
+void test_resolve_compound_stmt_pointer_typedef();
 void test_resolve_compound_stmt_empty();
 void test_resolve_return_stmt();
 void test_resolve_expression_stmt();
@@ -13,15 +13,15 @@ void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ l
 
 CU_Suite* add_test_suite_stmt_resolver() {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver", NULL, NULL);
-    CU_ADD_TEST(suite, test_resolve_compound_stmt_vardef);
-    CU_ADD_TEST(suite, test_resolve_compound_stmt_typedef);
+    CU_ADD_TEST(suite, test_resolve_compound_stmt_integer_vardef);
+    CU_ADD_TEST(suite, test_resolve_compound_stmt_pointer_typedef);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_empty);
     CU_ADD_TEST(suite, test_resolve_return_stmt);
     CU_ADD_TEST(suite, test_resolve_expression_stmt);
     return suite;
 }
 
-void test_resolve_compound_stmt_vardef() {
+void test_resolve_compound_stmt_integer_vardef() {
     Ast* input = new_ast(
         AST_CMPD_STMT, 3, // non-terminal
         new_ast(
@@ -104,7 +104,7 @@ void test_resolve_compound_stmt_vardef() {
     delete_srt(expected);
 }
 
-void test_resolve_compound_stmt_typedef() {
+void test_resolve_compound_stmt_pointer_typedef() {
     Ast* input = new_ast(
         AST_CMPD_STMT, 3, // non-terminal
         new_ast(

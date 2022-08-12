@@ -2,8 +2,8 @@
 #include "../../src/immcgen/statement.h"
 #include "../testlib/testlib.h"
 
-void test_immcgen_compound_stmt_vardef();
-void test_immcgen_compound_stmt_typedef();
+void test_immcgen_compound_stmt_integer_vardef();
+void test_immcgen_compound_stmt_pointer_typedef();
 void test_immcgen_compound_stmt_empty();
 void test_immcgen_return_stmt();
 void test_immcgen_expression_stmt();
@@ -13,15 +13,15 @@ void run_stmt_immcgen_test(Srt* __restrict__ input, SymbolTable* __restrict__ lo
 
 CU_Suite* add_test_suite_stmt_immcgen() {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_immcgen", NULL, NULL);
-    CU_ADD_TEST(suite, test_immcgen_compound_stmt_vardef);
-    CU_ADD_TEST(suite, test_immcgen_compound_stmt_typedef);
+    CU_ADD_TEST(suite, test_immcgen_compound_stmt_integer_vardef);
+    CU_ADD_TEST(suite, test_immcgen_compound_stmt_pointer_typedef);
     CU_ADD_TEST(suite, test_immcgen_compound_stmt_empty);
     CU_ADD_TEST(suite, test_immcgen_return_stmt);
     CU_ADD_TEST(suite, test_immcgen_expression_stmt);
     return suite;
 }
 
-void test_immcgen_compound_stmt_vardef() {
+void test_immcgen_compound_stmt_integer_vardef() {
     Srt* input = new_srt(
         SRT_CMPD_STMT, 3, // non-terminal
         new_srt(
@@ -131,7 +131,7 @@ void test_immcgen_compound_stmt_vardef() {
     delete_vector(expected);
 }
 
-void test_immcgen_compound_stmt_typedef() {
+void test_immcgen_compound_stmt_pointer_typedef() {
     Dtype* pint_def_dtype = new_decoration_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
     pint_def_dtype->decoration->typedef_flag = 1;
 

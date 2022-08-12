@@ -3,8 +3,8 @@
 #include "../../src/parser/statement.h"
 #include "../testlib/testlib.h"
 
-void test_parse_compound_stmt_vardef();
-void test_parse_compound_stmt_typedef();
+void test_parse_compound_stmt_integer_vardef();
+void test_parse_compound_stmt_pointer_typedef();
 void test_parse_compound_stmt_empty();
 void test_parse_return_stmt();
 void test_parse_expression_stmt();
@@ -13,15 +13,15 @@ void run_stmt_parser_test(Vector* __restrict__ input, Ast* __restrict__ expected
 
 CU_Suite* add_test_suite_stmt_parser() {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_parser", NULL, NULL);
-    CU_ADD_TEST(suite, test_parse_compound_stmt_vardef);
-    CU_ADD_TEST(suite, test_parse_compound_stmt_typedef);
+    CU_ADD_TEST(suite, test_parse_compound_stmt_integer_vardef);
+    CU_ADD_TEST(suite, test_parse_compound_stmt_pointer_typedef);
     CU_ADD_TEST(suite, test_parse_compound_stmt_empty);
     CU_ADD_TEST(suite, test_parse_return_stmt);
     CU_ADD_TEST(suite, test_parse_expression_stmt);
     return suite;
 }
 
-void test_parse_compound_stmt_vardef() {
+void test_parse_compound_stmt_integer_vardef() {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_LBRACE));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
@@ -87,7 +87,7 @@ void test_parse_compound_stmt_vardef() {
     delete_ast(expected);
 }
 
-void test_parse_compound_stmt_typedef() {
+void test_parse_compound_stmt_pointer_typedef() {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_LBRACE));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_TYPEDEF));
