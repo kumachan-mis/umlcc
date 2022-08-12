@@ -10,20 +10,21 @@ Vector* gen_assignment_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = immcgen->srt;
 
-    ImmcOpe* src = gen_child_reg_immcope(immcgen, codes, 1);
-    ImmcOpe* dst = gen_child_ptr_immcope(immcgen, codes, 0);
+    ImmcOpe* st_src = gen_child_int_immcope(immcgen, codes, 1);
+    ImmcOpe* ptr = gen_child_ptr_immcope(immcgen, codes, 0);
+
+    ImmcOpe* ld_src = immcope_copy(st_src);
+    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
 
     switch (srt->type) {
         case SRT_ASSIGN_EXPR:
-            vector_push(codes, new_inst_immc(IMMC_INST_STORE, dst, src, NULL));
+            vector_push(codes, new_inst_immc(IMMC_INST_STORE, ptr, st_src, NULL));
+            vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, ld_src, NULL));
             break;
         default:
             fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
             exit(1);
     }
-
-    immcgen->virtual_reg_id = src->reg_id;
-    immcgen->virtual_reg_suffix = src->suffix;
 
     return codes;
 }

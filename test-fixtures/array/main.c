@@ -18,6 +18,7 @@ int main() {
     put_int(*(a + 2));
     put_int(a[3]);
     put_int(a[4]);
+    put_int(&a[4] - &a[1]);
     put_blank_line();
 
     int b[3];

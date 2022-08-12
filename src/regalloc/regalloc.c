@@ -199,6 +199,13 @@ int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
         Immc* immc = vector_at(basic_block->immcs, index);
         if (immc->type != IMMC_INST) continue;
 
+        ImmcOpe* dst = immc->inst->dst;
+        if (dst != NULL && dst->type == IMMC_OPERAND_REG) {
+            set_remove(input, &dst->reg_id);
+        } else if (dst != NULL && dst->type == IMMC_OPERAND_PTR) {
+            set_add(input, new_integer(dst->reg_id));
+        }
+
         ImmcOpe* fst_src = immc->inst->fst_src;
         if (fst_src != NULL &&
             (fst_src->type == IMMC_OPERAND_REG || fst_src->type == IMMC_OPERAND_PTR)) {
@@ -209,13 +216,6 @@ int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
         if (snd_src != NULL &&
             (snd_src->type == IMMC_OPERAND_REG || snd_src->type == IMMC_OPERAND_PTR)) {
             set_add(input, new_integer(snd_src->reg_id));
-        }
-
-        ImmcOpe* dst = immc->inst->dst;
-        if (dst != NULL && dst->type == IMMC_OPERAND_REG) {
-            set_remove(input, &dst->reg_id);
-        } else if (dst != NULL && dst->type == IMMC_OPERAND_PTR) {
-            set_add(input, new_integer(dst->reg_id));
         }
     }
 
