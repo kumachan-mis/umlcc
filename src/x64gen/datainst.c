@@ -227,7 +227,10 @@ Vector* gen_ldarg_x64code(X64gen* x64gen) {
     if (immc_src->reg_id < NUM_ARG_REGS) {
         X64Ope* src = new_reg_x64ope(src_suffix, ARG_REG_IDS[immc_src->reg_id]);
         X64Ope* dst = new_mem_x64ope(immc_dst->mem_offset);
+
         vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
+
+        liveseqs_next(x64gen->liveseqs);
         return codes;
     }
 
