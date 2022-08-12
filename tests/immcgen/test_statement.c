@@ -23,13 +23,39 @@ CU_Suite* add_test_suite_stmt_immcgen() {
 
 void test_immcgen_compound_stmt_vardef() {
     Srt* input = new_srt(
-        SRT_CMPD_STMT, 2,                 // non-terminal
-        new_srt(SRT_DECL_LIST, 1,         // non-terminal
-                new_srt(SRT_INIT_DECL, 2, // non-terminal
-                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("x")),
-                        new_srt(SRT_INIT, 1,
-                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                 new_signed_iliteral(INTEGER_INT, 3))))),
+        SRT_CMPD_STMT, 3, // non-terminal
+        new_srt(
+            SRT_DECL_LIST, 3,         // non-terminal
+            new_srt(SRT_INIT_DECL, 2, // non-terminal
+                    new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("x")),
+                    new_srt(SRT_INIT, 1,
+                            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                             new_signed_iliteral(INTEGER_INT, 3)))),
+            new_srt(SRT_INIT_DECL, 2, // non-terminal
+                    new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("y")),
+                    new_srt(SRT_INIT, 1,
+                            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                             new_signed_iliteral(INTEGER_INT, 1)))),
+            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                    new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                                       new_string("z")))),
+        new_srt(
+            SRT_EXPR_STMT, 1, // non-terminal
+            new_dtyped_srt(
+                SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                               1, // non-terminal
+                               new_dtyped_srt(SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT),
+                                              1, // non-terminal
+                                              new_identifier_srt(
+                                                  SRT_IDENT_EXPR,
+                                                  new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                                                  new_string("z")))),
+                new_dtyped_srt(SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                  new_string("x")),
+                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                  new_string("y"))))),
         new_srt(SRT_EXPR_STMT, 1, // non-terminal
                 new_dtyped_srt(
                     SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
@@ -50,24 +76,54 @@ void test_immcgen_compound_stmt_vardef() {
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 3), // fst_src
                               NULL));                                               // snd_src
     vector_push(expected,
-                new_inst_immc(IMMC_INST_LOAD,                                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2), // fst_src
+                new_inst_immc(IMMC_INST_STORE,                                      // inst
+                              new_mem_immcope(8),                                   // dst
+                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 1), // fst_src
                               NULL));                                               // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 1), // dst
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
                               new_mem_immcope(4),                   // fst_src
                               NULL));                               // snd_src
     vector_push(expected,
-                new_inst_immc(IMMC_INST_MUL,                          // inst
+                new_inst_immc(IMMC_INST_LOAD,                       // inst
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 1), // dst
+                              new_mem_immcope(8),                   // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_SUB,                          // inst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 2),   // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1))); // snd_src
     vector_push(expected,
+                new_inst_immc(IMMC_INST_LOAD,                       // inst
+                              new_reg_immcope(IMMC_SUFFIX_QUAD, 3), // dst
+                              new_mem_immcope(16),                  // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_STORE,                      // inst
+                              new_ptr_immcope(3),                   // dst
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 2), // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_LOAD,                                       // inst
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 4),                 // dst
+                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2), // fst_src
+                              NULL));                                               // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_LOAD,                       // inst
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 5), // dst
+                              new_mem_immcope(4),                   // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_MUL,                          // inst
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 6),   // dst
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 4),   // fst_src
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 5))); // snd_src
+    vector_push(expected,
                 new_inst_immc(IMMC_INST_STORE,                      // inst
                               new_mem_immcope(4),                   // dst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 2), // fst_src
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 6), // fst_src
                               NULL));                               // snd_src
 
     run_stmt_immcgen_test(input, NULL, -1, expected);
@@ -85,10 +141,13 @@ void test_immcgen_compound_stmt_typedef() {
                 new_srt(SRT_INIT_DECL, 1, // non-terminal
                         new_identifier_srt(SRT_DECL, pint_def_dtype, new_string("pint")))),
         new_srt(
-            SRT_DECL_LIST, 1,         // non-terminal
+            SRT_DECL_LIST, 2,         // non-terminal
             new_srt(SRT_INIT_DECL, 1, // non-terminal
                     new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
-                                       new_string("ptr")))),
+                                       new_string("p"))),
+            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                    new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                                       new_string("q")))),
         new_srt(SRT_EXPR_STMT, 1, // non-terminal
                 new_dtyped_srt(
                     SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
@@ -99,9 +158,19 @@ void test_immcgen_compound_stmt_typedef() {
                             SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                             new_identifier_srt(SRT_IDENT_EXPR,
                                                new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
-                                               new_string("ptr")))),
-                    new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                     new_signed_iliteral(INTEGER_INT, 7)))));
+                                               new_string("p")))),
+                    new_dtyped_srt(
+                        SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                        new_dtyped_srt(
+                            SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                            1, // non-terminal
+                            new_dtyped_srt(
+                                SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                                new_identifier_srt(SRT_IDENT_EXPR,
+                                                   new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                                                   new_string("q")))),
+                        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                         new_signed_iliteral(INTEGER_INT, 7))))));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -112,11 +181,21 @@ void test_immcgen_compound_stmt_typedef() {
     vector_push(expected,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 1), // dst
-                              new_mem_immcope(8),                   // fst_src
+                              new_mem_immcope(16),                  // fst_src
                               NULL));                               // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_STORE,                      // inst
                               new_ptr_immcope(1),                   // dst
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_LOAD,                       // inst
+                              new_reg_immcope(IMMC_SUFFIX_QUAD, 2), // dst
+                              new_mem_immcope(8),                   // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_STORE,                      // inst
+                              new_ptr_immcope(2),                   // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
                               NULL));                               // snd_src
 

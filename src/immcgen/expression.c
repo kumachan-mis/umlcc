@@ -22,9 +22,6 @@ Vector* gen_assignment_expr_immcode(Immcgen* immcgen) {
             exit(1);
     }
 
-    immcgen->virtual_reg_id = src->reg_id;
-    immcgen->virtual_reg_suffix = src->suffix;
-
     return codes;
 }
 

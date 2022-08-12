@@ -12,7 +12,10 @@ int main() {
     int n;
     n = 2;
 
-    int a[5];
+    int z, w;
+    int *r = &x, *s = &w;
+
+    *r = *s = 7;
 
     put_int(*&x);
     put_int(*&y);
@@ -22,7 +25,8 @@ int main() {
     put_int(q - &y == 0);
     put_int((p + n) - n == p);
     put_int((q + n) - n == q);
-    put_int(&a[4] - &a[1]);
+    put_int(*r);
+    put_int(*s);
 
     return 0;
 }

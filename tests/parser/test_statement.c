@@ -28,6 +28,20 @@ void test_parse_compound_stmt_vardef() {
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_MINUS));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL));
@@ -39,15 +53,28 @@ void test_parse_compound_stmt_vardef() {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Ast* expected = new_ast(
-        AST_CMPD_STMT, 2, // non-terminal
+        AST_CMPD_STMT, 3, // non-terminal
         new_ast(
             AST_DECL, 2,                    // non-terminal
             new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                     new_ast(AST_TYPE_INT, 0)),
-            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+            new_ast(AST_INIT_DECLOR_LIST, 3,    // non-terminal
                     new_ast(AST_INIT_DECLOR, 2, // non-terminal
                             new_identifier_ast(AST_IDENT_DECLOR, new_string("x")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))))),
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
+                    new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_DECLOR, new_string("y")),
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))),
+                    new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                            new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("z")))))),
+        new_ast(AST_EXPR_STMT, 1,                  // non-terminal
+                new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
+                        new_ast(AST_INDIR_EXPR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("z"))),
+                        new_ast(AST_SUB_EXPR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("y"))))),
         new_ast(AST_EXPR_STMT, 1,           // non-terminal
                 new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
@@ -69,10 +96,15 @@ void test_parse_compound_stmt_typedef() {
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("pint")));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("pint")));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("ptr")));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("p")));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("q")));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("ptr")));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("p")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("q")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 7)));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
@@ -92,14 +124,20 @@ void test_parse_compound_stmt_typedef() {
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                         new_identifier_ast(AST_TYPEDEF_NAME, new_string("pint"))),
-                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                new_ast(AST_INIT_DECLOR_LIST, 2,    // non-terminal
                         new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("ptr"))))),
-        new_ast(AST_EXPR_STMT, 1,                  // non-terminal
-                new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
-                        new_ast(AST_INDIR_EXPR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_EXPR, new_string("ptr"))),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 7)))));
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("p"))),
+                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("q"))))),
+        new_ast(
+            AST_EXPR_STMT, 1,                  // non-terminal
+            new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
+                    new_ast(AST_INDIR_EXPR, 1, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("p"))),
+                    new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
+                            new_ast(AST_INDIR_EXPR, 1, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("q"))),
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 7))))));
 
     run_stmt_parser_test(input, expected);
 
