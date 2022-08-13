@@ -6,6 +6,8 @@
 #include "../../src/immc/immc.h"
 #include "../../src/literal/iliteral.h"
 #include "../../src/literal/sliteral.h"
+#include "../../src/liveseq/liveness.h"
+#include "../../src/liveseq/liveseq.h"
 #include "../../src/srt/srt.h"
 #include "../../src/vector/vector.h"
 
@@ -17,6 +19,9 @@ int testlib_immcs_equals(Vector* actual, Vector* expected);
 int testlib_immc_equals(Immc* actual, Immc* expected);
 int testlib_immcope_equals(ImmcOpe* actual, ImmcOpe* expected);
 int testlib_dtype_equals(Dtype* actual, Dtype* expected);
+int testlib_liveseqs_equals(Vector* actual, Vector* expected);
+int testlib_liveseq_equals(Liveseq* actual, Liveseq* expected);
+int testlib_liveness_equals(Liveness* actual, Liveness* expected);
 int testlib_iliteral_equals(IntegerLiteral* actual, IntegerLiteral* expected);
 int testlib_sliteral_equals(StringLiteral* actual, StringLiteral* expected);
 int testlib_string_equals(char* actual, char* expected);

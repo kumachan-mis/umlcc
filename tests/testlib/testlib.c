@@ -186,6 +186,41 @@ int testlib_ddecoration_equals(DDecoration* actual, DDecoration* expected) {
             testlib_dtype_equals(actual->deco_dtype, expected->deco_dtype));
 }
 
+int testlib_liveseqs_equals(Vector* actual, Vector* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+    if (vector_size(actual) != vector_size(expected)) return 0;
+
+    int num_liveseqs = vector_size(expected);
+    for (int i = 0; i < num_liveseqs; i++) {
+        Liveseq* actual_liveseq = vector_at(actual, i);
+        Liveseq* expected_liveseq = vector_at(expected, i);
+        if (!testlib_liveseq_equals(actual_liveseq, expected_liveseq)) return 0;
+    }
+    return 1;
+}
+
+int testlib_liveseq_equals(Liveseq* actual, Liveseq* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+    if (actual->liveness_index != expected->liveness_index || actual->index != expected->index ||
+        vector_size(actual->livenesses) != vector_size(expected->livenesses))
+        return 0;
+
+    int num_livenesses = vector_size(expected->livenesses);
+    for (int i = 0; i < num_livenesses; i++) {
+        Liveness* actual_liveness = vector_at(actual->livenesses, i);
+        Liveness* expected_liveness = vector_at(expected->livenesses, i);
+        if (!testlib_liveness_equals(actual_liveness, expected_liveness)) return 0;
+    }
+    return 1;
+}
+
+int testlib_liveness_equals(Liveness* actual, Liveness* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->first_def_index == expected->first_def_index &&
+            actual->last_use_index == expected->last_use_index);
+}
+
 int testlib_iliteral_equals(IntegerLiteral* actual, IntegerLiteral* expected) {
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
