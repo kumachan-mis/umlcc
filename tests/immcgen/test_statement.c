@@ -252,15 +252,15 @@ void test_immcgen_expression_stmt() {
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
-                new_inst_immc(IMMC_INST_STORE,                                       // inst
-                              new_mem_immcope(4),                                    // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 12), // fst_src
-                              NULL));                                                // snd_src
-    vector_push(expected,
                 new_inst_immc(IMMC_INST_LOAD,                                        // inst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                  // dst
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 12), // fst_src
                               NULL));                                                // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_STORE,                      // inst
+                              new_mem_immcope(4),                   // dst
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
+                              NULL));                               // snd_src
 
     run_stmt_immcgen_test(input, local_table, -1, expected);
 
