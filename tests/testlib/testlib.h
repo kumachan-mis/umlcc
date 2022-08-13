@@ -19,6 +19,7 @@ int testlib_immcs_equals(Vector* actual, Vector* expected);
 int testlib_immc_equals(Immc* actual, Immc* expected);
 int testlib_immcope_equals(ImmcOpe* actual, ImmcOpe* expected);
 int testlib_dtype_equals(Dtype* actual, Dtype* expected);
+int testlib_liveseqs_equals(Vector* actual, Vector* expected);
 int testlib_liveseq_equals(Liveseq* actual, Liveseq* expected);
 int testlib_liveness_equals(Liveness* actual, Liveness* expected);
 int testlib_iliteral_equals(IntegerLiteral* actual, IntegerLiteral* expected);

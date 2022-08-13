@@ -186,6 +186,19 @@ int testlib_ddecoration_equals(DDecoration* actual, DDecoration* expected) {
             testlib_dtype_equals(actual->deco_dtype, expected->deco_dtype));
 }
 
+int testlib_liveseqs_equals(Vector* actual, Vector* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+    if (vector_size(actual) != vector_size(expected)) return 0;
+
+    int num_liveseqs = vector_size(expected);
+    for (int i = 0; i < num_liveseqs; i++) {
+        Liveseq* actual_liveseq = vector_at(actual, i);
+        Liveseq* expected_liveseq = vector_at(expected, i);
+        if (!testlib_liveseq_equals(actual_liveseq, expected_liveseq)) return 0;
+    }
+    return 1;
+}
+
 int testlib_liveseq_equals(Liveseq* actual, Liveseq* expected) {
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
     if (actual->liveness_index != expected->liveness_index || actual->index != expected->index ||
