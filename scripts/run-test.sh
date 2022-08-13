@@ -50,7 +50,7 @@ do
     gcc -o ${binary} ${output} ${TESTLIB}
     ${binary} > ${actual}
 
-    test_diff=$(git diff --color ${expected} ${actual})
+    test_diff=$(diff -u --color ${expected} ${actual})
     if [ "${test_diff}" = "" ]
     then
         echo -e "${GREEN}PASS${END}"
