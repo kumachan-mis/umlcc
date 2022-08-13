@@ -33,6 +33,11 @@ void append_child_immcode(Immcgen* immcgen, Vector* codes, int index) {
     immcgen->srt = srt;
 }
 
+void update_expr_register(Immcgen* immcgen, ImmcOpe* dst) {
+    immcgen->expr_reg_suffix = dst->suffix;
+    immcgen->expr_reg_id = dst->reg_id;
+}
+
 ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
     Srt* srt = immcgen->srt;
     Srt* child = vector_at(srt->children, index);
@@ -54,25 +59,25 @@ ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
     append_child_immcode(immcgen, codes, index);
     immcgen->srt = srt;
 
-    if (suffix != IMMC_SUFFIX_NONE) {
-        ImmcOpe* src = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
-        immcgen->virtual_reg_suffix = suffix;
-        immcgen->virtual_reg_id++;
-        ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
-        vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
+    if (suffix == IMMC_SUFFIX_NONE) {
+        return new_reg_immcope(immcgen->expr_reg_suffix, immcgen->expr_reg_id);
     }
-    return new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+
+    ImmcOpe* src = new_reg_immcope(immcgen->expr_reg_suffix, immcgen->expr_reg_id);
+    immcgen->next_reg_id++;
+    ImmcOpe* dst = new_reg_immcope(suffix, immcgen->next_reg_id);
+    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
+    return immcope_copy(dst);
 }
 
 ImmcOpe* gen_child_reg_immcope(Immcgen* immcgen, Vector* codes, int index) {
-    ImmcOpe* immc_ope = gen_child_int_immcope(immcgen, codes, index);
-    if (immc_ope->type == IMMC_OPERAND_REG) return immc_ope;
+    ImmcOpe* src = gen_child_int_immcope(immcgen, codes, index);
+    if (src->type == IMMC_OPERAND_REG) return src;
 
-    immcgen->virtual_reg_suffix = immc_ope->suffix;
-    immcgen->virtual_reg_id++;
-    ImmcOpe* dst = new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
-    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, immc_ope, NULL));
-    return new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+    immcgen->next_reg_id++;
+    ImmcOpe* dst = new_reg_immcope(src->suffix, immcgen->next_reg_id);
+    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
+    return immcope_copy(dst);
 }
 
 ImmcOpe* gen_child_ptr_immcope(Immcgen* immcgen, Vector* codes, int index) {
@@ -97,13 +102,13 @@ ImmcOpe* gen_child_ptr_immcope(Immcgen* immcgen, Vector* codes, int index) {
     }
 
     append_child_immcode(immcgen, codes, index);
-    return new_ptr_immcope(immcgen->virtual_reg_id);
+    return new_ptr_immcope(immcgen->next_reg_id);
 }
 
 ImmcOpe* create_dest_reg_immcope(Immcgen* immcgen) {
-    immcgen->virtual_reg_suffix = immcsuffix_get(dtype_size(immcgen->srt->dtype));
-    immcgen->virtual_reg_id++;
-    return new_reg_immcope(immcgen->virtual_reg_suffix, immcgen->virtual_reg_id);
+    ImmcSuffix suffix = immcsuffix_get(dtype_size(immcgen->srt->dtype));
+    immcgen->next_reg_id++;
+    return new_reg_immcope(suffix, immcgen->next_reg_id);
 }
 
 char* create_label_name(int label_id) {

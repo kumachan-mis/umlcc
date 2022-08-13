@@ -6,6 +6,7 @@
 
 void append_children_immcode(Immcgen* immcgen, Vector* codes);
 void append_child_immcode(Immcgen* immcgen, Vector* codes, int index);
+void update_expr_register(Immcgen* immcgen, ImmcOpe* dst);
 ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index);
 ImmcOpe* gen_child_reg_immcope(Immcgen* immcgen, Vector* codes, int index);
 ImmcOpe* gen_child_ptr_immcope(Immcgen* immcgen, Vector* codes, int index);

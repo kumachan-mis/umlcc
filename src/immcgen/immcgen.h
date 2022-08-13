@@ -10,8 +10,9 @@ typedef struct Immcgen {
     Srt* srt;
     SymbolTable* global_table;
     SymbolTable* local_table;
-    ImmcSuffix virtual_reg_suffix;
-    int virtual_reg_id;
+    ImmcSuffix expr_reg_suffix;
+    int expr_reg_id;
+    int next_reg_id;
     Dtype* initialized_dtype;
     int initialized_offset;
     int return_label_id;

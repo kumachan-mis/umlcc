@@ -28,6 +28,8 @@ Vector* gen_return_stmt_immcode(Immcgen* immcgen) {
 
 Vector* gen_expression_stmt_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
+    immcgen->expr_reg_suffix = IMMC_SUFFIX_NONE;
+    immcgen->expr_reg_id = -1;
     append_child_immcode(immcgen, codes, 0);
     return codes;
 }
