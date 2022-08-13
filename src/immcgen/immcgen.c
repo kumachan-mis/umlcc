@@ -12,8 +12,9 @@ Immcgen* new_immcgen(Srt* srt) {
     immcgen->srt = srt;
     immcgen->global_table = new_symboltable();
     immcgen->local_table = NULL;
-    immcgen->virtual_reg_suffix = IMMC_SUFFIX_NONE;
-    immcgen->virtual_reg_id = -1;
+    immcgen->expr_reg_suffix = IMMC_SUFFIX_NONE;
+    immcgen->expr_reg_id = -1;
+    immcgen->next_reg_id = -1;
     immcgen->initialized_dtype = NULL;
     immcgen->initialized_offset = -1;
     immcgen->return_label_id = -1;
