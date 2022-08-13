@@ -21,7 +21,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
     Dtype* symbol_dtype = dtype_copy(declarator_srt->dtype);
     symboltable_define_label(immcgen->global_table, symbol_name, symbol_dtype);
 
-    immcgen->virtual_reg_id = -1;
+    immcgen->next_reg_id = -1;
     immcgen->label_id++;
     immcgen->local_table = new_symboltable();
     immcgen->return_label_id = immcgen->label_id;
