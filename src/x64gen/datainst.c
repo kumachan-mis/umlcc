@@ -19,9 +19,8 @@ Vector* gen_load_x64code(X64gen* x64gen) {
 
     switch (immc_src->type) {
         case IMMC_OPERAND_INT: {
-            X64Suffix src_suffix = x64suffix_get(immcsuffix_tosize(immc_src->suffix));
             X64Ope* dst = new_reg_x64ope(dst_suffix, dst_id);
-            X64Ope* src = new_int_x64ope(src_suffix, iliteral_copy(immc_src->iliteral));
+            X64Ope* src = new_int_x64ope(dst_suffix, iliteral_copy(immc_src->iliteral));
             vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
             break;
         }
