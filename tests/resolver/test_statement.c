@@ -5,18 +5,20 @@
 void test_resolve_compound_stmt_integer_vardef();
 void test_resolve_compound_stmt_pointer_typedef();
 void test_resolve_compound_stmt_empty();
-void test_resolve_return_stmt();
+void test_resolve_return_stmt_without_cast();
+void test_resolve_return_stmt_with_cast();
 void test_resolve_expression_stmt();
 
 void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                            SymbolTable* __restrict__ global_table, Srt* __restrict__ expected);
+                            Dtype* __restrict__ return_dtype, Srt* __restrict__ expected);
 
 CU_Suite* add_test_suite_stmt_resolver() {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_integer_vardef);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_pointer_typedef);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_empty);
-    CU_ADD_TEST(suite, test_resolve_return_stmt);
+    CU_ADD_TEST(suite, test_resolve_return_stmt_without_cast);
+    CU_ADD_TEST(suite, test_resolve_return_stmt_with_cast);
     CU_ADD_TEST(suite, test_resolve_expression_stmt);
     return suite;
 }
@@ -188,15 +190,34 @@ void test_resolve_compound_stmt_empty() {
     delete_srt(expected);
 }
 
-void test_resolve_return_stmt() {
+void test_resolve_return_stmt_without_cast() {
     Ast* input = new_ast(AST_RET_STMT, 1, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
 
-    Srt* expected = new_srt(SRT_RET_STMT, 1,
+    Dtype* return_dtype = new_integer_dtype(DTYPE_INT);
+
+    Srt* expected = new_srt(SRT_RET_STMT, 1, // non-terminal
                             new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                              new_signed_iliteral(INTEGER_INT, 0)));
 
-    run_stmt_resolver_test(input, NULL, NULL, expected);
+    run_stmt_resolver_test(input, NULL, return_dtype, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_return_stmt_with_cast() {
+    Ast* input = new_ast(AST_RET_STMT, 1, // non-terminal
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
+
+    Dtype* return_dtype = new_integer_dtype(DTYPE_CHAR);
+
+    Srt* expected =
+        new_srt(SRT_RET_STMT, 1,                                                // non-terminal
+                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                new_signed_iliteral(INTEGER_INT, 0))));
+
+    run_stmt_resolver_test(input, NULL, return_dtype, expected);
 
     delete_srt(expected);
 }
@@ -227,14 +248,11 @@ void test_resolve_expression_stmt() {
 }
 
 void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                            SymbolTable* __restrict__ global_table, Srt* __restrict__ expected) {
+                            Dtype* __restrict__ return_dtype, Srt* __restrict__ expected) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
-    if (global_table != NULL) {
-        delete_symboltable(resolver->global_table);
-        resolver->global_table = global_table;
-    }
     if (local_table != NULL) resolver->local_table = local_table;
+    resolver->return_dtype = return_dtype;
 
     Srt* actual = resolve_stmt(resolver);
 
