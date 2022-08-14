@@ -10,11 +10,12 @@ typedef struct Resolver {
     Srt* trans_unit_srt;
     SymbolTable* global_table;
     SymbolTable* local_table;
+    Dtype* return_dtype;
     Dtype* specifier_dtype;
     Dtype* initialized_dtype;
     int initialized_offset;
     int sliteral_id;
-    Dtype* function_dtype;
+    Dtype* call_dtype;
 } Resolver;
 
 Resolver* new_resolver(Ast* ast);

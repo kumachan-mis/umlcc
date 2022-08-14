@@ -49,7 +49,11 @@ Srt* resolve_return_stmt(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    Srt* srt = new_srt(SRT_RET_STMT, 1, resolve_expr(resolver));
+    Srt* expr_srt = resolve_expr(resolver);
+    if (!dtype_equals(expr_srt->dtype, resolver->return_dtype)) {
+        expr_srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(resolver->return_dtype), 1, expr_srt);
+    }
+    Srt* srt = new_srt(SRT_RET_STMT, 1, expr_srt);
 
     resolver->ast = ast;
     return srt;
