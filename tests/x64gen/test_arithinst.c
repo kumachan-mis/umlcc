@@ -595,9 +595,9 @@ void test_x64gen_div_rdx_inuse() {
                              new_signed_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 2), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, R10_REG_ID)));      // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                 // type
-                             new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID),    // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, R11_REG_ID))); // dst
+                new_inst_x64(X64_INST_MOVX,                                              // type
+                             new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID),                 // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_CXTD,                      // type
                              new_suffix_x64ope(X64_SUFFIX_LONG), // src
@@ -611,9 +611,9 @@ void test_x64gen_div_rdx_inuse() {
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                // type
-                             new_reg_x64ope(X64_SUFFIX_QUAD, R11_REG_ID),  // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID))); // dst
+                new_inst_x64(X64_INST_MOVX,                                            // type
+                             new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[0]), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID)));             // dst
 
     run_arithinst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -877,9 +877,9 @@ void test_x64gen_mod_rdx_inuse() {
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[3]),   // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                 // type
-                             new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID),    // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, R11_REG_ID))); // dst
+                new_inst_x64(X64_INST_MOVX,                                              // type
+                             new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID),                 // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_CXTD,                      // type
                              new_suffix_x64ope(X64_SUFFIX_QUAD), // src
@@ -893,9 +893,9 @@ void test_x64gen_mod_rdx_inuse() {
                              new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[2]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                // type
-                             new_reg_x64ope(X64_SUFFIX_QUAD, R11_REG_ID),  // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID))); // dst
+                new_inst_x64(X64_INST_MOVX,                                            // type
+                             new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[0]), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID)));             // dst
 
     run_arithinst_x64gen_test(input_immcs, input_liveseqs, expected);
 

@@ -161,9 +161,10 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
     }
 
     if (dx_needs_evacuation) {
-        int evacuation_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 1];
+        int evacuation_id = CALLEE_SAVED_REG_IDS[0];
         append_mov_code(codes, DX_REG_ID, X64_SUFFIX_QUAD, evacuation_id, X64_SUFFIX_QUAD);
     }
+
     vector_push(codes, new_inst_x64(X64_INST_CXTD, new_suffix_x64ope(suffix), NULL));
 
     X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
@@ -171,9 +172,11 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
 
     X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(immc_dst->suffix));
     append_mov_code(codes, result_reg_id, suffix, dst_id, dst_suffix);
+
     if (dx_needs_evacuation) {
-        int evacuation_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 1];
+        int evacuation_id = CALLEE_SAVED_REG_IDS[0];
         append_mov_code(codes, evacuation_id, X64_SUFFIX_QUAD, DX_REG_ID, X64_SUFFIX_QUAD);
+        if (x64gen->evacuation_count < 1) x64gen->evacuation_count = 1;
     }
 
     liveseqs_next(x64gen->liveseqs);
