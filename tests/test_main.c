@@ -32,6 +32,7 @@
 #include "./x64/test_ope.h"
 #include "./x64/test_suffix.h"
 #include "./x64/test_x64.h"
+#include "./x64gen/test_arithinst.h"
 #include "./x64gen/test_data.h"
 #include "./x64gen/test_label.h"
 
@@ -83,6 +84,7 @@ int main(void) {
     add_test_suite_decl_immcgen();
     add_test_suite_exteral_immcgen();
     add_test_suite_regalloc();
+    add_test_suite_arithinst_x64gen();
     add_test_suite_data_x64gen();
     add_test_suite_label_x64gen();
 

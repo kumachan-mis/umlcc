@@ -81,12 +81,13 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     ImmcOpe* immc_fst_src = immc->inst->fst_src;
     ImmcOpe* immc_snd_src = immc->inst->snd_src;
 
-    Set* alive_regs_set = create_alive_regs_set(x64gen->liveseqs);
+    Set* alive_reg_induces_set = create_alive_reg_induces_set(x64gen->liveseqs);
     int evacuation_count = 0;
     // TODO: consider case that evacuation_count is greater than NUM_CALLEE_SAVED_REG
-    for (SetIter* iter = set_iter_begin(alive_regs_set); !set_iter_end(iter, alive_regs_set);
-         iter = set_iter_next(iter, alive_regs_set)) {
-        int* caller_ref = set_iter_item(iter, alive_regs_set);
+    for (SetIter* iter = set_iter_begin(alive_reg_induces_set);
+         !set_iter_end(iter, alive_reg_induces_set);
+         iter = set_iter_next(iter, alive_reg_induces_set)) {
+        int* caller_ref = set_iter_item(iter, alive_reg_induces_set);
         int caller_id = CALLER_SAVED_REG_IDS[*caller_ref];
         int callee_id = CALLEE_SAVED_REG_IDS[evacuation_count];
         append_mov_code(codes, caller_id, X64_SUFFIX_QUAD, callee_id, X64_SUFFIX_QUAD);
@@ -132,16 +133,17 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     }
 
     evacuation_count = 0;
-    for (SetIter* iter = set_iter_begin(alive_regs_set); !set_iter_end(iter, alive_regs_set);
-         iter = set_iter_next(iter, alive_regs_set)) {
-        int* caller_ref = set_iter_item(iter, alive_regs_set);
+    for (SetIter* iter = set_iter_begin(alive_reg_induces_set);
+         !set_iter_end(iter, alive_reg_induces_set);
+         iter = set_iter_next(iter, alive_reg_induces_set)) {
+        int* caller_ref = set_iter_item(iter, alive_reg_induces_set);
         int caller_id = CALLER_SAVED_REG_IDS[*caller_ref];
         int callee_id = CALLEE_SAVED_REG_IDS[evacuation_count];
         append_mov_code(codes, callee_id, X64_SUFFIX_QUAD, caller_id, X64_SUFFIX_QUAD);
         evacuation_count++;
     }
     if (x64gen->evacuation_count < evacuation_count) x64gen->evacuation_count = evacuation_count;
-    delete_set(alive_regs_set);
+    delete_set(alive_reg_induces_set);
 
     X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(immc_dst->suffix));
     int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];

@@ -5,53 +5,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+Vector* gen_additive_common_x64code(X64gen* x64gen, X64InstType type);
 Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id);
 
 Vector* gen_add_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
-    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
-    x64gen->index++;
-
-    ImmcOpe* immc_dst = immc->inst->dst;
-    ImmcOpe* immc_fst_src = immc->inst->fst_src;
-    ImmcOpe* immc_snd_src = immc->inst->snd_src;
-
-    int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
-    int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
-
-    X64Suffix suffix = X64_SUFFIX_NONE;
-    switch (immc_snd_src->type) {
-        case IMMC_OPERAND_INT: {
-            suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
-            X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
-            X64Ope* snd_src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
-            vector_push(codes, new_inst_x64(X64_INST_ADDX, snd_src, fst_src));
-            break;
-        }
-        case IMMC_OPERAND_REG: {
-            int snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg_id];
-            X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
-            X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_snd_src->suffix));
-            suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
-            append_mov_code(codes, fst_src_id, fst_src_suffix, fst_src_id, suffix);
-            append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
-            X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
-            X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
-            vector_push(codes, new_inst_x64(X64_INST_ADDX, snd_src, fst_src));
-            break;
-        }
-        default:
-            fprintf(stderr, "Error: unexpected operand %d\n", immc_snd_src->type);
-            exit(1);
-    }
-
-    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(immc_dst->suffix));
-    append_mov_code(codes, fst_src_id, suffix, dst_id, dst_suffix);
-    liveseqs_next(x64gen->liveseqs);
-    return codes;
+    return gen_additive_common_x64code(x64gen, X64_INST_ADDX);
 }
 
 Vector* gen_sub_x64code(X64gen* x64gen) {
+    return gen_additive_common_x64code(x64gen, X64_INST_SUBX);
+}
+
+Vector* gen_additive_common_x64code(X64gen* x64gen, X64InstType type) {
     Vector* codes = new_vector(&t_string);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
@@ -63,25 +28,24 @@ Vector* gen_sub_x64code(X64gen* x64gen) {
     int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
     int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
 
-    X64Suffix suffix = X64_SUFFIX_NONE;
+    X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
+    X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_snd_src->suffix));
+    X64Suffix suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
+
     switch (immc_snd_src->type) {
         case IMMC_OPERAND_INT: {
-            suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
             X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
             X64Ope* snd_src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
-            vector_push(codes, new_inst_x64(X64_INST_SUBX, snd_src, fst_src));
+            vector_push(codes, new_inst_x64(type, snd_src, fst_src));
             break;
         }
         case IMMC_OPERAND_REG: {
             int snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg_id];
-            X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
-            X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_snd_src->suffix));
-            suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
             append_mov_code(codes, fst_src_id, fst_src_suffix, fst_src_id, suffix);
             append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
             X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
             X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
-            vector_push(codes, new_inst_x64(X64_INST_SUBX, snd_src, fst_src));
+            vector_push(codes, new_inst_x64(type, snd_src, fst_src));
             break;
         }
         default:
@@ -107,10 +71,12 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
     int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
     int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
 
-    X64Suffix suffix = X64_SUFFIX_NONE;
+    X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
+    X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_snd_src->suffix));
+    X64Suffix suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
+
     switch (immc_snd_src->type) {
         case IMMC_OPERAND_INT: {
-            suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
             append_mov_code(codes, fst_src_id, suffix, AX_REG_ID, suffix);
             X64Ope* fst_src = new_reg_x64ope(suffix, AX_REG_ID);
             X64Ope* snd_src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
@@ -119,9 +85,6 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
         }
         case IMMC_OPERAND_REG: {
             int snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg_id];
-            X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
-            X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_snd_src->suffix));
-            suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
             append_mov_code(codes, fst_src_id, fst_src_suffix, AX_REG_ID, suffix);
             append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
             X64Ope* fst_src = new_reg_x64ope(suffix, AX_REG_ID);
@@ -161,11 +124,13 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
     int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
     int snd_src_id = -1;
 
-    X64Suffix suffix = X64_SUFFIX_NONE;
+    X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
+    X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_snd_src->suffix));
+    X64Suffix suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
+
     switch (immc_snd_src->type) {
         case IMMC_OPERAND_INT: {
             snd_src_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
-            suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
             append_mov_code(codes, fst_src_id, suffix, AX_REG_ID, suffix);
             X64Ope* dst = new_reg_x64ope(suffix, snd_src_id);
             X64Ope* src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
@@ -174,9 +139,6 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
         }
         case IMMC_OPERAND_REG: {
             snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg_id];
-            X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
-            X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_snd_src->suffix));
-            suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
             append_mov_code(codes, fst_src_id, fst_src_suffix, AX_REG_ID, suffix);
             if (snd_src_id != DX_REG_ID) {
                 append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
@@ -191,6 +153,17 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
             exit(1);
     }
 
+    int dx_needs_evacuation = 0;
+    if (fst_src_id != DX_REG_ID && snd_src_id != DX_REG_ID && dst_id != DX_REG_ID) {
+        Set* alive_regs_set = create_alive_regs_set(x64gen->liveseqs);
+        dx_needs_evacuation = set_contains(alive_regs_set, &DX_REG_ID);
+        delete_set(alive_regs_set);
+    }
+
+    if (dx_needs_evacuation) {
+        int evacuation_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 1];
+        append_mov_code(codes, DX_REG_ID, X64_SUFFIX_QUAD, evacuation_id, X64_SUFFIX_QUAD);
+    }
     vector_push(codes, new_inst_x64(X64_INST_CXTD, new_suffix_x64ope(suffix), NULL));
 
     X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
@@ -198,6 +171,11 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
 
     X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(immc_dst->suffix));
     append_mov_code(codes, result_reg_id, suffix, dst_id, dst_suffix);
+    if (dx_needs_evacuation) {
+        int evacuation_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 1];
+        append_mov_code(codes, evacuation_id, X64_SUFFIX_QUAD, DX_REG_ID, X64_SUFFIX_QUAD);
+    }
+
     liveseqs_next(x64gen->liveseqs);
     return codes;
 }
