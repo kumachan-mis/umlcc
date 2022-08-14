@@ -44,6 +44,7 @@ Srt* resolve_function_definition(Resolver* resolver) {
     symboltable_define_label(resolver->global_table, symbol_name, symbol_dtype);
 
     resolver->local_table = new_symboltable();
+    resolver->return_dtype = symbol_dtype->function->return_dtype;
 
     Vector* params = declarator_srt->dtype->function->params;
     int num_params = vector_size(params);
@@ -59,6 +60,7 @@ Srt* resolve_function_definition(Resolver* resolver) {
 
     delete_symboltable(resolver->local_table);
     resolver->local_table = NULL;
+    resolver->return_dtype = NULL;
 
     resolver->specifier_dtype = NULL;
     resolver->ast = ast;
