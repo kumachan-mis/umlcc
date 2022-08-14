@@ -13,7 +13,7 @@ int main() {
     n = 2;
 
     int z, w;
-    int *r = &x, *s = &w;
+    int *r = &z, *s = &w;
 
     *r = *s = 7;
 
