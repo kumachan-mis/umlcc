@@ -684,7 +684,7 @@ void test_regalloc_function_variable_mixed() {
                               new_label_immcope(new_string("count")), // fst_src
                               NULL));                                 // snd_src
     vector_push(input,
-                new_inst_immc(IMMC_INST_LOAD,                                         // inst
+                new_inst_immc(IMMC_INST_ADD,                                          // inst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1),                   // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 1))); // snd_src
@@ -693,6 +693,11 @@ void test_regalloc_function_variable_mixed() {
                               new_label_immcope(new_string("count")), // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1),   // fst_src
                               NULL));                                 // snd_src
+    vector_push(input,
+                new_inst_immc(IMMC_INST_JMP,                       // inst
+                              new_label_immcope(new_string("L0")), // dst
+                              NULL,                                // fst_src
+                              NULL));                              // snd_src
     vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
     vector_push(input,
                 new_inst_immc(IMMC_INST_LEAVE,                                      // inst
@@ -720,7 +725,7 @@ void test_regalloc_function_variable_mixed() {
                               new_label_immcope(new_string("count")), // fst_src
                               NULL));                                 // snd_src
     vector_push(expected_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                                         // inst
+                new_inst_immc(IMMC_INST_ADD,                                          // inst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 1))); // snd_src
@@ -729,6 +734,11 @@ void test_regalloc_function_variable_mixed() {
                               new_label_immcope(new_string("count")), // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),   // fst_src
                               NULL));                                 // snd_src
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_JMP,                       // inst
+                              new_label_immcope(new_string("L0")), // dst
+                              NULL,                                // fst_src
+                              NULL));                              // snd_src
     vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_LEAVE,                                      // inst

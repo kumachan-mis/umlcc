@@ -37,6 +37,7 @@
 #include "./x64gen/test_data.h"
 #include "./x64gen/test_datainst.h"
 #include "./x64gen/test_label.h"
+#include "./x64gen/test_x64gen.h"
 
 #include <CUnit/Basic.h>
 
@@ -91,6 +92,7 @@ int main(void) {
     add_test_suite_ctrlinst_x64gen();
     add_test_suite_data_x64gen();
     add_test_suite_label_x64gen();
+    add_test_suite_x64gen();
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

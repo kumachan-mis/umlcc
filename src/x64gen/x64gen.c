@@ -74,9 +74,6 @@ Vector* gen_function_x64code(X64gen* x64gen) {
             case IMMC_INST:
                 sub_codes = gen_inst_x64code(x64gen);
                 break;
-            case IMMC_DATA:
-                sub_codes = gen_data_x64code(x64gen);
-                break;
             case IMMC_LABEL:
                 sub_codes = gen_label_x64code(x64gen);
                 break;
@@ -105,8 +102,8 @@ Vector* gen_function_x64code(X64gen* x64gen) {
         vector_push(tail_codes, new_inst_x64(X64_INST_ADDX, src, dst));
     }
     for (int i = evacuation_count - 1; i >= 0; i--) {
-        X64Ope* src = new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[i]);
-        vector_push(tail_codes, new_inst_x64(X64_INST_POPX, src, NULL));
+        X64Ope* dst = new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[i]);
+        vector_push(tail_codes, new_inst_x64(X64_INST_POPX, NULL, dst));
     }
 
     sub_codes = gen_inst_x64code(x64gen);
@@ -141,9 +138,6 @@ Vector* gen_variable_x64code(X64gen* x64gen) {
         switch (immc->type) {
             case IMMC_DATA:
                 sub_codes = gen_data_x64code(x64gen);
-                break;
-            case IMMC_LABEL:
-                sub_codes = gen_label_x64code(x64gen);
                 break;
             default:
                 fprintf(stderr, "Error: unexpected immc type %d\n", immc->type);
