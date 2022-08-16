@@ -34,6 +34,7 @@ Vector* gen_additive_common_x64code(X64gen* x64gen, X64InstType type) {
 
     switch (immc_snd_src->type) {
         case IMMC_OPERAND_INT: {
+            append_mov_code(codes, fst_src_id, fst_src_suffix, fst_src_id, suffix);
             X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
             X64Ope* snd_src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
             vector_push(codes, new_inst_x64(type, snd_src, fst_src));

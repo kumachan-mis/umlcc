@@ -15,7 +15,7 @@ Vector* gen_jmp_x64code(X64gen* x64gen) {
     ImmcOpe* immc_dst = immc->inst->dst;
 
     X64Ope* dst = new_jlabel_x64ope(new_string(immc_dst->label_name));
-    vector_push(codes, new_inst_x64(X64_INST_JMP, dst, NULL));
+    vector_push(codes, new_inst_x64(X64_INST_JMP, NULL, dst));
 
     liveseqs_next(x64gen->liveseqs);
     return codes;
@@ -38,20 +38,21 @@ Vector* gen_jcmp_common_x64code(X64gen* x64gen, X64InstType type) {
     ImmcOpe* immc_fst_src = immc->inst->fst_src;
     ImmcOpe* immc_snd_src = immc->inst->snd_src;
 
+    int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
+
+    X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
+    X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_snd_src->suffix));
+    X64Suffix suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
+
     switch (immc_snd_src->type) {
         case IMMC_OPERAND_INT: {
-            X64Suffix suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
-            int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
+            append_mov_code(codes, fst_src_id, fst_src_suffix, fst_src_id, suffix);
             X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
             X64Ope* snd_src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
             vector_push(codes, new_inst_x64(X64_INST_CMPX, snd_src, fst_src));
             break;
         }
         case IMMC_OPERAND_REG: {
-            X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
-            X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
-            X64Suffix suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
-            int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
             int snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg_id];
             append_mov_code(codes, fst_src_id, fst_src_suffix, fst_src_id, suffix);
             append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
@@ -61,12 +62,12 @@ Vector* gen_jcmp_common_x64code(X64gen* x64gen, X64InstType type) {
             break;
         }
         default:
-            fprintf(stderr, "Error: unexpected operand %d\n", immc_dst->type);
+            fprintf(stderr, "Error: unexpected operand %d\n", immc_snd_src->type);
             exit(1);
     }
 
     X64Ope* dst = new_jlabel_x64ope(new_string(immc_dst->label_name));
-    vector_push(codes, new_inst_x64(type, dst, NULL));
+    vector_push(codes, new_inst_x64(type, NULL, dst));
 
     liveseqs_next(x64gen->liveseqs);
     return codes;
@@ -88,6 +89,7 @@ Vector* gen_call_x64code(X64gen* x64gen) {
          !set_iter_end(iter, alive_reg_induces_set);
          iter = set_iter_next(iter, alive_reg_induces_set)) {
         int* caller_ref = set_iter_item(iter, alive_reg_induces_set);
+        if (*caller_ref == immc->inst->dst->reg_id) continue;
         int caller_id = CALLER_SAVED_REG_IDS[*caller_ref];
         int callee_id = CALLEE_SAVED_REG_IDS[evacuation_count];
         append_mov_code(codes, caller_id, X64_SUFFIX_QUAD, callee_id, X64_SUFFIX_QUAD);
@@ -109,11 +111,11 @@ Vector* gen_call_x64code(X64gen* x64gen) {
 
     for (int i = 0; i < num_args && i < NUM_ARG_REGS; i++) {
         X64Ope* arg = new_reg_x64ope(X64_SUFFIX_QUAD, ARG_REG_IDS[i]);
-        vector_push(codes, new_inst_x64(X64_INST_POPX, arg, NULL));
+        vector_push(codes, new_inst_x64(X64_INST_POPX, NULL, arg));
     }
 
-    X64Ope* ret = new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID);
-    X64Ope* zero = new_signed_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 0);
+    X64Ope* ret = new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID);
+    X64Ope* zero = new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0);
     vector_push(codes, new_inst_x64(X64_INST_MOVX, zero, ret));
 
     switch (immc_fst_src->type) {
@@ -137,6 +139,7 @@ Vector* gen_call_x64code(X64gen* x64gen) {
          !set_iter_end(iter, alive_reg_induces_set);
          iter = set_iter_next(iter, alive_reg_induces_set)) {
         int* caller_ref = set_iter_item(iter, alive_reg_induces_set);
+        if (*caller_ref == immc->inst->dst->reg_id) continue;
         int caller_id = CALLER_SAVED_REG_IDS[*caller_ref];
         int callee_id = CALLEE_SAVED_REG_IDS[evacuation_count];
         append_mov_code(codes, callee_id, X64_SUFFIX_QUAD, caller_id, X64_SUFFIX_QUAD);
@@ -194,7 +197,7 @@ Vector* gen_leave_x64code(X64gen* x64gen) {
         vector_push(codes, new_inst_x64(X64_INST_ADDX, imm, sp));
     }
     X64Ope* bp = new_reg_x64ope(X64_SUFFIX_QUAD, BP_REG_ID);
-    vector_push(codes, new_inst_x64(X64_INST_POPX, bp, NULL));
+    vector_push(codes, new_inst_x64(X64_INST_POPX, NULL, bp));
     vector_push(codes, new_inst_x64(X64_INST_RET, NULL, NULL));
 
     liveseqs_next(x64gen->liveseqs);

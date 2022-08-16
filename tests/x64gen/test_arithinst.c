@@ -47,7 +47,7 @@ void test_x64gen_add_reg_int() {
                               new_mem_immcope(4),                   // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_ADD,                                          // type
+                new_inst_immc(IMMC_INST_ADD,                                          // inst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2))); // snd_src
@@ -71,7 +71,7 @@ void test_x64gen_add_reg_int() {
                              new_mem_x64ope(4),                                          // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_ADDX,                                              // type
+                new_inst_x64(X64_INST_ADDX,                                              // inst
                              new_signed_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 2),         // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
 
@@ -93,7 +93,7 @@ void test_x64gen_add_reg_reg() {
                               new_mem_immcope(12),                  // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_ADD,                          // type
+                new_inst_immc(IMMC_INST_ADD,                          // inst
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 0),   // dst
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 0),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1))); // snd_src
@@ -128,7 +128,7 @@ void test_x64gen_add_reg_reg() {
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[1]),   // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[1]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_ADDX,                                              // type
+                new_inst_x64(X64_INST_ADDX,                                              // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[1]),   // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[0]))); // dst
 
@@ -145,7 +145,7 @@ void test_x64gen_sub_reg_int() {
                               new_mem_immcope(8),                   // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_SUB,                                          // type
+                new_inst_immc(IMMC_INST_SUB,                                          // inst
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 0),                   // dst
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 0),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2))); // snd_src
@@ -169,7 +169,7 @@ void test_x64gen_sub_reg_int() {
                              new_mem_x64ope(8),                                          // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_SUBX,                                              // type
+                new_inst_x64(X64_INST_SUBX,                                              // inst
                              new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 2),         // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[0]))); // dst
 
@@ -191,7 +191,7 @@ void test_x64gen_sub_reg_reg() {
                               new_mem_immcope(2),                   // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_SUB,                          // type
+                new_inst_immc(IMMC_INST_SUB,                          // inst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),   // dst
                               new_reg_immcope(IMMC_SUFFIX_BYTE, 0),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_BYTE, 1))); // snd_src
@@ -222,7 +222,7 @@ void test_x64gen_sub_reg_reg() {
                              new_mem_x64ope(2),                                          // src
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[1]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_SUBX,                                              // type
+                new_inst_x64(X64_INST_SUBX,                                              // inst
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[1]),   // src
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
@@ -243,7 +243,7 @@ void test_x64gen_mul_reg_int() {
                               new_mem_immcope(4),                   // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_MUL,                                          // type
+                new_inst_immc(IMMC_INST_MUL,                                          // inst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2))); // snd_src
@@ -271,7 +271,7 @@ void test_x64gen_mul_reg_int() {
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID)));             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_IMULX,                                     // type
+                new_inst_x64(X64_INST_IMULX,                                     // inst
                              new_signed_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 2), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID)));       // dst
     vector_push(expected,
@@ -297,7 +297,7 @@ void test_x64gen_mul_reg_reg() {
                               new_mem_immcope(5),                   // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_MUL,                          // type
+                new_inst_immc(IMMC_INST_MUL,                          // inst
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 0),   // dst
                               new_reg_immcope(IMMC_SUFFIX_BYTE, 0),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1))); // snd_src
@@ -332,7 +332,7 @@ void test_x64gen_mul_reg_reg() {
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[0]), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID)));             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_IMULX,                                           // type
+                new_inst_x64(X64_INST_IMULX,                                           // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[1]), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID)));             // dst
     vector_push(expected,
@@ -353,7 +353,7 @@ void test_x64gen_div_reg_int() {
                               new_mem_immcope(4),                   // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_DIV,                                          // type
+                new_inst_immc(IMMC_INST_DIV,                                          // inst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2))); // snd_src
@@ -377,23 +377,23 @@ void test_x64gen_div_reg_int() {
                              new_mem_x64ope(4),                                          // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                            // type
+                new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID)));             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                      // type
+                new_inst_x64(X64_INST_MOVX,                                      // inst
                              new_signed_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 2), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, R10_REG_ID)));      // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_CXTD,                      // type
+                new_inst_x64(X64_INST_CXTD,                      // inst
                              new_suffix_x64ope(X64_SUFFIX_LONG), // src
                              NULL));                             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_IDIVX,                              // type
+                new_inst_x64(X64_INST_IDIVX,                              // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, R10_REG_ID), // src
                              NULL));                                      // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                              // type
+                new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
 
@@ -415,7 +415,7 @@ void test_x64gen_div_reg_reg() {
                               new_mem_immcope(12),                  // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_DIV,                          // type
+                new_inst_immc(IMMC_INST_DIV,                          // inst
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 2),   // dst
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 2),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 3))); // snd_src
@@ -446,7 +446,7 @@ void test_x64gen_div_reg_reg() {
                              new_mem_x64ope(12),                                         // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[3]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                            // type
+                new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[2]), // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));             // dst
     vector_push(expected,
@@ -454,15 +454,15 @@ void test_x64gen_div_reg_reg() {
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[3]),   // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_CXTD,                      // type
+                new_inst_x64(X64_INST_CXTD,                      // inst
                              new_suffix_x64ope(X64_SUFFIX_QUAD), // src
                              NULL));                             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_IDIVX,                                           // type
+                new_inst_x64(X64_INST_IDIVX,                                           // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]), // src
                              NULL));                                                   // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                              // type
+                new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[2]))); // dst
 
@@ -484,7 +484,7 @@ void test_x64gen_div_rdx_inarg() {
                               new_mem_immcope(8),                   // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_DIV,                          // type
+                new_inst_immc(IMMC_INST_DIV,                          // inst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),   // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1))); // snd_src
@@ -515,7 +515,7 @@ void test_x64gen_div_rdx_inarg() {
                              new_mem_x64ope(8),                                          // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[1]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                            // type
+                new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID)));             // dst
     vector_push(expected,
@@ -523,15 +523,15 @@ void test_x64gen_div_rdx_inarg() {
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[1]),   // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_CXTD,                      // type
+                new_inst_x64(X64_INST_CXTD,                      // inst
                              new_suffix_x64ope(X64_SUFFIX_LONG), // src
                              NULL));                             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_IDIVX,                                           // type
+                new_inst_x64(X64_INST_IDIVX,                                           // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]), // src
                              NULL));                                                   // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                              // type
+                new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
 
@@ -553,7 +553,7 @@ void test_x64gen_div_rdx_inuse() {
                               new_mem_immcope(4),                   // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_DIV,                                          // type
+                new_inst_immc(IMMC_INST_DIV,                                          // inst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2))); // snd_src
@@ -587,31 +587,31 @@ void test_x64gen_div_rdx_inuse() {
                              new_mem_x64ope(4),                                          // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                            // type
+                new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID)));             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                      // type
+                new_inst_x64(X64_INST_MOVX,                                      // inst
                              new_signed_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 2), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, R10_REG_ID)));      // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                              // type
+                new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_CXTD,                      // type
+                new_inst_x64(X64_INST_CXTD,                      // inst
                              new_suffix_x64ope(X64_SUFFIX_LONG), // src
                              NULL));                             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_IDIVX,                              // type
+                new_inst_x64(X64_INST_IDIVX,                              // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, R10_REG_ID), // src
                              NULL));                                      // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                              // type
+                new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                            // type
+                new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[0]), // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID)));             // dst
 
@@ -628,7 +628,7 @@ void test_x64gen_mod_reg_int() {
                               new_mem_immcope(4),                   // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_MOD,                                          // type
+                new_inst_immc(IMMC_INST_MOD,                                          // inst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 3))); // snd_src
@@ -652,23 +652,23 @@ void test_x64gen_mod_reg_int() {
                              new_mem_x64ope(4),                                          // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                            // type
+                new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID)));             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                      // type
+                new_inst_x64(X64_INST_MOVX,                                      // inst
                              new_signed_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 3), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, R10_REG_ID)));      // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_CXTD,                      // type
+                new_inst_x64(X64_INST_CXTD,                      // inst
                              new_suffix_x64ope(X64_SUFFIX_LONG), // src
                              NULL));                             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_IDIVX,                              // type
+                new_inst_x64(X64_INST_IDIVX,                              // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, R10_REG_ID), // src
                              NULL));                                      // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                              // type
+                new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, DX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
 
@@ -690,7 +690,7 @@ void test_x64gen_mod_reg_reg() {
                               new_mem_immcope(12),                  // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_MOD,                          // type
+                new_inst_immc(IMMC_INST_MOD,                          // inst
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 2),   // dst
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 2),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 3))); // snd_src
@@ -721,7 +721,7 @@ void test_x64gen_mod_reg_reg() {
                              new_mem_x64ope(12),                                         // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[3]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                            // type
+                new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[2]), // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));             // dst
     vector_push(expected,
@@ -729,15 +729,15 @@ void test_x64gen_mod_reg_reg() {
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[3]),   // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_CXTD,                      // type
+                new_inst_x64(X64_INST_CXTD,                      // inst
                              new_suffix_x64ope(X64_SUFFIX_QUAD), // src
                              NULL));                             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_IDIVX,                                           // type
+                new_inst_x64(X64_INST_IDIVX,                                           // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]), // src
                              NULL));                                                   // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                              // type
+                new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[2]))); // dst
 
@@ -759,7 +759,7 @@ void test_x64gen_mod_rdx_inarg() {
                               new_mem_immcope(8),                   // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_MOD,                          // type
+                new_inst_immc(IMMC_INST_MOD,                          // inst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1),   // dst
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 2))); // snd_src
@@ -790,15 +790,15 @@ void test_x64gen_mod_rdx_inarg() {
                              new_mem_x64ope(8),                                          // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[2]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                            // type
+                new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[1]), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID)));             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_CXTD,                      // type
+                new_inst_x64(X64_INST_CXTD,                      // inst
                              new_suffix_x64ope(X64_SUFFIX_LONG), // src
                              NULL));                             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_IDIVX,                                           // type
+                new_inst_x64(X64_INST_IDIVX,                                           // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[2]), // src
                              NULL));                                                   // dst
 
@@ -828,7 +828,7 @@ void test_x64gen_mod_rdx_inuse() {
                               new_mem_immcope(16),                  // fst_src
                               NULL));                               // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_MOD,                          // type
+                new_inst_immc(IMMC_INST_MOD,                          // inst
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 2),   // dst
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 2),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 3))); // snd_src
@@ -869,7 +869,7 @@ void test_x64gen_mod_rdx_inuse() {
                              new_mem_x64ope(16),                                         // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[3]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                            // type
+                new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[2]), // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));             // dst
     vector_push(expected,
@@ -877,23 +877,23 @@ void test_x64gen_mod_rdx_inuse() {
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[3]),   // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                              // type
+                new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_CXTD,                      // type
+                new_inst_x64(X64_INST_CXTD,                      // inst
                              new_suffix_x64ope(X64_SUFFIX_QUAD), // src
                              NULL));                             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_IDIVX,                                           // type
+                new_inst_x64(X64_INST_IDIVX,                                           // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]), // src
                              NULL));                                                   // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                              // type
+                new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[2]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                            // type
+                new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[0]), // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID)));             // dst
 
