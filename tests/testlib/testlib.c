@@ -125,6 +125,63 @@ int testlib_immcope_equals(ImmcOpe* actual, ImmcOpe* expected) {
             testlib_sliteral_equals(actual->sliteral, expected->sliteral));
 }
 
+int testlib_x64codes_equals(Vector* actual, Vector* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+    if (vector_size(actual) != vector_size(expected)) return 0;
+
+    int num_x64codes = vector_size(expected);
+    for (int i = 0; i < num_x64codes; i++) {
+        X64* actual_x64code = vector_at(actual, i);
+        X64* expected_x64code = vector_at(expected, i);
+        if (!testlib_x64code_equals(actual_x64code, expected_x64code)) return 0;
+    }
+    return 1;
+}
+
+int testlib_x64code_equals(X64* actual, X64* expected) {
+    int testlib_x64inst_equals(X64Inst * actual, X64Inst * expected);
+    int testlib_x64data_equals(X64Data * actual, X64Data * expected);
+    int testlib_x64label_equals(X64Label * actual, X64Label * expected);
+
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->type == expected->type &&
+            testlib_x64inst_equals(actual->inst, expected->inst) &&
+            testlib_x64data_equals(actual->data, expected->data) &&
+            testlib_x64label_equals(actual->label, expected->label));
+}
+
+int testlib_x64inst_equals(X64Inst* actual, X64Inst* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->type == expected->type && testlib_x64ope_equals(actual->src, expected->src) &&
+            testlib_x64ope_equals(actual->dst, expected->dst));
+}
+
+int testlib_x64data_equals(X64Data* actual, X64Data* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->type == expected->type &&
+            testlib_iliteral_equals(actual->iliteral, expected->iliteral) &&
+            testlib_sliteral_equals(actual->sliteral, expected->sliteral));
+}
+
+int testlib_x64label_equals(X64Label* actual, X64Label* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->type == expected->type && actual->visibility == expected->visibility &&
+            testlib_string_equals(actual->name, expected->name));
+}
+
+int testlib_x64ope_equals(X64Ope* actual, X64Ope* expected) {
+    if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
+
+    return (actual->type == expected->type && actual->suffix == expected->suffix &&
+            actual->reg_id == expected->reg_id && actual->mem_offset == expected->mem_offset &&
+            testlib_string_equals(actual->label_name, expected->label_name) &&
+            testlib_iliteral_equals(actual->iliteral, expected->iliteral));
+}
+
 int testlib_dtype_equals(Dtype* actual, Dtype* expected) {
     int testlib_dpointer_equals(DPointer * actual, DPointer * expected);
     int testlib_darray_equals(DArray * actual, DArray * expected);

@@ -32,6 +32,14 @@
 #include "./x64/test_ope.h"
 #include "./x64/test_suffix.h"
 #include "./x64/test_x64.h"
+#include "./x64gen/test_arithinst.h"
+#include "./x64gen/test_bitinst.h"
+#include "./x64gen/test_ctrlinst.h"
+#include "./x64gen/test_data.h"
+#include "./x64gen/test_datainst.h"
+#include "./x64gen/test_label.h"
+#include "./x64gen/test_shrotinst.h"
+#include "./x64gen/test_x64gen.h"
 
 #include <CUnit/Basic.h>
 
@@ -66,21 +74,39 @@ int main(void) {
     add_test_suite_x64ope();
     add_test_suite_x64();
 
-    // compiler step tests
+    // lexer tests
     add_test_suite_lexer();
+
+    // parser tests
     add_test_suite_expr_parser();
     add_test_suite_stmt_parser();
     add_test_suite_decl_parser();
     add_test_suite_external_parser();
+
+    // resolver tests
     add_test_suite_expr_resolver();
     add_test_suite_stmt_resolver();
     add_test_suite_decl_resolver();
     add_test_suite_external_resolver();
+
+    // immcgen tests
     add_test_suite_expr_immcgen();
     add_test_suite_stmt_immcgen();
     add_test_suite_decl_immcgen();
     add_test_suite_exteral_immcgen();
+
+    // regalloc tests
     add_test_suite_regalloc();
+
+    // x64gen tests
+    add_test_suite_datainst_x64gen();
+    add_test_suite_arithinst_x64gen();
+    add_test_suite_shrotinst_x64gen();
+    add_test_suite_bitinst_x64gen();
+    add_test_suite_ctrlinst_x64gen();
+    add_test_suite_data_x64gen();
+    add_test_suite_label_x64gen();
+    add_test_suite_x64gen();
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

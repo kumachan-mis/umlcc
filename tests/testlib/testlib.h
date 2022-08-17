@@ -10,6 +10,7 @@
 #include "../../src/liveseq/liveseq.h"
 #include "../../src/srt/srt.h"
 #include "../../src/vector/vector.h"
+#include "../../src/x64/x64.h"
 
 int testlib_ctokens_equals(Vector* actual, Vector* expected);
 int testlib_ctoken_equals(CToken* actual, CToken* expected);
@@ -18,6 +19,9 @@ int testlib_srt_equals(Srt* actual, Srt* expected);
 int testlib_immcs_equals(Vector* actual, Vector* expected);
 int testlib_immc_equals(Immc* actual, Immc* expected);
 int testlib_immcope_equals(ImmcOpe* actual, ImmcOpe* expected);
+int testlib_x64codes_equals(Vector* actual, Vector* expected);
+int testlib_x64code_equals(X64* actual, X64* expected);
+int testlib_x64ope_equals(X64Ope* actual, X64Ope* expected);
 int testlib_dtype_equals(Dtype* actual, Dtype* expected);
 int testlib_liveseqs_equals(Vector* actual, Vector* expected);
 int testlib_liveseq_equals(Liveseq* actual, Liveseq* expected);

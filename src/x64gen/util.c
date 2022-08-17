@@ -11,8 +11,8 @@ void append_mov_code(Vector* codes, int src_reg_id, X64Suffix src_suffix, int ds
                      X64Suffix dst_suffix) {
     if (src_suffix >= dst_suffix) {
         if (src_reg_id == dst_reg_id) return;
-        X64Ope* src = new_reg_x64ope(src_suffix, src_reg_id);
-        X64Ope* dst = new_reg_x64ope(src_suffix, dst_reg_id);
+        X64Ope* src = new_reg_x64ope(dst_suffix, src_reg_id);
+        X64Ope* dst = new_reg_x64ope(dst_suffix, dst_reg_id);
         vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
         return;
     }
@@ -30,11 +30,22 @@ void liveseqs_next(Vector* liveseqs) {
     }
 }
 
+Set* create_alive_reg_induces_set(Vector* liveseqs) {
+    Set* alive_regs_set = new_set(&t_hashable_integer);
+    int liveseqs_len = vector_size(liveseqs);
+    for (int reg_index = 0; reg_index < liveseqs_len; reg_index++) {
+        Liveseq* liveseq = vector_at(liveseqs, reg_index);
+        if (liveseq_is_alive(liveseq)) set_add(alive_regs_set, new_integer(reg_index));
+    }
+    return alive_regs_set;
+}
+
 Set* create_alive_regs_set(Vector* liveseqs) {
     Set* alive_regs_set = new_set(&t_hashable_integer);
     int liveseqs_len = vector_size(liveseqs);
-    for (int reg_id = 0; reg_id < liveseqs_len; reg_id++) {
-        Liveseq* liveseq = vector_at(liveseqs, reg_id);
+    for (int reg_index = 0; reg_index < liveseqs_len; reg_index++) {
+        Liveseq* liveseq = vector_at(liveseqs, reg_index);
+        int reg_id = CALLER_SAVED_REG_IDS[reg_index];
         if (liveseq_is_alive(liveseq)) set_add(alive_regs_set, new_integer(reg_id));
     }
     return alive_regs_set;
