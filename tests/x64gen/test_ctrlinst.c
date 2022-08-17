@@ -3,10 +3,10 @@
 #include "../testlib/testlib.h"
 
 void test_x64gen_jmp();
-void test_x64gen_jeq_int();
-void test_x64gen_jeq_reg();
-void test_x64gen_jneq_int();
-void test_x64gen_jneq_reg();
+void test_x64gen_jeq_reg_int();
+void test_x64gen_jeq_reg_reg();
+void test_x64gen_jneq_reg_int();
+void test_x64gen_jneq_reg_reg();
 void test_x64gen_call_label_six_or_less();
 void test_x64gen_call_label_seven_or_more_odd();
 void test_x64gen_call_label_seven_or_more_even();
@@ -26,10 +26,10 @@ void run_ctrlinst_x64gen_test(Vector* __restrict__ input_immcs, Vector* __restri
 CU_Suite* add_test_suite_ctrlinst_x64gen() {
     CU_Suite* suite = CU_add_suite("test_suite_ctrlinst_x64gen", NULL, NULL);
     CU_ADD_TEST(suite, test_x64gen_jmp);
-    CU_ADD_TEST(suite, test_x64gen_jeq_int);
-    CU_ADD_TEST(suite, test_x64gen_jeq_reg);
-    CU_ADD_TEST(suite, test_x64gen_jneq_int);
-    CU_ADD_TEST(suite, test_x64gen_jneq_reg);
+    CU_ADD_TEST(suite, test_x64gen_jeq_reg_int);
+    CU_ADD_TEST(suite, test_x64gen_jeq_reg_reg);
+    CU_ADD_TEST(suite, test_x64gen_jneq_reg_int);
+    CU_ADD_TEST(suite, test_x64gen_jneq_reg_reg);
     CU_ADD_TEST(suite, test_x64gen_call_label_six_or_less);
     CU_ADD_TEST(suite, test_x64gen_call_label_seven_or_more_odd);
     CU_ADD_TEST(suite, test_x64gen_call_label_seven_or_more_even);
@@ -67,7 +67,7 @@ void test_x64gen_jmp() {
     delete_vector(expected);
 }
 
-void test_x64gen_jeq_int() {
+void test_x64gen_jeq_reg_int() {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -113,7 +113,7 @@ void test_x64gen_jeq_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_jeq_reg() {
+void test_x64gen_jeq_reg_reg() {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -168,7 +168,7 @@ void test_x64gen_jeq_reg() {
     delete_vector(expected);
 }
 
-void test_x64gen_jneq_int() {
+void test_x64gen_jneq_reg_int() {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -210,7 +210,7 @@ void test_x64gen_jneq_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_jneq_reg() {
+void test_x64gen_jneq_reg_reg() {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
