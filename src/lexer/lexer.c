@@ -19,6 +19,9 @@ Lexer* new_lexer(FILE* file_ptr) {
 
 LexerReturn* lexer_read_ctokens(Lexer* lexer) {
     Vector* ctokens = new_vector(&t_ctoken);
+    CToken* ctoken = NULL;
+    Error* err = NULL;
+
     skip_white_spaces(lexer);
 
     while (1) {
@@ -39,9 +42,7 @@ LexerReturn* lexer_read_ctokens(Lexer* lexer) {
             item = read_punctuator(lexer);
         }
 
-        CToken* ctoken = item->ctoken;
-        Error* err = item->err;
-        lexerret_item_close(item);
+        lexerret_item_assign(&ctoken, &err, item);
 
         if (err != NULL) {
             delete_vector(ctokens);

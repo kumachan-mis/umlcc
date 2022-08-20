@@ -17,9 +17,9 @@ typedef struct LexerReturnItem {
 
 LexerReturn* new_lexerret(Vector* ctokens);
 LexerReturn* new_lexerret_error(Error* err);
-void lexerret_close(LexerReturn* lexerret);
+void lexerret_assign(Vector** ctokens_ptr, Error** err_ptr, LexerReturn* lexerret);
 LexerReturnItem* new_lexerret_item(CToken* ctoken);
 LexerReturnItem* new_lexerret_item_error(Error* err);
-void lexerret_item_close(LexerReturnItem* item);
+void lexerret_item_assign(CToken** ctoken_ptr, Error** err_ptr, LexerReturnItem* item);
 
 #endif
