@@ -24,7 +24,7 @@ CU_Suite* add_test_suite_lexer_error() {
 
 void test_read_unexpected_character_error() {
     const char* input = "@variable = 1;\n";
-    const char* message = "Error: unexpected character\n";
+    const char* message = "Error: unexpected character '@'\n";
     run_lexer_error_test(input, message);
 }
 
