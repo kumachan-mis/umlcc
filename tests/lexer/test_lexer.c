@@ -402,9 +402,13 @@ void run_lexer_test(const char* __restrict__ input, Vector* __restrict__ expecte
     rewind(file_ptr);
 
     Lexer* lexer = new_lexer(file_ptr);
-    Vector* actual = lexer_read_ctokens(lexer);
+    LexerReturn* lexerret = lexer_read_ctokens(lexer);
+    Vector* actual = lexerret->ctokens;
+    Error* err = lexerret->err;
+    lexerret_close(lexerret);
 
     CU_ASSERT_TRUE(testlib_ctokens_equals(actual, expected));
+    CU_ASSERT_PTR_NULL(err);
 
     delete_vector(actual);
     delete_lexer(lexer);

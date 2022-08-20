@@ -42,10 +42,21 @@ int main(int argc, char* argv[]) {
     free(imm_filename);
 
     Lexer* lexer = new_lexer(src);
-    Vector* ctokens = lexer_read_ctokens(lexer);
+    LexerReturn* lexerret = lexer_read_ctokens(lexer);
     delete_lexer(lexer);
 
-    Parser* parser = new_parser(ctokens);
+    if (lexerret->err != NULL) {
+        Error* err = lexerret->err;
+        lexerret_close(lexerret);
+        fprintf(stderr, "@@@@@ Error occured in lexer @@@@@\n");
+        fprintf(stderr, "%s", err->message);
+        delete_error(err);
+        // files are implicitly closed
+        return 1;
+    }
+
+    Parser* parser = new_parser(lexerret->ctokens);
+    lexerret_close(lexerret);
     Ast* ast = parser_create_ast(parser);
     delete_parser(parser);
 
@@ -81,9 +92,6 @@ int main(int argc, char* argv[]) {
     }
     delete_vector(x64codes);
 
-    fclose(dst);
-    fclose(imm);
-    fclose(src);
-
+    // files are implicitly closed
     return 0;
 }
