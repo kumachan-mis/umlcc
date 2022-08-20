@@ -5,7 +5,7 @@ typedef struct Error {
     char* message;
 } Error;
 
-Error* new_error(char* message);
+Error* new_error(char* format, ...);
 void delete_error(Error* err);
 
 #endif

@@ -79,13 +79,13 @@ LexerReturnItem* read_character_constant(Lexer* lexer) {
         case '\\':
             c = read_escape_seqence(lexer);
             if (c != EOF) break;
-            err = new_error(new_string("Error: invalid escape sequence\n"));
+            err = new_error("Error: invalid escape sequence\n");
             return new_lexerret_item_error(err);
         case '\n':
-            err = new_error(new_string("Error: newline appeared in character constant\n"));
+            err = new_error("Error: newline appeared in character constant\n");
             return new_lexerret_item_error(err);
         case '\'':
-            err = new_error(new_string("Error: character constant is empty\n"));
+            err = new_error("Error: character constant is empty\n");
             return new_lexerret_item_error(err);
         default:
             break;
@@ -98,10 +98,10 @@ LexerReturnItem* read_character_constant(Lexer* lexer) {
             case '\\':
                 rest = read_escape_seqence(lexer);
                 if (rest != EOF) break;
-                err = new_error(new_string("Error: invalid escape sequence\n"));
+                err = new_error("Error: invalid escape sequence\n");
                 return new_lexerret_item_error(err);
             case '\n':
-                err = new_error(new_string("Error: newline appeared in character constant\n"));
+                err = new_error("Error: newline appeared in character constant\n");
                 return new_lexerret_item_error(err);
             case '\'':
                 terminated = 1;
@@ -133,14 +133,14 @@ LexerReturnItem* read_string_literal(Lexer* lexer) {
                 c = read_escape_seqence(lexer);
                 if (c != EOF) break;
                 free(value);
-                err = new_error(new_string("Error: invalid escape sequence\n"));
+                err = new_error("Error: invalid escape sequence\n");
                 return new_lexerret_item_error(err);
             case '\"':
                 terminated = 1;
                 break;
             case '\n':
                 free(value);
-                err = new_error(new_string("Error: newline appeared in string literal\n"));
+                err = new_error("Error: newline appeared in string literal\n");
                 return new_lexerret_item_error(err);
             default:
                 break;
@@ -201,7 +201,7 @@ LexerReturnItem* read_punctuator(Lexer* lexer) {
     free(ctoken_str);
 
     if (ctoken_type_ref == NULL) {
-        err = new_error(new_string("Error: unexpected character\n"));
+        err = new_error("Error: unexpected character '%c'\n", c);
         return new_lexerret_item_error(err);
     }
 
