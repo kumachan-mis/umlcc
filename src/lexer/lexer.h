@@ -4,7 +4,7 @@
 #include "../ctoken/ctoken.h"
 #include "../map/map.h"
 #include "../set/set.h"
-#include "../vector/vector.h"
+#include "./lexerret.h"
 
 #include <stdio.h>
 
@@ -20,7 +20,7 @@ typedef struct Lexer {
 } Lexer;
 
 Lexer* new_lexer(FILE* file_ptr);
-Vector* lexer_read_ctokens(Lexer* lexer);
+LexerReturn* lexer_read_ctokens(Lexer* lexer);
 void delete_lexer(Lexer* lexer);
 
 #endif

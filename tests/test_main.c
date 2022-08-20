@@ -9,6 +9,7 @@
 #include "./immcgen/test_external.h"
 #include "./immcgen/test_statement.h"
 #include "./lexer/test_lexer.h"
+#include "./lexer/test_lexer_error.h"
 #include "./literal/test_iliteral.h"
 #include "./literal/test_sliteral.h"
 #include "./liveseq/test_liveness.h"
@@ -76,6 +77,7 @@ int main(void) {
 
     // lexer tests
     add_test_suite_lexer();
+    add_test_suite_lexer_error();
 
     // parser tests
     add_test_suite_expr_parser();

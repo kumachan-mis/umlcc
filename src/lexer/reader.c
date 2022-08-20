@@ -4,17 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-CToken* read_keyword_or_identifier(Lexer* lexer) {
+LexerReturnItem* read_keyword_or_identifier(Lexer* lexer) {
     int length = 0, capacity = 4;
     char* ctoken_str = malloc(sizeof(char) * capacity);
 
     int c = fgetc(lexer->file_ptr);
     ctoken_str[length] = c;
     length++;
-    if (length + 1 >= capacity) {
-        ctoken_str = realloc(ctoken_str, 2 * capacity * sizeof(char));
-        capacity *= 2;
-    }
 
     while (1) {
         c = fgetc(lexer->file_ptr);
@@ -31,17 +27,19 @@ CToken* read_keyword_or_identifier(Lexer* lexer) {
     }
     ctoken_str[length] = '\0';
 
-    CTokenType* ctoken_ref = map_get(lexer->keyword_map, ctoken_str);
-    if (ctoken_ref != NULL) {
+    CTokenType* ctoken_type_ref = map_get(lexer->keyword_map, ctoken_str);
+    if (ctoken_type_ref != NULL) {
         free(ctoken_str);
-        return new_ctoken(*ctoken_ref);
+        CToken* ctoken = new_ctoken(*ctoken_type_ref);
+        return new_lexerret_item(ctoken);
     }
 
     ctoken_str = realloc(ctoken_str, (length + 1) * sizeof(char));
-    return new_identifier_ctoken(CTOKEN_IDENT, ctoken_str);
+    CToken* ctoken = new_identifier_ctoken(CTOKEN_IDENT, ctoken_str);
+    return new_lexerret_item(ctoken);
 }
 
-CToken* read_integer_constant(Lexer* lexer) {
+LexerReturnItem* read_integer_constant(Lexer* lexer) {
     int read_decimal_constant(Lexer * lexer);
     int read_octal_constant(Lexer * lexer);
     int read_hexadecimal_constant(Lexer * lexer);
@@ -51,7 +49,8 @@ CToken* read_integer_constant(Lexer* lexer) {
 
     if (fst == '0' && (snd == 'x' || snd == 'X')) {
         int value = read_hexadecimal_constant(lexer);
-        return new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, value));
+        CToken* ctoken = new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, value));
+        return new_lexerret_item(ctoken);
     }
 
     ungetc(snd, lexer->file_ptr);
@@ -59,10 +58,155 @@ CToken* read_integer_constant(Lexer* lexer) {
 
     if (fst == '0') {
         int value = read_octal_constant(lexer);
-        return new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, value));
+        CToken* ctoken = new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, value));
+        return new_lexerret_item(ctoken);
     }
+
     int value = read_decimal_constant(lexer);
-    return new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, value));
+    CToken* ctoken = new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, value));
+    return new_lexerret_item(ctoken);
+}
+
+LexerReturnItem* read_character_constant(Lexer* lexer) {
+    int read_escape_seqence(Lexer * lexer);
+
+    Error* err = NULL;
+
+    fgetc(lexer->file_ptr);
+
+    int c = fgetc(lexer->file_ptr);
+    switch (c) {
+        case '\\':
+            c = read_escape_seqence(lexer);
+            if (c != EOF) break;
+            err = new_error(new_string("Error: invalid escape sequence\n"));
+            return new_lexerret_item_error(err);
+        case '\n':
+            err = new_error(new_string("Error: newline appeared in character constant\n"));
+            return new_lexerret_item_error(err);
+        case '\'':
+            err = new_error(new_string("Error: character constant is empty\n"));
+            return new_lexerret_item_error(err);
+        default:
+            break;
+    }
+
+    int terminated = 0;
+    while (!terminated) {
+        int rest = fgetc(lexer->file_ptr);
+        switch (rest) {
+            case '\\':
+                rest = read_escape_seqence(lexer);
+                if (rest != EOF) break;
+                err = new_error(new_string("Error: invalid escape sequence\n"));
+                return new_lexerret_item_error(err);
+            case '\n':
+                err = new_error(new_string("Error: newline appeared in character constant\n"));
+                return new_lexerret_item_error(err);
+            case '\'':
+                terminated = 1;
+                break;
+            default:
+                break;
+        }
+    }
+
+    CToken* ctoken = new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, c));
+    return new_lexerret_item(ctoken);
+}
+
+LexerReturnItem* read_string_literal(Lexer* lexer) {
+    int read_escape_seqence(Lexer * lexer);
+
+    Error* err = NULL;
+
+    int length = 0, capacity = 4;
+    char* value = malloc(sizeof(char) * capacity);
+
+    fgetc(lexer->file_ptr);
+
+    int terminated = 0;
+    while (1) {
+        int c = fgetc(lexer->file_ptr);
+        switch (c) {
+            case '\\':
+                c = read_escape_seqence(lexer);
+                if (c != EOF) break;
+                free(value);
+                err = new_error(new_string("Error: invalid escape sequence\n"));
+                return new_lexerret_item_error(err);
+            case '\"':
+                terminated = 1;
+                break;
+            case '\n':
+                free(value);
+                err = new_error(new_string("Error: newline appeared in string literal\n"));
+                return new_lexerret_item_error(err);
+            default:
+                break;
+        }
+        if (terminated) break;
+
+        value[length] = c;
+        length++;
+        if (length + 1 >= capacity) {
+            value = realloc(value, 2 * capacity * sizeof(char));
+            capacity *= 2;
+        }
+    }
+    value[length] = '\0';
+
+    value = realloc(value, (length + 1) * sizeof(char));
+    CToken* ctoken = new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(value, length + 1));
+    return new_lexerret_item(ctoken);
+}
+
+LexerReturnItem* read_punctuator(Lexer* lexer) {
+    int MAX_PUNCUATOR_LEN = 3;
+
+    Error* err = NULL;
+
+    char* ctoken_str = malloc((MAX_PUNCUATOR_LEN + 1) * sizeof(int));
+    int length = 0;
+    memset(ctoken_str, 0, MAX_PUNCUATOR_LEN + 1);
+
+    int c = fgetc(lexer->file_ptr);
+    if (c == EOF) {
+        free(ctoken_str);
+        return new_lexerret_item(new_ctoken(CTOKEN_EOF));
+    }
+    ctoken_str[length] = c;
+    length++;
+
+    for (int i = 0; i < MAX_PUNCUATOR_LEN - 1; i++) {
+        c = fgetc(lexer->file_ptr);
+        if (c == EOF) {
+            ungetc(c, lexer->file_ptr);
+            break;
+        }
+        ctoken_str[length] = c;
+        length++;
+    }
+
+    CTokenType* ctoken_type_ref = NULL;
+    while (length > 0) {
+        ctoken_type_ref = map_get(lexer->punctuator_map, ctoken_str);
+        if (ctoken_type_ref != NULL) break;
+
+        length--;
+        c = ctoken_str[length];
+        ungetc(ctoken_str[length], lexer->file_ptr);
+        ctoken_str[length] = '\0';
+    }
+    free(ctoken_str);
+
+    if (ctoken_type_ref == NULL) {
+        err = new_error(new_string("Error: unexpected character\n"));
+        return new_lexerret_item_error(err);
+    }
+
+    CToken* ctoken = new_ctoken(*ctoken_type_ref);
+    return new_lexerret_item(ctoken);
 }
 
 int read_decimal_constant(Lexer* lexer) {
@@ -120,84 +264,6 @@ int read_hexadecimal_constant(Lexer* lexer) {
     }
 
     return value;
-}
-
-CToken* read_character_constant(Lexer* lexer) {
-    int read_escape_seqence(Lexer * lexer);
-
-    fgetc(lexer->file_ptr);
-
-    int c = fgetc(lexer->file_ptr);
-    switch (c) {
-        case '\\':
-            c = read_escape_seqence(lexer);
-            break;
-        case '\'':
-        case '\n':
-            fprintf(stderr, "Error: unexpected character \\n\n");
-            exit(1);
-        default:
-            break;
-    }
-
-    int terminated = 0;
-    while (!terminated) {
-        int rest = fgetc(lexer->file_ptr);
-        switch (rest) {
-            case '\\':
-                rest = read_escape_seqence(lexer);
-                break;
-            case '\'':
-                terminated = 1;
-                break;
-            case '\n':
-                fprintf(stderr, "Error: unexpected character \\n\n");
-                exit(1);
-            default:
-                break;
-        }
-    }
-
-    return new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, c));
-}
-
-CToken* read_string_literal(Lexer* lexer) {
-    int read_escape_seqence(Lexer * lexer);
-
-    int length = 0, capacity = 4;
-    char* value = malloc(sizeof(char) * capacity);
-
-    fgetc(lexer->file_ptr);
-
-    int terminated = 0;
-    while (1) {
-        int c = fgetc(lexer->file_ptr);
-        switch (c) {
-            case '\\':
-                c = read_escape_seqence(lexer);
-                break;
-            case '\"':
-                terminated = 1;
-                break;
-            case '\n':
-                fprintf(stderr, "Error: unexpected character \\n\n");
-                exit(1);
-            default:
-                break;
-        }
-        if (terminated) break;
-
-        value[length] = c;
-        length++;
-        if (length + 1 >= capacity) {
-            value = realloc(value, 2 * capacity * sizeof(char));
-            capacity *= 2;
-        }
-    }
-    value[length] = '\0';
-
-    value = realloc(value, (length + 1) * sizeof(char));
-    return new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(value, length + 1));
 }
 
 int read_escape_seqence(Lexer* lexer) {
@@ -280,48 +346,6 @@ int read_simple_escape_seqence(Lexer* lexer) {
         case 'v':
             return '\v';
         default:
-            fprintf(stderr, "Error: unexpected character %c\n", c);
-            exit(1);
+            return EOF;
     }
-}
-
-CToken* read_punctuator(Lexer* lexer) {
-    int MAX_PUNCUATOR_LEN = 3;
-
-    char* ctoken_str = malloc((MAX_PUNCUATOR_LEN + 1) * sizeof(int));
-    int length = 0;
-    memset(ctoken_str, 0, MAX_PUNCUATOR_LEN + 1);
-
-    int c = fgetc(lexer->file_ptr);
-    if (c == EOF) {
-        free(ctoken_str);
-        return new_ctoken(CTOKEN_EOF);
-    }
-    ctoken_str[length] = c;
-    length++;
-
-    for (int i = 0; i < MAX_PUNCUATOR_LEN - 1; i++) {
-        c = fgetc(lexer->file_ptr);
-        if (c == EOF) {
-            ungetc(c, lexer->file_ptr);
-            break;
-        }
-        ctoken_str[length] = c;
-        length++;
-    }
-
-    while (length > 0) {
-        CTokenType* ctoken_ref = map_get(lexer->punctuator_map, ctoken_str);
-        if (ctoken_ref != NULL) {
-            free(ctoken_str);
-            return new_ctoken(*ctoken_ref);
-        }
-        length--;
-        c = ctoken_str[length];
-        ungetc(ctoken_str[length], lexer->file_ptr);
-        ctoken_str[length] = '\0';
-    }
-
-    fprintf(stderr, "Error: unexpected character %c\n", c);
-    exit(1);
 }

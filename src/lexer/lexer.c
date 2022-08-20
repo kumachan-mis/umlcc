@@ -17,35 +17,43 @@ Lexer* new_lexer(FILE* file_ptr) {
     return lexer;
 }
 
-Vector* lexer_read_ctokens(Lexer* lexer) {
+LexerReturn* lexer_read_ctokens(Lexer* lexer) {
     Vector* ctokens = new_vector(&t_ctoken);
     skip_white_spaces(lexer);
 
     while (1) {
-        CToken* ctoken = NULL;
+        LexerReturnItem* item = NULL;
 
         int c = fgetc(lexer->file_ptr);
         ungetc(c, lexer->file_ptr);
 
         if (set_contains(lexer->nondigit_set, &c)) {
-            ctoken = read_keyword_or_identifier(lexer);
+            item = read_keyword_or_identifier(lexer);
         } else if (map_contains(lexer->digit_map, &c)) {
-            ctoken = read_integer_constant(lexer);
+            item = read_integer_constant(lexer);
         } else if (c == '\'') {
-            ctoken = read_character_constant(lexer);
+            item = read_character_constant(lexer);
         } else if (c == '\"') {
-            ctoken = read_string_literal(lexer);
+            item = read_string_literal(lexer);
         } else {
-            ctoken = read_punctuator(lexer);
+            item = read_punctuator(lexer);
         }
 
+        CToken* ctoken = item->ctoken;
+        Error* err = item->err;
+        lexerret_item_close(item);
+
+        if (err != NULL) {
+            delete_vector(ctokens);
+            return new_lexerret_error(err);
+        }
         vector_push(ctokens, ctoken);
 
         if (ctoken->type == CTOKEN_EOF) break;
         skip_white_spaces(lexer);
     }
 
-    return ctokens;
+    return new_lexerret(ctokens);
 }
 
 void delete_lexer(Lexer* lexer) {
