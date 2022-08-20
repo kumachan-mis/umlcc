@@ -16,7 +16,9 @@ LexerReturn* new_lexerret_error(Error* err) {
     return lexerret;
 }
 
-void lexerret_close(LexerReturn* lexerret) {
+void lexerret_assign(Vector** ctokens_ptr, Error** err_ptr, LexerReturn* lexerret) {
+    *ctokens_ptr = lexerret->ctokens;
+    *err_ptr = lexerret->err;
     free(lexerret);
 }
 
@@ -34,6 +36,8 @@ LexerReturnItem* new_lexerret_item_error(Error* err) {
     return item;
 }
 
-void lexerret_item_close(LexerReturnItem* item) {
+void lexerret_item_assign(CToken** ctoken_ptr, Error** err_ptr, LexerReturnItem* item) {
+    *ctoken_ptr = item->ctoken;
+    *err_ptr = item->err;
     free(item);
 }

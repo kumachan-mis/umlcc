@@ -9,6 +9,6 @@ typedef struct RegAllocReturn {
 } RegAllocReturn;
 
 RegAllocReturn* new_regallocret(Vector* immcs, Vector* liveseqs);
-void regallocret_close(RegAllocReturn* regallocret);
+void regallocret_assign(Vector** immcs_ptr, Vector** liveseqs_ptr, RegAllocReturn* regallocret);
 
 #endif

@@ -74,10 +74,9 @@ void run_lexer_error_test(const char* __restrict__ input, const char* __restrict
     rewind(file_ptr);
 
     Lexer* lexer = new_lexer(file_ptr);
-    LexerReturn* lexerret = lexer_read_ctokens(lexer);
-    Vector* actual = lexerret->ctokens;
-    Error* err = lexerret->err;
-    lexerret_close(lexerret);
+    Vector* actual = NULL;
+    Error* err = NULL;
+    lexerret_assign(&actual, &err, lexer_read_ctokens(lexer));
 
     CU_ASSERT_PTR_NULL(actual);
     CU_ASSERT_STRING_EQUAL(err->message, message);

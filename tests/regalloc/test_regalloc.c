@@ -769,14 +769,14 @@ void run_regalloc_test(Vector* __restrict__ input, int num_regs,
                        Vector* __restrict__ expected_immcs,
                        Vector* __restrict__ expected_liveseqs) {
     RegAlloc* regalloc = new_regalloc(input, num_regs);
+    Vector* actual_immcs = NULL;
+    Vector* actual_liveseqs = NULL;
+    regallocret_assign(&actual_immcs, &actual_liveseqs, regalloc_allocate_regs(regalloc));
 
-    RegAllocReturn* actual = regalloc_allocate_regs(regalloc);
+    CU_ASSERT_TRUE(testlib_immcs_equals(actual_immcs, expected_immcs));
+    CU_ASSERT_TRUE(testlib_liveseqs_equals(actual_liveseqs, expected_liveseqs));
 
-    CU_ASSERT_TRUE(testlib_immcs_equals(actual->immcs, expected_immcs));
-    CU_ASSERT_TRUE(testlib_liveseqs_equals(actual->liveseqs, expected_liveseqs));
-
-    delete_vector(actual->immcs);
-    delete_vector(actual->liveseqs);
-    regallocret_close(actual);
+    delete_vector(actual_immcs);
+    delete_vector(actual_liveseqs);
     delete_regalloc(regalloc);
 }
