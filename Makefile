@@ -1,15 +1,16 @@
-CC         := gcc
-CFLAGS     := -O3 -std=c99 -pedantic -W -Wall -Werror
+CC     := gcc
+DB     := lldb
+CFLAGS := -std=c99 -pedantic -W -Wall -Werror
 
-BLD_DIR  := build
-BIN_DIR  := bin
+BLD_DIR := build
+BIN_DIR := bin
 
-UMLCC      := umlcc
-SRC_MAIN   := main
-SRC_DIR    := src
-OBJ_DIR    := $(BLD_DIR)/src/object
-COBJ_DIR   := $(BLD_DIR)/src/cobject
-DEP_DIR    := $(BLD_DIR)/src/depend
+UMLCC    := umlcc
+SRC_MAIN := main
+SRC_DIR  := src
+OBJ_DIR  := $(BLD_DIR)/src/object
+COBJ_DIR := $(BLD_DIR)/src/cobject
+DEP_DIR  := $(BLD_DIR)/src/depend
 
 TEST_LIBS    := -lcunit
 TEST         := test_umlcc
@@ -52,18 +53,23 @@ SAMPLES     := $(wildcard $(SAMPLE_DIR)/*$(SRC_EXT))
 SAMPLE_ASMS := $(patsubst $(SAMPLE_DIR)/%$(SRC_EXT),$(SAMPLE_OUT)/%$(ASM_EXT),$(SAMPLES))
 
 .PRECIOUS: $(OBJS) $(DEPS) $(TEST_OBJS) $(TEST_DEPS)
-.PHONY: build debug-build unittest unittest-with-coverage e2etest sample format clean clean-sample install-pre-commit
+.PHONY: build build-debug unittest unittest-debug unittest-cov e2etest sample clean clean-sample format install-pre-commit
 
-build: $(BIN_DIR)/$(UMLCC)
+build:
+	$(MAKE) $(BIN_DIR)/$(UMLCC)
 
-debug-build: CFLAGS += -g
-debug-build: $(BIN_DIR)/$(UMLCC)
+build-debug:
+	$(MAKE) $(BIN_DIR)/$(UMLCC) DEBUG=true
 
 unittest:
 	$(MAKE) $(BIN_DIR)/$(TEST)
 	$(BIN_DIR)/$(TEST)
 
-unittest-with-coverage:
+unittest-debug:
+	$(MAKE) $(BIN_DIR)/$(TEST) DEBUG=true
+	$(DB) $(BIN_DIR)/$(TEST)
+
+unittest-cov:
 	$(MAKE) $(BIN_DIR)/$(TEST) COVERAGE=true
 	$(BIN_DIR)/$(TEST)
 	$(TEST_COV)
@@ -72,29 +78,31 @@ e2etest:
 	$(MAKE) $(BIN_DIR)/$(UMLCC)
 	$(E2E_TEST)
 
-sample: $(SAMPLE_ASMS)
+sample:
+	$(MAKE) $(SAMPLE_ASMS)
 
 $(BIN_DIR)/$(UMLCC): $(OBJS)
 	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) $^ -o $@
 
 ifeq ($(COVERAGE),true)
-$(COBJ_DIR)/%$(OBJ_EXT): CFLAGS += -fprofile-arcs -ftest-coverage
+$(COBJ_DIR)/%$(OBJ_EXT): CFLAGS += -O0 -fprofile-arcs -ftest-coverage
 $(COBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
-	@$(MKDIR) $(dir $@)
 	@$(RM) $(patsubst $(COBJ_DIR)/%$(OBJ_EXT),$(COBJ_DIR)/%$(GCDA_EXT),$@) \
-		  $(patsubst $(COBJ_DIR)/%$(OBJ_EXT),$(COBJ_DIR)/%$(GCNO_EXT),$@)
-	$(CC) $(CFLAGS) -c $< -o $@
-else
+		   $(patsubst $(COBJ_DIR)/%$(OBJ_EXT),$(COBJ_DIR)/%$(GCNO_EXT),$@)
+else ifeq ($(DEBUG),true)
+$(OBJ_DIR)/%$(OBJ_EXT): CFLAGS += -O0 -g
 $(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
+else
+$(OBJ_DIR)/%$(OBJ_EXT): CFLAGS += -O3
+$(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
+endif
 	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
-endif
 
 $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
 	@$(MKDIR) $(dir $@)
-	$(CC) $(CFLAGS) -MP -MM $< -MF $@ \
-		-MT $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$<)
+	$(CC) $(CFLAGS) -MP -MM $< -MF $@ -MT $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$<)
 
 ifeq ($(COVERAGE),true)
 $(BIN_DIR)/$(TEST): TEST_LIBS += -lgcov
@@ -105,21 +113,24 @@ endif
 	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) $^ $(TEST_LIBS) -o $@
 
+ifeq ($(COVERAGE),true)
+$(TEST_OBJ_DIR)/%$(OBJ_EXT): CFLAGS += -O0
+else ifeq ($(DEBUG),true)
+$(TEST_OBJ_DIR)/%$(OBJ_EXT): CFLAGS += -O0 -g
+else
+$(TEST_OBJ_DIR)/%$(OBJ_EXT): CFLAGS += -O3
+endif
 $(TEST_OBJ_DIR)/%$(OBJ_EXT): $(TEST_DIR)/%$(TEST_EXT) $(TEST_DEP_DIR)/%$(DEP_EXT)
 	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(TEST_DEP_DIR)/%$(DEP_EXT): $(TEST_DIR)/%$(TEST_EXT)
 	@$(MKDIR) $(dir $@)
-	$(CC) $(CFLAGS) -MP -MM $< -MF $@ \
-		-MT $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_OBJ_DIR)/%$(OBJ_EXT),$<)
+	$(CC) $(CFLAGS) -MP -MM $< -MF $@ -MT $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_OBJ_DIR)/%$(OBJ_EXT),$<)
 
 $(SAMPLE_OUT)/%$(ASM_EXT): $(SAMPLE_DIR)/%$(SRC_EXT)
 	@$(MKDIR) $(dir $@)
 	$(CC) $(SAMPLE_CFLAGS) -S $< -o $@
-
-format:
-	@clang-format -i $(shell find . -name *.h -o -name *.c)
 
 clean:
 	$(RM) $(BIN_DIR) $(BLD_DIR)
@@ -128,6 +139,9 @@ clean:
 
 clean-sample:
 	$(RM) $(SAMPLE_OUT)
+
+format:
+	@clang-format -i $(shell find . -name *.h -o -name *.c)
 
 install-pre-commit:
 	cp .pre-commit .git/hooks/pre-commit
@@ -140,7 +154,7 @@ ifeq ($(MAKECMDGOALS),build)
 -include $(DEPS)
 endif
 
-ifeq ($(MAKECMDGOALS),debug-build)
+ifeq ($(MAKECMDGOALS),build-debug)
 -include $(DEPS)
 endif
 
@@ -152,6 +166,10 @@ ifeq ($(MAKECMDGOALS),unittest)
 -include $(DEPS) $(TEST_DEPS)
 endif
 
-ifeq ($(MAKECMDGOALS),unittest-with-coverage)
+ifeq ($(MAKECMDGOALS),unittest-debug)
+-include $(DEPS) $(TEST_DEPS)
+endif
+
+ifeq ($(MAKECMDGOALS),unittest-cov)
 -include $(DEPS) $(TEST_DEPS)
 endif
