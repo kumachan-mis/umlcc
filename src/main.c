@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
 
     Parser* parser = new_parser(ctokens);
     Ast* ast = NULL;
-    parserret_assign(&ast, &err, parser_create_ast(lexer));
+    parserret_assign(&ast, &err, parser_create_ast(parser));
     delete_parser(parser);
 
     if (err != NULL) {
