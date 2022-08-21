@@ -3,7 +3,9 @@
 #include "./expression.h"
 #include "./util.h"
 
-Ast* parse_stmt(Parser* parser) {
+#include <stdlib.h>
+
+ParserReturn* parse_stmt(Parser* parser) {
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     switch (ctoken->type) {
         case CTOKEN_LBRACE:
@@ -15,40 +17,83 @@ Ast* parse_stmt(Parser* parser) {
     }
 }
 
-Ast* parse_compound_stmt(Parser* parser) {
+ParserReturn* parse_compound_stmt(Parser* parser) {
     Ast* ast = new_ast(AST_CMPD_STMT, 0);
+    Ast* child = NULL;
+    Error* err = NULL;
+
+    err = consume_ctoken(parser, CTOKEN_LBRACE);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
 
     Set* typedef_names_set = set_copy(parser->typedef_names_set);
 
-    consume_ctoken(parser, CTOKEN_LBRACE);
     while (1) {
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         if (ctoken->type == CTOKEN_RBRACE) {
             parser->index++;
             break;
         }
-        if (blockitem_may_decl(parser)) {
-            vector_push(ast->children, parse_decl(parser));
+
+        int may_decl = -1;
+        errint_assign(&may_decl, &err, blockitem_may_decl(parser));
+        if (err != NULL) break;
+
+        if (may_decl) {
+            parserret_assign(&child, &err, parse_decl(parser));
         } else {
-            vector_push(ast->children, parse_stmt(parser));
+            parserret_assign(&child, &err, parse_stmt(parser));
         }
+
+        if (err != NULL) break;
+        vector_push(ast->children, child);
     }
 
     delete_set(parser->typedef_names_set);
     parser->typedef_names_set = typedef_names_set;
 
-    return ast;
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    return new_parserret(ast);
 }
 
-Ast* parse_return_stmt(Parser* parser) {
-    consume_ctoken(parser, CTOKEN_KEYWORD_RETURN);
-    Ast* expr_ast = parse_expr(parser);
-    consume_ctoken(parser, CTOKEN_SEMICOLON);
-    return new_ast(AST_RET_STMT, 1, expr_ast);
+ParserReturn* parse_return_stmt(Parser* parser) {
+    Ast* ast = NULL;
+    Error* err = NULL;
+
+    err = consume_ctoken(parser, CTOKEN_KEYWORD_RETURN);
+    if (err != NULL) return new_parserret_error(err);
+
+    parserret_assign(&ast, &err, parse_expr(parser));
+    if (err != NULL) return new_parserret_error(err);
+
+    err = consume_ctoken(parser, CTOKEN_SEMICOLON);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    ast = new_ast(AST_RET_STMT, 1, ast);
+    return new_parserret(ast);
 }
 
-Ast* parse_expression_stmt(Parser* parser) {
-    Ast* expr_ast = parse_expr(parser);
-    consume_ctoken(parser, CTOKEN_SEMICOLON);
-    return new_ast(AST_EXPR_STMT, 1, expr_ast);
+ParserReturn* parse_expression_stmt(Parser* parser) {
+    Ast* ast = NULL;
+    Error* err = NULL;
+
+    parserret_assign(&ast, &err, parse_expr(parser));
+    if (err != NULL) return new_parserret_error(err);
+
+    err = consume_ctoken(parser, CTOKEN_SEMICOLON);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    ast = new_ast(AST_EXPR_STMT, 1, ast);
+    return new_parserret(ast);
 }

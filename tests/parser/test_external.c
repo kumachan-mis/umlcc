@@ -79,9 +79,12 @@ void test_parse_transration_unit() {
 
 void run_parser_test(Vector* __restrict__ input, Ast* __restrict__ expected) {
     Parser* parser = new_parser(input);
-    Ast* actual = parser_create_ast(parser);
+    Ast* actual = NULL;
+    Error* err = NULL;
+    parserret_assign(&actual, &err, parser_create_ast(parser));
 
     CU_ASSERT_TRUE(testlib_ast_equals(actual, expected));
+    CU_ASSERT_PTR_NULL(err);
 
     delete_ast(actual);
     delete_parser(parser);

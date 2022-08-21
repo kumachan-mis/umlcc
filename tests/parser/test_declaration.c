@@ -438,9 +438,12 @@ void run_decl_parser_test(Vector* __restrict__ input, Set* __restrict__ typedef_
         parser->typedef_names_set = typedef_names_set;
     }
 
-    Ast* actual = parse_decl(parser);
+    Ast* actual = NULL;
+    Error* err = NULL;
+    parserret_assign(&actual, &err, parse_decl(parser));
 
     CU_ASSERT_TRUE(testlib_ast_equals(actual, expected));
+    CU_ASSERT_PTR_NULL(err);
 
     delete_ast(actual);
     delete_parser(parser);

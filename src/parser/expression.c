@@ -6,18 +6,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Ast* parse_expr(Parser* parser) {
-    Ast* ast = parse_assignment_expr(parser);
-    return ast;
+ParserReturn* parse_expr(Parser* parser) {
+    ParserReturn* parserret = parse_assignment_expr(parser);
+    return parserret;
 }
 
-Ast* parse_assignment_expr(Parser* parser) {
+ParserReturn* parse_assignment_expr(Parser* parser) {
     Vector* stack = new_vector(&t_ast);
-    int terminated = 0;
+    Ast* ast = NULL;
+    Error* err = NULL;
 
+    int terminated = 0;
     while (!terminated) {
         int index = parser->index;
-        Ast* ast = parse_unary_expr(parser);
+        parserret_assign(&ast, &err, parse_unary_expr(parser));
+        if (err != NULL) break;
 
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         switch (ctoken->type) {
@@ -28,13 +31,20 @@ Ast* parse_assignment_expr(Parser* parser) {
             default:
                 delete_ast(ast);
                 parser->index = index;
-                vector_push(stack, parse_logical_or_expr(parser));
+                parserret_assign(&ast, &err, parse_logical_or_expr(parser));
+                if (err != NULL) break;
+                vector_push(stack, ast);
                 terminated = 1;
                 break;
         }
     }
 
-    Ast* ast = vector_pop(stack);
+    if (err != NULL) {
+        delete_vector(stack);
+        return new_parserret_error(err);
+    }
+
+    ast = vector_pop(stack);
     while (vector_size(stack) > 0) {
         Ast* next_ast = vector_pop(stack);
         vector_push(next_ast->children, ast);
@@ -42,110 +52,169 @@ Ast* parse_assignment_expr(Parser* parser) {
     }
 
     delete_vector(stack);
-
-    return ast;
+    return new_parserret(ast);
 }
 
-Ast* parse_logical_or_expr(Parser* parser) {
-    Ast* ast = parse_logical_and_expr(parser);
+ParserReturn* parse_logical_or_expr(Parser* parser) {
+    Ast* ast = NULL;
+    Ast* child = NULL;
+    Error* err = NULL;
 
-    while (1) {
+    parserret_assign(&ast, &err, parse_logical_and_expr(parser));
+    if (err != NULL) return new_parserret_error(err);
+
+    while (err == NULL) {
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         switch (ctoken->type) {
             case CTOKEN_VBAR_VBAR:
                 parser->index++;
-                ast = new_ast(AST_LOR_EXPR, 2, ast, parse_logical_and_expr(parser));
+                parserret_assign(&child, &err, parse_logical_and_expr(parser));
+                if (err != NULL) break;
+                ast = new_ast(AST_LOR_EXPR, 2, ast, child);
                 break;
             default:
-                return ast;
+                return new_parserret(ast);
         }
     }
+
+    delete_ast(ast);
+    return new_parserret_error(err);
 }
 
-Ast* parse_logical_and_expr(Parser* parser) {
-    Ast* ast = parse_equality_expr(parser);
+ParserReturn* parse_logical_and_expr(Parser* parser) {
+    Ast* ast = NULL;
+    Ast* child = NULL;
+    Error* err = NULL;
 
-    while (1) {
+    parserret_assign(&ast, &err, parse_equality_expr(parser));
+    if (err != NULL) return new_parserret_error(err);
+
+    while (err == NULL) {
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         switch (ctoken->type) {
             case CTOKEN_AND_AND:
                 parser->index++;
-                ast = new_ast(AST_LAND_EXPR, 2, ast, parse_equality_expr(parser));
+                parserret_assign(&child, &err, parse_equality_expr(parser));
+                if (err != NULL) break;
+                ast = new_ast(AST_LAND_EXPR, 2, ast, child);
                 break;
             default:
-                return ast;
+                return new_parserret(ast);
         }
     }
+
+    delete_ast(ast);
+    return new_parserret_error(err);
 }
 
-Ast* parse_equality_expr(Parser* parser) {
-    Ast* ast = parse_additive_expr(parser);
+ParserReturn* parse_equality_expr(Parser* parser) {
+    Ast* ast = NULL;
+    Ast* child = NULL;
+    Error* err = NULL;
 
-    while (1) {
+    parserret_assign(&ast, &err, parse_additive_expr(parser));
+    if (err != NULL) return new_parserret_error(err);
+
+    while (err == NULL) {
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         switch (ctoken->type) {
             case CTOKEN_EQUAL_EQUAL:
                 parser->index++;
-                ast = new_ast(AST_EQUAL_EXPR, 2, ast, parse_additive_expr(parser));
+                parserret_assign(&child, &err, parse_additive_expr(parser));
+                if (err != NULL) break;
+                ast = new_ast(AST_EQUAL_EXPR, 2, ast, child);
                 break;
             case CTOKEN_EXCLAM_EQUAL:
                 parser->index++;
-                ast = new_ast(AST_NEQUAL_EXPR, 2, ast, parse_additive_expr(parser));
+                parserret_assign(&child, &err, parse_additive_expr(parser));
+                if (err != NULL) break;
+                ast = new_ast(AST_NEQUAL_EXPR, 2, ast, child);
                 break;
             default:
-                return ast;
+                return new_parserret(ast);
         }
     }
+
+    delete_ast(ast);
+    return new_parserret_error(err);
 }
 
-Ast* parse_additive_expr(Parser* parser) {
-    Ast* ast = parse_multiplicative_expr(parser);
+ParserReturn* parse_additive_expr(Parser* parser) {
+    Ast* ast = NULL;
+    Ast* child = NULL;
+    Error* err = NULL;
 
-    while (1) {
+    parserret_assign(&ast, &err, parse_multiplicative_expr(parser));
+    if (err != NULL) return new_parserret_error(err);
+
+    while (err == NULL) {
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         switch (ctoken->type) {
             case CTOKEN_PLUS:
                 parser->index++;
-                ast = new_ast(AST_ADD_EXPR, 2, ast, parse_multiplicative_expr(parser));
+                parserret_assign(&child, &err, parse_multiplicative_expr(parser));
+                if (err != NULL) break;
+                ast = new_ast(AST_ADD_EXPR, 2, ast, child);
                 break;
             case CTOKEN_MINUS:
                 parser->index++;
-                ast = new_ast(AST_SUB_EXPR, 2, ast, parse_multiplicative_expr(parser));
+                parserret_assign(&child, &err, parse_multiplicative_expr(parser));
+                if (err != NULL) break;
+                ast = new_ast(AST_SUB_EXPR, 2, ast, child);
                 break;
             default:
-                return ast;
+                return new_parserret(ast);
         }
     }
+
+    delete_ast(ast);
+    return new_parserret_error(err);
 }
 
-Ast* parse_multiplicative_expr(Parser* parser) {
-    Ast* ast = parse_unary_expr(parser);
+ParserReturn* parse_multiplicative_expr(Parser* parser) {
+    Ast* ast = NULL;
+    Ast* child = NULL;
+    Error* err = NULL;
 
-    while (1) {
+    parserret_assign(&ast, &err, parse_unary_expr(parser));
+    if (err != NULL) return new_parserret_error(err);
+
+    while (err == NULL) {
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         switch (ctoken->type) {
             case CTOKEN_ASTERISK:
                 parser->index++;
-                ast = new_ast(AST_MUL_EXPR, 2, ast, parse_unary_expr(parser));
+                parserret_assign(&child, &err, parse_unary_expr(parser));
+                if (err != NULL) break;
+                ast = new_ast(AST_MUL_EXPR, 2, ast, child);
                 break;
             case CTOKEN_SLASH:
                 parser->index++;
-                ast = new_ast(AST_DIV_EXPR, 2, ast, parse_unary_expr(parser));
+                parserret_assign(&child, &err, parse_unary_expr(parser));
+                if (err != NULL) break;
+                ast = new_ast(AST_DIV_EXPR, 2, ast, child);
                 break;
             case CTOKEN_PERCENT:
                 parser->index++;
-                ast = new_ast(AST_MOD_EXPR, 2, ast, parse_unary_expr(parser));
+                parserret_assign(&child, &err, parse_unary_expr(parser));
+                if (err != NULL) break;
+                ast = new_ast(AST_MOD_EXPR, 2, ast, child);
                 break;
             default:
-                return ast;
+                return new_parserret(ast);
         }
     }
+
+    delete_ast(ast);
+    return new_parserret_error(err);
 }
 
-Ast* parse_unary_expr(Parser* parser) {
+ParserReturn* parse_unary_expr(Parser* parser) {
     Vector* stack = new_vector(&t_ast);
-    int terminated = 0;
+    Ast* ast = NULL;
+    Error* err = NULL;
 
+    int terminated = 0;
     while (!terminated) {
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         switch (ctoken->type) {
@@ -167,7 +236,12 @@ Ast* parse_unary_expr(Parser* parser) {
         }
     }
 
-    Ast* ast = parse_postfix_expr(parser);
+    parserret_assign(&ast, &err, parse_postfix_expr(parser));
+    if (err != NULL) {
+        delete_vector(stack);
+        return new_parserret_error(err);
+    }
+
     while (vector_size(stack) > 0) {
         Ast* next_ast = vector_pop(stack);
         vector_push(next_ast->children, ast);
@@ -175,52 +249,72 @@ Ast* parse_unary_expr(Parser* parser) {
     }
 
     delete_vector(stack);
-
-    return ast;
+    return new_parserret(ast);
 }
 
-Ast* parse_postfix_expr(Parser* parser) {
-    Ast* ast = parse_primary_expr(parser);
+ParserReturn* parse_postfix_expr(Parser* parser) {
+    Ast* ast = NULL;
+    Ast* child = NULL;
+    Error* err = NULL;
 
-    while (1) {
+    parserret_assign(&ast, &err, parse_primary_expr(parser));
+    if (err != NULL) return new_parserret_error(err);
+
+    while (err == NULL) {
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         switch (ctoken->type) {
             case CTOKEN_LBRACKET:
                 parser->index++;
-                ast = new_ast(AST_SUBSC_EXPR, 2, ast, parse_expr(parser));
-                consume_ctoken(parser, CTOKEN_RBRACKET);
+                parserret_assign(&child, &err, parse_expr(parser));
+                if (err != NULL) break;
+                ast = new_ast(AST_SUBSC_EXPR, 2, ast, child);
+                err = consume_ctoken(parser, CTOKEN_RBRACKET);
                 break;
             case CTOKEN_LPALEN:
                 parser->index++;
-                ast = new_ast(AST_CALL_EXPR, 2, ast, parse_argument_expr_list(parser));
-                consume_ctoken(parser, CTOKEN_RPALEN);
+                parserret_assign(&child, &err, parse_argument_expr_list(parser));
+                if (err != NULL) break;
+                ast = new_ast(AST_CALL_EXPR, 2, ast, child);
+                err = consume_ctoken(parser, CTOKEN_RPALEN);
                 break;
             default:
-                return ast;
+                return new_parserret(ast);
         }
     }
 
-    return ast;
+    delete_ast(ast);
+    return new_parserret_error(err);
 }
 
-Ast* parse_argument_expr_list(Parser* parser) {
+ParserReturn* parse_argument_expr_list(Parser* parser) {
     Ast* ast = new_ast(AST_ARG_LIST, 0);
+    Ast* child = NULL;
+    Error* err = NULL;
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
-    if (ctoken->type == CTOKEN_RPALEN) return ast;
+    if (ctoken->type == CTOKEN_RPALEN) return new_parserret(ast);
 
-    while (1) {
-        vector_push(ast->children, parse_assignment_expr(parser));
+    while (err == NULL) {
+        parserret_assign(&child, &err, parse_assignment_expr(parser));
+        if (err != NULL) break;
+
+        vector_push(ast->children, child);
         ctoken = vector_at(parser->ctokens, parser->index);
         if (ctoken->type == CTOKEN_RPALEN) break;
-        consume_ctoken(parser, CTOKEN_COMMA);
+
+        err = consume_ctoken(parser, CTOKEN_COMMA);
     }
 
-    return ast;
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    return new_parserret(ast);
 }
 
-Ast* parse_primary_expr(Parser* parser) {
+ParserReturn* parse_primary_expr(Parser* parser) {
     Ast* ast = NULL;
+    Error* err = NULL;
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     switch (ctoken->type) {
@@ -242,13 +336,18 @@ Ast* parse_primary_expr(Parser* parser) {
             break;
         case CTOKEN_LPALEN:
             parser->index++;
-            ast = parse_expr(parser);
-            consume_ctoken(parser, CTOKEN_RPALEN);
+            parserret_assign(&ast, &err, parse_expr(parser));
+            if (err != NULL) break;
+            err = consume_ctoken(parser, CTOKEN_RPALEN);
             break;
         default:
-            fprintf(stderr, "Error: unexpected ctoken type %d\n", ctoken->type);
-            exit(1);
+            err = new_error("Error: unexpected token %s\n", ctoken_types[ctoken->type]);
+            break;
     }
 
-    return ast;
+    if (err != NULL) {
+        if (ast != NULL) delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    return new_parserret(ast);
 }

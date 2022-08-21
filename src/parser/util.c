@@ -4,14 +4,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int external_may_function_definition(Parser* parser) {
+ErrorableInt* external_may_function_definition(Parser* parser) {
     Ast* ast = NULL;
+    Error* err = NULL;
+
     int index = parser->index;
     Set* typedef_names_set = set_copy(parser->typedef_names_set);
 
-    ast = parse_decl_specifiers(parser);
+    parserret_assign(&ast, &err, parse_decl_specifiers(parser));
+    if (err != NULL) return new_errint_error(err);
     delete_ast(ast);
-    ast = parse_declarator(parser);
+
+    parserret_assign(&ast, &err, parse_declarator(parser));
+    if (err != NULL) return new_errint_error(err);
     delete_ast(ast);
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
@@ -20,29 +25,30 @@ int external_may_function_definition(Parser* parser) {
     parser->index = index;
     parser->typedef_names_set = typedef_names_set;
 
-    return ctoken->type == CTOKEN_LBRACE;
+    return new_errint(ctoken->type == CTOKEN_LBRACE);
 }
 
-int blockitem_may_decl(Parser* parser) {
+ErrorableInt* blockitem_may_decl(Parser* parser) {
+
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     switch (ctoken->type) {
         case CTOKEN_KEYWORD_TYPEDEF:
         case CTOKEN_KEYWORD_CHAR:
         case CTOKEN_KEYWORD_INT:
-            return 1;
+            return new_errint(1);
         case CTOKEN_IDENT:
-            return set_contains(parser->typedef_names_set, ctoken->ident_name);
+            return new_errint(set_contains(parser->typedef_names_set, ctoken->ident_name));
         default:
-            return 0;
+            return new_errint(0);
     }
 }
 
-void consume_ctoken(Parser* parser, CTokenType ctoken_type) {
+Error* consume_ctoken(Parser* parser, CTokenType ctoken_type) {
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     if (ctoken->type == ctoken_type) {
         parser->index++;
-        return;
+        return NULL;
     }
-    fprintf(stderr, "Error: unexpected ctoken type %d\n", ctoken->type);
-    exit(1);
+    return new_error("Error: token %s expected, but got %s\n", ctoken_types[ctoken_type],
+                     ctoken_types[ctoken->type]);
 }
