@@ -145,7 +145,7 @@ ParserReturn* parse_declarator(Parser* parser) {
 
     parserret_assign(&direct_declarator_ast, &err, parse_direct_declarator(parser));
     if (err != NULL) {
-        delete_ast(pointer_ast);
+        if (pointer_ast != NULL) delete_ast(pointer_ast);
         return new_parserret_error(err);
     }
 
@@ -244,7 +244,7 @@ ParserReturn* parse_direct_declarator(Parser* parser) {
     }
 
     delete_ast(ident_ast);
-    delete_ast(ast);
+    if (ast != NULL) delete_ast(ast);
     return new_parserret_error(err);
 }
 

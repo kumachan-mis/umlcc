@@ -16,6 +16,7 @@
 #include "./liveseq/test_liveseq.h"
 #include "./map/test_map.h"
 #include "./parser/test_declaration.h"
+#include "./parser/test_declaration_error.h"
 #include "./parser/test_expression.h"
 #include "./parser/test_expression_error.h"
 #include "./parser/test_external.h"
@@ -87,6 +88,7 @@ int main(void) {
     add_test_suite_stmt_parser();
     add_test_suite_stmt_parser_error();
     add_test_suite_decl_parser();
+    add_test_suite_decl_parser_error();
     add_test_suite_external_parser();
 
     // resolver tests
