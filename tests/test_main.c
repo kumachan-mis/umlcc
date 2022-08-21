@@ -17,6 +17,7 @@
 #include "./map/test_map.h"
 #include "./parser/test_declaration.h"
 #include "./parser/test_expression.h"
+#include "./parser/test_expression_error.h"
 #include "./parser/test_external.h"
 #include "./parser/test_statement.h"
 #include "./regalloc/test_basicblock.h"
@@ -81,6 +82,7 @@ int main(void) {
 
     // parser tests
     add_test_suite_expr_parser();
+    add_test_suite_expr_parser_error();
     add_test_suite_stmt_parser();
     add_test_suite_decl_parser();
     add_test_suite_external_parser();
