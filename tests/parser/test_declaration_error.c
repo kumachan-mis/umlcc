@@ -4,24 +4,32 @@
 #include "../testlib/testlib.h"
 
 void test_parse_no_decl_specifier_error();
-void test_parse_invalid_arithmetic_declarator_error();
-void test_parse_invalid_pointer_declarator_error();
-void test_parse_invalid_array_declarator_error();
-void test_parse_invalid_function_declarator_error();
+void test_parse_arithmetic_declarator_error();
+void test_parse_pointer_declarator_error();
+void test_parse_array_declarator_size_error();
+void test_parse_array_declarator_bracket_error();
+void test_parse_function_declarator_return_type_error();
+void test_parse_function_declarator_param_decl_error();
+void test_parse_function_declarator_param_list_error();
 void test_parse_expr_init_error();
-void test_parse_list_init_error();
+void test_parse_list_init_list_error();
+void test_parse_list_init_item_error();
 
 void run_decl_parser_error_test(Vector* __restrict__ input, const char* message);
 
 CU_Suite* add_test_suite_decl_parser_error() {
     CU_Suite* suite = CU_add_suite("test_suite_decl_parser_error", NULL, NULL);
     CU_ADD_TEST(suite, test_parse_no_decl_specifier_error);
-    CU_ADD_TEST(suite, test_parse_invalid_arithmetic_declarator_error);
-    CU_ADD_TEST(suite, test_parse_invalid_pointer_declarator_error);
-    CU_ADD_TEST(suite, test_parse_invalid_array_declarator_error);
-    CU_ADD_TEST(suite, test_parse_invalid_function_declarator_error);
+    CU_ADD_TEST(suite, test_parse_arithmetic_declarator_error);
+    CU_ADD_TEST(suite, test_parse_pointer_declarator_error);
+    CU_ADD_TEST(suite, test_parse_array_declarator_size_error);
+    CU_ADD_TEST(suite, test_parse_array_declarator_bracket_error);
+    CU_ADD_TEST(suite, test_parse_function_declarator_return_type_error);
+    CU_ADD_TEST(suite, test_parse_function_declarator_param_decl_error);
+    CU_ADD_TEST(suite, test_parse_function_declarator_param_list_error);
     CU_ADD_TEST(suite, test_parse_expr_init_error);
-    CU_ADD_TEST(suite, test_parse_list_init_error);
+    CU_ADD_TEST(suite, test_parse_list_init_list_error);
+    CU_ADD_TEST(suite, test_parse_list_init_item_error);
     return suite;
 }
 
@@ -35,7 +43,7 @@ void test_parse_no_decl_specifier_error() {
     run_decl_parser_error_test(input, message);
 }
 
-void test_parse_invalid_arithmetic_declarator_error() {
+void test_parse_arithmetic_declarator_error() {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_RETURN));
@@ -46,7 +54,7 @@ void test_parse_invalid_arithmetic_declarator_error() {
     run_decl_parser_error_test(input, message);
 }
 
-void test_parse_invalid_pointer_declarator_error() {
+void test_parse_pointer_declarator_error() {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
@@ -58,11 +66,8 @@ void test_parse_invalid_pointer_declarator_error() {
     run_decl_parser_error_test(input, message);
 }
 
-void test_parse_invalid_array_declarator_error() {
-    Vector* input = NULL;
-    const char* message = NULL;
-
-    input = new_vector(&t_ctoken);
+void test_parse_array_declarator_size_error() {
+    Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_LBRACKET));
@@ -70,10 +75,12 @@ void test_parse_invalid_array_declarator_error() {
     vector_push(input, new_ctoken(CTOKEN_RBRACKET));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    message = "Error: unexpected token =\n";
+    const char* message = "Error: unexpected token =\n";
     run_decl_parser_error_test(input, message);
+}
 
-    input = new_vector(&t_ctoken);
+void test_parse_array_declarator_bracket_error() {
+    Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_LBRACKET));
@@ -81,15 +88,12 @@ void test_parse_invalid_array_declarator_error() {
     vector_push(input, new_ctoken(CTOKEN_RBRACE));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    message = "Error: token ] expected, but got }\n";
+    const char* message = "Error: token ] expected, but got }\n";
     run_decl_parser_error_test(input, message);
 }
 
-void test_parse_invalid_function_declarator_error() {
-    Vector* input = NULL;
-    const char* message = NULL;
-
-    input = new_vector(&t_ctoken);
+void test_parse_function_declarator_return_type_error() {
+    Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
     vector_push(input, new_ctoken(CTOKEN_LPALEN));
@@ -97,10 +101,24 @@ void test_parse_invalid_function_declarator_error() {
     vector_push(input, new_ctoken(CTOKEN_RPALEN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    message = "Error: one of declaration-specifiers expected, but got identifier\n";
+    const char* message = "Error: one of declaration-specifiers expected, but got identifier\n";
     run_decl_parser_error_test(input, message);
+}
 
-    input = new_vector(&t_ctoken);
+void test_parse_function_declarator_param_decl_error() {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    const char* message = "Error: unexpected token EOF\n";
+    run_decl_parser_error_test(input, message);
+}
+
+void test_parse_function_declarator_param_list_error() {
+    Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
     vector_push(input, new_ctoken(CTOKEN_LPALEN));
@@ -108,17 +126,7 @@ void test_parse_invalid_function_declarator_error() {
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    message = "Error: token , expected, but got EOF\n";
-    run_decl_parser_error_test(input, message);
-
-    input = new_vector(&t_ctoken);
-    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
-    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
-    vector_push(input, new_ctoken(CTOKEN_EOF));
-
-    message = "Error: unexpected token EOF\n";
+    const char* message = "Error: token , expected, but got EOF\n";
     run_decl_parser_error_test(input, message);
 }
 
@@ -134,11 +142,8 @@ void test_parse_expr_init_error() {
     run_decl_parser_error_test(input, message);
 }
 
-void test_parse_list_init_error() {
-    Vector* input = NULL;
-    const char* message = NULL;
-
-    input = new_vector(&t_ctoken);
+void test_parse_list_init_list_error() {
+    Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_LBRACKET));
@@ -151,10 +156,12 @@ void test_parse_list_init_error() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    message = "Error: unexpected token ,\n";
+    const char* message = "Error: unexpected token ,\n";
     run_decl_parser_error_test(input, message);
+}
 
-    input = new_vector(&t_ctoken);
+void test_parse_list_init_item_error() {
+    Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_LBRACKET));
@@ -167,7 +174,7 @@ void test_parse_list_init_error() {
     vector_push(input, new_ctoken(CTOKEN_RBRACE));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    message = "Error: token , expected, but got integer-constant\n";
+    const char* message = "Error: token , expected, but got integer-constant\n";
     run_decl_parser_error_test(input, message);
 }
 
