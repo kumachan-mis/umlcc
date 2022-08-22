@@ -20,6 +20,7 @@
 #include "./parser/test_expression.h"
 #include "./parser/test_expression_error.h"
 #include "./parser/test_external.h"
+#include "./parser/test_external_error.h"
 #include "./parser/test_statement.h"
 #include "./parser/test_statement_error.h"
 #include "./regalloc/test_basicblock.h"
@@ -90,6 +91,7 @@ int main(void) {
     add_test_suite_decl_parser();
     add_test_suite_decl_parser_error();
     add_test_suite_external_parser();
+    add_test_suite_external_parser_error();
 
     // resolver tests
     add_test_suite_expr_resolver();
