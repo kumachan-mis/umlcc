@@ -7,6 +7,14 @@ BaseType t_ctoken = {
     .delete_object = (void (*)(void*))delete_ctoken,
 };
 
+char* ctoken_types[] = {
+    // non-punctuators
+    "char", "int", "return", "typedef", "identifier", "integer-constant", "character-constant",
+    "string-literal",
+    // punctuators
+    "[", "]", "(", ")", "{", "}", "&", "*", "+", "-", "!", "/", "%", "==", "!=", "&&", "||", ";",
+    "=", ",", "EOF"};
+
 CToken* new_ctoken(CTokenType type) {
     CToken* ctoken = malloc(sizeof(CToken));
     ctoken->type = type;

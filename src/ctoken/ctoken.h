@@ -53,6 +53,8 @@ typedef struct CToken {
 
 extern BaseType t_ctoken;
 
+extern char* ctoken_types[];
+
 CToken* new_ctoken(CTokenType type);
 CToken* new_identifier_ctoken(CTokenType type, char* name);
 CToken* new_iliteral_ctoken(CTokenType type, IntegerLiteral* iliteral);

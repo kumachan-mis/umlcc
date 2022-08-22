@@ -57,8 +57,17 @@ int main(int argc, char* argv[]) {
     }
 
     Parser* parser = new_parser(ctokens);
-    Ast* ast = parser_create_ast(parser);
+    Ast* ast = NULL;
+    parserret_assign(&ast, &err, parser_create_ast(parser));
     delete_parser(parser);
+
+    if (err != NULL) {
+        fprintf(stderr, "@@@@@ Error occured in parser @@@@@\n");
+        fprintf(stderr, "%s", err->message);
+        delete_error(err);
+        // files are implicitly closed
+        return 1;
+    }
 
     Resolver* resolver = new_resolver(ast);
     Srt* srt = resolver_resolve_semantics(resolver);

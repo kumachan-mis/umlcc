@@ -193,9 +193,12 @@ void test_parse_expression_stmt() {
 
 void run_stmt_parser_test(Vector* __restrict__ input, Ast* __restrict__ expected) {
     Parser* parser = new_parser(input);
-    Ast* actual = parse_stmt(parser);
+    Ast* actual = NULL;
+    Error* err = NULL;
+    parserret_assign(&actual, &err, parse_stmt(parser));
 
     CU_ASSERT_TRUE(testlib_ast_equals(actual, expected));
+    CU_ASSERT_PTR_NULL(err);
 
     delete_ast(actual);
     delete_parser(parser);
