@@ -47,7 +47,7 @@ void test_read_newline_character_constant_error() {
 
 void test_read_invalid_escape_sequence_character_constant_error() {
     const char* input = NULL;
-    const char* message = "Error: invalid escape sequence\n";
+    const char* message = "Error: invalid escape sequence \\!\n";
 
     input = "ch = '\\!';\n";
     run_lexer_error_test(input, message);
@@ -64,7 +64,7 @@ void test_read_newline_string_literal_error() {
 
 void test_read_invalid_escape_sequence_string_literal_error() {
     const char* input = "str = \"\\~\";\n";
-    const char* message = "Error: invalid escape sequence\n";
+    const char* message = "Error: invalid escape sequence \\~\n";
     run_lexer_error_test(input, message);
 }
 
