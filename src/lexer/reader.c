@@ -1,4 +1,5 @@
 #include "./reader.h"
+#include "../error/errint.h"
 #include "../literal/sliteral.h"
 
 #include <stdlib.h>
@@ -18,6 +19,7 @@ LexerReturnItem* read_keyword_or_identifier(Lexer* lexer) {
             ungetc(c, lexer->file_ptr);
             break;
         }
+
         ctoken_str[length] = c;
         length++;
         if (length + 1 >= capacity) {
@@ -68,7 +70,7 @@ LexerReturnItem* read_integer_constant(Lexer* lexer) {
 }
 
 LexerReturnItem* read_character_constant(Lexer* lexer) {
-    int read_escape_seqence(Lexer * lexer);
+    ErrorableInt* read_escape_seqence(Lexer * lexer);
 
     Error* err = NULL;
 
@@ -77,46 +79,42 @@ LexerReturnItem* read_character_constant(Lexer* lexer) {
     int c = fgetc(lexer->file_ptr);
     switch (c) {
         case '\\':
-            c = read_escape_seqence(lexer);
-            if (c != EOF) break;
-            err = new_error("Error: invalid escape sequence\n");
-            return new_lexerret_item_error(err);
+            errint_assign(&c, &err, read_escape_seqence(lexer));
+            break;
         case '\n':
             err = new_error("Error: newline appeared in character constant\n");
-            return new_lexerret_item_error(err);
+            break;
         case '\'':
             err = new_error("Error: character constant is empty\n");
-            return new_lexerret_item_error(err);
+            break;
         default:
             break;
     }
 
-    int terminated = 0;
-    while (!terminated) {
+    while (err == NULL) {
         int rest = fgetc(lexer->file_ptr);
+        if (rest == '\'') break;
+
         switch (rest) {
             case '\\':
-                rest = read_escape_seqence(lexer);
-                if (rest != EOF) break;
-                err = new_error("Error: invalid escape sequence\n");
-                return new_lexerret_item_error(err);
+                errint_assign(&rest, &err, read_escape_seqence(lexer));
+                break;
             case '\n':
                 err = new_error("Error: newline appeared in character constant\n");
-                return new_lexerret_item_error(err);
-            case '\'':
-                terminated = 1;
                 break;
             default:
                 break;
         }
     }
 
+    if (err != NULL) return new_lexerret_item_error(err);
+
     CToken* ctoken = new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, c));
     return new_lexerret_item(ctoken);
 }
 
 LexerReturnItem* read_string_literal(Lexer* lexer) {
-    int read_escape_seqence(Lexer * lexer);
+    ErrorableInt* read_escape_seqence(Lexer * lexer);
 
     Error* err = NULL;
 
@@ -125,27 +123,21 @@ LexerReturnItem* read_string_literal(Lexer* lexer) {
 
     fgetc(lexer->file_ptr);
 
-    int terminated = 0;
     while (1) {
         int c = fgetc(lexer->file_ptr);
+        if (c == '\"') break;
+
         switch (c) {
             case '\\':
-                c = read_escape_seqence(lexer);
-                if (c != EOF) break;
-                free(value);
-                err = new_error("Error: invalid escape sequence\n");
-                return new_lexerret_item_error(err);
-            case '\"':
-                terminated = 1;
+                errint_assign(&c, &err, read_escape_seqence(lexer));
                 break;
             case '\n':
-                free(value);
                 err = new_error("Error: newline appeared in string literal\n");
-                return new_lexerret_item_error(err);
+                break;
             default:
                 break;
         }
-        if (terminated) break;
+        if (err != NULL) break;
 
         value[length] = c;
         length++;
@@ -154,9 +146,15 @@ LexerReturnItem* read_string_literal(Lexer* lexer) {
             capacity *= 2;
         }
     }
-    value[length] = '\0';
 
+    if (err != NULL) {
+        free(value);
+        return new_lexerret_item_error(err);
+    }
+
+    value[length] = '\0';
     value = realloc(value, (length + 1) * sizeof(char));
+
     CToken* ctoken = new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(value, length + 1));
     return new_lexerret_item(ctoken);
 }
@@ -266,10 +264,10 @@ int read_hexadecimal_constant(Lexer* lexer) {
     return value;
 }
 
-int read_escape_seqence(Lexer* lexer) {
-    int read_octal_escape_seqence(Lexer * lexer);
-    int read_hexadecimal_escape_seqence(Lexer * lexer);
-    int read_simple_escape_seqence(Lexer * lexer);
+ErrorableInt* read_escape_seqence(Lexer* lexer) {
+    ErrorableInt* read_octal_escape_seqence(Lexer * lexer);
+    ErrorableInt* read_hexadecimal_escape_seqence(Lexer * lexer);
+    ErrorableInt* read_simple_escape_seqence(Lexer * lexer);
 
     int c = fgetc(lexer->file_ptr);
     if (c == 'x') return read_hexadecimal_escape_seqence(lexer);
@@ -280,7 +278,7 @@ int read_escape_seqence(Lexer* lexer) {
     return read_simple_escape_seqence(lexer);
 }
 
-int read_octal_escape_seqence(Lexer* lexer) {
+ErrorableInt* read_octal_escape_seqence(Lexer* lexer) {
     int MAX_OCTAL_SEQUENCE_LEN = 3;
 
     int c = fgetc(lexer->file_ptr);
@@ -298,10 +296,10 @@ int read_octal_escape_seqence(Lexer* lexer) {
         break;
     }
 
-    return value;
+    return new_errint(value);
 }
 
-int read_hexadecimal_escape_seqence(Lexer* lexer) {
+ErrorableInt* read_hexadecimal_escape_seqence(Lexer* lexer) {
     int c = fgetc(lexer->file_ptr);
     int* hexdigit_ref = map_get(lexer->hexdigit_map, &c);
     int value = *hexdigit_ref;
@@ -317,35 +315,38 @@ int read_hexadecimal_escape_seqence(Lexer* lexer) {
         break;
     }
 
-    return value;
+    return new_errint(value);
 }
 
-int read_simple_escape_seqence(Lexer* lexer) {
+ErrorableInt* read_simple_escape_seqence(Lexer* lexer) {
+    Error* err = NULL;
+
     int c = fgetc(lexer->file_ptr);
     switch (c) {
         case '\'':
-            return '\'';
+            return new_errint('\'');
         case '\"':
-            return '\"';
+            return new_errint('\"');
         case '\?':
-            return '\?';
+            return new_errint('\?');
         case '\\':
-            return '\\';
+            return new_errint('\\');
         case 'a':
-            return '\a';
+            return new_errint('\a');
         case 'b':
-            return '\b';
+            return new_errint('\b');
         case 'f':
-            return '\f';
+            return new_errint('\f');
         case 'n':
-            return '\n';
+            return new_errint('\n');
         case 'r':
-            return '\r';
+            return new_errint('\r');
         case 't':
-            return '\t';
+            return new_errint('\t');
         case 'v':
-            return '\v';
+            return new_errint('\v');
         default:
-            return EOF;
+            err = new_error("Error: invalid escape sequence \\%c\n", c);
+            return new_errint_error(err);
     }
 }
