@@ -405,7 +405,7 @@ ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
 ResolverReturn* resolve_array_initializer(Resolver* resolver) {
     Srt* srt = new_srt(SRT_INIT, 0);
     Vector* errs = NULL;
-    // Error* err = NULL;
+    Error* err = NULL;
 
     Ast* ast = resolver->ast;
     Dtype* dtype = resolver->initialized_dtype;
@@ -466,12 +466,12 @@ ResolverReturn* resolve_array_initializer(Resolver* resolver) {
         vector_push(srt->children, child_srt);
     }
 
-    // if (array_index == dtype->array->size && resolver->initialized_offset < initializer_len) {
-    //     if (errs != NULL) delete_vector(errs);
-    //     errs = new_vector(&t_error);
-    //     err = new_error("Error: initializer list is too long\n");
-    //     vector_push(errs, err);
-    // }
+    if (array_index == dtype->array->size && resolver->initialized_offset < initializer_len) {
+        if (errs != NULL) delete_vector(errs);
+        errs = new_vector(&t_error);
+        err = new_error("Error: initializer list is too long\n");
+        vector_push(errs, err);
+    }
 
     resolver->ast = ast;
     resolver->initialized_dtype = dtype;
