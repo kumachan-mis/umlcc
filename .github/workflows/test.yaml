@@ -8,6 +8,7 @@ on:
 
 jobs:
   unittest:
+    if: ${{ !startsWith(github.event.pull_request.title, '[WIP]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -28,6 +29,7 @@ jobs:
         run: make unittest
 
   unittest-cov:
+    if: ${{ !startsWith(github.event.pull_request.title, '[WIP]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -48,6 +50,7 @@ jobs:
         run: make unittest-cov
 
   e2etest:
+    if: ${{ !startsWith(github.event.pull_request.title, '[WIP]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
