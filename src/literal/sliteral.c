@@ -116,3 +116,11 @@ void delete_sliteral(StringLiteral* sliteral) {
     free(sliteral->value);
     free(sliteral);
 }
+
+char* sliteral_create_label(int sliteral_id) {
+    // TODO: fix to prevent buffer overflow
+    char* sliteral_name = malloc(50 * sizeof(char));
+    sprintf(sliteral_name, ".SL%d", sliteral_id);
+    sliteral_name = realloc(sliteral_name, (strlen(sliteral_name) + 1) * sizeof(char));
+    return sliteral_name;
+}

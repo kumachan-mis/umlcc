@@ -18,7 +18,7 @@ Resolver* new_resolver(Ast* ast) {
     return resolver;
 }
 
-Srt* resolver_resolve_semantics(Resolver* resolver) {
+ResolverReturn* resolver_resolve_semantics(Resolver* resolver) {
     return resolve_transration_unit(resolver);
 }
 

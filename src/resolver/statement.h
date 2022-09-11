@@ -3,9 +3,9 @@
 
 #include "./resolver.h"
 
-Srt* resolve_stmt(Resolver* resolver);
-Srt* resolve_compound_stmt(Resolver* resolver);
-Srt* resolve_return_stmt(Resolver* resolver);
-Srt* resolve_expression_stmt(Resolver* resolver);
+ResolverReturn* resolve_stmt(Resolver* resolver);
+ResolverReturn* resolve_compound_stmt(Resolver* resolver);
+ResolverReturn* resolve_return_stmt(Resolver* resolver);
+ResolverReturn* resolve_expression_stmt(Resolver* resolver);
 
 #endif

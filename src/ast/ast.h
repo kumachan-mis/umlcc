@@ -81,11 +81,14 @@ typedef struct Ast {
 
 extern BaseType t_ast;
 
+extern char* ast_types[];
+
 Ast* new_ast(AstType type, int num_children, ...);
 Ast* new_identifier_ast(AstType type, char* name);
 Ast* new_iliteral_ast(AstType type, IntegerLiteral* iliteral);
 Ast* new_sliteral_ast(AstType type, StringLiteral* sliteral);
 Ast* ast_copy(Ast* ast);
+int ast_isexpr(Ast* ast);
 void delete_ast(Ast* ast);
 
 #endif

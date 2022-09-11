@@ -957,9 +957,12 @@ void run_local_decl_resolver_test(Ast* __restrict__ input, SymbolTable* __restri
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
     input = ast_copy(resolver->ast);
 
-    Srt* actual = resolve_decl(resolver);
+    Srt* actual = NULL;
+    Vector* errs = NULL;
+    resolverret_assign(&actual, &errs, resolve_decl(resolver));
 
     CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+    CU_ASSERT_PTR_NULL(errs);
 
     delete_srt(actual);
     delete_resolver(resolver);
@@ -974,9 +977,12 @@ void run_global_decl_resolver_test(Ast* __restrict__ input, SymbolTable* __restr
     }
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
 
-    Srt* actual = resolve_decl(resolver);
+    Srt* actual = NULL;
+    Vector* errs = NULL;
+    resolverret_assign(&actual, &errs, resolve_decl(resolver));
 
     CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+    CU_ASSERT_PTR_NULL(errs);
 
     delete_srt(actual);
     delete_resolver(resolver);

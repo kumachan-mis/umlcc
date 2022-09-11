@@ -9,6 +9,23 @@ BaseType t_ast = {
     .delete_object = (void (*)(void*))delete_ast,
 };
 
+char* ast_types[] = {
+    // external definitions
+    "translation-unit", "function-definition",
+    // declarations
+    "declaration", "declaration-specifiers", "init-declarator-list", "init-declarator", "typedef",
+    "char", "int", "typedef-name", "identifier-declarator", "pointer-declarator",
+    "array-declarator", "function-declarator", "parameter-list", "parameter-declaration",
+    "initializer-list",
+    // statements
+    "compound-statement", "return-statement", "expression-statement",
+    // expressions
+    "assign-expression", "logical-OR-expression", "logical-AND-expression", "equal-expression",
+    "not-equal-expression", "add-expression", "subtract-expression", "multiply-expression",
+    "divide-expression", "modulo-expression", "address-expression", "indirection-expression",
+    "logical-NOT-expression", "subscribe-expression", "call-expression", "argument-list",
+    "identifier", "integer-constant", "character-constant", "string-literal"};
+
 Ast* new_ast(AstType type, int num_children, ...) {
     Ast* ast = malloc(sizeof(Ast));
     ast->type = type;
@@ -68,6 +85,10 @@ Ast* ast_copy(Ast* ast) {
     if (ast->sliteral != NULL) copied_ast->sliteral = sliteral_copy(ast->sliteral);
     copied_ast->children = vector_copy(ast->children);
     return copied_ast;
+}
+
+int ast_isexpr(Ast* ast) {
+    return AST_ASSIGN_EXPR <= ast->type && ast->type <= AST_STRING_EXPR;
 }
 
 void delete_ast(Ast* ast) {
