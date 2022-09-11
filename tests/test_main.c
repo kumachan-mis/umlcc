@@ -123,5 +123,5 @@ int main(void) {
 
     int exit_code = CU_get_number_of_failures();
     CU_cleanup_registry();
-    return exit_code;
+    return 1;
 }
