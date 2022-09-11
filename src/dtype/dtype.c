@@ -186,7 +186,7 @@ int dtype_equals(Dtype* dtype, Dtype* other) {
 int dtype_iscompatible(Dtype* dtype, Dtype* other) {
     if (dtype_equals(dtype, other)) return 1;
 
-    // additional rules may be added
+    // TODO: more rules may be added
     return 0;
 }
 
@@ -198,7 +198,7 @@ int dtype_isassignable(Dtype* dtype, Dtype* other) {
         return 1;
     }
 
-    // additional rules may be added
+    // TODO: more rules may be added
     return 0;
 }
 
