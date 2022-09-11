@@ -13,6 +13,7 @@ Resolver* new_resolver(Ast* ast) {
     resolver->specifier_dtype = NULL;
     resolver->initialized_dtype = NULL;
     resolver->initialized_offset = -1;
+    resolver->is_nested_initializing = 0;
     resolver->sliteral_id = -1;
     resolver->call_dtype = NULL;
     return resolver;

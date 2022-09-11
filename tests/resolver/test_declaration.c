@@ -16,8 +16,8 @@ void test_resolve_scalar_init_enclosed();
 void test_resolve_sliteral_init();
 void test_resolve_sliteral_init_lacked();
 void test_resolve_sliteral_init_enclosed();
-void test_resolve_list_init_empty();
-void test_resolve_list_init_empty_nested();
+void test_resolve_list_init_zero();
+void test_resolve_list_init_zero_nested();
 void test_resolve_list_init();
 void test_resolve_list_init_lacked();
 void test_resolve_list_init_nested();
@@ -45,8 +45,8 @@ CU_Suite* add_test_suite_decl_resolver() {
     CU_ADD_TEST(suite, test_resolve_sliteral_init);
     CU_ADD_TEST(suite, test_resolve_sliteral_init_lacked);
     CU_ADD_TEST(suite, test_resolve_sliteral_init_enclosed);
-    CU_ADD_TEST(suite, test_resolve_list_init_empty);
-    CU_ADD_TEST(suite, test_resolve_list_init_empty_nested);
+    CU_ADD_TEST(suite, test_resolve_list_init_zero);
+    CU_ADD_TEST(suite, test_resolve_list_init_zero_nested);
     CU_ADD_TEST(suite, test_resolve_list_init);
     CU_ADD_TEST(suite, test_resolve_list_init_lacked);
     CU_ADD_TEST(suite, test_resolve_list_init_nested);
@@ -511,7 +511,7 @@ void test_resolve_sliteral_init_enclosed() {
     delete_srt(expected);
 }
 
-void test_resolve_list_init_empty() {
+void test_resolve_list_init_zero() {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -522,7 +522,8 @@ void test_resolve_list_init_empty() {
                     new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
                             new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
-                    new_ast(AST_INIT_LIST, 0))));
+                    new_ast(AST_INIT_LIST, 1,
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
@@ -544,7 +545,7 @@ void test_resolve_list_init_empty() {
     delete_srt(expected);
 }
 
-void test_resolve_list_init_empty_nested() {
+void test_resolve_list_init_zero_nested() {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -558,7 +559,8 @@ void test_resolve_list_init_empty_nested() {
                                     new_iliteral_ast(AST_INT_EXPR,
                                                      new_signed_iliteral(INTEGER_INT, 3))),
                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
-                    new_ast(AST_INIT_LIST, 0))));
+                    new_ast(AST_INIT_LIST, 1,
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(

@@ -14,6 +14,7 @@ typedef struct Resolver {
     Dtype* specifier_dtype;
     Dtype* initialized_dtype;
     int initialized_offset;
+    int is_nested_initializing;
     int sliteral_id;
     Dtype* call_dtype;
 } Resolver;

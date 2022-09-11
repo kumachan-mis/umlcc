@@ -178,9 +178,13 @@ ResolverReturn* resolve_init_declarator(Resolver* resolver) {
 
     resolver->initialized_dtype = child_srt->dtype;
     resolver->initialized_offset = 0;
+    resolver->is_nested_initializing = 0;
     resolver->ast = vector_at(ast->children, 1);
+
     resolverret_assign(&child_srt, &errs, resolve_initializer(resolver));
+
     resolver->ast = ast;
+    resolver->is_nested_initializing = 0;
     resolver->initialized_offset = -1;
     resolver->initialized_dtype = NULL;
 
@@ -347,22 +351,21 @@ ResolverReturn* resolve_initializer(Resolver* resolver) {
     Dtype* dtype = resolver->initialized_dtype;
 
     switch (dtype->type) {
+        case DTYPE_CHAR:
+        case DTYPE_INT:
+        case DTYPE_POINTER:
+            resolverret_assign(&srt, &errs, resolve_scalar_initializer(resolver));
+            break;
         case DTYPE_ARRAY:
             if (dtype->array->of_dtype->type == DTYPE_CHAR) {
                 resolverret_assign(&srt, &errs, resolve_string_initializer(resolver));
-                break;
+            } else {
+                resolverret_assign(&srt, &errs, resolve_array_initializer(resolver));
             }
-            resolverret_assign(&srt, &errs, resolve_array_initializer(resolver));
             break;
         default:
-            if (dtype_isscalar(dtype)) {
-                resolverret_assign(&srt, &errs, resolve_scalar_initializer(resolver));
-                break;
-            }
-
             errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (dtype_type=%s)\n",
-                            dtype_types[dtype->type]);
+            err = new_error("Error: %s cannot be initialized\n", dtype_types[dtype->type]);
             vector_push(errs, err);
             break;
     }
@@ -382,15 +385,15 @@ ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
     Dtype* dtype = resolver->initialized_dtype;
 
     switch (dtype->type) {
+        case DTYPE_CHAR:
+        case DTYPE_INT:
+        case DTYPE_POINTER:
+            resolverret_assign(&srt, &errs, resolve_zero_scalar_initializer(resolver));
+            break;
         case DTYPE_ARRAY:
             resolverret_assign(&srt, &errs, resolve_zero_array_initializer(resolver));
             break;
         default:
-            if (dtype_isscalar(dtype)) {
-                resolverret_assign(&srt, &errs, resolve_zero_scalar_initializer(resolver));
-                break;
-            }
-
             errs = new_vector(&t_error);
             err = new_error("Error: unreachable statement (dtype_type=%s)\n",
                             dtype_types[dtype->type]);
@@ -409,26 +412,48 @@ ResolverReturn* resolve_array_initializer(Resolver* resolver) {
 
     Ast* ast = resolver->ast;
     Dtype* dtype = resolver->initialized_dtype;
-
     int initializer_len = vector_size(ast->children);
+
+    if (ast->type != AST_INIT_LIST) {
+        errs = new_vector(&t_error);
+        err = new_error("Error: an array should be initialized with an initializer list\n");
+        vector_push(errs, err);
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    if (initializer_len == 0) {
+        errs = new_vector(&t_error);
+        err = new_error("Error: one or more initializer is required in an initializer list\n");
+        vector_push(errs, err);
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
     int array_index = 0;
 
     while (resolver->initialized_offset < initializer_len && array_index < dtype->array->size) {
         Srt* child_srt = NULL;
         Vector* child_errs = NULL;
+
         Ast* child_ast = vector_at(ast->children, resolver->initialized_offset);
+        int original_offset = resolver->initialized_offset;
+        int original_is_nested = resolver->is_nested_initializing;
+
         resolver->initialized_dtype = dtype->array->of_dtype;
 
         if (dtype_isaggregate(dtype->array->of_dtype) && child_ast->type != AST_INIT_LIST) {
             resolver->ast = ast;
+            resolver->is_nested_initializing = 1;
             resolverret_assign(&child_srt, &child_errs, resolve_initializer(resolver));
         } else {
             resolver->ast = child_ast;
-            int original_offset = resolver->initialized_offset;
             resolver->initialized_offset = 0;
+            resolver->is_nested_initializing = 0;
             resolverret_assign(&child_srt, &child_errs, resolve_initializer(resolver));
             resolver->initialized_offset = original_offset + 1;
         }
+        resolver->is_nested_initializing = original_is_nested;
 
         array_index++;
 
@@ -448,6 +473,7 @@ ResolverReturn* resolve_array_initializer(Resolver* resolver) {
     for (int i = array_index; i < dtype->array->size; i++) {
         Srt* child_srt = NULL;
         Vector* child_errs = NULL;
+
         resolver->ast = NULL;
         resolver->initialized_dtype = dtype->array->of_dtype;
 
@@ -466,12 +492,13 @@ ResolverReturn* resolve_array_initializer(Resolver* resolver) {
         vector_push(srt->children, child_srt);
     }
 
-    if (array_index == dtype->array->size && resolver->initialized_offset < initializer_len) {
-        if (errs != NULL) delete_vector(errs);
-        errs = new_vector(&t_error);
-        err = new_error("Error: initializer list is too long\n");
-        vector_push(errs, err);
-    }
+    // if (!resolver->is_nested_initializing && array_index == dtype->array->size &&
+    // resolver->initialized_offset < initializer_len) {
+    //     if (errs != NULL) delete_vector(errs);
+    //     errs = new_vector(&t_error);
+    //     err = new_error("Error: initializer list is too long\n");
+    //     vector_push(errs, err);
+    // }
 
     resolver->ast = ast;
     resolver->initialized_dtype = dtype;
