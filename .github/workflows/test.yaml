@@ -11,7 +11,6 @@ jobs:
     if: ${{ !startsWith(github.event.pull_request.title, '[WIP]') }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
       - name: Install dependencies
         run: |
              sudo apt-get update
@@ -38,10 +37,10 @@ jobs:
       - name: Run unit test with coverage
         run: make unittest-cov
 
-e2etest:
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run end-to-end test
-        run: make e2etest
+  e2etest:
+      needs: install
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - name: Run end-to-end test
+          run: make e2etest
