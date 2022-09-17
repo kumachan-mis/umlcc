@@ -10,8 +10,8 @@ void test_parse_function_definition_no_param_identifier_error();
 void test_parse_function_definition_param_list_error();
 void test_parse_function_definition_body_error();
 
-void run_parser_test_error(Vector* __restrict__ input, const char* message);
-void run_function_definition_parser_test_error(Vector* __restrict__ input, const char* message);
+void run_parser_error_test(Vector* __restrict__ input, const char* message);
+void run_function_definition_parser_error_test(Vector* __restrict__ input, const char* message);
 
 CU_Suite* add_test_suite_external_parser_error() {
     CU_Suite* suite = CU_add_suite("test_suite_external_parser_error", NULL, NULL);
@@ -33,7 +33,7 @@ void test_parse_external_declaration_error() {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     const char* message = "Error: unexpected token int\n";
-    run_parser_test_error(input, message);
+    run_parser_error_test(input, message);
 }
 
 void test_parse_function_definition_no_specifier_error() {
@@ -48,8 +48,8 @@ void test_parse_function_definition_no_specifier_error() {
     Vector* func_def_inpput = vector_copy(input);
 
     const char* message = "Error: one of declaration-specifiers expected, but got identifier\n";
-    run_parser_test_error(input, message);
-    run_function_definition_parser_test_error(func_def_inpput, message);
+    run_parser_error_test(input, message);
+    run_function_definition_parser_error_test(func_def_inpput, message);
 }
 
 void test_parse_function_definition_no_param_specifier_error() {
@@ -66,8 +66,8 @@ void test_parse_function_definition_no_param_specifier_error() {
     Vector* func_def_inpput = vector_copy(input);
 
     const char* message = "Error: one of declaration-specifiers expected, but got identifier\n";
-    run_parser_test_error(input, message);
-    run_function_definition_parser_test_error(func_def_inpput, message);
+    run_parser_error_test(input, message);
+    run_function_definition_parser_error_test(func_def_inpput, message);
 }
 
 void test_parse_function_definition_no_param_identifier_error() {
@@ -82,8 +82,8 @@ void test_parse_function_definition_no_param_identifier_error() {
     Vector* func_def_inpput = vector_copy(input);
 
     const char* message = "Error: unexpected token )\n";
-    run_parser_test_error(input, message);
-    run_function_definition_parser_test_error(func_def_inpput, message);
+    run_parser_error_test(input, message);
+    run_function_definition_parser_error_test(func_def_inpput, message);
 }
 
 void test_parse_function_definition_param_list_error() {
@@ -98,8 +98,8 @@ void test_parse_function_definition_param_list_error() {
     Vector* func_def_inpput = vector_copy(input);
 
     const char* message = "Error: token , expected, but got EOF\n";
-    run_parser_test_error(input, message);
-    run_function_definition_parser_test_error(func_def_inpput, message);
+    run_parser_error_test(input, message);
+    run_function_definition_parser_error_test(func_def_inpput, message);
 }
 
 void test_parse_function_definition_body_error() {
@@ -121,11 +121,11 @@ void test_parse_function_definition_body_error() {
     Vector* func_def_inpput = vector_copy(input);
 
     const char* message = "Error: unexpected token EOF\n";
-    run_parser_test_error(input, message);
-    run_function_definition_parser_test_error(func_def_inpput, message);
+    run_parser_error_test(input, message);
+    run_function_definition_parser_error_test(func_def_inpput, message);
 }
 
-void run_parser_test_error(Vector* __restrict__ input, const char* message) {
+void run_parser_error_test(Vector* __restrict__ input, const char* message) {
     Parser* parser = new_parser(input);
     Ast* actual = NULL;
     Error* err = NULL;
@@ -138,7 +138,7 @@ void run_parser_test_error(Vector* __restrict__ input, const char* message) {
     delete_parser(parser);
 }
 
-void run_function_definition_parser_test_error(Vector* __restrict__ input, const char* message) {
+void run_function_definition_parser_error_test(Vector* __restrict__ input, const char* message) {
     Parser* parser = new_parser(input);
     Ast* actual = NULL;
     Error* err = NULL;
