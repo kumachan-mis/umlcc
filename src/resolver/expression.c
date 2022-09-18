@@ -215,8 +215,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
         lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
         rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER &&
-               dtype_iscompatible(lhs_srt->dtype->pointer->to_dtype,
-                                  rhs_srt->dtype->pointer->to_dtype)) {
+               dtype_iscompatible(lhs_srt->dtype, rhs_srt->dtype)) {
         // do nothing
     } else {
         errs = new_vector(&t_error);
@@ -224,7 +223,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
 
     switch (ast->type) {
         case AST_EQUAL_EXPR:
-            if (err != NULL) {
+            if (errs != NULL) {
                 if (lhs_srt->dtype->type == DTYPE_POINTER &&
                     rhs_srt->dtype->type == DTYPE_POINTER) {
                     err = new_error("Error: operands of pointer == pointer are not compatible\n");
@@ -238,7 +237,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
             srt = new_dtyped_srt(SRT_EQUAL_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         case AST_NEQUAL_EXPR:
-            if (err != NULL) {
+            if (errs != NULL) {
                 if (lhs_srt->dtype->type == DTYPE_POINTER &&
                     rhs_srt->dtype->type == DTYPE_POINTER) {
                     err = new_error("Error: operands of pointer != pointer are not compatible\n");
@@ -252,7 +251,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
             srt = new_dtyped_srt(SRT_NEQUAL_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         default:
-            errs = new_vector(&t_error);
+            if (errs == NULL) errs = new_vector(&t_error);
             err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
             vector_push(errs, err);
             break;
@@ -321,16 +320,21 @@ ResolverReturn* resolve_add_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
+
         lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
         rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
         Dtype* dtype = new_integer_dtype(DTYPE_INT);
         srt = new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
+
     } else if ((lhs_srt->dtype->type == DTYPE_POINTER && dtype_isinteger(rhs_srt->dtype)) ||
                (dtype_isinteger(lhs_srt->dtype) && rhs_srt->dtype->type == DTYPE_POINTER)) {
+
         if (rhs_srt->dtype->type == DTYPE_POINTER) swap_ptr((void**)&lhs_srt, (void**)&rhs_srt);
         Dtype* dtype = dtype_copy(lhs_srt->dtype);
         srt = new_dtyped_srt(SRT_PADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
+
     } else {
+
         errs = new_vector(&t_error);
         err = new_error("Error: binary + expression should be either arithmetic + arithmetic, "
                         "pointer + integer, or integer + pointer\n");
@@ -373,23 +377,31 @@ ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
+
         lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
         rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
         Dtype* dtype = new_integer_dtype(DTYPE_INT);
         srt = new_dtyped_srt(SRT_SUB_EXPR, dtype, 2, lhs_srt, rhs_srt);
+
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && dtype_isinteger(rhs_srt->dtype)) {
+
         Dtype* dtype = dtype_copy(lhs_srt->dtype);
         srt = new_dtyped_srt(SRT_PSUB_EXPR, dtype, 2, lhs_srt, rhs_srt);
+
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER &&
-               dtype_iscompatible(lhs_srt->dtype->pointer->to_dtype,
-                                  rhs_srt->dtype->pointer->to_dtype)) {
+               dtype_iscompatible(lhs_srt->dtype, rhs_srt->dtype)) {
+
         Dtype* dtype = new_integer_dtype(DTYPE_INT);
         srt = new_dtyped_srt(SRT_PDIFF_EXPR, dtype, 2, lhs_srt, rhs_srt);
+
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
+
         errs = new_vector(&t_error);
         err = new_error("Error: operands of pointer - pointer are not compatible\n");
         vector_push(errs, err);
+
     } else {
+
         errs = new_vector(&t_error);
         err = new_error("Error: binary - expression should be either arithmetic - arithmetic, "
                         "pointer - integer, or pointer - pointer\n");
@@ -478,6 +490,64 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
 }
 
 ResolverReturn* resolve_unary_expr(Resolver* resolver) {
+    ResolverReturn* resolve_address_expr(Resolver * resolver);
+    ResolverReturn* resolve_indirection_expr(Resolver * resolver);
+    ResolverReturn* resolve_logical_not_expr(Resolver * resolver);
+
+    Srt* srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    switch (ast->type) {
+        case AST_ADDR_EXPR:
+            resolverret_assign(&srt, &errs, resolve_address_expr(resolver));
+            break;
+        case AST_INDIR_EXPR:
+            resolverret_assign(&srt, &errs, resolve_indirection_expr(resolver));
+            break;
+        case AST_LNOT_EXPR:
+            resolverret_assign(&srt, &errs, resolve_logical_not_expr(resolver));
+            break;
+        default:
+            errs = new_vector(&t_error);
+            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
+            vector_push(errs, err);
+            break;
+    }
+
+    if (errs != NULL) return new_resolverret_errors(errs);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_address_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    Srt* child_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) return new_resolverret_errors(errs);
+
+    if (child_srt->dtype->type != DTYPE_FUNCTION && child_srt->type != SRT_INDIR_EXPR &&
+        (child_srt->type != SRT_IDENT_EXPR || !dtype_isobject(child_srt->dtype))) {
+        errs = new_vector(&t_error);
+        err = new_error("Error: operand of unary & is neither a function designator, "
+                        "a indirection, nor an object lvalue\n");
+        vector_push(errs, err);
+        delete_srt(child_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    Dtype* dtype = new_pointer_dtype(dtype_copy(child_srt->dtype));
+    srt = new_dtyped_srt(SRT_ADDR_EXPR, dtype, 1, child_srt);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_indirection_expr(Resolver* resolver) {
     Srt* srt = NULL;
     Srt* child_srt = NULL;
     Vector* errs = NULL;
@@ -490,77 +560,48 @@ ResolverReturn* resolve_unary_expr(Resolver* resolver) {
 
     if (errs != NULL) return new_resolverret_errors(errs);
 
-    switch (ast->type) {
-        case AST_ADDR_EXPR: {
-            int is_valid_operand = 0;
+    child_srt = convert_to_ptr_if_array(child_srt);
+    child_srt = convert_to_ptr_if_function(child_srt);
 
-            is_valid_operand = is_valid_operand || child_srt->dtype->type == DTYPE_FUNCTION;
-            is_valid_operand = is_valid_operand || child_srt->type == SRT_INDIR_EXPR;
-
-            if (!is_valid_operand && child_srt->type == SRT_IDENT_EXPR) {
-                Symbol* symbol = NULL;
-                if (symbol == NULL && resolver->local_table != NULL) {
-                    symbol = symboltable_search(resolver->local_table, child_srt->ident_name);
-                }
-                if (symbol == NULL) {
-                    symbol = symboltable_search(resolver->global_table, child_srt->ident_name);
-                }
-                is_valid_operand = symbol != NULL && dtype_isobject(symbol->dtype);
-            }
-
-            if (!is_valid_operand) {
-                errs = new_vector(&t_error);
-                err = new_error("Error: operand of unary & is neither a function designator, "
-                                "a indirection, nor an object lvalue\n");
-                vector_push(errs, err);
-                break;
-            }
-
-            Dtype* dtype = new_pointer_dtype(dtype_copy(child_srt->dtype));
-            srt = new_dtyped_srt(SRT_ADDR_EXPR, dtype, 1, child_srt);
-            break;
-        }
-        case AST_INDIR_EXPR: {
-            child_srt = convert_to_ptr_if_array(child_srt);
-            child_srt = convert_to_ptr_if_function(child_srt);
-
-            if (child_srt->dtype->type != DTYPE_POINTER) {
-                errs = new_vector(&t_error);
-                err = new_error("Error: operand of unary * does not have pointer type\n");
-                vector_push(errs, err);
-                break;
-            }
-
-            Dtype* dtype = dtype_copy(child_srt->dtype->pointer->to_dtype);
-            srt = new_dtyped_srt(SRT_INDIR_EXPR, dtype, 1, child_srt);
-            break;
-        }
-        case AST_LNOT_EXPR: {
-            child_srt = convert_to_ptr_if_array(child_srt);
-            child_srt = convert_to_ptr_if_function(child_srt);
-
-            if (!dtype_isscalar(child_srt->dtype)) {
-                errs = new_vector(&t_error);
-                err = new_error("Error: operand of unary ! does not have scalar type\n");
-                vector_push(errs, err);
-                break;
-            }
-
-            Dtype* dtype = new_integer_dtype(DTYPE_INT);
-            srt = new_dtyped_srt(SRT_LNOT_EXPR, dtype, 1, child_srt);
-            break;
-        }
-        default:
-            errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
-            vector_push(errs, err);
-            break;
-    }
-
-    if (errs != NULL) {
+    if (child_srt->dtype->type != DTYPE_POINTER) {
+        errs = new_vector(&t_error);
+        err = new_error("Error: operand of unary * does not have pointer type\n");
+        vector_push(errs, err);
         delete_srt(child_srt);
         return new_resolverret_errors(errs);
     }
+
+    Dtype* dtype = dtype_copy(child_srt->dtype->pointer->to_dtype);
+    srt = new_dtyped_srt(SRT_INDIR_EXPR, dtype, 1, child_srt);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_logical_not_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    Srt* child_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+
+    if (errs != NULL) return new_resolverret_errors(errs);
+
+    child_srt = convert_to_ptr_if_array(child_srt);
+    child_srt = convert_to_ptr_if_function(child_srt);
+
+    if (!dtype_isscalar(child_srt->dtype)) {
+        errs = new_vector(&t_error);
+        err = new_error("Error: operand of unary ! does not have scalar type\n");
+        vector_push(errs, err);
+        delete_srt(child_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    Dtype* dtype = new_integer_dtype(DTYPE_INT);
+    srt = new_dtyped_srt(SRT_LNOT_EXPR, dtype, 1, child_srt);
     return new_resolverret(srt);
 }
 
@@ -593,19 +634,55 @@ ResolverReturn* resolve_postfix_expr(Resolver* resolver) {
 
 ResolverReturn* resolve_subscription_expr(Resolver* resolver) {
     Srt* srt = NULL;
+    Srt* lhs_srt = NULL;
+    Srt* rhs_srt = NULL;
     Vector* errs = NULL;
+    Error* err = NULL;
     Ast* ast = resolver->ast;
 
-    Ast* lhs_ast = ast_copy(vector_at(ast->children, 0));
-    Ast* rhs_ast = ast_copy(vector_at(ast->children, 1));
-    resolver->ast = new_ast(AST_INDIR_EXPR, 1, new_ast(AST_ADD_EXPR, 2, lhs_ast, rhs_ast));
-
-    resolverret_assign(&srt, &errs, resolve_expr(resolver));
-
-    delete_ast(resolver->ast);
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-
     if (errs != NULL) return new_resolverret_errors(errs);
+
+    lhs_srt = convert_to_ptr_if_array(lhs_srt);
+    lhs_srt = convert_to_ptr_if_function(lhs_srt);
+
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_assign(&rhs_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(lhs_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    rhs_srt = convert_to_ptr_if_array(rhs_srt);
+    rhs_srt = convert_to_ptr_if_function(rhs_srt);
+
+    if ((lhs_srt->dtype->type != DTYPE_POINTER || !dtype_isinteger(rhs_srt->dtype)) &&
+        (!dtype_isinteger(lhs_srt->dtype) || rhs_srt->dtype->type != DTYPE_POINTER)) {
+        errs = new_vector(&t_error);
+        err = new_error("Error: subscription should be pointer[integer] or integer[pointer]\n");
+        vector_push(errs, err);
+        delete_srt(lhs_srt);
+        delete_srt(rhs_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    if (rhs_srt->dtype->type == DTYPE_POINTER) swap_ptr((void**)&lhs_srt, (void**)&rhs_srt);
+
+    if (!dtype_isobject(lhs_srt->dtype->pointer->to_dtype)) {
+        errs = new_vector(&t_error);
+        err = new_error("Error: subscribed object should have pointer to object type\n");
+        vector_push(errs, err);
+        delete_srt(lhs_srt);
+        delete_srt(rhs_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    Dtype* dtype = dtype_copy(lhs_srt->dtype);
+    srt = new_dtyped_srt(SRT_PADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
+    srt = new_dtyped_srt(SRT_INDIR_EXPR, dtype_copy(lhs_srt->dtype->pointer->to_dtype), 1, srt);
     return new_resolverret(srt);
 }
 
@@ -685,9 +762,6 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
             vector_extend(errs, child_errs);
             delete_vector(child_errs);
             continue;
-        } else if (errs != NULL) {
-            delete_srt(child_srt);
-            continue;
         }
 
         child_srt = convert_to_ptr_if_array(child_srt);
@@ -697,6 +771,10 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
             if (errs == NULL) errs = new_vector(&t_error);
             err = new_error("Error: argument is not assignable to parameter\n");
             vector_push(errs, err);
+            delete_srt(child_srt);
+            continue;
+        }
+        if (errs != NULL) {
             delete_srt(child_srt);
             continue;
         }
@@ -733,7 +811,8 @@ ResolverReturn* resolve_primary_expr(Resolver* resolver) {
             }
             if (symbol == NULL) {
                 errs = new_vector(&t_error);
-                err = new_error("Error: identifier '%s' is used before declared\n", symbol->name);
+                err =
+                    new_error("Error: identifier '%s' is used before declared\n", ast->ident_name);
                 vector_push(errs, err);
                 break;
             }

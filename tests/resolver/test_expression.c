@@ -448,7 +448,7 @@ void test_resolve_address_expr() {
     symboltable_define_memory(local_table, new_string("a"), array_dtype);
 
     Srt* expected = new_dtyped_srt(
-        SRT_ADDR_EXPR, dtype_copy(pointer_dtype), 1, // non-terminal
+        SRT_ADDR_EXPR, pointer_dtype, 1, // non-terminal
         new_dtyped_srt(
             SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
             new_dtyped_srt(
@@ -514,7 +514,7 @@ void test_resolve_call_expr() {
     vector_push(params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
     vector_push(params, new_dparam(new_string("y"), new_integer_dtype(DTYPE_INT)));
     Dtype* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
-    symboltable_define_memory(local_table, new_string("function"), func_dtype);
+    symboltable_define_label(local_table, new_string("function"), func_dtype);
     symboltable_define_memory(local_table, new_string("a"), new_integer_dtype(DTYPE_CHAR));
 
     Srt* expected = new_dtyped_srt(
