@@ -103,25 +103,9 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
         DParam* dparam = vector_at(params, i);
-
-        if (!symboltable_can_define(resolver->local_table, dparam->ident_name)) {
-            if (errs == NULL) errs = new_vector(&t_error);
-            err = new_error("Error: parameter name '%s' is duplicated\n", dparam->ident_name);
-            vector_push(errs, err);
-            continue;
-        }
-
         char* symbol_name = new_string(dparam->ident_name);
         Dtype* symbol_dtype = dtype_copy(dparam->dtype);
         symboltable_define_memory(resolver->local_table, symbol_name, symbol_dtype);
-    }
-
-    if (errs != NULL) {
-        delete_symboltable(resolver->local_table);
-        resolver->local_table = NULL;
-        resolver->return_dtype = NULL;
-        delete_srt(srt);
-        return new_resolverret_errors(errs);
     }
 
     resolver->ast = vector_at(ast->children, 2);

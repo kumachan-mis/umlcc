@@ -771,8 +771,6 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
             if (errs == NULL) errs = new_vector(&t_error);
             err = new_error("Error: argument is not assignable to parameter\n");
             vector_push(errs, err);
-            delete_srt(child_srt);
-            continue;
         }
         if (errs != NULL) {
             delete_srt(child_srt);

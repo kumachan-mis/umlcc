@@ -1,6 +1,7 @@
 #include "./declaration.h"
 #include "../common/type.h"
 #include "../literal/iliteral.h"
+#include "../set/set.h"
 #include "./conversion.h"
 #include "./expression.h"
 
@@ -218,6 +219,13 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                 break;
             }
             case AST_ARRAY_DECLOR: {
+                if (socket_dtype != NULL && socket_dtype->type == DTYPE_FUNCTION) {
+                    errs = new_vector(&t_error);
+                    err = new_error("Error: function returning array is invalid\n");
+                    vector_push(errs, err);
+                    break;
+                }
+
                 Srt* array_size_srt = NULL;
                 resolver->ast = vector_at(ast_ptr->children, 1);
                 resolverret_assign(&array_size_srt, &errs, resolve_expr(resolver));
@@ -225,7 +233,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
 
                 if (array_size_srt->type != SRT_INT_EXPR || array_size_srt->iliteral->is_unsigned) {
                     errs = new_vector(&t_error);
-                    err = new_error("Error: only signed integer is supported as array size\n");
+                    err = new_error("Error: only direct integer is supported as array size\n");
                     vector_push(errs, err);
                     delete_srt(array_size_srt);
                     break;
@@ -239,6 +247,18 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                 break;
             }
             case AST_FUNC_DECLOR: {
+                if (socket_dtype != NULL && socket_dtype->type == DTYPE_ARRAY) {
+                    errs = new_vector(&t_error);
+                    err = new_error("Error: array of functions is invalid\n");
+                    vector_push(errs, err);
+                    break;
+                } else if (socket_dtype != NULL && socket_dtype->type == DTYPE_FUNCTION) {
+                    errs = new_vector(&t_error);
+                    err = new_error("Error: function returning function is invalid\n");
+                    vector_push(errs, err);
+                    break;
+                }
+
                 Vector* func_dparams = NULL;
                 resolver->ast = vector_at(ast_ptr->children, 1);
                 resolverret_dparams_assign(&func_dparams, &errs, resolve_parameter_list(resolver));
@@ -264,7 +284,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
 
     resolver->ast = ast;
     if (errs != NULL) {
-        delete_dtype(dtype);
+        if (dtype != NULL) delete_dtype(dtype);
         return new_resolverret_errors(errs);
     }
     return new_resolverret(srt);
@@ -273,7 +293,9 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
 ResolverReturnDParams* resolve_parameter_list(Resolver* resolver) {
     Vector* dparams = new_vector(&t_dparam);
     Vector* errs = NULL;
+    Error* err = NULL;
     Ast* ast = resolver->ast;
+    Set* param_names_set = new_set(&t_hashable_string);
 
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
@@ -288,15 +310,24 @@ ResolverReturnDParams* resolve_parameter_list(Resolver* resolver) {
             vector_extend(errs, child_errs);
             delete_vector(child_errs);
             continue;
-        } else if (errs != NULL) {
+        }
+
+        if (set_contains(param_names_set, dparam->ident_name)) {
+            if (errs == NULL) errs = new_vector(&t_error);
+            err = new_error("Error: parameter name '%s' is duplicated\n", dparam->ident_name);
+            vector_push(errs, err);
+        }
+        if (errs != NULL) {
             delete_dparam(dparam);
             continue;
         }
 
         vector_push(dparams, dparam);
+        set_add(param_names_set, new_string(dparam->ident_name));
     }
 
     resolver->ast = ast;
+    delete_set(param_names_set);
     if (errs != NULL) {
         delete_vector(dparams);
         return new_resolverret_dparams_errors(errs);
@@ -308,6 +339,7 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
     Dtype* specifiers_dtype = NULL;
     Srt* declarator_srt = NULL;
     Vector* errs = NULL;
+    Error* err = NULL;
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
@@ -315,10 +347,21 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
     resolver->ast = ast;
     if (errs != NULL) return new_resolverret_dparam_errors(errs);
 
+    if (specifiers_dtype->type == DTYPE_DECORATION && specifiers_dtype->decoration->typedef_flag) {
+        errs = new_vector(&t_error);
+        err = new_error("Error: storage specifiers are invalid for a function parameter\n");
+        vector_push(errs, err);
+        delete_dtype(specifiers_dtype);
+        return new_resolverret_dparam_errors(errs);
+    }
+
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&declarator_srt, &errs, resolve_declarator(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_dparam_errors(errs);
+    if (errs != NULL) {
+        delete_dtype(specifiers_dtype);
+        return new_resolverret_dparam_errors(errs);
+    }
 
     declarator_srt->dtype = dtype_connect(declarator_srt->dtype, specifiers_dtype);
     if (declarator_srt->dtype->type == DTYPE_ARRAY) {
@@ -492,13 +535,13 @@ ResolverReturn* resolve_array_initializer(Resolver* resolver) {
         vector_push(srt->children, child_srt);
     }
 
-    // if (!resolver->is_nested_initializing && array_index == dtype->array->size &&
-    // resolver->initialized_offset < initializer_len) {
-    //     if (errs != NULL) delete_vector(errs);
-    //     errs = new_vector(&t_error);
-    //     err = new_error("Error: initializer list is too long\n");
-    //     vector_push(errs, err);
-    // }
+    if (!resolver->is_nested_initializing && array_index == dtype->array->size &&
+        resolver->initialized_offset < initializer_len) {
+        if (errs != NULL) delete_vector(errs);
+        errs = new_vector(&t_error);
+        err = new_error("Error: initializer list is too long\n");
+        vector_push(errs, err);
+    }
 
     resolver->ast = ast;
     resolver->initialized_dtype = dtype;

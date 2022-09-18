@@ -26,6 +26,7 @@
 #include "./regalloc/test_basicblock.h"
 #include "./regalloc/test_regalloc.h"
 #include "./resolver/test_declaration.h"
+#include "./resolver/test_declaration_error.h"
 #include "./resolver/test_expression.h"
 #include "./resolver/test_expression_error.h"
 #include "./resolver/test_external.h"
@@ -99,6 +100,7 @@ int main(void) {
     add_test_suite_expr_resolver_error();
     add_test_suite_stmt_resolver();
     add_test_suite_decl_resolver();
+    add_test_suite_decl_resolver_error();
     add_test_suite_external_resolver();
 
     // immcgen tests

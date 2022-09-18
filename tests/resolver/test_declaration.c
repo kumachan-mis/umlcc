@@ -608,7 +608,7 @@ void test_resolve_list_init() {
                     new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
                             new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
-                    new_ast(AST_INIT_LIST, 3,
+                    new_ast(AST_INIT_LIST, 3, // non-terminal
                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)),
                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4))))));
