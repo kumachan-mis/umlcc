@@ -84,7 +84,7 @@ ResolverReturn* resolve_return_stmt(Resolver* resolver) {
 
     if (!dtype_isassignable(srt->dtype, resolver->return_dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("Error: expression is not assignable to function return\n");
+        err = new_error("expression is not assignable to function return\n");
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);

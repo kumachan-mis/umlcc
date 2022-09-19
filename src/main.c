@@ -11,19 +11,19 @@
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
-        fprintf(stderr, "Error: no input file\n");
+        fprintf(stderr, "\x1b[1;31merror\x1b[0m: no input file\n");
         return 1;
     }
 
     FILE* src = fopen(argv[1], "r");
     if (src == NULL) {
-        fprintf(stderr, "Error: %s: no such file or directory\n", argv[1]);
+        fprintf(stderr, "\x1b[1;31merror\x1b[0m: %s: no such file or directory\n", argv[1]);
         return 1;
     }
 
     char* ext = strrchr(argv[1], '.');
     if (ext == NULL || strcmp(ext, ".c") != 0) {
-        fprintf(stderr, "Error: file format is not .c\n");
+        fprintf(stderr, "\x1b[1;31merror\x1b[0m: file format is not .c\n");
         return 1;
     }
 
@@ -50,8 +50,8 @@ int main(int argc, char* argv[]) {
     delete_lexer(lexer);
 
     if (err != NULL) {
-        fprintf(stderr, "@@@@@ Error occured in lexer @@@@@\n");
-        fprintf(stderr, "    %s", err->message);
+        fprintf(stderr, "\x1b[0;36m@@@@@ Error occured in lexer @@@@@\x1b[0m\n");
+        fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s", err->message);
         delete_error(err);
         // files are implicitly closed
         return 1;
@@ -63,8 +63,8 @@ int main(int argc, char* argv[]) {
     delete_parser(parser);
 
     if (err != NULL) {
-        fprintf(stderr, "@@@@@ Error occured in parser @@@@@\n");
-        fprintf(stderr, "    %s", err->message);
+        fprintf(stderr, "\x1b[0;36m@@@@@ Error occured in parser @@@@@\x1b[0m\n");
+        fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s", err->message);
         delete_error(err);
         // files are implicitly closed
         return 1;
@@ -76,11 +76,11 @@ int main(int argc, char* argv[]) {
     delete_resolver(resolver);
 
     if (errs != NULL) {
-        fprintf(stderr, "@@@@@ Error occured in resolver @@@@@\n");
+        fprintf(stderr, "\x1b[0;36m@@@@@ Error occured in resolver @@@@@\x1b[0m\n");
         int num_errs = vector_size(errs);
         for (int i = 0; i < num_errs; i++) {
             err = vector_at(errs, i);
-            fprintf(stderr, "    %s", err->message);
+            fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s", err->message);
         }
         delete_vector(errs);
         // files are implicitly closed

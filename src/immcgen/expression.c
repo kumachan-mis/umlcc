@@ -18,7 +18,7 @@ Vector* gen_assignment_expr_immcode(Immcgen* immcgen) {
             vector_push(codes, new_inst_immc(IMMC_INST_STORE, dst, src, NULL));
             break;
         default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            fprintf(stderr, "unexpected srt type %d\n", srt->type);
             exit(1);
     }
 

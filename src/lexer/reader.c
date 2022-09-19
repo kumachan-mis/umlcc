@@ -82,10 +82,10 @@ LexerReturnItem* read_character_constant(Lexer* lexer) {
             errint_assign(&c, &err, read_escape_seqence(lexer));
             break;
         case '\n':
-            err = new_error("Error: newline appeared in character constant\n");
+            err = new_error("newline appeared in character constant\n");
             break;
         case '\'':
-            err = new_error("Error: character constant is empty\n");
+            err = new_error("character constant is empty\n");
             break;
         default:
             break;
@@ -100,7 +100,7 @@ LexerReturnItem* read_character_constant(Lexer* lexer) {
                 errint_assign(&rest, &err, read_escape_seqence(lexer));
                 break;
             case '\n':
-                err = new_error("Error: newline appeared in character constant\n");
+                err = new_error("newline appeared in character constant\n");
                 break;
             default:
                 break;
@@ -132,7 +132,7 @@ LexerReturnItem* read_string_literal(Lexer* lexer) {
                 errint_assign(&c, &err, read_escape_seqence(lexer));
                 break;
             case '\n':
-                err = new_error("Error: newline appeared in string literal\n");
+                err = new_error("newline appeared in string literal\n");
                 break;
             default:
                 break;
@@ -199,7 +199,7 @@ LexerReturnItem* read_punctuator(Lexer* lexer) {
     free(ctoken_str);
 
     if (ctoken_type_ref == NULL) {
-        err = new_error("Error: unexpected character '%c'\n", c);
+        err = new_error("unexpected character '%c'\n", c);
         return new_lexerret_item_error(err);
     }
 
@@ -346,7 +346,7 @@ ErrorableInt* read_simple_escape_seqence(Lexer* lexer) {
         case 'v':
             return new_errint('\v');
         default:
-            err = new_error("Error: invalid escape sequence \\%c\n", c);
+            err = new_error("invalid escape sequence \\%c\n", c);
             return new_errint_error(err);
     }
 }
