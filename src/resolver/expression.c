@@ -59,6 +59,7 @@ ResolverReturn* resolve_expr(Resolver* resolver) {
 
 ResolverReturn* resolve_assignment_expr(Resolver* resolver) {
     Srt* srt = NULL;
+    Dtype* dtype = NULL;
     Srt* lhs_srt = NULL;
     Srt* rhs_srt = NULL;
     Vector* errs = NULL;
@@ -103,7 +104,7 @@ ResolverReturn* resolve_assignment_expr(Resolver* resolver) {
         rhs_srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(lhs_srt->dtype), 1, rhs_srt);
     }
 
-    Dtype* dtype = dtype_copy(lhs_srt->dtype);
+    dtype = dtype_copy(lhs_srt->dtype);
     lhs_srt = convert_to_ptr(lhs_srt);
 
     srt = new_dtyped_srt(SRT_ASSIGN_EXPR, dtype, 2, lhs_srt, rhs_srt);
@@ -112,6 +113,7 @@ ResolverReturn* resolve_assignment_expr(Resolver* resolver) {
 
 ResolverReturn* resolve_logical_expr(Resolver* resolver) {
     Srt* srt = NULL;
+    Dtype* dtype = NULL;
     Srt* lhs_srt = NULL;
     Srt* rhs_srt = NULL;
     Vector* errs = NULL;
@@ -137,8 +139,6 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_array(rhs_srt);
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
-    Dtype* dtype = new_integer_dtype(DTYPE_INT);
-
     switch (ast->type) {
         case AST_LOR_EXPR:
             if (!dtype_isscalar(lhs_srt->dtype)) {
@@ -151,7 +151,10 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver) {
                 err = new_error("each of operands of || should have scalar type\n");
                 vector_push(errs, err);
             }
-            if (errs == NULL) srt = new_dtyped_srt(SRT_LOR_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            if (errs == NULL) {
+                dtype = new_integer_dtype(DTYPE_INT);
+                srt = new_dtyped_srt(SRT_LOR_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            }
             break;
         case AST_LAND_EXPR:
             if (!dtype_isscalar(lhs_srt->dtype)) {
@@ -164,7 +167,10 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver) {
                 err = new_error("each of operands of && should have scalar type\n");
                 vector_push(errs, err);
             }
-            if (errs == NULL) srt = new_dtyped_srt(SRT_LAND_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            if (errs == NULL) {
+                dtype = new_integer_dtype(DTYPE_INT);
+                srt = new_dtyped_srt(SRT_LAND_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            }
             break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
@@ -182,6 +188,7 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver) {
 
 ResolverReturn* resolve_equality_expr(Resolver* resolver) {
     Srt* srt = NULL;
+    Dtype* dtype = NULL;
     Srt* lhs_srt = NULL;
     Srt* rhs_srt = NULL;
     Vector* errs = NULL;
@@ -206,8 +213,6 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
 
     rhs_srt = convert_to_ptr_if_array(rhs_srt);
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
-
-    Dtype* dtype = new_integer_dtype(DTYPE_INT);
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
         lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
@@ -231,6 +236,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
                 vector_push(errs, err);
                 break;
             }
+            dtype = new_integer_dtype(DTYPE_INT);
             srt = new_dtyped_srt(SRT_EQUAL_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         case AST_NEQUAL_EXPR:
@@ -244,6 +250,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
                 vector_push(errs, err);
                 break;
             }
+            dtype = new_integer_dtype(DTYPE_INT);
             srt = new_dtyped_srt(SRT_NEQUAL_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         default:
@@ -287,6 +294,7 @@ ResolverReturn* resolve_additive_expr(Resolver* resolver) {
 
 ResolverReturn* resolve_add_expr(Resolver* resolver) {
     Srt* srt = NULL;
+    Dtype* dtype = NULL;
     Srt* lhs_srt = NULL;
     Srt* rhs_srt = NULL;
     Vector* errs = NULL;
@@ -316,14 +324,14 @@ ResolverReturn* resolve_add_expr(Resolver* resolver) {
 
         lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
         rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
-        Dtype* dtype = new_integer_dtype(DTYPE_INT);
+        dtype = new_integer_dtype(DTYPE_INT);
         srt = new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
 
     } else if ((lhs_srt->dtype->type == DTYPE_POINTER && dtype_isinteger(rhs_srt->dtype)) ||
                (dtype_isinteger(lhs_srt->dtype) && rhs_srt->dtype->type == DTYPE_POINTER)) {
 
         if (rhs_srt->dtype->type == DTYPE_POINTER) swap_ptr((void**)&lhs_srt, (void**)&rhs_srt);
-        Dtype* dtype = dtype_copy(lhs_srt->dtype);
+        dtype = dtype_copy(lhs_srt->dtype);
         srt = new_dtyped_srt(SRT_PADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
 
     } else {
@@ -344,6 +352,7 @@ ResolverReturn* resolve_add_expr(Resolver* resolver) {
 
 ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
     Srt* srt = NULL;
+    Dtype* dtype = NULL;
     Srt* lhs_srt = NULL;
     Srt* rhs_srt = NULL;
     Vector* errs = NULL;
@@ -373,18 +382,18 @@ ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
 
         lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
         rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
-        Dtype* dtype = new_integer_dtype(DTYPE_INT);
+        dtype = new_integer_dtype(DTYPE_INT);
         srt = new_dtyped_srt(SRT_SUB_EXPR, dtype, 2, lhs_srt, rhs_srt);
 
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && dtype_isinteger(rhs_srt->dtype)) {
 
-        Dtype* dtype = dtype_copy(lhs_srt->dtype);
+        dtype = dtype_copy(lhs_srt->dtype);
         srt = new_dtyped_srt(SRT_PSUB_EXPR, dtype, 2, lhs_srt, rhs_srt);
 
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER &&
                dtype_iscompatible(lhs_srt->dtype, rhs_srt->dtype)) {
 
-        Dtype* dtype = new_integer_dtype(DTYPE_INT);
+        dtype = new_integer_dtype(DTYPE_INT);
         srt = new_dtyped_srt(SRT_PDIFF_EXPR, dtype, 2, lhs_srt, rhs_srt);
 
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
@@ -411,6 +420,7 @@ ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
 
 ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
     Srt* srt = NULL;
+    Dtype* dtype = NULL;
     Srt* lhs_srt = NULL;
     Srt* rhs_srt = NULL;
     Vector* errs = NULL;
@@ -437,8 +447,6 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
     rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
 
-    Dtype* dtype = new_integer_dtype(DTYPE_INT);
-
     switch (ast->type) {
         case AST_MUL_EXPR:
             if (!dtype_isarithmetic(lhs_srt->dtype) || !dtype_isarithmetic(rhs_srt->dtype)) {
@@ -447,6 +455,7 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
                 vector_push(errs, err);
                 break;
             }
+            dtype = new_integer_dtype(DTYPE_INT);
             srt = new_dtyped_srt(SRT_MUL_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         case AST_DIV_EXPR:
@@ -456,6 +465,7 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
                 vector_push(errs, err);
                 break;
             }
+            dtype = new_integer_dtype(DTYPE_INT);
             srt = new_dtyped_srt(SRT_DIV_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         case AST_MOD_EXPR:
@@ -465,6 +475,7 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
                 vector_push(errs, err);
                 break;
             }
+            dtype = new_integer_dtype(DTYPE_INT);
             srt = new_dtyped_srt(SRT_MOD_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         default:
@@ -512,6 +523,7 @@ ResolverReturn* resolve_unary_expr(Resolver* resolver) {
 
 ResolverReturn* resolve_address_expr(Resolver* resolver) {
     Srt* srt = NULL;
+    Dtype* dtype = NULL;
     Srt* child_srt = NULL;
     Vector* errs = NULL;
     Error* err = NULL;
@@ -532,13 +544,14 @@ ResolverReturn* resolve_address_expr(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    Dtype* dtype = new_pointer_dtype(dtype_copy(child_srt->dtype));
+    dtype = new_pointer_dtype(dtype_copy(child_srt->dtype));
     srt = new_dtyped_srt(SRT_ADDR_EXPR, dtype, 1, child_srt);
     return new_resolverret(srt);
 }
 
 ResolverReturn* resolve_indirection_expr(Resolver* resolver) {
     Srt* srt = NULL;
+    Dtype* dtype = NULL;
     Srt* child_srt = NULL;
     Vector* errs = NULL;
     Error* err = NULL;
@@ -561,13 +574,14 @@ ResolverReturn* resolve_indirection_expr(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    Dtype* dtype = dtype_copy(child_srt->dtype->pointer->to_dtype);
+    dtype = dtype_copy(child_srt->dtype->pointer->to_dtype);
     srt = new_dtyped_srt(SRT_INDIR_EXPR, dtype, 1, child_srt);
     return new_resolverret(srt);
 }
 
 ResolverReturn* resolve_logical_not_expr(Resolver* resolver) {
     Srt* srt = NULL;
+    Dtype* dtype = NULL;
     Srt* child_srt = NULL;
     Vector* errs = NULL;
     Error* err = NULL;
@@ -590,7 +604,7 @@ ResolverReturn* resolve_logical_not_expr(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    Dtype* dtype = new_integer_dtype(DTYPE_INT);
+    dtype = new_integer_dtype(DTYPE_INT);
     srt = new_dtyped_srt(SRT_LNOT_EXPR, dtype, 1, child_srt);
     return new_resolverret(srt);
 }
@@ -622,6 +636,7 @@ ResolverReturn* resolve_postfix_expr(Resolver* resolver) {
 
 ResolverReturn* resolve_subscription_expr(Resolver* resolver) {
     Srt* srt = NULL;
+    Dtype* dtype = NULL;
     Srt* lhs_srt = NULL;
     Srt* rhs_srt = NULL;
     Vector* errs = NULL;
@@ -668,7 +683,7 @@ ResolverReturn* resolve_subscription_expr(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    Dtype* dtype = dtype_copy(lhs_srt->dtype);
+    dtype = dtype_copy(lhs_srt->dtype);
     srt = new_dtyped_srt(SRT_PADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
     srt = new_dtyped_srt(SRT_INDIR_EXPR, dtype_copy(lhs_srt->dtype->pointer->to_dtype), 1, srt);
     return new_resolverret(srt);
@@ -676,6 +691,7 @@ ResolverReturn* resolve_subscription_expr(Resolver* resolver) {
 
 ResolverReturn* resolve_call_expr(Resolver* resolver) {
     Srt* srt = NULL;
+    Dtype* dtype = NULL;
     Srt* lhs_srt = NULL;
     Srt* rhs_srt = NULL;
     Vector* errs = NULL;
@@ -698,22 +714,22 @@ ResolverReturn* resolve_call_expr(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    Dtype* call_dtype = resolver->call_dtype;
+    Dtype* original_call_dtype = resolver->call_dtype;
     resolver->call_dtype = lhs_srt->dtype->pointer->to_dtype;
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&rhs_srt, &errs, resolve_argument_expr_list(resolver));
     resolver->ast = ast;
 
     if (errs != NULL) {
-        resolver->call_dtype = call_dtype;
+        resolver->call_dtype = original_call_dtype;
         delete_srt(lhs_srt);
         return new_resolverret_errors(errs);
     }
 
-    Dtype* dtype = dtype_copy(resolver->call_dtype->function->return_dtype);
+    dtype = dtype_copy(resolver->call_dtype->function->return_dtype);
     srt = new_dtyped_srt(SRT_CALL_EXPR, dtype, 2, lhs_srt, rhs_srt);
 
-    resolver->call_dtype = call_dtype;
+    resolver->call_dtype = original_call_dtype;
     return new_resolverret(srt);
 }
 
