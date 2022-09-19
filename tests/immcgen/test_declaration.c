@@ -4,22 +4,22 @@
 
 #include <stdlib.h>
 
-void test_immcgen_local_scalar_decl();
-void test_immcgen_global_scalar_decl();
-void test_immcgen_local_array_decl();
-void test_immcgen_global_array_decl();
-void test_immcgen_local_function_decl();
-void test_immcgen_global_function_decl();
-void test_immcgen_local_scalar_init();
-void test_immcgen_global_scalar_init();
-void test_immcgen_local_sliteral_init();
-void test_immcgen_global_sliteral_init();
-void test_immcgen_local_array_init();
-void test_immcgen_global_array_init();
+void test_immcgen_local_scalar_decl(void);
+void test_immcgen_global_scalar_decl(void);
+void test_immcgen_local_array_decl(void);
+void test_immcgen_global_array_decl(void);
+void test_immcgen_local_function_decl(void);
+void test_immcgen_global_function_decl(void);
+void test_immcgen_local_scalar_init(void);
+void test_immcgen_global_scalar_init(void);
+void test_immcgen_local_sliteral_init(void);
+void test_immcgen_global_sliteral_init(void);
+void test_immcgen_local_array_init(void);
+void test_immcgen_global_array_init(void);
 void run_local_decl_immcgen_test(Srt* input, SymbolTable* local_table, Vector* expected);
 void run_global_decl_immcgen_test(Srt* input, SymbolTable* global_table, Vector* expected);
 
-CU_Suite* add_test_suite_decl_immcgen() {
+CU_Suite* add_test_suite_decl_immcgen(void) {
     CU_Suite* suite = CU_add_suite("test_suite_decl_immcgen", NULL, NULL);
     CU_ADD_TEST(suite, test_immcgen_local_scalar_decl);
     CU_ADD_TEST(suite, test_immcgen_global_scalar_decl);
@@ -36,7 +36,7 @@ CU_Suite* add_test_suite_decl_immcgen() {
     return suite;
 }
 
-void test_immcgen_local_scalar_decl() {
+void test_immcgen_local_scalar_decl(void) {
     Srt* input = new_srt(SRT_DECL_LIST, 2,         // non-terminal
                          new_srt(SRT_INIT_DECL, 1, // non-terminal
                                  new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c"))),
@@ -50,7 +50,7 @@ void test_immcgen_local_scalar_decl() {
     delete_vector(expected);
 }
 
-void test_immcgen_global_scalar_decl() {
+void test_immcgen_global_scalar_decl(void) {
     Srt* input = new_srt(SRT_DECL_LIST, 2,         // non-terminal
                          new_srt(SRT_INIT_DECL, 1, // non-terminal
                                  new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c"))),
@@ -68,7 +68,7 @@ void test_immcgen_global_scalar_decl() {
     delete_vector(expected);
 }
 
-void test_immcgen_local_array_decl() {
+void test_immcgen_local_array_decl(void) {
     Srt* input = new_srt(
         SRT_DECL_LIST, 2,         // non-terminal
         new_srt(SRT_INIT_DECL, 1, // non-terminal
@@ -84,7 +84,7 @@ void test_immcgen_local_array_decl() {
     delete_vector(expected);
 }
 
-void test_immcgen_global_array_decl() {
+void test_immcgen_global_array_decl(void) {
     Srt* input = new_srt(
         SRT_DECL_LIST, 2,         // non-terminal
         new_srt(SRT_INIT_DECL, 1, // non-terminal
@@ -104,7 +104,7 @@ void test_immcgen_global_array_decl() {
     delete_vector(expected);
 }
 
-void test_immcgen_local_function_decl() {
+void test_immcgen_local_function_decl(void) {
     Vector* fparams = new_vector(&t_dparam);
     Dtype* fdtype = new_function_dtype(fparams, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
 
@@ -125,7 +125,7 @@ void test_immcgen_local_function_decl() {
     delete_vector(expected);
 }
 
-void test_immcgen_global_function_decl() {
+void test_immcgen_global_function_decl(void) {
     Vector* fparams = new_vector(&t_dparam);
     Dtype* fdtype = new_function_dtype(fparams, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
 
@@ -146,7 +146,7 @@ void test_immcgen_global_function_decl() {
     delete_vector(expected);
 }
 
-void test_immcgen_local_scalar_init() {
+void test_immcgen_local_scalar_init(void) {
     Srt* input = new_srt(
         SRT_DECL_LIST, 3,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
@@ -218,7 +218,7 @@ void test_immcgen_local_scalar_init() {
     delete_vector(expected);
 }
 
-void test_immcgen_global_scalar_init() {
+void test_immcgen_global_scalar_init(void) {
     Srt* input = new_srt(SRT_DECL_LIST, 2,         // non-terminal
                          new_srt(SRT_INIT_DECL, 2, // non-terminal
                                  new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c")),
@@ -243,7 +243,7 @@ void test_immcgen_global_scalar_init() {
     delete_vector(expected);
 }
 
-void test_immcgen_local_sliteral_init() {
+void test_immcgen_local_sliteral_init(void) {
     char* sliteral_const = "local";
     int sliteral_size = 6;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
@@ -272,7 +272,7 @@ void test_immcgen_local_sliteral_init() {
     delete_vector(expected);
 }
 
-void test_immcgen_global_sliteral_init() {
+void test_immcgen_global_sliteral_init(void) {
     char* sliteral_const = "global";
     int sliteral_size = 7;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
@@ -298,7 +298,7 @@ void test_immcgen_global_sliteral_init() {
     delete_vector(expected);
 }
 
-void test_immcgen_local_array_init() {
+void test_immcgen_local_array_init(void) {
     Srt* input = new_srt(
         SRT_DECL_LIST, 2,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
@@ -383,7 +383,7 @@ void test_immcgen_local_array_init() {
     delete_vector(expected);
 }
 
-void test_immcgen_global_array_init() {
+void test_immcgen_global_array_init(void) {
     Srt* input = new_srt(
         SRT_DECL_LIST, 2,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal

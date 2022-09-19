@@ -2,17 +2,17 @@
 #include "../../src/resolver/resolver.h"
 #include "../testlib/testlib.h"
 
-void test_resolve_transration_unit();
+void test_resolve_transration_unit(void);
 
 void run_resolver_test(Ast* input, Srt* expected);
 
-CU_Suite* add_test_suite_external_resolver() {
+CU_Suite* add_test_suite_external_resolver(void) {
     CU_Suite* suite = CU_add_suite("test_suite_external_resolver", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_transration_unit);
     return suite;
 }
 
-void test_resolve_transration_unit() {
+void test_resolve_transration_unit(void) {
     Ast* input = new_ast(
         AST_TRAS_UNIT, 3,
         new_ast(AST_DECL, 2,                    // non-terminal

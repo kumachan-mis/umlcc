@@ -3,13 +3,13 @@
 
 #include <stdlib.h>
 
-void test_new_ctoken();
-void test_new_identifier_ctoken();
-void test_new_iliteral_ctoken_int();
-void test_new_iliteral_ctoken_char();
-void test_new_sliteral_ctoken();
+void test_new_ctoken(void);
+void test_new_identifier_ctoken(void);
+void test_new_iliteral_ctoken_int(void);
+void test_new_iliteral_ctoken_char(void);
+void test_new_sliteral_ctoken(void);
 
-CU_Suite* add_test_suite_ctoken() {
+CU_Suite* add_test_suite_ctoken(void) {
     CU_Suite* suite = CU_add_suite("test_suite_ctoken", NULL, NULL);
     CU_ADD_TEST(suite, test_new_ctoken);
     CU_ADD_TEST(suite, test_new_identifier_ctoken);
@@ -19,7 +19,7 @@ CU_Suite* add_test_suite_ctoken() {
     return suite;
 }
 
-void test_new_ctoken() {
+void test_new_ctoken(void) {
     CToken* ctoken = new_ctoken(CTOKEN_SEMICOLON);
 
     for (int i = 0; i < 2; i++) {
@@ -37,7 +37,7 @@ void test_new_ctoken() {
     delete_ctoken(ctoken);
 }
 
-void test_new_identifier_ctoken() {
+void test_new_identifier_ctoken(void) {
     CToken* ctoken = new_identifier_ctoken(CTOKEN_IDENT, new_string("ident"));
 
     for (int i = 0; i < 2; i++) {
@@ -55,7 +55,7 @@ void test_new_identifier_ctoken() {
     delete_ctoken(ctoken);
 }
 
-void test_new_iliteral_ctoken_int() {
+void test_new_iliteral_ctoken_int(void) {
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 6);
     CToken* ctoken = new_iliteral_ctoken(CTOKEN_INT, iliteral);
 
@@ -77,7 +77,7 @@ void test_new_iliteral_ctoken_int() {
     delete_ctoken(ctoken);
 }
 
-void test_new_iliteral_ctoken_char() {
+void test_new_iliteral_ctoken_char(void) {
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 89);
     CToken* ctoken = new_iliteral_ctoken(CTOKEN_CHAR, iliteral);
 
@@ -99,7 +99,7 @@ void test_new_iliteral_ctoken_char() {
     delete_ctoken(ctoken);
 }
 
-void test_new_sliteral_ctoken() {
+void test_new_sliteral_ctoken(void) {
     char* sliteral_const = "string literal";
     int sliteral_size = 15;
 

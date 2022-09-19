@@ -3,17 +3,17 @@
 #include "../../src/parser/parser.h"
 #include "../testlib/testlib.h"
 
-void test_parse_transration_unit();
+void test_parse_transration_unit(void);
 
 void run_parser_test(Vector* input, Ast* expected);
 
-CU_Suite* add_test_suite_external_parser() {
+CU_Suite* add_test_suite_external_parser(void) {
     CU_Suite* suite = CU_add_suite("test_suite_external_parser", NULL, NULL);
     CU_ADD_TEST(suite, test_parse_transration_unit);
     return suite;
 }
 
-void test_parse_transration_unit() {
+void test_parse_transration_unit(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("incriment")));

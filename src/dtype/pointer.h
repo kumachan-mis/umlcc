@@ -6,7 +6,7 @@ typedef struct DPointer {
 } DPointer;
 
 DPointer* new_dpointer(struct Dtype* to_dtype);
-DPointer* new_socket_dpointer();
+DPointer* new_socket_dpointer(void);
 DPointer* dpointer_copy(DPointer* dpointer);
 struct Dtype* dpointer_next(DPointer* dpointer);
 DPointer* dpointer_connect(DPointer* socket, struct Dtype* plug);

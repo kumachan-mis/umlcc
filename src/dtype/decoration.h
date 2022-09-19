@@ -7,7 +7,7 @@ typedef struct DDecoration {
 } DDecoration;
 
 DDecoration* new_ddecoration(struct Dtype* deco_dtype);
-DDecoration* new_socket_ddecoration();
+DDecoration* new_socket_ddecoration(void);
 DDecoration* ddecoration_copy(DDecoration* ddecoration);
 struct Dtype* ddecoration_next(DDecoration* ddecoration);
 DDecoration* ddecoration_connect(DDecoration* socket, struct Dtype* plug);

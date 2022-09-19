@@ -74,7 +74,7 @@ Dtype* dtype_copy(Dtype* dtype) {
     return copied_dtype;
 }
 
-Dtype* new_socket_pointer_dtype() {
+Dtype* new_socket_pointer_dtype(void) {
     Dtype* dtype = malloc(sizeof(Dtype));
     dtype->type = DTYPE_POINTER;
     dtype->pointer = new_socket_dpointer();
@@ -104,7 +104,7 @@ Dtype* new_socket_function_dtype(Vector* params) {
     return dtype;
 }
 
-Dtype* new_socket_decoration_dtype() {
+Dtype* new_socket_decoration_dtype(void) {
     Dtype* dtype = malloc(sizeof(Dtype));
     dtype->type = DTYPE_DECORATION;
     dtype->pointer = NULL;

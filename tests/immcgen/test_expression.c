@@ -2,33 +2,33 @@
 #include "../../src/immcgen/expression.h"
 #include "../testlib/testlib.h"
 
-void test_immcgen_assignment_expr();
-void test_immcgen_logical_or_expr();
-void test_immcgen_logical_and_expr();
-void test_immcgen_equal_expr();
-void test_immcgen_not_equal_expr();
-void test_immcgen_add_expr();
-void test_immcgen_subtract_expr();
-void test_immcgen_pointer_add_expr();
-void test_immcgen_pointer_subtract_expr();
-void test_immcgen_pointer_difference_expr();
-void test_immcgen_multiply_expr();
-void test_immcgen_division_expr();
-void test_immcgen_modulo_expr();
-void test_immcgen_address_expr_local();
-void test_immcgen_address_expr_global();
-void test_immcgen_address_expr_indir();
-void test_immcgen_indirection_expr();
-void test_immcgen_logical_not_expr();
-void test_immcgen_call_expr();
-void test_immcgen_ident_expr_local();
-void test_immcgen_ident_expr_global();
-void test_immcgen_iliteral_expr_int();
-void test_immcgen_iliteral_expr_char();
+void test_immcgen_assignment_expr(void);
+void test_immcgen_logical_or_expr(void);
+void test_immcgen_logical_and_expr(void);
+void test_immcgen_equal_expr(void);
+void test_immcgen_not_equal_expr(void);
+void test_immcgen_add_expr(void);
+void test_immcgen_subtract_expr(void);
+void test_immcgen_pointer_add_expr(void);
+void test_immcgen_pointer_subtract_expr(void);
+void test_immcgen_pointer_difference_expr(void);
+void test_immcgen_multiply_expr(void);
+void test_immcgen_division_expr(void);
+void test_immcgen_modulo_expr(void);
+void test_immcgen_address_expr_local(void);
+void test_immcgen_address_expr_global(void);
+void test_immcgen_address_expr_indir(void);
+void test_immcgen_indirection_expr(void);
+void test_immcgen_logical_not_expr(void);
+void test_immcgen_call_expr(void);
+void test_immcgen_ident_expr_local(void);
+void test_immcgen_ident_expr_global(void);
+void test_immcgen_iliteral_expr_int(void);
+void test_immcgen_iliteral_expr_char(void);
 
 void run_expr_immcgen_test(Srt* input, SymbolTable* local_table, SymbolTable* global_table, Vector* expected);
 
-CU_Suite* add_test_suite_expr_immcgen() {
+CU_Suite* add_test_suite_expr_immcgen(void) {
     CU_Suite* suite = CU_add_suite("test_suite_expr_immcgen", NULL, NULL);
     CU_ADD_TEST(suite, test_immcgen_assignment_expr);
     CU_ADD_TEST(suite, test_immcgen_logical_or_expr);
@@ -56,7 +56,7 @@ CU_Suite* add_test_suite_expr_immcgen() {
     return suite;
 }
 
-void test_immcgen_assignment_expr() {
+void test_immcgen_assignment_expr(void) {
     Dtype* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
 
     Srt* input = new_dtyped_srt(
@@ -108,7 +108,7 @@ void test_immcgen_assignment_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_logical_or_expr() {
+void test_immcgen_logical_or_expr(void) {
     Srt* input =
         new_dtyped_srt(SRT_LOR_EXPR, new_integer_dtype(DTYPE_INT), 2,                  // non-terminal
                        new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
@@ -189,7 +189,7 @@ void test_immcgen_logical_or_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_logical_and_expr() {
+void test_immcgen_logical_and_expr(void) {
     Dtype* arg_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6);
 
     Vector* params = new_vector(&t_dparam);
@@ -285,7 +285,7 @@ void test_immcgen_logical_and_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_equal_expr() {
+void test_immcgen_equal_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2,               // non-terminal
         new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
@@ -329,7 +329,7 @@ void test_immcgen_equal_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_not_equal_expr() {
+void test_immcgen_not_equal_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_NEQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
         new_dtyped_srt(
@@ -363,7 +363,7 @@ void test_immcgen_not_equal_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_add_expr() {
+void test_immcgen_add_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_ADD_EXPR, new_integer_dtype(DTYPE_INT), 2,                 // non-terminal
         new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
@@ -395,7 +395,7 @@ void test_immcgen_add_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_subtract_expr() {
+void test_immcgen_subtract_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
         new_dtyped_srt(
@@ -426,7 +426,7 @@ void test_immcgen_subtract_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_pointer_add_expr() {
+void test_immcgen_pointer_add_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 2, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("ptr")),
@@ -462,7 +462,7 @@ void test_immcgen_pointer_add_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_pointer_subtract_expr() {
+void test_immcgen_pointer_subtract_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_PSUB_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("ptr")),
@@ -498,7 +498,7 @@ void test_immcgen_pointer_subtract_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_pointer_difference_expr() {
+void test_immcgen_pointer_difference_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_PDIFF_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("p")),
@@ -535,7 +535,7 @@ void test_immcgen_pointer_difference_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_multiply_expr() {
+void test_immcgen_multiply_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_MUL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4)),
@@ -566,7 +566,7 @@ void test_immcgen_multiply_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_division_expr() {
+void test_immcgen_division_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_DIV_EXPR, new_integer_dtype(DTYPE_INT), 2,                 // non-terminal
         new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
@@ -598,7 +598,7 @@ void test_immcgen_division_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_modulo_expr() {
+void test_immcgen_modulo_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_MOD_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
         new_dtyped_srt(
@@ -638,7 +638,7 @@ void test_immcgen_modulo_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_address_expr_local() {
+void test_immcgen_address_expr_local(void) {
     Srt* input = new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
                                 new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")));
 
@@ -657,7 +657,7 @@ void test_immcgen_address_expr_local() {
     delete_vector(expected);
 }
 
-void test_immcgen_address_expr_global() {
+void test_immcgen_address_expr_global(void) {
     Srt* input = new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
                                 new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")));
 
@@ -676,7 +676,7 @@ void test_immcgen_address_expr_global() {
     delete_vector(expected);
 }
 
-void test_immcgen_address_expr_indir() {
+void test_immcgen_address_expr_indir(void) {
     Dtype* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
     Dtype* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
 
@@ -720,7 +720,7 @@ void test_immcgen_address_expr_indir() {
     delete_vector(expected);
 }
 
-void test_immcgen_indirection_expr() {
+void test_immcgen_indirection_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("ptr")));
@@ -745,7 +745,7 @@ void test_immcgen_indirection_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_logical_not_expr() {
+void test_immcgen_logical_not_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_LNOT_EXPR, new_integer_dtype(DTYPE_INT), 1,                // non-terminal
         new_dtyped_srt(SRT_LNOT_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
@@ -776,7 +776,7 @@ void test_immcgen_logical_not_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_call_expr() {
+void test_immcgen_call_expr(void) {
     Vector* params = new_vector(&t_dparam);
     vector_push(params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
     vector_push(params, new_dparam(new_string("y"), new_integer_dtype(DTYPE_INT)));
@@ -837,7 +837,7 @@ void test_immcgen_call_expr() {
     delete_vector(expected);
 }
 
-void test_immcgen_ident_expr_local() {
+void test_immcgen_ident_expr_local(void) {
     Srt* input = new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("local"));
 
     SymbolTable* local_table = new_symboltable();
@@ -855,7 +855,7 @@ void test_immcgen_ident_expr_local() {
     delete_vector(expected);
 }
 
-void test_immcgen_ident_expr_global() {
+void test_immcgen_ident_expr_global(void) {
     Srt* input = new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("global"));
 
     SymbolTable* global_table = new_symboltable();
@@ -873,7 +873,7 @@ void test_immcgen_ident_expr_global() {
     delete_vector(expected);
 }
 
-void test_immcgen_iliteral_expr_int() {
+void test_immcgen_iliteral_expr_int(void) {
     Srt* input = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3));
 
     Vector* expected = new_vector(&t_immc);
@@ -888,7 +888,7 @@ void test_immcgen_iliteral_expr_int() {
     delete_vector(expected);
 }
 
-void test_immcgen_iliteral_expr_char() {
+void test_immcgen_iliteral_expr_char(void) {
     Srt* input = new_iliteral_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 89));
 
     Vector* expected = new_vector(&t_immc);

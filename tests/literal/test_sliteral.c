@@ -3,20 +3,20 @@
 
 #include <stdlib.h>
 
-void test_new_sliteral_empty();
-void test_new_sliteral_without_null();
-void test_new_sliteral_with_null();
-void test_sliteral_zero_padding_copy_empty();
-void test_sliteral_zero_padding_copy_without_null();
-void test_sliteral_zero_padding_copy_with_null();
-void test_sliteral_display_string_normal();
-void test_sliteral_display_string_escape();
-void test_sliteral_display_string_octal();
-void test_sliteral_display_string_mixed();
-void test_sliteral_display_string_elonged();
-void test_sliteral_display_string_zero_padding();
+void test_new_sliteral_empty(void);
+void test_new_sliteral_without_null(void);
+void test_new_sliteral_with_null(void);
+void test_sliteral_zero_padding_copy_empty(void);
+void test_sliteral_zero_padding_copy_without_null(void);
+void test_sliteral_zero_padding_copy_with_null(void);
+void test_sliteral_display_string_normal(void);
+void test_sliteral_display_string_escape(void);
+void test_sliteral_display_string_octal(void);
+void test_sliteral_display_string_mixed(void);
+void test_sliteral_display_string_elonged(void);
+void test_sliteral_display_string_zero_padding(void);
 
-CU_Suite* add_test_suite_sliteral() {
+CU_Suite* add_test_suite_sliteral(void) {
     CU_Suite* suite = CU_add_suite("test_suite_sliteral", NULL, NULL);
     CU_ADD_TEST(suite, test_new_sliteral_empty);
     CU_ADD_TEST(suite, test_new_sliteral_without_null);
@@ -33,7 +33,7 @@ CU_Suite* add_test_suite_sliteral() {
     return suite;
 }
 
-void test_new_sliteral_empty() {
+void test_new_sliteral_empty(void) {
     char* sliteral_const = "";
     int sliteral_size = 1;
 
@@ -55,7 +55,7 @@ void test_new_sliteral_empty() {
     delete_sliteral(sliteral);
 }
 
-void test_new_sliteral_without_null() {
+void test_new_sliteral_without_null(void) {
     char* sliteral_const = "test: sliteral copy (without null-char)";
     int sliteral_size = 40;
 
@@ -77,7 +77,7 @@ void test_new_sliteral_without_null() {
     delete_sliteral(sliteral);
 }
 
-void test_new_sliteral_with_null() {
+void test_new_sliteral_with_null(void) {
     char* sliteral_const = "test: sliteral copy\0(with\0\0\0 null-char)";
     int sliteral_size = 40;
 
@@ -99,7 +99,7 @@ void test_new_sliteral_with_null() {
     delete_sliteral(sliteral);
 }
 
-void test_sliteral_zero_padding_copy_empty() {
+void test_sliteral_zero_padding_copy_empty(void) {
     char* sliteral_const = "";
     int sliteral_size = 1;
     char* zero_padding_sliteral_const = "\0\0\0\0";
@@ -118,7 +118,7 @@ void test_sliteral_zero_padding_copy_empty() {
     delete_sliteral(copied_sliteral);
 }
 
-void test_sliteral_zero_padding_copy_without_null() {
+void test_sliteral_zero_padding_copy_without_null(void) {
     char* sliteral_const = "zero padding";
     int sliteral_size = 13;
     char* zero_padding_sliteral_const = "zero padding\0\0\0";
@@ -137,7 +137,7 @@ void test_sliteral_zero_padding_copy_without_null() {
     delete_sliteral(copied_sliteral);
 }
 
-void test_sliteral_zero_padding_copy_with_null() {
+void test_sliteral_zero_padding_copy_with_null(void) {
     char* sliteral_const = "zero\0padding";
     int sliteral_size = 13;
     char* zero_padding_sliteral_const = "zero\0padding\0";
@@ -156,7 +156,7 @@ void test_sliteral_zero_padding_copy_with_null() {
     delete_sliteral(copied_sliteral);
 }
 
-void test_sliteral_display_string_normal() {
+void test_sliteral_display_string_normal(void) {
     char* sliteral_const = " !#$%&()*+,-./"
                            "0123456789"
                            ":;<=>@"
@@ -187,7 +187,7 @@ void test_sliteral_display_string_normal() {
     delete_sliteral(sliteral);
 }
 
-void test_sliteral_display_string_escape() {
+void test_sliteral_display_string_escape(void) {
     char* sliteral_const = "\? \' \" \\ \a \b \f \n \r \t \v";
     int sliteral_size = 22;
     char* expected_display_string = "\"\\\? \\\' \\\" \\\\ \\a \\b \\f \\n \\r \\t \\v\\000\"";
@@ -204,7 +204,7 @@ void test_sliteral_display_string_escape() {
     delete_sliteral(sliteral);
 }
 
-void test_sliteral_display_string_octal() {
+void test_sliteral_display_string_octal(void) {
     char* sliteral_const = "\0\1\2\03\04\05\006\007\060";
     int sliteral_size = 10;
     char* expected_display_string = "\"\\000\\001\\002\\003\\004\\005\\006\\a0\\000\"";
@@ -221,7 +221,7 @@ void test_sliteral_display_string_octal() {
     delete_sliteral(sliteral);
 }
 
-void test_sliteral_display_string_mixed() {
+void test_sliteral_display_string_mixed(void) {
     char* sliteral_const = "string\0literal\03\n";
     int sliteral_size = 17;
     char* expected_display_string = "\"string\\000literal\\003\\n\\000\"";
@@ -238,7 +238,7 @@ void test_sliteral_display_string_mixed() {
     delete_sliteral(sliteral);
 }
 
-void test_sliteral_display_string_elonged() {
+void test_sliteral_display_string_elonged(void) {
     char* sliteral_const = "\0\1\2\3\4\5\6";
     int sliteral_size = 8;
     char* expected_display_string = "\"\\000\\001\\002\\003\\004\\005\\006\\000\"";
@@ -255,7 +255,7 @@ void test_sliteral_display_string_elonged() {
     delete_sliteral(sliteral);
 }
 
-void test_sliteral_display_string_zero_padding() {
+void test_sliteral_display_string_zero_padding(void) {
     char* sliteral_const = "string literal";
     int sliteral_size = 15;
     int zero_padding_sliteral_size = 18;

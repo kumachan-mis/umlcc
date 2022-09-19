@@ -13,7 +13,7 @@ DDecoration* new_ddecoration(struct Dtype* deco_dtype) {
     return ddecoration;
 }
 
-DDecoration* new_socket_ddecoration() {
+DDecoration* new_socket_ddecoration(void) {
     return new_ddecoration(NULL);
 }
 

@@ -3,26 +3,26 @@
 
 #include <stdlib.h>
 
-void test_new_arg_immcope();
-void test_new_reg_immcope();
-void test_new_ptr_immcope();
-void test_new_mem_immcope();
-void test_new_label_immcope();
-void test_new_int_immcope();
-void test_new_signed_immcope();
-void test_new_unsigned_immcope();
-void test_new_str_immcope();
-void test_immcope_tostring_arg();
-void test_immcope_tostring_reg();
-void test_immcope_tostring_ptr();
-void test_immcope_tostring_mem();
-void test_immcope_tostring_label();
-void test_immcope_tostring_int();
-void test_immcope_tostring_signed();
-void test_immcope_tostring_unsigned();
-void test_immcope_tostring_str();
+void test_new_arg_immcope(void);
+void test_new_reg_immcope(void);
+void test_new_ptr_immcope(void);
+void test_new_mem_immcope(void);
+void test_new_label_immcope(void);
+void test_new_int_immcope(void);
+void test_new_signed_immcope(void);
+void test_new_unsigned_immcope(void);
+void test_new_str_immcope(void);
+void test_immcope_tostring_arg(void);
+void test_immcope_tostring_reg(void);
+void test_immcope_tostring_ptr(void);
+void test_immcope_tostring_mem(void);
+void test_immcope_tostring_label(void);
+void test_immcope_tostring_int(void);
+void test_immcope_tostring_signed(void);
+void test_immcope_tostring_unsigned(void);
+void test_immcope_tostring_str(void);
 
-CU_Suite* add_test_suite_immcope() {
+CU_Suite* add_test_suite_immcope(void) {
     CU_Suite* suite = CU_add_suite("test_suite_immcope", NULL, NULL);
     CU_ADD_TEST(suite, test_new_arg_immcope);
     CU_ADD_TEST(suite, test_new_reg_immcope);
@@ -45,7 +45,7 @@ CU_Suite* add_test_suite_immcope() {
     return suite;
 }
 
-void test_new_arg_immcope() {
+void test_new_arg_immcope(void) {
     ImmcOpe* ope = new_arg_immcope(IMMC_SUFFIX_WORD, 1);
 
     for (int i = 0; i < 2; i++) {
@@ -66,7 +66,7 @@ void test_new_arg_immcope() {
     delete_immcope(ope);
 }
 
-void test_new_reg_immcope() {
+void test_new_reg_immcope(void) {
     ImmcOpe* ope = new_reg_immcope(IMMC_SUFFIX_LONG, 8);
 
     for (int i = 0; i < 2; i++) {
@@ -87,7 +87,7 @@ void test_new_reg_immcope() {
     delete_immcope(ope);
 }
 
-void test_new_ptr_immcope() {
+void test_new_ptr_immcope(void) {
     ImmcOpe* ope = new_ptr_immcope(3);
 
     for (int i = 0; i < 2; i++) {
@@ -108,7 +108,7 @@ void test_new_ptr_immcope() {
     delete_immcope(ope);
 }
 
-void test_new_mem_immcope() {
+void test_new_mem_immcope(void) {
     ImmcOpe* ope = new_mem_immcope(8);
 
     for (int i = 0; i < 2; i++) {
@@ -129,7 +129,7 @@ void test_new_mem_immcope() {
     delete_immcope(ope);
 }
 
-void test_new_label_immcope() {
+void test_new_label_immcope(void) {
     ImmcOpe* ope = new_label_immcope(new_string("sample_label"));
 
     for (int i = 0; i < 2; i++) {
@@ -150,7 +150,7 @@ void test_new_label_immcope() {
     delete_immcope(ope);
 }
 
-void test_new_int_immcope() {
+void test_new_int_immcope(void) {
     ImmcOpe* ope = new_int_immcope(IMMC_SUFFIX_BYTE, new_signed_iliteral(INTEGER_INT, 10));
 
     for (int i = 0; i < 2; i++) {
@@ -174,7 +174,7 @@ void test_new_int_immcope() {
     delete_immcope(ope);
 }
 
-void test_new_signed_immcope() {
+void test_new_signed_immcope(void) {
     ImmcOpe* ope = new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 32);
 
     for (int i = 0; i < 2; i++) {
@@ -198,7 +198,7 @@ void test_new_signed_immcope() {
     delete_immcope(ope);
 }
 
-void test_new_unsigned_immcope() {
+void test_new_unsigned_immcope(void) {
     ImmcOpe* ope = new_unsigned_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2147483648U);
 
     for (int i = 0; i < 2; i++) {
@@ -222,7 +222,7 @@ void test_new_unsigned_immcope() {
     delete_immcope(ope);
 }
 
-void test_new_str_immcope() {
+void test_new_str_immcope(void) {
     char* sliteral_const = "string\0literal";
     int sliteral_size = 15;
 
@@ -251,7 +251,7 @@ void test_new_str_immcope() {
     delete_immcope(ope);
 }
 
-void test_immcope_tostring_arg() {
+void test_immcope_tostring_arg(void) {
     ImmcOpe* ope = new_arg_immcope(IMMC_SUFFIX_WORD, 1);
     char* ope_str = immcope_tostring(ope);
 
@@ -261,7 +261,7 @@ void test_immcope_tostring_arg() {
     delete_immcope(ope);
 }
 
-void test_immcope_tostring_reg() {
+void test_immcope_tostring_reg(void) {
     ImmcOpe* ope = new_reg_immcope(IMMC_SUFFIX_LONG, 8);
     char* ope_str = immcope_tostring(ope);
 
@@ -271,7 +271,7 @@ void test_immcope_tostring_reg() {
     delete_immcope(ope);
 }
 
-void test_immcope_tostring_ptr() {
+void test_immcope_tostring_ptr(void) {
     ImmcOpe* ope = new_ptr_immcope(3);
     char* ope_str = immcope_tostring(ope);
 
@@ -281,7 +281,7 @@ void test_immcope_tostring_ptr() {
     delete_immcope(ope);
 }
 
-void test_immcope_tostring_mem() {
+void test_immcope_tostring_mem(void) {
     ImmcOpe* ope = new_mem_immcope(8);
     char* ope_str = immcope_tostring(ope);
 
@@ -291,7 +291,7 @@ void test_immcope_tostring_mem() {
     delete_immcope(ope);
 }
 
-void test_immcope_tostring_label() {
+void test_immcope_tostring_label(void) {
     ImmcOpe* ope = new_label_immcope(new_string("sample_label"));
     char* ope_str = immcope_tostring(ope);
 
@@ -301,7 +301,7 @@ void test_immcope_tostring_label() {
     delete_immcope(ope);
 }
 
-void test_immcope_tostring_int() {
+void test_immcope_tostring_int(void) {
     ImmcOpe* ope = new_int_immcope(IMMC_SUFFIX_BYTE, new_signed_iliteral(INTEGER_INT, 10));
     char* ope_str = immcope_tostring(ope);
 
@@ -311,7 +311,7 @@ void test_immcope_tostring_int() {
     delete_immcope(ope);
 }
 
-void test_immcope_tostring_signed() {
+void test_immcope_tostring_signed(void) {
     ImmcOpe* ope = new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 32);
     char* ope_str = immcope_tostring(ope);
 
@@ -321,7 +321,7 @@ void test_immcope_tostring_signed() {
     delete_immcope(ope);
 }
 
-void test_immcope_tostring_unsigned() {
+void test_immcope_tostring_unsigned(void) {
     ImmcOpe* ope = new_unsigned_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2147483648U);
     char* ope_str = immcope_tostring(ope);
 
@@ -331,7 +331,7 @@ void test_immcope_tostring_unsigned() {
     delete_immcope(ope);
 }
 
-void test_immcope_tostring_str() {
+void test_immcope_tostring_str(void) {
     char* sliteral_const = "string\0literal";
     int sliteral_size = 15;
 

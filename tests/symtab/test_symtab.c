@@ -3,14 +3,14 @@
 
 #include <stdlib.h>
 
-void test_symboltable_define_memory();
-void test_symboltable_define_label();
-void test_symboltable_duplicated();
-void test_symboltable_scoped();
-void test_symboltable_copy_without_outer();
-void test_symboltable_copy_with_outer();
+void test_symboltable_define_memory(void);
+void test_symboltable_define_label(void);
+void test_symboltable_duplicated(void);
+void test_symboltable_scoped(void);
+void test_symboltable_copy_without_outer(void);
+void test_symboltable_copy_with_outer(void);
 
-CU_Suite* add_test_suite_symboltable() {
+CU_Suite* add_test_suite_symboltable(void) {
     CU_Suite* suite = CU_add_suite("test_suite_symboltable", NULL, NULL);
     CU_ADD_TEST(suite, test_symboltable_define_memory);
     CU_ADD_TEST(suite, test_symboltable_define_label);
@@ -21,7 +21,7 @@ CU_Suite* add_test_suite_symboltable() {
     return suite;
 }
 
-void test_symboltable_define_memory() {
+void test_symboltable_define_memory(void) {
     SymbolTable* table = new_symboltable();
     Symbol* symbol = NULL;
 
@@ -66,7 +66,7 @@ void test_symboltable_define_memory() {
     delete_symboltable(table);
 }
 
-void test_symboltable_define_label() {
+void test_symboltable_define_label(void) {
     SymbolTable* table = new_symboltable();
     Symbol* symbol = NULL;
 
@@ -109,7 +109,7 @@ void test_symboltable_define_label() {
     delete_symboltable(table);
 }
 
-void test_symboltable_duplicated() {
+void test_symboltable_duplicated(void) {
     SymbolTable* table = new_symboltable();
     Symbol* symbol = NULL;
 
@@ -149,7 +149,7 @@ void test_symboltable_duplicated() {
     delete_symboltable(table);
 }
 
-void test_symboltable_scoped() {
+void test_symboltable_scoped(void) {
     SymbolTable* table = new_symboltable();
     Symbol* symbol = NULL;
 
@@ -219,7 +219,7 @@ void test_symboltable_scoped() {
     delete_symboltable(table);
 }
 
-void test_symboltable_copy_without_outer() {
+void test_symboltable_copy_without_outer(void) {
     SymbolTable* table = new_symboltable();
 
     char* ident_name = new_string("identifier");
@@ -267,7 +267,7 @@ void test_symboltable_copy_without_outer() {
     delete_symboltable(copied_table);
 }
 
-void test_symboltable_copy_with_outer() {
+void test_symboltable_copy_with_outer(void) {
     SymbolTable* table = new_symboltable();
 
     char* outer_name = new_string("outer_scope");

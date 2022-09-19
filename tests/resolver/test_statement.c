@@ -2,16 +2,16 @@
 #include "../../src/resolver/statement.h"
 #include "../testlib/testlib.h"
 
-void test_resolve_compound_stmt_integer_vardef();
-void test_resolve_compound_stmt_pointer_typedef();
-void test_resolve_compound_stmt_empty();
-void test_resolve_return_stmt_without_cast();
-void test_resolve_return_stmt_with_cast();
-void test_resolve_expression_stmt();
+void test_resolve_compound_stmt_integer_vardef(void);
+void test_resolve_compound_stmt_pointer_typedef(void);
+void test_resolve_compound_stmt_empty(void);
+void test_resolve_return_stmt_without_cast(void);
+void test_resolve_return_stmt_with_cast(void);
+void test_resolve_expression_stmt(void);
 
 void run_stmt_resolver_test(Ast* input, SymbolTable* local_table, Dtype* return_dtype, Srt* expected);
 
-CU_Suite* add_test_suite_stmt_resolver() {
+CU_Suite* add_test_suite_stmt_resolver(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_integer_vardef);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_pointer_typedef);
@@ -22,7 +22,7 @@ CU_Suite* add_test_suite_stmt_resolver() {
     return suite;
 }
 
-void test_resolve_compound_stmt_integer_vardef() {
+void test_resolve_compound_stmt_integer_vardef(void) {
     Ast* input = new_ast(AST_CMPD_STMT, 3,                       // non-terminal
                          new_ast(AST_DECL, 2,                    // non-terminal
                                  new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -94,7 +94,7 @@ void test_resolve_compound_stmt_integer_vardef() {
     delete_srt(expected);
 }
 
-void test_resolve_compound_stmt_pointer_typedef() {
+void test_resolve_compound_stmt_pointer_typedef(void) {
     Ast* input =
         new_ast(AST_CMPD_STMT, 3,                       // non-terminal
                 new_ast(AST_DECL, 2,                    // non-terminal
@@ -159,7 +159,7 @@ void test_resolve_compound_stmt_pointer_typedef() {
     delete_srt(expected);
 }
 
-void test_resolve_compound_stmt_empty() {
+void test_resolve_compound_stmt_empty(void) {
     Ast* input = new_ast(AST_CMPD_STMT, 0);
 
     Srt* expected = new_srt(SRT_CMPD_STMT, 0);
@@ -169,7 +169,7 @@ void test_resolve_compound_stmt_empty() {
     delete_srt(expected);
 }
 
-void test_resolve_return_stmt_without_cast() {
+void test_resolve_return_stmt_without_cast(void) {
     Ast* input = new_ast(AST_RET_STMT, 1, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
 
@@ -184,7 +184,7 @@ void test_resolve_return_stmt_without_cast() {
     delete_srt(expected);
 }
 
-void test_resolve_return_stmt_with_cast() {
+void test_resolve_return_stmt_with_cast(void) {
     Ast* input = new_ast(AST_RET_STMT, 1, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
 
@@ -200,7 +200,7 @@ void test_resolve_return_stmt_with_cast() {
     delete_srt(expected);
 }
 
-void test_resolve_expression_stmt() {
+void test_resolve_expression_stmt(void) {
     Ast* input = new_ast(AST_EXPR_STMT, 1,           // non-terminal
                          new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                                  new_identifier_ast(AST_IDENT_EXPR, new_string("x")),

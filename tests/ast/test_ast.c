@@ -3,14 +3,14 @@
 
 #include <stdlib.h>
 
-void test_new_ast();
-void test_new_identifier_ast_ident();
-void test_new_identifier_ast_typedefname();
-void test_new_iliteral_ast_int();
-void test_new_iliteral_ast_char();
-void test_new_sliteral_ast();
+void test_new_ast(void);
+void test_new_identifier_ast_ident(void);
+void test_new_identifier_ast_typedefname(void);
+void test_new_iliteral_ast_int(void);
+void test_new_iliteral_ast_char(void);
+void test_new_sliteral_ast(void);
 
-CU_Suite* add_test_suite_ast() {
+CU_Suite* add_test_suite_ast(void) {
     CU_Suite* suite = CU_add_suite("test_suite_ast", NULL, NULL);
     CU_ADD_TEST(suite, test_new_ast);
     CU_ADD_TEST(suite, test_new_identifier_ast_ident);
@@ -21,7 +21,7 @@ CU_Suite* add_test_suite_ast() {
     return suite;
 }
 
-void test_new_ast() {
+void test_new_ast(void) {
     Ast* ast = new_ast(AST_TRAS_UNIT, 2, new_ast(AST_DECL, 0), new_ast(AST_FUNC_DEF, 0));
     Ast* child = NULL;
 
@@ -55,7 +55,7 @@ void test_new_ast() {
     delete_ast(ast);
 }
 
-void test_new_identifier_ast_ident() {
+void test_new_identifier_ast_ident(void) {
     Ast* ast = new_identifier_ast(AST_IDENT_EXPR, new_string("ident"));
 
     for (int i = 0; i < 2; i++) {
@@ -74,7 +74,7 @@ void test_new_identifier_ast_ident() {
     delete_ast(ast);
 }
 
-void test_new_identifier_ast_typedefname() {
+void test_new_identifier_ast_typedefname(void) {
     Ast* ast = new_identifier_ast(AST_TYPEDEF_NAME, new_string("typedef-name"));
 
     for (int i = 0; i < 2; i++) {
@@ -93,7 +93,7 @@ void test_new_identifier_ast_typedefname() {
     delete_ast(ast);
 }
 
-void test_new_iliteral_ast_int() {
+void test_new_iliteral_ast_int(void) {
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 6);
     Ast* ast = new_iliteral_ast(AST_INT_EXPR, iliteral);
 
@@ -116,7 +116,7 @@ void test_new_iliteral_ast_int() {
     delete_ast(ast);
 }
 
-void test_new_iliteral_ast_char() {
+void test_new_iliteral_ast_char(void) {
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 89);
     Ast* ast = new_iliteral_ast(AST_CHAR_EXPR, iliteral);
 
@@ -139,7 +139,7 @@ void test_new_iliteral_ast_char() {
     delete_ast(ast);
 }
 
-void test_new_sliteral_ast() {
+void test_new_sliteral_ast(void) {
     char* sliteral_const = "string literal";
     int sliteral_size = 15;
 

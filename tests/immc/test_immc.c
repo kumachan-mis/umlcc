@@ -6,18 +6,18 @@
 void test_new_inst_immc_1arg();
 void test_new_inst_immc_2arg();
 void test_new_inst_immc_3arg();
-void test_new_int_data_immc();
-void test_new_str_data_immc();
-void test_new_label_immc();
-void test_immc_isjumpinst();
+void test_new_int_data_immc(void);
+void test_new_str_data_immc(void);
+void test_new_label_immc(void);
+void test_immc_isjumpinst(void);
 void test_immc_tostring_1arg_inst();
 void test_immc_tostring_2arg_inst();
 void test_immc_tostring_3arg_inst();
-void test_immc_tostring_int_data();
-void test_immc_tostring_str_data();
-void test_immc_tostring_label();
+void test_immc_tostring_int_data(void);
+void test_immc_tostring_str_data(void);
+void test_immc_tostring_label(void);
 
-CU_Suite* add_test_suite_immc() {
+CU_Suite* add_test_suite_immc(void) {
     CU_Suite* suite = CU_add_suite("test_suite_immc", NULL, NULL);
     CU_ADD_TEST(suite, test_new_inst_immc_1arg);
     CU_ADD_TEST(suite, test_new_inst_immc_2arg);
@@ -134,7 +134,7 @@ void test_new_inst_immc_3arg() {
     delete_immc(immc);
 }
 
-void test_new_int_data_immc() {
+void test_new_int_data_immc(void) {
     Immc* immc = new_int_data_immc(IMMC_DATA_WORD, new_signed_iliteral(INTEGER_INT, 6));
 
     for (int i = 0; i < 2; i++) {
@@ -157,7 +157,7 @@ void test_new_int_data_immc() {
     delete_immc(immc);
 }
 
-void test_new_str_data_immc() {
+void test_new_str_data_immc(void) {
     char* sliteral_const = "string\0literal";
     int sliteral_size = 15;
 
@@ -185,7 +185,7 @@ void test_new_str_data_immc() {
     delete_immc(immc);
 }
 
-void test_new_label_immc() {
+void test_new_label_immc(void) {
     Immc* immc = new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("function"));
 
     for (int i = 0; i < 2; i++) {
@@ -205,7 +205,7 @@ void test_new_label_immc() {
     delete_immc(immc);
 }
 
-void test_immc_isjumpinst() {
+void test_immc_isjumpinst(void) {
     ImmcOpe* dst = NULL;
     ImmcOpe* fst_src = NULL;
     ImmcOpe* snd_src = NULL;
@@ -297,7 +297,7 @@ void test_immc_tostring_3arg_inst() {
     free(immc_str);
 }
 
-void test_immc_tostring_int_data() {
+void test_immc_tostring_int_data(void) {
     Immc* immc = NULL;
     char* immc_str = NULL;
 
@@ -332,7 +332,7 @@ void test_immc_tostring_int_data() {
     free(immc_str);
 }
 
-void test_immc_tostring_str_data() {
+void test_immc_tostring_str_data(void) {
     char* sliteral_const = "string\0literal";
     int sliteral_size = 15;
 
@@ -349,7 +349,7 @@ void test_immc_tostring_str_data() {
     free(immc_str);
 }
 
-void test_immc_tostring_label() {
+void test_immc_tostring_label(void) {
     Immc* immc = NULL;
     char* immc_str = NULL;
 

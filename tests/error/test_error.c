@@ -3,17 +3,17 @@
 
 #include <stdlib.h>
 
-void test_new_error();
-void test_error_copy();
+void test_new_error(void);
+void test_error_copy(void);
 
-CU_Suite* add_test_suite_error() {
+CU_Suite* add_test_suite_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_error", NULL, NULL);
     CU_ADD_TEST(suite, test_new_error);
     CU_ADD_TEST(suite, test_error_copy);
     return suite;
 }
 
-void test_new_error() {
+void test_new_error(void) {
     Error* err = new_error("L%d:%d: %s raised an error\n", 10, 4, "test_function");
 
     CU_ASSERT_STRING_EQUAL(err->message, "L10:4: test_function raised an error\n");
@@ -21,7 +21,7 @@ void test_new_error() {
     delete_error(err);
 }
 
-void test_error_copy() {
+void test_error_copy(void) {
     Error* err = new_error("error is copied\n");
     Error* copied_err = erorr_copy(err);
     delete_error(err);

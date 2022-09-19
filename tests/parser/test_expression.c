@@ -3,30 +3,30 @@
 #include "../../src/parser/expression.h"
 #include "../testlib/testlib.h"
 
-void test_parse_assignment_expr();
-void test_parse_logical_or_expr();
-void test_parse_logical_and_expr();
-void test_parse_equal_expr();
-void test_parse_not_equal_expr();
-void test_parse_add_expr();
-void test_parse_subtract_expr();
-void test_parse_multiply_expr();
-void test_parse_division_expr();
-void test_parse_modulo_expr();
-void test_parse_address_expr();
-void test_parse_indirection_expr();
-void test_parse_logical_not_expr();
-void test_parse_call_expr();
-void test_parse_subscription_expr();
-void test_parse_ident_expr();
-void test_parse_iliteral_expr_int();
-void test_parse_iliteral_expr_char();
-void test_parse_sliteral_expr();
-void test_parse_parenthesized_expr();
+void test_parse_assignment_expr(void);
+void test_parse_logical_or_expr(void);
+void test_parse_logical_and_expr(void);
+void test_parse_equal_expr(void);
+void test_parse_not_equal_expr(void);
+void test_parse_add_expr(void);
+void test_parse_subtract_expr(void);
+void test_parse_multiply_expr(void);
+void test_parse_division_expr(void);
+void test_parse_modulo_expr(void);
+void test_parse_address_expr(void);
+void test_parse_indirection_expr(void);
+void test_parse_logical_not_expr(void);
+void test_parse_call_expr(void);
+void test_parse_subscription_expr(void);
+void test_parse_ident_expr(void);
+void test_parse_iliteral_expr_int(void);
+void test_parse_iliteral_expr_char(void);
+void test_parse_sliteral_expr(void);
+void test_parse_parenthesized_expr(void);
 
 void run_expr_parser_test(Vector* input, Ast* expected);
 
-CU_Suite* add_test_suite_expr_parser() {
+CU_Suite* add_test_suite_expr_parser(void) {
     CU_Suite* suite = CU_add_suite("test_suite_expr_parser", NULL, NULL);
     CU_ADD_TEST(suite, test_parse_assignment_expr);
     CU_ADD_TEST(suite, test_parse_logical_or_expr);
@@ -51,7 +51,7 @@ CU_Suite* add_test_suite_expr_parser() {
     return suite;
 }
 
-void test_parse_assignment_expr() {
+void test_parse_assignment_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
@@ -78,7 +78,7 @@ void test_parse_assignment_expr() {
     delete_ast(expected);
 }
 
-void test_parse_logical_or_expr() {
+void test_parse_logical_or_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL_EQUAL));
@@ -127,7 +127,7 @@ void test_parse_logical_or_expr() {
     delete_ast(expected);
 }
 
-void test_parse_logical_and_expr() {
+void test_parse_logical_and_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("check")));
     vector_push(input, new_ctoken(CTOKEN_EXCLAM_EQUAL));
@@ -153,7 +153,7 @@ void test_parse_logical_and_expr() {
     delete_ast(expected);
 }
 
-void test_parse_equal_expr() {
+void test_parse_equal_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_MINUS));
@@ -177,7 +177,7 @@ void test_parse_equal_expr() {
     delete_ast(expected);
 }
 
-void test_parse_not_equal_expr() {
+void test_parse_not_equal_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("zero_flag")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL_EQUAL));
@@ -197,7 +197,7 @@ void test_parse_not_equal_expr() {
     delete_ast(expected);
 }
 
-void test_parse_add_expr() {
+void test_parse_add_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
     vector_push(input, new_ctoken(CTOKEN_PLUS));
@@ -217,7 +217,7 @@ void test_parse_add_expr() {
     delete_ast(expected);
 }
 
-void test_parse_subtract_expr() {
+void test_parse_subtract_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
     vector_push(input, new_ctoken(CTOKEN_PLUS));
@@ -237,7 +237,7 @@ void test_parse_subtract_expr() {
     delete_ast(expected);
 }
 
-void test_parse_multiply_expr() {
+void test_parse_multiply_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 4)));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
@@ -255,7 +255,7 @@ void test_parse_multiply_expr() {
     delete_ast(expected);
 }
 
-void test_parse_division_expr() {
+void test_parse_division_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("amount")));
     vector_push(input, new_ctoken(CTOKEN_SLASH));
@@ -271,7 +271,7 @@ void test_parse_division_expr() {
     delete_ast(expected);
 }
 
-void test_parse_modulo_expr() {
+void test_parse_modulo_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("value")));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
@@ -291,7 +291,7 @@ void test_parse_modulo_expr() {
     delete_ast(expected);
 }
 
-void test_parse_address_expr() {
+void test_parse_address_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_AND));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
@@ -310,7 +310,7 @@ void test_parse_address_expr() {
     delete_ast(expected);
 }
 
-void test_parse_indirection_expr() {
+void test_parse_indirection_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("ptr")));
@@ -324,7 +324,7 @@ void test_parse_indirection_expr() {
     delete_ast(expected);
 }
 
-void test_parse_logical_not_expr() {
+void test_parse_logical_not_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_EXCLAM));
     vector_push(input, new_ctoken(CTOKEN_EXCLAM));
@@ -340,7 +340,7 @@ void test_parse_logical_not_expr() {
     delete_ast(expected);
 }
 
-void test_parse_call_expr() {
+void test_parse_call_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("function")));
     vector_push(input, new_ctoken(CTOKEN_LPALEN));
@@ -365,7 +365,7 @@ void test_parse_call_expr() {
     delete_ast(expected);
 }
 
-void test_parse_subscription_expr() {
+void test_parse_subscription_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("array")));
     vector_push(input, new_ctoken(CTOKEN_LBRACKET));
@@ -387,7 +387,7 @@ void test_parse_subscription_expr() {
     delete_ast(expected);
 }
 
-void test_parse_ident_expr() {
+void test_parse_ident_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("variable")));
     vector_push(input, new_ctoken(CTOKEN_EOF));
@@ -399,7 +399,7 @@ void test_parse_ident_expr() {
     delete_ast(expected);
 }
 
-void test_parse_iliteral_expr_int() {
+void test_parse_iliteral_expr_int(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
     vector_push(input, new_ctoken(CTOKEN_EOF));
@@ -411,7 +411,7 @@ void test_parse_iliteral_expr_int() {
     delete_ast(expected);
 }
 
-void test_parse_iliteral_expr_char() {
+void test_parse_iliteral_expr_char(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, 89)));
     vector_push(input, new_ctoken(CTOKEN_EOF));
@@ -423,7 +423,7 @@ void test_parse_iliteral_expr_char() {
     delete_ast(expected);
 }
 
-void test_parse_sliteral_expr() {
+void test_parse_sliteral_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(new_string("Hello"), 6)));
     vector_push(input, new_ctoken(CTOKEN_EOF));
@@ -435,7 +435,7 @@ void test_parse_sliteral_expr() {
     delete_ast(expected);
 }
 
-void test_parse_parenthesized_expr() {
+void test_parse_parenthesized_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_EXCLAM));
     vector_push(input, new_ctoken(CTOKEN_LPALEN));

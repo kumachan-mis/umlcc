@@ -1,17 +1,17 @@
 #include "./test_symbol.h"
 #include "../../src/symtab/symbol.h"
 
-void test_new_memory_symbol();
-void test_new_label_symbol();
+void test_new_memory_symbol(void);
+void test_new_label_symbol(void);
 
-CU_Suite* add_test_suite_symbol() {
+CU_Suite* add_test_suite_symbol(void) {
     CU_Suite* suite = CU_add_suite("test_suite_symbol", NULL, NULL);
     CU_ADD_TEST(suite, test_new_memory_symbol);
     CU_ADD_TEST(suite, test_new_label_symbol);
     return suite;
 }
 
-void test_new_memory_symbol() {
+void test_new_memory_symbol(void) {
     char* symbol_name = new_string("abc");
     Dtype* symbol_dtype = new_integer_dtype(DTYPE_CHAR);
     Symbol* symbol = new_memory_symbol(symbol_name, symbol_dtype, 1);
@@ -33,7 +33,7 @@ void test_new_memory_symbol() {
     delete_symbol(symbol);
 }
 
-void test_new_label_symbol() {
+void test_new_label_symbol(void) {
     char* symbol_name = new_string("xyz");
     Dtype* symbol_dtype = new_integer_dtype(DTYPE_INT);
     Symbol* symbol = new_label_symbol(symbol_name, symbol_dtype);

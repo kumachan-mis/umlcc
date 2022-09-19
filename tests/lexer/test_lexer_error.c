@@ -2,16 +2,16 @@
 #include "../../src/lexer/lexer.h"
 #include "../testlib/testlib.h"
 
-void test_read_error_character();
-void test_read_character_constant_error_empty();
-void test_read_character_constant_error_newline();
-void test_read_character_constant_error_escape_sequence();
-void test_read_string_literal_error_newline();
-void test_read_string_literal_error_escape_sequence();
+void test_read_error_character(void);
+void test_read_character_constant_error_empty(void);
+void test_read_character_constant_error_newline(void);
+void test_read_character_constant_error_escape_sequence(void);
+void test_read_string_literal_error_newline(void);
+void test_read_string_literal_error_escape_sequence(void);
 
 void run_lexer_error_test(char* input, Error* expected);
 
-CU_Suite* add_test_suite_lexer_error() {
+CU_Suite* add_test_suite_lexer_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_lexer_error", NULL, NULL);
     CU_ADD_TEST(suite, test_read_error_character);
     CU_ADD_TEST(suite, test_read_character_constant_error_empty);
@@ -22,7 +22,7 @@ CU_Suite* add_test_suite_lexer_error() {
     return suite;
 }
 
-void test_read_error_character() {
+void test_read_error_character(void) {
     char* input = "@variable = 1;\n";
     Error* expected = new_error("Error: unexpected character '@'\n");
 
@@ -31,7 +31,7 @@ void test_read_error_character() {
     delete_error(expected);
 }
 
-void test_read_character_constant_error_empty() {
+void test_read_character_constant_error_empty(void) {
     char* input = "ch = '';\n";
     Error* expected = new_error("Error: character constant is empty\n");
 
@@ -40,7 +40,7 @@ void test_read_character_constant_error_empty() {
     delete_error(expected);
 }
 
-void test_read_character_constant_error_newline() {
+void test_read_character_constant_error_newline(void) {
     char* input = NULL;
     Error* expected = new_error("Error: newline appeared in character constant\n");
 
@@ -53,7 +53,7 @@ void test_read_character_constant_error_newline() {
     delete_error(expected);
 }
 
-void test_read_character_constant_error_escape_sequence() {
+void test_read_character_constant_error_escape_sequence(void) {
     char* input = NULL;
     Error* expected = new_error("Error: invalid escape sequence \\!\n");
 
@@ -66,7 +66,7 @@ void test_read_character_constant_error_escape_sequence() {
     delete_error(expected);
 }
 
-void test_read_string_literal_error_newline() {
+void test_read_string_literal_error_newline(void) {
     char* input = "str = \"\n\";\n";
     Error* expected = new_error("Error: newline appeared in string literal\n");
 
@@ -75,7 +75,7 @@ void test_read_string_literal_error_newline() {
     delete_error(expected);
 }
 
-void test_read_string_literal_error_escape_sequence() {
+void test_read_string_literal_error_escape_sequence(void) {
     char* input = "str = \"\\~\";\n";
     Error* expected = new_error("Error: invalid escape sequence \\~\n");
 

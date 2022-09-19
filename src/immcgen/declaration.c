@@ -100,8 +100,8 @@ Vector* gen_initializer_immcode(Immcgen* immcgen) {
 }
 
 Vector* gen_array_initializer_immcode(Immcgen* immcgen) {
-    Vector* gen_global_string_initializer_immcode();
-    Vector* gen_local_string_initializer_immcode();
+    Vector* gen_global_string_initializer_immcode(Immcgen * immcgen);
+    Vector* gen_local_string_initializer_immcode(Immcgen * immcgen);
 
     Srt* srt = vector_at(immcgen->srt->children, 0);
     if (srt->type == SRT_STRING_EXPR) {

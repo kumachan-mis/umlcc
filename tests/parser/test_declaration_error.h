@@ -3,6 +3,6 @@
 
 #include <CUnit/Basic.h>
 
-CU_Suite* add_test_suite_decl_parser_error();
+CU_Suite* add_test_suite_decl_parser_error(void);
 
 #endif

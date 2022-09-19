@@ -14,11 +14,14 @@ struct SetIter {
     MapIter* inner;
 };
 
-void* copy_notnull() {
+void* copy_notnull(void* x) {
+    (void)x;
     return NOTNULL;
 }
 
-void delete_notnull() {}
+void delete_notnull(void* x) {
+    (void)x;
+}
 
 BaseType t_notnull = {
     .copy_object = (void* (*)(void*))copy_notnull,

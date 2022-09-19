@@ -3,6 +3,6 @@
 
 #include <CUnit/Basic.h>
 
-CU_Suite* add_test_suite_immc();
+CU_Suite* add_test_suite_immc(void);
 
 #endif

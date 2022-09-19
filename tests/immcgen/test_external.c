@@ -2,17 +2,17 @@
 #include "../../src/immcgen/immcgen.h"
 #include "../testlib/testlib.h"
 
-void test_immcgen_transration_unit();
+void test_immcgen_transration_unit(void);
 
 void run_immcgen_test(Srt* input, Vector* expected);
 
-CU_Suite* add_test_suite_exteral_immcgen() {
+CU_Suite* add_test_suite_exteral_immcgen(void) {
     CU_Suite* suite = CU_add_suite("test_suite_exteral_immcgen", NULL, NULL);
     CU_ADD_TEST(suite, test_immcgen_transration_unit);
     return suite;
 }
 
-void test_immcgen_transration_unit() {
+void test_immcgen_transration_unit(void) {
     Vector* incr_params = new_vector(&t_dparam);
     vector_push(incr_params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
     Dtype* incr_dtype = new_function_dtype(incr_params, new_integer_dtype(DTYPE_INT));

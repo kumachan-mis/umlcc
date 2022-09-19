@@ -2,17 +2,17 @@
 #include "../../src/regalloc/regalloc.h"
 #include "../testlib/testlib.h"
 
-void test_regalloc_empty_function();
-void test_regalloc_single_register();
-void test_regalloc_multiple_register();
-void test_regalloc_longlife_register();
-void test_regalloc_jump();
-void test_regalloc_global_variable();
-void test_regalloc_function_variable_mixed();
+void test_regalloc_empty_function(void);
+void test_regalloc_single_register(void);
+void test_regalloc_multiple_register(void);
+void test_regalloc_longlife_register(void);
+void test_regalloc_jump(void);
+void test_regalloc_global_variable(void);
+void test_regalloc_function_variable_mixed(void);
 
 void run_regalloc_test(Vector* input, int num_regs, Vector* expected_immcs, Vector* expected_liveseqs);
 
-CU_Suite* add_test_suite_regalloc() {
+CU_Suite* add_test_suite_regalloc(void) {
     CU_Suite* suite = CU_add_suite("test_suite_regalloc", NULL, NULL);
     CU_ADD_TEST(suite, test_regalloc_empty_function);
     CU_ADD_TEST(suite, test_regalloc_single_register);
@@ -24,7 +24,7 @@ CU_Suite* add_test_suite_regalloc() {
     return suite;
 }
 
-void test_regalloc_empty_function() {
+void test_regalloc_empty_function(void) {
     Vector* input = new_vector(&t_immc);
     vector_push(input, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("empty")));
     vector_push(input,
@@ -64,7 +64,7 @@ void test_regalloc_empty_function() {
     delete_vector(expected_liveseqs);
 }
 
-void test_regalloc_single_register() {
+void test_regalloc_single_register(void) {
     Vector* input = new_vector(&t_immc);
     vector_push(input, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("decriment")));
     vector_push(input,
@@ -164,7 +164,7 @@ void test_regalloc_single_register() {
     delete_vector(expected_liveseqs);
 }
 
-void test_regalloc_multiple_register() {
+void test_regalloc_multiple_register(void) {
     Vector* input = new_vector(&t_immc);
     vector_push(input, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("add")));
     vector_push(input,
@@ -287,7 +287,7 @@ void test_regalloc_multiple_register() {
     delete_vector(expected_liveseqs);
 }
 
-void test_regalloc_longlife_register() {
+void test_regalloc_longlife_register(void) {
     Vector* input = new_vector(&t_immc);
     vector_push(input, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("update_ptr")));
     vector_push(input,
@@ -411,7 +411,7 @@ void test_regalloc_longlife_register() {
     delete_vector(expected_liveseqs);
 }
 
-void test_regalloc_jump() {
+void test_regalloc_jump(void) {
     Vector* input = new_vector(&t_immc);
     vector_push(input, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("check_validate")));
     vector_push(input,
@@ -613,7 +613,7 @@ void test_regalloc_jump() {
     delete_vector(expected_liveseqs);
 }
 
-void test_regalloc_global_variable() {
+void test_regalloc_global_variable(void) {
     Vector* input = new_vector(&t_immc);
     vector_push(input, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("a")));
     vector_push(input, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 1)));
@@ -649,7 +649,7 @@ void test_regalloc_global_variable() {
     delete_vector(expected_liveseqs);
 }
 
-void test_regalloc_function_variable_mixed() {
+void test_regalloc_function_variable_mixed(void) {
     Vector* input = new_vector(&t_immc);
     vector_push(input, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("count")));
     vector_push(input, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 1)));

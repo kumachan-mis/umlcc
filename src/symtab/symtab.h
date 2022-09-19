@@ -10,7 +10,7 @@ typedef struct SymbolTable {
     struct SymbolTable* outer_scope;
 } SymbolTable;
 
-SymbolTable* new_symboltable();
+SymbolTable* new_symboltable(void);
 SymbolTable* symboltable_copy(SymbolTable* table);
 int symboltable_can_define(SymbolTable* table, char* name);
 Symbol* symboltable_define_memory(SymbolTable* table, char* name, Dtype* dtype);

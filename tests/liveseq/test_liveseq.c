@@ -2,14 +2,14 @@
 #include "../../src/liveseq/liveness.h"
 #include "../../src/liveseq/liveseq.h"
 
-void test_liveseq_copy();
-void test_liveseq_empty();
-void test_liveseq_unused_liveness();
-void test_liveseq_starts_with_zero();
-void test_liveseq_starts_with_nonzero();
-void test_liveseq_redef_without_interval();
+void test_liveseq_copy(void);
+void test_liveseq_empty(void);
+void test_liveseq_unused_liveness(void);
+void test_liveseq_starts_with_zero(void);
+void test_liveseq_starts_with_nonzero(void);
+void test_liveseq_redef_without_interval(void);
 
-CU_Suite* add_test_suite_liveseq() {
+CU_Suite* add_test_suite_liveseq(void) {
     CU_Suite* suite = CU_add_suite("test_suite_liveseq", NULL, NULL);
     CU_ADD_TEST(suite, test_liveseq_copy);
     CU_ADD_TEST(suite, test_liveseq_empty);
@@ -20,7 +20,7 @@ CU_Suite* add_test_suite_liveseq() {
     return suite;
 }
 
-void test_liveseq_copy() {
+void test_liveseq_copy(void) {
     Liveseq* liveseq = new_liveseq();
     Liveness* liveness = NULL;
 
@@ -42,7 +42,7 @@ void test_liveseq_copy() {
     delete_liveseq(copied_liveseq);
 }
 
-void test_liveseq_empty() {
+void test_liveseq_empty(void) {
     Liveseq* liveseq = new_liveseq();
 
     CU_ASSERT_EQUAL(vector_size(liveseq->livenesses), 0);
@@ -57,7 +57,7 @@ void test_liveseq_empty() {
     delete_liveseq(liveseq);
 }
 
-void test_liveseq_unused_liveness() {
+void test_liveseq_unused_liveness(void) {
     Liveseq* liveseq = new_liveseq();
     Liveness* liveness = NULL;
 
@@ -77,7 +77,7 @@ void test_liveseq_unused_liveness() {
     delete_liveseq(liveseq);
 }
 
-void test_liveseq_starts_with_zero() {
+void test_liveseq_starts_with_zero(void) {
     Liveseq* liveseq = new_liveseq();
     Liveness* liveness = NULL;
 
@@ -99,7 +99,7 @@ void test_liveseq_starts_with_zero() {
     delete_liveseq(liveseq);
 }
 
-void test_liveseq_starts_with_nonzero() {
+void test_liveseq_starts_with_nonzero(void) {
     Liveseq* liveseq = new_liveseq();
     Liveness* liveness = NULL;
 
@@ -121,7 +121,7 @@ void test_liveseq_starts_with_nonzero() {
     delete_liveseq(liveseq);
 }
 
-void test_liveseq_redef_without_interval() {
+void test_liveseq_redef_without_interval(void) {
     Liveseq* liveseq = new_liveseq();
     Liveness* liveness = NULL;
 
