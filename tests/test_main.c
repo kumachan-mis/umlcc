@@ -30,6 +30,7 @@
 #include "./resolver/test_expression.h"
 #include "./resolver/test_expression_error.h"
 #include "./resolver/test_external.h"
+#include "./resolver/test_external_error.h"
 #include "./resolver/test_statement.h"
 #include "./resolver/test_statement_error.h"
 #include "./set/test_set.h"
@@ -104,6 +105,7 @@ int main(void) {
     add_test_suite_decl_resolver();
     add_test_suite_decl_resolver_error();
     add_test_suite_external_resolver();
+    add_test_suite_external_resolver_error();
 
     // immcgen tests
     add_test_suite_expr_immcgen();

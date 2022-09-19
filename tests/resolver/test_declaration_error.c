@@ -5,10 +5,10 @@
 void test_resolve_decl_specifiers_error();
 void test_resolve_declarator_list_error_duplicated();
 void test_resolve_declarator_error();
-void test_resolve_array_size_limitation_error();
+void test_resolve_array_error_size_limitation();
 void test_resolve_parameter_list_error_duplicated();
-void test_resolve_parameter_error_invalid_storage_specifier();
-void test_resolve_parameter_error_invalid_declarator();
+void test_resolve_parameter_error_storage_specifier();
+void test_resolve_parameter_error_declarator();
 void test_resolve_initializer_error_unassignable();
 void test_resolve_initializer_error_non_object();
 void test_resolve_initializer_error_nested_list_scalar();
@@ -32,10 +32,10 @@ CU_Suite* add_test_suite_decl_resolver_error() {
     CU_ADD_TEST(suite, test_resolve_decl_specifiers_error);
     CU_ADD_TEST(suite, test_resolve_declarator_list_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_declarator_error);
-    CU_ADD_TEST(suite, test_resolve_array_size_limitation_error);
+    CU_ADD_TEST(suite, test_resolve_array_error_size_limitation);
     CU_ADD_TEST(suite, test_resolve_parameter_list_error_duplicated);
-    CU_ADD_TEST(suite, test_resolve_parameter_error_invalid_storage_specifier);
-    CU_ADD_TEST(suite, test_resolve_parameter_error_invalid_declarator);
+    CU_ADD_TEST(suite, test_resolve_parameter_error_storage_specifier);
+    CU_ADD_TEST(suite, test_resolve_parameter_error_declarator);
     CU_ADD_TEST(suite, test_resolve_initializer_error_unassignable);
     CU_ADD_TEST(suite, test_resolve_initializer_error_non_object);
     CU_ADD_TEST(suite, test_resolve_initializer_error_nested_list_scalar);
@@ -135,7 +135,7 @@ void test_resolve_declarator_error() {
     delete_vector(messages);
 }
 
-void test_resolve_array_size_limitation_error() {
+void test_resolve_array_error_size_limitation() {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -196,8 +196,8 @@ void test_resolve_parameter_list_error_duplicated() {
     Ast* global_input = ast_copy(local_input);
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: parameter name 'x' is duplicated\n"));
-    vector_push(messages, new_string("Error: parameter name 'y' is duplicated\n"));
+    vector_push(messages, new_string("Error: parameter 'x' is already declared\n"));
+    vector_push(messages, new_string("Error: parameter 'y' is already declared\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, messages);
     run_global_decl_resolver_error_test(global_input, NULL, messages);
@@ -205,7 +205,7 @@ void test_resolve_parameter_list_error_duplicated() {
     delete_vector(messages);
 }
 
-void test_resolve_parameter_error_invalid_storage_specifier() {
+void test_resolve_parameter_error_storage_specifier() {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -233,7 +233,7 @@ void test_resolve_parameter_error_invalid_storage_specifier() {
     delete_vector(messages);
 }
 
-void test_resolve_parameter_error_invalid_declarator() {
+void test_resolve_parameter_error_declarator() {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal

@@ -314,7 +314,7 @@ ResolverReturnDParams* resolve_parameter_list(Resolver* resolver) {
 
         if (set_contains(param_names_set, dparam->ident_name)) {
             if (errs == NULL) errs = new_vector(&t_error);
-            err = new_error("Error: parameter name '%s' is duplicated\n", dparam->ident_name);
+            err = new_error("Error: parameter '%s' is already declared\n", dparam->ident_name);
             vector_push(errs, err);
         }
         if (errs != NULL) {

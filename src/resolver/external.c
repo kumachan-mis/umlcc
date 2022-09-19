@@ -48,6 +48,7 @@ ResolverReturn* resolve_transration_unit(Resolver* resolver) {
 
 ResolverReturn* resolve_function_definition(Resolver* resolver) {
     Srt* srt = new_srt(SRT_FUNC_DEF, 0);
+    Dtype* specifiers_dtype = NULL;
     Srt* child_srt = NULL;
     Vector* errs = NULL;
     Error* err = NULL;
@@ -55,10 +56,18 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_decl_specifiers(resolver));
+    resolverret_dtype_assign(&specifiers_dtype, &errs, resolve_decl_specifiers(resolver));
     resolver->ast = ast;
     if (errs != NULL) {
         delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    if (specifiers_dtype->type == DTYPE_DECORATION && specifiers_dtype->decoration->typedef_flag) {
+        errs = new_vector(&t_error);
+        err = new_error("Error: storage specifiers are invalid for a function definition\n");
+        vector_push(errs, err);
+        delete_dtype(specifiers_dtype);
         return new_resolverret_errors(errs);
     }
 
@@ -66,12 +75,10 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     resolverret_assign(&child_srt, &errs, resolve_declarator(resolver));
     resolver->ast = ast;
     if (errs != NULL) {
-        resolver->specifier_dtype = NULL;
         delete_srt(srt);
         return new_resolverret_errors(errs);
     }
-    child_srt->dtype = dtype_connect(child_srt->dtype, resolver->specifier_dtype);
-    resolver->specifier_dtype = NULL;
+    child_srt->dtype = dtype_connect(child_srt->dtype, specifiers_dtype);
 
     if (child_srt->dtype->type != DTYPE_FUNCTION) {
         errs = new_vector(&t_error);
