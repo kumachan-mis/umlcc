@@ -2,17 +2,17 @@
 #include "../../src/resolver/resolver.h"
 #include "../testlib/testlib.h"
 
-void test_resolve_translation_unit_error_child();
-void test_resolve_function_definition_error_decl_specifier();
-void test_resolve_function_definition_error_storage_specifier();
-void test_resolve_function_definition_error_non_func();
-void test_resolve_function_definition_error_declarator();
-void test_resolve_function_definition_error_duplicated();
-void test_resolve_function_definition_error_body();
+void test_resolve_translation_unit_error_child(void);
+void test_resolve_function_definition_error_decl_specifier(void);
+void test_resolve_function_definition_error_storage_specifier(void);
+void test_resolve_function_definition_error_non_func(void);
+void test_resolve_function_definition_error_declarator(void);
+void test_resolve_function_definition_error_duplicated(void);
+void test_resolve_function_definition_error_body(void);
 
 void run_resolver_error_test(Ast* input, Vector* expected);
 
-CU_Suite* add_test_suite_external_resolver_error() {
+CU_Suite* add_test_suite_external_resolver_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_external_resolver_error", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_translation_unit_error_child);
     CU_ADD_TEST(suite, test_resolve_function_definition_error_decl_specifier);
@@ -24,7 +24,7 @@ CU_Suite* add_test_suite_external_resolver_error() {
     return suite;
 }
 
-void test_resolve_translation_unit_error_child() {
+void test_resolve_translation_unit_error_child(void) {
     Ast* input = new_ast(
         AST_TRAS_UNIT, 3,
         new_ast(AST_DECL, 2,                    // non-terminal
@@ -78,7 +78,7 @@ void test_resolve_translation_unit_error_child() {
     delete_vector(expected);
 }
 
-void test_resolve_function_definition_error_decl_specifier() {
+void test_resolve_function_definition_error_decl_specifier(void) {
     Ast* input =
         new_ast(AST_TRAS_UNIT, 1,
                 new_ast(AST_FUNC_DEF, 3,                // non-terminal
@@ -98,7 +98,7 @@ void test_resolve_function_definition_error_decl_specifier() {
     delete_vector(expected);
 }
 
-void test_resolve_function_definition_error_storage_specifier() {
+void test_resolve_function_definition_error_storage_specifier(void) {
     Ast* input =
         new_ast(AST_TRAS_UNIT, 1,
                 new_ast(AST_FUNC_DEF, 3,                // non-terminal
@@ -117,7 +117,7 @@ void test_resolve_function_definition_error_storage_specifier() {
     delete_vector(expected);
 }
 
-void test_resolve_function_definition_error_non_func() {
+void test_resolve_function_definition_error_non_func(void) {
     Ast* input =
         new_ast(AST_TRAS_UNIT, 1,
                 new_ast(AST_FUNC_DEF, 3,                // non-terminal
@@ -137,7 +137,7 @@ void test_resolve_function_definition_error_non_func() {
     delete_vector(expected);
 }
 
-void test_resolve_function_definition_error_declarator() {
+void test_resolve_function_definition_error_declarator(void) {
     Ast* input = new_ast(AST_TRAS_UNIT, 1,
                          new_ast(AST_FUNC_DEF, 3,                // non-terminal
                                  new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -166,7 +166,7 @@ void test_resolve_function_definition_error_declarator() {
     delete_vector(expected);
 }
 
-void test_resolve_function_definition_error_duplicated() {
+void test_resolve_function_definition_error_duplicated(void) {
     Ast* input =
         new_ast(AST_TRAS_UNIT, 3,
                 new_ast(AST_FUNC_DEF, 3,                // non-terminal
@@ -201,7 +201,7 @@ void test_resolve_function_definition_error_duplicated() {
     delete_vector(expected);
 }
 
-void test_resolve_function_definition_error_body() {
+void test_resolve_function_definition_error_body(void) {
     Ast* input = new_ast(
         AST_TRAS_UNIT, 1,
         new_ast(AST_FUNC_DEF, 3,                // non-terminal

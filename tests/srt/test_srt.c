@@ -3,14 +3,14 @@
 
 #include <stdlib.h>
 
-void test_new_srt();
-void test_new_dtyped_srt();
-void test_new_identifier_srt();
-void test_new_iliteral_srt_int();
-void test_new_iliteral_srt_char();
-void test_new_sliteral_srt();
+void test_new_srt(void);
+void test_new_dtyped_srt(void);
+void test_new_identifier_srt(void);
+void test_new_iliteral_srt_int(void);
+void test_new_iliteral_srt_char(void);
+void test_new_sliteral_srt(void);
 
-CU_Suite* add_test_suite_srt() {
+CU_Suite* add_test_suite_srt(void) {
     CU_Suite* suite = CU_add_suite("test_suite_srt", NULL, NULL);
     CU_ADD_TEST(suite, test_new_srt);
     CU_ADD_TEST(suite, test_new_dtyped_srt);
@@ -21,7 +21,7 @@ CU_Suite* add_test_suite_srt() {
     return suite;
 }
 
-void test_new_srt() {
+void test_new_srt(void) {
     Srt* srt = new_srt(SRT_TRAS_UNIT, 2, new_srt(SRT_DECL, 0), new_srt(SRT_FUNC_DEF, 0));
     Srt* child = NULL;
 
@@ -58,7 +58,7 @@ void test_new_srt() {
     delete_srt(srt);
 }
 
-void test_new_dtyped_srt() {
+void test_new_dtyped_srt(void) {
     Dtype* dtype = new_integer_dtype(DTYPE_INT);
     Dtype* lhs_dtype = new_integer_dtype(DTYPE_INT);
     Dtype* rhs_dtype = new_integer_dtype(DTYPE_INT);
@@ -116,7 +116,7 @@ void test_new_dtyped_srt() {
     delete_srt(srt);
 }
 
-void test_new_identifier_srt() {
+void test_new_identifier_srt(void) {
     Dtype* dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     Srt* srt = new_identifier_srt(SRT_IDENT_EXPR, dtype, new_string("ident"));
 
@@ -138,7 +138,7 @@ void test_new_identifier_srt() {
     delete_srt(srt);
 }
 
-void test_new_iliteral_srt_int() {
+void test_new_iliteral_srt_int(void) {
     Dtype* dtype = new_integer_dtype(DTYPE_INT);
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 6);
     Srt* srt = new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
@@ -164,7 +164,7 @@ void test_new_iliteral_srt_int() {
     delete_srt(srt);
 }
 
-void test_new_iliteral_srt_char() {
+void test_new_iliteral_srt_char(void) {
     Dtype* dtype = new_integer_dtype(DTYPE_INT);
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 89);
     Srt* srt = new_iliteral_srt(SRT_CHAR_EXPR, dtype, iliteral);
@@ -191,7 +191,7 @@ void test_new_iliteral_srt_char() {
     delete_srt(srt);
 }
 
-void test_new_sliteral_srt() {
+void test_new_sliteral_srt(void) {
     char* sliteral_const = "string literal";
     int sliteral_size = 15;
 

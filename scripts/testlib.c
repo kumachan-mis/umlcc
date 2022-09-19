@@ -38,7 +38,7 @@ int put_str(char* x) {
     return 0;
 }
 
-int put_blank_line() {
+int put_blank_line(void) {
     printf("\n");
     return 0;
 }

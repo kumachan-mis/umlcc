@@ -3,6 +3,6 @@
 
 #include <CUnit/Basic.h>
 
-CU_Suite* add_test_suite_stmt_parser();
+CU_Suite* add_test_suite_stmt_parser(void);
 
 #endif

@@ -8,7 +8,7 @@ BaseType t_liveseq = {
     .delete_object = (void (*)(void*))delete_liveseq,
 };
 
-Liveseq* new_liveseq() {
+Liveseq* new_liveseq(void) {
     Liveseq* liveseq = malloc(sizeof(Liveseq));
     liveseq->livenesses = new_vector(&t_liveness);
     liveseq->index = 0;

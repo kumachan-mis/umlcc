@@ -2,61 +2,61 @@
 #include "../../src/resolver/expression.h"
 #include "../testlib/testlib.h"
 
-void test_resolve_assign_expr_error_unassignable();
-void test_resolve_assign_expr_error_unmodifiable();
-void test_resolve_assign_expr_error_lhs();
-void test_resolve_assign_expr_error_rhs();
-void test_resolve_logical_or_expr_error_non_scalar();
-void test_resolve_logical_or_expr_error_lhs();
-void test_resolve_logical_or_expr_error_rhs();
-void test_resolve_logical_and_expr_error_non_scalar_rhs();
-void test_resolve_logical_and_expr_error_non_scalar_lhs();
-void test_resolve_logical_and_expr_error_lhs();
-void test_resolve_logical_and_expr_error_rhs();
-void test_resolve_equal_expr_error_operand_dtype();
-void test_resolve_equal_expr_error_incompatible_pointer();
-void test_resolve_equal_expr_error_lhs();
-void test_resolve_equal_expr_error_rhs();
-void test_resolve_not_equal_expr_error_operand_dtype();
-void test_resolve_not_equal_expr_error_incompatible_pointer();
-void test_resolve_not_equal_expr_error_lhs();
-void test_resolve_not_equal_expr_error_rhs();
-void test_resolve_add_expr_error_operand_dtype();
-void test_resolve_add_expr_error_lhs();
-void test_resolve_add_expr_error_rhs();
-void test_resolve_subtract_expr_error_operand_dtype();
-void test_resolve_subtract_expr_error_incompatible_pointer();
-void test_resolve_subtract_expr_error_lhs();
-void test_resolve_subtract_expr_error_rhs();
-void test_resolve_multiply_expr_error_non_arithmetic();
-void test_resolve_multiply_expr_error_lhs();
-void test_resolve_multiply_expr_error_rhs();
-void test_resolve_division_expr_error_non_arithmetic();
-void test_resolve_division_expr_error_lhs();
-void test_resolve_division_expr_error_rhs();
-void test_resolve_modulo_expr_error_non_integer();
-void test_resolve_modulo_expr_error_lhs();
-void test_resolve_modulo_expr_error_rhs();
-void test_resolve_address_expr_error_operand_dtype();
-void test_resolve_address_expr_error_child();
-void test_resolve_indirection_expr_error_non_pointer();
-void test_resolve_indirection_expr_error_child();
-void test_resolve_logical_not_expr_error_non_scalar();
-void test_resolve_logical_not_expr_error_child();
-void test_resolve_call_expr_error_non_func();
-void test_resolve_call_expr_error_num_params();
-void test_resolve_call_expr_error_param_dtype();
-void test_resolve_call_expr_error_child();
-void test_resolve_subscription_expr_error_non_obj_pointer();
-void test_resolve_subscription_expr_error_non_pointer();
-void test_resolve_subscription_expr_error_non_integer();
-void test_resolve_subscription_expr_error_lhs();
-void test_resolve_subscription_expr_error_rhs();
-void test_resolve_ident_expr_error();
+void test_resolve_assign_expr_error_unassignable(void);
+void test_resolve_assign_expr_error_unmodifiable(void);
+void test_resolve_assign_expr_error_lhs(void);
+void test_resolve_assign_expr_error_rhs(void);
+void test_resolve_logical_or_expr_error_non_scalar(void);
+void test_resolve_logical_or_expr_error_lhs(void);
+void test_resolve_logical_or_expr_error_rhs(void);
+void test_resolve_logical_and_expr_error_non_scalar_rhs(void);
+void test_resolve_logical_and_expr_error_non_scalar_lhs(void);
+void test_resolve_logical_and_expr_error_lhs(void);
+void test_resolve_logical_and_expr_error_rhs(void);
+void test_resolve_equal_expr_error_operand_dtype(void);
+void test_resolve_equal_expr_error_incompatible_pointer(void);
+void test_resolve_equal_expr_error_lhs(void);
+void test_resolve_equal_expr_error_rhs(void);
+void test_resolve_not_equal_expr_error_operand_dtype(void);
+void test_resolve_not_equal_expr_error_incompatible_pointer(void);
+void test_resolve_not_equal_expr_error_lhs(void);
+void test_resolve_not_equal_expr_error_rhs(void);
+void test_resolve_add_expr_error_operand_dtype(void);
+void test_resolve_add_expr_error_lhs(void);
+void test_resolve_add_expr_error_rhs(void);
+void test_resolve_subtract_expr_error_operand_dtype(void);
+void test_resolve_subtract_expr_error_incompatible_pointer(void);
+void test_resolve_subtract_expr_error_lhs(void);
+void test_resolve_subtract_expr_error_rhs(void);
+void test_resolve_multiply_expr_error_non_arithmetic(void);
+void test_resolve_multiply_expr_error_lhs(void);
+void test_resolve_multiply_expr_error_rhs(void);
+void test_resolve_division_expr_error_non_arithmetic(void);
+void test_resolve_division_expr_error_lhs(void);
+void test_resolve_division_expr_error_rhs(void);
+void test_resolve_modulo_expr_error_non_integer(void);
+void test_resolve_modulo_expr_error_lhs(void);
+void test_resolve_modulo_expr_error_rhs(void);
+void test_resolve_address_expr_error_operand_dtype(void);
+void test_resolve_address_expr_error_child(void);
+void test_resolve_indirection_expr_error_non_pointer(void);
+void test_resolve_indirection_expr_error_child(void);
+void test_resolve_logical_not_expr_error_non_scalar(void);
+void test_resolve_logical_not_expr_error_child(void);
+void test_resolve_call_expr_error_non_func(void);
+void test_resolve_call_expr_error_num_params(void);
+void test_resolve_call_expr_error_param_dtype(void);
+void test_resolve_call_expr_error_child(void);
+void test_resolve_subscription_expr_error_non_obj_pointer(void);
+void test_resolve_subscription_expr_error_non_pointer(void);
+void test_resolve_subscription_expr_error_non_integer(void);
+void test_resolve_subscription_expr_error_lhs(void);
+void test_resolve_subscription_expr_error_rhs(void);
+void test_resolve_ident_expr_error(void);
 
 void run_expr_resolver_error_test(Ast* input, SymbolTable* local_table, SymbolTable* global_table, Vector* expected);
 
-CU_Suite* add_test_suite_expr_resolver_error() {
+CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_expr_resolver_error", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_assign_expr_error_unassignable);
     CU_ADD_TEST(suite, test_resolve_assign_expr_error_unmodifiable);
@@ -112,7 +112,7 @@ CU_Suite* add_test_suite_expr_resolver_error() {
     return suite;
 }
 
-void test_resolve_assign_expr_error_unassignable() {
+void test_resolve_assign_expr_error_unassignable(void) {
     Ast* input = new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -129,7 +129,7 @@ void test_resolve_assign_expr_error_unassignable() {
     delete_vector(expected);
 }
 
-void test_resolve_assign_expr_error_unmodifiable() {
+void test_resolve_assign_expr_error_unmodifiable(void) {
     Ast* input = new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -146,7 +146,7 @@ void test_resolve_assign_expr_error_unmodifiable() {
     delete_vector(expected);
 }
 
-void test_resolve_assign_expr_error_lhs() {
+void test_resolve_assign_expr_error_lhs(void) {
     Ast* input = new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -159,7 +159,7 @@ void test_resolve_assign_expr_error_lhs() {
     delete_vector(expected);
 }
 
-void test_resolve_assign_expr_error_rhs() {
+void test_resolve_assign_expr_error_rhs(void) {
     Ast* input = new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -175,11 +175,11 @@ void test_resolve_assign_expr_error_rhs() {
     delete_vector(expected);
 }
 
-void test_resolve_logical_or_expr_error_non_scalar() {
+void test_resolve_logical_or_expr_error_non_scalar(void) {
     // TODO: implement here after non-scalar dtype is introduced
 }
 
-void test_resolve_logical_or_expr_error_lhs() {
+void test_resolve_logical_or_expr_error_lhs(void) {
     Ast* input = new_ast(AST_LOR_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -192,7 +192,7 @@ void test_resolve_logical_or_expr_error_lhs() {
     delete_vector(expected);
 }
 
-void test_resolve_logical_or_expr_error_rhs() {
+void test_resolve_logical_or_expr_error_rhs(void) {
     Ast* input = new_ast(AST_LOR_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -208,15 +208,15 @@ void test_resolve_logical_or_expr_error_rhs() {
     delete_vector(expected);
 }
 
-void test_resolve_logical_and_expr_error_non_scalar_rhs() {
+void test_resolve_logical_and_expr_error_non_scalar_rhs(void) {
     // TODO: implement here after non-scalar dtype is introduced
 }
 
-void test_resolve_logical_and_expr_error_non_scalar_lhs() {
+void test_resolve_logical_and_expr_error_non_scalar_lhs(void) {
     // TODO: implement here after non-scalar dtype is introduced
 }
 
-void test_resolve_logical_and_expr_error_lhs() {
+void test_resolve_logical_and_expr_error_lhs(void) {
     Ast* input = new_ast(AST_LAND_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -229,7 +229,7 @@ void test_resolve_logical_and_expr_error_lhs() {
     delete_vector(expected);
 }
 
-void test_resolve_logical_and_expr_error_rhs() {
+void test_resolve_logical_and_expr_error_rhs(void) {
     Ast* input = new_ast(AST_LAND_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -245,7 +245,7 @@ void test_resolve_logical_and_expr_error_rhs() {
     delete_vector(expected);
 }
 
-void test_resolve_equal_expr_error_operand_dtype() {
+void test_resolve_equal_expr_error_operand_dtype(void) {
     Ast* input = new_ast(AST_EQUAL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -263,7 +263,7 @@ void test_resolve_equal_expr_error_operand_dtype() {
     delete_vector(expected);
 }
 
-void test_resolve_equal_expr_error_incompatible_pointer() {
+void test_resolve_equal_expr_error_incompatible_pointer(void) {
     Ast* input = new_ast(AST_EQUAL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
@@ -280,7 +280,7 @@ void test_resolve_equal_expr_error_incompatible_pointer() {
     delete_vector(expected);
 }
 
-void test_resolve_equal_expr_error_lhs() {
+void test_resolve_equal_expr_error_lhs(void) {
     Ast* input = new_ast(AST_EQUAL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -293,7 +293,7 @@ void test_resolve_equal_expr_error_lhs() {
     delete_vector(expected);
 }
 
-void test_resolve_equal_expr_error_rhs() {
+void test_resolve_equal_expr_error_rhs(void) {
     Ast* input = new_ast(AST_EQUAL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -309,7 +309,7 @@ void test_resolve_equal_expr_error_rhs() {
     delete_vector(expected);
 }
 
-void test_resolve_not_equal_expr_error_operand_dtype() {
+void test_resolve_not_equal_expr_error_operand_dtype(void) {
     Ast* input = new_ast(AST_NEQUAL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -327,7 +327,7 @@ void test_resolve_not_equal_expr_error_operand_dtype() {
     delete_vector(expected);
 }
 
-void test_resolve_not_equal_expr_error_incompatible_pointer() {
+void test_resolve_not_equal_expr_error_incompatible_pointer(void) {
     Ast* input = new_ast(AST_NEQUAL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
@@ -344,7 +344,7 @@ void test_resolve_not_equal_expr_error_incompatible_pointer() {
     delete_vector(expected);
 }
 
-void test_resolve_not_equal_expr_error_lhs() {
+void test_resolve_not_equal_expr_error_lhs(void) {
     Ast* input = new_ast(AST_NEQUAL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -357,7 +357,7 @@ void test_resolve_not_equal_expr_error_lhs() {
     delete_vector(expected);
 }
 
-void test_resolve_not_equal_expr_error_rhs() {
+void test_resolve_not_equal_expr_error_rhs(void) {
     Ast* input = new_ast(AST_NEQUAL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -373,7 +373,7 @@ void test_resolve_not_equal_expr_error_rhs() {
     delete_vector(expected);
 }
 
-void test_resolve_add_expr_error_operand_dtype() {
+void test_resolve_add_expr_error_operand_dtype(void) {
     Ast* input = new_ast(AST_ADD_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
@@ -391,7 +391,7 @@ void test_resolve_add_expr_error_operand_dtype() {
     delete_vector(expected);
 }
 
-void test_resolve_add_expr_error_lhs() {
+void test_resolve_add_expr_error_lhs(void) {
     Ast* input = new_ast(AST_ADD_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -404,7 +404,7 @@ void test_resolve_add_expr_error_lhs() {
     delete_vector(expected);
 }
 
-void test_resolve_add_expr_error_rhs() {
+void test_resolve_add_expr_error_rhs(void) {
     Ast* input = new_ast(AST_ADD_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -420,7 +420,7 @@ void test_resolve_add_expr_error_rhs() {
     delete_vector(expected);
 }
 
-void test_resolve_subtract_expr_error_operand_dtype() {
+void test_resolve_subtract_expr_error_operand_dtype(void) {
     Ast* input = new_ast(AST_SUB_EXPR, 2, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("ptr")));
@@ -437,7 +437,7 @@ void test_resolve_subtract_expr_error_operand_dtype() {
     delete_vector(expected);
 }
 
-void test_resolve_subtract_expr_error_incompatible_pointer() {
+void test_resolve_subtract_expr_error_incompatible_pointer(void) {
     Ast* input = new_ast(AST_SUB_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
@@ -454,7 +454,7 @@ void test_resolve_subtract_expr_error_incompatible_pointer() {
     delete_vector(expected);
 }
 
-void test_resolve_subtract_expr_error_lhs() {
+void test_resolve_subtract_expr_error_lhs(void) {
     Ast* input = new_ast(AST_SUB_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -467,7 +467,7 @@ void test_resolve_subtract_expr_error_lhs() {
     delete_vector(expected);
 }
 
-void test_resolve_subtract_expr_error_rhs() {
+void test_resolve_subtract_expr_error_rhs(void) {
     Ast* input = new_ast(AST_SUB_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -483,7 +483,7 @@ void test_resolve_subtract_expr_error_rhs() {
     delete_vector(expected);
 }
 
-void test_resolve_multiply_expr_error_non_arithmetic() {
+void test_resolve_multiply_expr_error_non_arithmetic(void) {
     Ast* input = new_ast(AST_MUL_EXPR, 2, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("value")));
@@ -499,7 +499,7 @@ void test_resolve_multiply_expr_error_non_arithmetic() {
     delete_vector(expected);
 }
 
-void test_resolve_multiply_expr_error_lhs() {
+void test_resolve_multiply_expr_error_lhs(void) {
     Ast* input = new_ast(AST_MUL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -512,7 +512,7 @@ void test_resolve_multiply_expr_error_lhs() {
     delete_vector(expected);
 }
 
-void test_resolve_multiply_expr_error_rhs() {
+void test_resolve_multiply_expr_error_rhs(void) {
     Ast* input = new_ast(AST_MUL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -528,7 +528,7 @@ void test_resolve_multiply_expr_error_rhs() {
     delete_vector(expected);
 }
 
-void test_resolve_division_expr_error_non_arithmetic() {
+void test_resolve_division_expr_error_non_arithmetic(void) {
     Ast* input = new_ast(AST_DIV_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("value")),
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3)));
@@ -544,7 +544,7 @@ void test_resolve_division_expr_error_non_arithmetic() {
     delete_vector(expected);
 }
 
-void test_resolve_division_expr_error_lhs() {
+void test_resolve_division_expr_error_lhs(void) {
     Ast* input = new_ast(AST_DIV_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -557,7 +557,7 @@ void test_resolve_division_expr_error_lhs() {
     delete_vector(expected);
 }
 
-void test_resolve_division_expr_error_rhs() {
+void test_resolve_division_expr_error_rhs(void) {
     Ast* input = new_ast(AST_DIV_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -573,7 +573,7 @@ void test_resolve_division_expr_error_rhs() {
     delete_vector(expected);
 }
 
-void test_resolve_modulo_expr_error_non_integer() {
+void test_resolve_modulo_expr_error_non_integer(void) {
     Ast* input = new_ast(AST_MOD_EXPR, 2, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("value")));
@@ -589,7 +589,7 @@ void test_resolve_modulo_expr_error_non_integer() {
     delete_vector(expected);
 }
 
-void test_resolve_modulo_expr_error_lhs() {
+void test_resolve_modulo_expr_error_lhs(void) {
     Ast* input = new_ast(AST_MOD_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -602,7 +602,7 @@ void test_resolve_modulo_expr_error_lhs() {
     delete_vector(expected);
 }
 
-void test_resolve_modulo_expr_error_rhs() {
+void test_resolve_modulo_expr_error_rhs(void) {
     Ast* input = new_ast(AST_MOD_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -618,7 +618,7 @@ void test_resolve_modulo_expr_error_rhs() {
     delete_vector(expected);
 }
 
-void test_resolve_address_expr_error_operand_dtype() {
+void test_resolve_address_expr_error_operand_dtype(void) {
     Ast* input = new_ast(AST_ADDR_EXPR, 1, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6)));
 
@@ -631,7 +631,7 @@ void test_resolve_address_expr_error_operand_dtype() {
     delete_vector(expected);
 }
 
-void test_resolve_address_expr_error_child() {
+void test_resolve_address_expr_error_child(void) {
     Ast* input = new_ast(AST_ADDR_EXPR, 1, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("value")));
 
@@ -643,7 +643,7 @@ void test_resolve_address_expr_error_child() {
     delete_vector(expected);
 }
 
-void test_resolve_indirection_expr_error_non_pointer() {
+void test_resolve_indirection_expr_error_non_pointer(void) {
     Ast* input = new_ast(AST_INDIR_EXPR, 1, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")));
 
@@ -658,7 +658,7 @@ void test_resolve_indirection_expr_error_non_pointer() {
     delete_vector(expected);
 }
 
-void test_resolve_indirection_expr_error_child() {
+void test_resolve_indirection_expr_error_child(void) {
     Ast* input = new_ast(AST_INDIR_EXPR, 1, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")));
 
@@ -670,11 +670,11 @@ void test_resolve_indirection_expr_error_child() {
     delete_vector(expected);
 }
 
-void test_resolve_logical_not_expr_error_non_scalar() {
+void test_resolve_logical_not_expr_error_non_scalar(void) {
     // TODO: implement here after non-scalar dtype is introduced
 }
 
-void test_resolve_logical_not_expr_error_child() {
+void test_resolve_logical_not_expr_error_child(void) {
     Ast* input = new_ast(AST_LNOT_EXPR, 1,         // non-terminal
                          new_ast(AST_LNOT_EXPR, 1, // non-terminal
                                  new_identifier_ast(AST_IDENT_EXPR, new_string("flag"))));
@@ -687,7 +687,7 @@ void test_resolve_logical_not_expr_error_child() {
     delete_vector(expected);
 }
 
-void test_resolve_call_expr_error_non_func() {
+void test_resolve_call_expr_error_non_func(void) {
     Ast* input = new_ast(AST_CALL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("function")),
                          new_ast(AST_ARG_LIST, 2, // non-terminal
@@ -708,7 +708,7 @@ void test_resolve_call_expr_error_non_func() {
     delete_vector(expected);
 }
 
-void test_resolve_call_expr_error_num_params() {
+void test_resolve_call_expr_error_num_params(void) {
     Ast* input = new_ast(AST_CALL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("function")),
                          new_ast(AST_ARG_LIST, 2, // non-terminal
@@ -731,7 +731,7 @@ void test_resolve_call_expr_error_num_params() {
     delete_vector(expected);
 }
 
-void test_resolve_call_expr_error_param_dtype() {
+void test_resolve_call_expr_error_param_dtype(void) {
     Ast* input = new_ast(AST_CALL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("function")),
                          new_ast(AST_ARG_LIST, 3, // non-terminal
@@ -759,7 +759,7 @@ void test_resolve_call_expr_error_param_dtype() {
     delete_vector(expected);
 }
 
-void test_resolve_call_expr_error_child() {
+void test_resolve_call_expr_error_child(void) {
     Ast* input = new_ast(AST_CALL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("function")),
                          new_ast(AST_ARG_LIST, 3, // non-terminal
@@ -785,7 +785,7 @@ void test_resolve_call_expr_error_child() {
     delete_vector(expected);
 }
 
-void test_resolve_subscription_expr_error_non_obj_pointer() {
+void test_resolve_subscription_expr_error_non_obj_pointer(void) {
     Ast* input = new_ast(AST_SUBSC_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
@@ -802,7 +802,7 @@ void test_resolve_subscription_expr_error_non_obj_pointer() {
     delete_vector(expected);
 }
 
-void test_resolve_subscription_expr_error_non_pointer() {
+void test_resolve_subscription_expr_error_non_pointer(void) {
     Ast* input = new_ast(AST_SUBSC_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
@@ -818,7 +818,7 @@ void test_resolve_subscription_expr_error_non_pointer() {
     delete_vector(expected);
 }
 
-void test_resolve_subscription_expr_error_non_integer() {
+void test_resolve_subscription_expr_error_non_integer(void) {
     Ast* input = new_ast(AST_SUBSC_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
@@ -837,7 +837,7 @@ void test_resolve_subscription_expr_error_non_integer() {
     delete_vector(expected);
 }
 
-void test_resolve_subscription_expr_error_lhs() {
+void test_resolve_subscription_expr_error_lhs(void) {
     Ast* input = new_ast(AST_SUBSC_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
@@ -850,7 +850,7 @@ void test_resolve_subscription_expr_error_lhs() {
     delete_vector(expected);
 }
 
-void test_resolve_subscription_expr_error_rhs() {
+void test_resolve_subscription_expr_error_rhs(void) {
     Ast* input = new_ast(AST_SUBSC_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
@@ -867,7 +867,7 @@ void test_resolve_subscription_expr_error_rhs() {
     delete_vector(expected);
 }
 
-void test_resolve_ident_expr_error() {
+void test_resolve_ident_expr_error(void) {
     Ast* input = new_identifier_ast(AST_IDENT_EXPR, new_string("x"));
 
     Vector* expected = new_vector(&t_error);

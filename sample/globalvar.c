@@ -10,6 +10,6 @@ char zca[10];
 int ia[3] = {1, 2, 3};
 int zia[3];
 
-int main() {
+int main(void) {
     return 0;
 }

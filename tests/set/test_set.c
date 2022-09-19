@@ -4,31 +4,31 @@
 
 #include <stdlib.h>
 
-void test_set_copy();
-void test_set_add();
-void test_set_remove();
-void test_set_iter();
-void test_set_intersection();
-void test_set_intersection_empty();
-void test_set_intersection_super();
-void test_set_intersection_sub();
-void test_set_intersection_foreign();
-void test_set_union();
-void test_set_union_empty();
-void test_set_union_super();
-void test_set_union_sub();
-void test_set_union_foreign();
-void test_set_difference();
-void test_set_difference_empty();
-void test_set_difference_super();
-void test_set_difference_sub();
-void test_set_difference_foreign();
-void test_set_issubset();
-void test_set_issubset_empty();
-void test_set_equals();
-void test_set_equals_empty();
+void test_set_copy(void);
+void test_set_add(void);
+void test_set_remove(void);
+void test_set_iter(void);
+void test_set_intersection(void);
+void test_set_intersection_empty(void);
+void test_set_intersection_super(void);
+void test_set_intersection_sub(void);
+void test_set_intersection_foreign(void);
+void test_set_union(void);
+void test_set_union_empty(void);
+void test_set_union_super(void);
+void test_set_union_sub(void);
+void test_set_union_foreign(void);
+void test_set_difference(void);
+void test_set_difference_empty(void);
+void test_set_difference_super(void);
+void test_set_difference_sub(void);
+void test_set_difference_foreign(void);
+void test_set_issubset(void);
+void test_set_issubset_empty(void);
+void test_set_equals(void);
+void test_set_equals_empty(void);
 
-CU_Suite* add_test_suite_set() {
+CU_Suite* add_test_suite_set(void) {
     CU_Suite* suite = CU_add_suite("test_suite_set", NULL, NULL);
     CU_ADD_TEST(suite, test_set_copy);
     CU_ADD_TEST(suite, test_set_add);
@@ -56,7 +56,7 @@ CU_Suite* add_test_suite_set() {
     return suite;
 }
 
-void test_set_copy() {
+void test_set_copy(void) {
     Set* set = new_set(&t_hashable_string);
     char* item = NULL;
 
@@ -80,7 +80,7 @@ void test_set_copy() {
     delete_set(copied_set);
 }
 
-void test_set_add() {
+void test_set_add(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -117,7 +117,7 @@ void test_set_add() {
     delete_set(set);
 }
 
-void test_set_remove() {
+void test_set_remove(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -157,7 +157,7 @@ void test_set_remove() {
     delete_set(set);
 }
 
-void test_set_iter() {
+void test_set_iter(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -193,7 +193,7 @@ void test_set_iter() {
     delete_set(set);
 }
 
-void test_set_intersection() {
+void test_set_intersection(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -232,7 +232,7 @@ void test_set_intersection() {
     delete_set(set);
 }
 
-void test_set_intersection_empty() {
+void test_set_intersection_empty(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -259,7 +259,7 @@ void test_set_intersection_empty() {
     delete_set(set);
 }
 
-void test_set_intersection_super() {
+void test_set_intersection_super(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -304,7 +304,7 @@ void test_set_intersection_super() {
     delete_set(set);
 }
 
-void test_set_intersection_sub() {
+void test_set_intersection_sub(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -340,7 +340,7 @@ void test_set_intersection_sub() {
     delete_set(set);
 }
 
-void test_set_intersection_foreign() {
+void test_set_intersection_foreign(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -377,7 +377,7 @@ void test_set_intersection_foreign() {
     delete_set(set);
 }
 
-void test_set_union() {
+void test_set_union(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -416,7 +416,7 @@ void test_set_union() {
     delete_set(set);
 }
 
-void test_set_union_empty() {
+void test_set_union_empty(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -445,7 +445,7 @@ void test_set_union_empty() {
     delete_set(set);
 }
 
-void test_set_union_super() {
+void test_set_union_super(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -490,7 +490,7 @@ void test_set_union_super() {
     delete_set(set);
 }
 
-void test_set_union_sub() {
+void test_set_union_sub(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -526,7 +526,7 @@ void test_set_union_sub() {
     delete_set(set);
 }
 
-void test_set_union_foreign() {
+void test_set_union_foreign(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -565,7 +565,7 @@ void test_set_union_foreign() {
     delete_set(set);
 }
 
-void test_set_difference() {
+void test_set_difference(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -604,7 +604,7 @@ void test_set_difference() {
     delete_set(set);
 }
 
-void test_set_difference_empty() {
+void test_set_difference_empty(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -633,7 +633,7 @@ void test_set_difference_empty() {
     delete_set(set);
 }
 
-void test_set_difference_super() {
+void test_set_difference_super(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -676,7 +676,7 @@ void test_set_difference_super() {
     delete_set(set);
 }
 
-void test_set_difference_sub() {
+void test_set_difference_sub(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -709,7 +709,7 @@ void test_set_difference_sub() {
     delete_set(set);
 }
 
-void test_set_difference_foreign() {
+void test_set_difference_foreign(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -748,7 +748,7 @@ void test_set_difference_foreign() {
     delete_set(set);
 }
 
-void test_set_issubset() {
+void test_set_issubset(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -783,7 +783,7 @@ void test_set_issubset() {
     delete_set(other);
 }
 
-void test_set_issubset_empty() {
+void test_set_issubset_empty(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -799,7 +799,7 @@ void test_set_issubset_empty() {
     delete_set(other);
 }
 
-void test_set_equals() {
+void test_set_equals(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 
@@ -834,7 +834,7 @@ void test_set_equals() {
     delete_set(other);
 }
 
-void test_set_equals_empty() {
+void test_set_equals_empty(void) {
     Set* set = new_set(&t_hashable_integer);
     int* item = NULL;
 

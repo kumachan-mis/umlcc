@@ -2,14 +2,14 @@
 #include "../testlib/testlib.h"
 #include "./test_external_error.h"
 
-void test_resolve_compound_stmt_error_child();
-void test_resolve_return_stmt_error_child();
-void test_resolve_return_stmt_error_unassignable();
-void test_resolve_expression_stmt_error_child();
+void test_resolve_compound_stmt_error_child(void);
+void test_resolve_return_stmt_error_child(void);
+void test_resolve_return_stmt_error_unassignable(void);
+void test_resolve_expression_stmt_error_child(void);
 
 void run_stmt_resolver_error_test(Ast* input, SymbolTable* local_table, Dtype* return_dtype, Vector* expected);
 
-CU_Suite* add_test_suite_stmt_resolver_error() {
+CU_Suite* add_test_suite_stmt_resolver_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver_error", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_error_child);
     CU_ADD_TEST(suite, test_resolve_return_stmt_error_child);
@@ -18,7 +18,7 @@ CU_Suite* add_test_suite_stmt_resolver_error() {
     return suite;
 }
 
-void test_resolve_compound_stmt_error_child() {
+void test_resolve_compound_stmt_error_child(void) {
     Ast* input = new_ast(AST_CMPD_STMT, 4,                       // non-terminal
                          new_ast(AST_DECL, 2,                    // non-terminal
                                  new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -52,7 +52,7 @@ void test_resolve_compound_stmt_error_child() {
     delete_vector(expected);
 }
 
-void test_resolve_return_stmt_error_child() {
+void test_resolve_return_stmt_error_child(void) {
     Ast* input = new_ast(AST_RET_STMT, 1,         // non-terminal
                          new_ast(AST_ADD_EXPR, 2, // non-terminal
                                  new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
@@ -69,7 +69,7 @@ void test_resolve_return_stmt_error_child() {
     delete_vector(expected);
 }
 
-void test_resolve_return_stmt_error_unassignable() {
+void test_resolve_return_stmt_error_unassignable(void) {
     Ast* input = new_ast(AST_RET_STMT, 1,         // non-terminal
                          new_ast(AST_ADD_EXPR, 2, // non-terminal
                                  new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
@@ -88,7 +88,7 @@ void test_resolve_return_stmt_error_unassignable() {
     delete_vector(expected);
 }
 
-void test_resolve_expression_stmt_error_child() {
+void test_resolve_expression_stmt_error_child(void) {
     Ast* input = new_ast(AST_EXPR_STMT, 1,           // non-terminal
                          new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                                  new_identifier_ast(AST_IDENT_EXPR, new_string("x")),

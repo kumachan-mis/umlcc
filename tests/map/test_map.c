@@ -4,14 +4,14 @@
 
 #include <stdlib.h>
 
-void test_map_copy();
-void test_map_get_with_default();
-void test_map_add();
-void test_map_remove();
-void test_map_contains();
-void test_map_iter();
+void test_map_copy(void);
+void test_map_get_with_default(void);
+void test_map_add(void);
+void test_map_remove(void);
+void test_map_contains(void);
+void test_map_iter(void);
 
-CU_Suite* add_test_suite_map() {
+CU_Suite* add_test_suite_map(void) {
     CU_Suite* suite = CU_add_suite("test_suite_map", NULL, NULL);
     CU_ADD_TEST(suite, test_map_copy);
     CU_ADD_TEST(suite, test_map_get_with_default);
@@ -22,7 +22,7 @@ CU_Suite* add_test_suite_map() {
     return suite;
 }
 
-void test_map_copy() {
+void test_map_copy(void) {
     Map* map = new_map(&t_hashable_integer, &t_string);
     int* key = NULL;
     char* value = NULL;
@@ -60,7 +60,7 @@ void test_map_copy() {
     delete_map(copied_map);
 }
 
-void test_map_get_with_default() {
+void test_map_get_with_default(void) {
     Map* map = new_map(&t_hashable_string, &t_integer);
     int* value = map_get(map, "key");
     CU_ASSERT_PTR_NULL(value);
@@ -73,7 +73,7 @@ void test_map_get_with_default() {
     delete_map(map);
 }
 
-void test_map_add() {
+void test_map_add(void) {
     Map* map = new_map(&t_hashable_string, &t_integer);
     char* key = NULL;
     int* value = NULL;
@@ -119,7 +119,7 @@ void test_map_add() {
     delete_map(map);
 }
 
-void test_map_remove() {
+void test_map_remove(void) {
     Map* map = new_map(&t_hashable_string, &t_integer);
     char* key = NULL;
     int* value = NULL;
@@ -167,7 +167,7 @@ void test_map_remove() {
     delete_map(map);
 }
 
-void test_map_contains() {
+void test_map_contains(void) {
     Map* map = new_map(&t_hashable_integer, &t_string);
     int* key = NULL;
     char* value = NULL;
@@ -187,7 +187,7 @@ void test_map_contains() {
     delete_map(map);
 }
 
-void test_map_iter() {
+void test_map_iter(void) {
     Map* map = new_map(&t_hashable_string, &t_integer);
     char* key = NULL;
     int* value = NULL;

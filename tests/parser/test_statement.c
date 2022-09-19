@@ -3,15 +3,15 @@
 #include "../../src/parser/statement.h"
 #include "../testlib/testlib.h"
 
-void test_parse_compound_stmt_integer_vardef();
-void test_parse_compound_stmt_pointer_typedef();
-void test_parse_compound_stmt_empty();
-void test_parse_return_stmt();
-void test_parse_expression_stmt();
+void test_parse_compound_stmt_integer_vardef(void);
+void test_parse_compound_stmt_pointer_typedef(void);
+void test_parse_compound_stmt_empty(void);
+void test_parse_return_stmt(void);
+void test_parse_expression_stmt(void);
 
 void run_stmt_parser_test(Vector* input, Ast* expected);
 
-CU_Suite* add_test_suite_stmt_parser() {
+CU_Suite* add_test_suite_stmt_parser(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_parser", NULL, NULL);
     CU_ADD_TEST(suite, test_parse_compound_stmt_integer_vardef);
     CU_ADD_TEST(suite, test_parse_compound_stmt_pointer_typedef);
@@ -21,7 +21,7 @@ CU_Suite* add_test_suite_stmt_parser() {
     return suite;
 }
 
-void test_parse_compound_stmt_integer_vardef() {
+void test_parse_compound_stmt_integer_vardef(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_LBRACE));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
@@ -86,7 +86,7 @@ void test_parse_compound_stmt_integer_vardef() {
     delete_ast(expected);
 }
 
-void test_parse_compound_stmt_pointer_typedef() {
+void test_parse_compound_stmt_pointer_typedef(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_LBRACE));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_TYPEDEF));
@@ -141,7 +141,7 @@ void test_parse_compound_stmt_pointer_typedef() {
     delete_ast(expected);
 }
 
-void test_parse_compound_stmt_empty() {
+void test_parse_compound_stmt_empty(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_LBRACE));
     vector_push(input, new_ctoken(CTOKEN_RBRACE));
@@ -154,7 +154,7 @@ void test_parse_compound_stmt_empty() {
     delete_ast(expected);
 }
 
-void test_parse_return_stmt() {
+void test_parse_return_stmt(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_RETURN));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
@@ -169,7 +169,7 @@ void test_parse_return_stmt() {
     delete_ast(expected);
 }
 
-void test_parse_expression_stmt() {
+void test_parse_expression_stmt(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL));

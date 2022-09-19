@@ -2,27 +2,27 @@
 #include "../../src/lexer/lexer.h"
 #include "../testlib/testlib.h"
 
-void test_read_function_definition();
-void test_read_declaration_without_init();
-void test_read_declaration_with_init();
-void test_read_assignment_expr();
-void test_read_logical_expr();
-void test_read_equality_expr();
-void test_read_additive_expr();
-void test_read_multiplicative_expr();
-void test_read_unary_expr();
-void test_read_postfix_expr();
-void test_read_decimal_integer_constant();
-void test_read_octal_integer_constant();
-void test_read_hexadecimal_integer_constant();
-void test_read_character_constant();
-void test_read_octal_character_constant();
-void test_read_hexadecimal_character_constant();
-void test_read_string_literal();
+void test_read_function_definition(void);
+void test_read_declaration_without_init(void);
+void test_read_declaration_with_init(void);
+void test_read_assignment_expr(void);
+void test_read_logical_expr(void);
+void test_read_equality_expr(void);
+void test_read_additive_expr(void);
+void test_read_multiplicative_expr(void);
+void test_read_unary_expr(void);
+void test_read_postfix_expr(void);
+void test_read_decimal_integer_constant(void);
+void test_read_octal_integer_constant(void);
+void test_read_hexadecimal_integer_constant(void);
+void test_read_character_constant(void);
+void test_read_octal_character_constant(void);
+void test_read_hexadecimal_character_constant(void);
+void test_read_string_literal(void);
 
 void run_lexer_test(char* input, Vector* expected);
 
-CU_Suite* add_test_suite_lexer() {
+CU_Suite* add_test_suite_lexer(void) {
     CU_Suite* suite = CU_add_suite("test_suite_lexer", NULL, NULL);
     CU_ADD_TEST(suite, test_read_function_definition);
     CU_ADD_TEST(suite, test_read_declaration_without_init);
@@ -44,7 +44,7 @@ CU_Suite* add_test_suite_lexer() {
     return suite;
 }
 
-void test_read_function_definition() {
+void test_read_function_definition(void) {
     char* input = "int test_read_function_definition() {\n"
                   "    printf(\"OK\\n\");"
                   "    return 0;"
@@ -72,7 +72,7 @@ void test_read_function_definition() {
     delete_vector(expected);
 }
 
-void test_read_declaration_without_init() {
+void test_read_declaration_without_init(void) {
     char* input = "typedef int* ptr2int; char* input;";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -92,7 +92,7 @@ void test_read_declaration_without_init() {
     delete_vector(expected);
 }
 
-void test_read_declaration_with_init() {
+void test_read_declaration_with_init(void) {
     char* input = "int int_array[3] = {8, 2, 0};";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -117,7 +117,7 @@ void test_read_declaration_with_init() {
     delete_vector(expected);
 }
 
-void test_read_assignment_expr() {
+void test_read_assignment_expr(void) {
     char* input = "x86 = 64;";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -132,7 +132,7 @@ void test_read_assignment_expr() {
     delete_vector(expected);
 }
 
-void test_read_logical_expr() {
+void test_read_logical_expr(void) {
     char* input = "a && xyz; b || _123;";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -151,7 +151,7 @@ void test_read_logical_expr() {
     delete_vector(expected);
 }
 
-void test_read_equality_expr() {
+void test_read_equality_expr(void) {
     char* input = "flag == 0; flag != 1;";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -170,7 +170,7 @@ void test_read_equality_expr() {
     delete_vector(expected);
 }
 
-void test_read_additive_expr() {
+void test_read_additive_expr(void) {
     char* input = "3 + 6; ptr - 1;";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -189,7 +189,7 @@ void test_read_additive_expr() {
     delete_vector(expected);
 }
 
-void test_read_multiplicative_expr() {
+void test_read_multiplicative_expr(void) {
     char* input = "n * 4; m / 8; offset % 2;";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -212,7 +212,7 @@ void test_read_multiplicative_expr() {
     delete_vector(expected);
 }
 
-void test_read_unary_expr() {
+void test_read_unary_expr(void) {
     char* input = "&a; *ptr; !false_flag; !!true_flag;";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -236,7 +236,7 @@ void test_read_unary_expr() {
     delete_vector(expected);
 }
 
-void test_read_postfix_expr() {
+void test_read_postfix_expr(void) {
     char* input = "arr[10][4]; exec_process(a,  b);";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -262,7 +262,7 @@ void test_read_postfix_expr() {
     delete_vector(expected);
 }
 
-void test_read_decimal_integer_constant() {
+void test_read_decimal_integer_constant(void) {
     char* input = "1 23 456 789 10 2147483647\n";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -279,7 +279,7 @@ void test_read_decimal_integer_constant() {
     delete_vector(expected);
 }
 
-void test_read_octal_integer_constant() {
+void test_read_octal_integer_constant(void) {
     char* input = "04 076 0123 05 0 017777777777\n";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -296,7 +296,7 @@ void test_read_octal_integer_constant() {
     delete_vector(expected);
 }
 
-void test_read_hexadecimal_integer_constant() {
+void test_read_hexadecimal_integer_constant(void) {
     char* input = "0x12 0X034 0XaFd 0X6cB 0x7e 0x598 0X0 0x7FFFFFFF\n";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -315,7 +315,7 @@ void test_read_hexadecimal_integer_constant() {
     delete_vector(expected);
 }
 
-void test_read_character_constant() {
+void test_read_character_constant(void) {
     char* input = "'0' 'a' 'xy' '#' '\\a' '\\b' '\\f' '\\r' '\\t' '\\v' '\\\"' '\\'' '\\?' '\\\\' '\\r\\n'\n";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -341,7 +341,7 @@ void test_read_character_constant() {
     delete_vector(expected);
 }
 
-void test_read_octal_character_constant() {
+void test_read_octal_character_constant(void) {
     char* input = "'\\0' '\\13' '\\107'\n";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -355,7 +355,7 @@ void test_read_octal_character_constant() {
     delete_vector(expected);
 }
 
-void test_read_hexadecimal_character_constant() {
+void test_read_hexadecimal_character_constant(void) {
     char* input = "'\\x12' '\\x034' '\\xaF' '\\xcB' '\\x7e' '\\x59' '\\xff' '\\x0'\n";
 
     // In current implementation, char has the same range of values as signed char
@@ -375,7 +375,7 @@ void test_read_hexadecimal_character_constant() {
     delete_vector(expected);
 }
 
-void test_read_string_literal() {
+void test_read_string_literal(void) {
     char* input = "\"\" \"str literal\" \"str\\tliteral\"\n";
 
     Vector* expected = new_vector(&t_ctoken);

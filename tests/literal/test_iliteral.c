@@ -3,12 +3,12 @@
 
 #include <stdlib.h>
 
-void test_new_signed_iliteral();
-void test_new_unsigned_iliteral();
-void test_iliteral_display_signed();
-void test_iliteral_display_unsigned();
+void test_new_signed_iliteral(void);
+void test_new_unsigned_iliteral(void);
+void test_iliteral_display_signed(void);
+void test_iliteral_display_unsigned(void);
 
-CU_Suite* add_test_suite_iliteral() {
+CU_Suite* add_test_suite_iliteral(void) {
     CU_Suite* suite = CU_add_suite("test_suite_iliteral", NULL, NULL);
     CU_ADD_TEST(suite, test_new_signed_iliteral);
     CU_ADD_TEST(suite, test_new_unsigned_iliteral);
@@ -17,7 +17,7 @@ CU_Suite* add_test_suite_iliteral() {
     return suite;
 }
 
-void test_new_signed_iliteral() {
+void test_new_signed_iliteral(void) {
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 45);
 
     for (int i = 0; i < 2; i++) {
@@ -35,7 +35,7 @@ void test_new_signed_iliteral() {
     delete_iliteral(iliteral);
 }
 
-void test_new_unsigned_iliteral() {
+void test_new_unsigned_iliteral(void) {
     IntegerLiteral* iliteral = new_unsigned_iliteral(INTEGER_LONG, 2147483648U);
 
     for (int i = 0; i < 2; i++) {
@@ -53,7 +53,7 @@ void test_new_unsigned_iliteral() {
     delete_iliteral(iliteral);
 }
 
-void test_iliteral_display_signed() {
+void test_iliteral_display_signed(void) {
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, -45);
     char* display_string = iliteral_display_string(iliteral);
 
@@ -63,7 +63,7 @@ void test_iliteral_display_signed() {
     delete_iliteral(iliteral);
 }
 
-void test_iliteral_display_unsigned() {
+void test_iliteral_display_unsigned(void) {
     IntegerLiteral* iliteral = new_unsigned_iliteral(INTEGER_LONG, 2147483648U);
     char* display_string = iliteral_display_string(iliteral);
 

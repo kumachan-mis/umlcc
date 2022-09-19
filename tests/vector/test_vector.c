@@ -4,22 +4,22 @@
 
 #include <stdlib.h>
 
-void test_vector_copy();
-void test_vector_push();
-void test_vector_pop();
-void test_vector_fill_all();
-void test_vector_fill_noeffect();
-void test_vector_fill_expand();
-void test_vector_set_success();
-void test_vector_set_fail();
-void test_vector_insert_success();
-void test_vector_insert_fail();
-void test_vector_erase_success();
-void test_vector_erase_fail();
-void test_vector_extend();
-void test_vector_extend_empty();
+void test_vector_copy(void);
+void test_vector_push(void);
+void test_vector_pop(void);
+void test_vector_fill_all(void);
+void test_vector_fill_noeffect(void);
+void test_vector_fill_expand(void);
+void test_vector_set_success(void);
+void test_vector_set_fail(void);
+void test_vector_insert_success(void);
+void test_vector_insert_fail(void);
+void test_vector_erase_success(void);
+void test_vector_erase_fail(void);
+void test_vector_extend(void);
+void test_vector_extend_empty(void);
 
-CU_Suite* add_test_suite_vector() {
+CU_Suite* add_test_suite_vector(void) {
     CU_Suite* suite = CU_add_suite("test_suite_vector", NULL, NULL);
     CU_ADD_TEST(suite, test_vector_copy);
     CU_ADD_TEST(suite, test_vector_push);
@@ -38,7 +38,7 @@ CU_Suite* add_test_suite_vector() {
     return suite;
 }
 
-void test_vector_copy() {
+void test_vector_copy(void) {
     Vector* vector = new_vector(&t_string);
     char* item = NULL;
 
@@ -68,7 +68,7 @@ void test_vector_copy() {
     delete_vector(copied_vector);
 }
 
-void test_vector_push() {
+void test_vector_push(void) {
     Vector* vector = new_vector(&t_integer);
     int* item = NULL;
     CU_ASSERT_EQUAL(vector_size(vector), 0);
@@ -105,7 +105,7 @@ void test_vector_push() {
     delete_vector(vector);
 }
 
-void test_vector_pop() {
+void test_vector_pop(void) {
     Vector* vector = new_vector(&t_integer);
     int* item = NULL;
 
@@ -138,7 +138,7 @@ void test_vector_pop() {
     delete_vector(vector);
 }
 
-void test_vector_fill_all() {
+void test_vector_fill_all(void) {
     Vector* vector = new_vector(&t_integer);
 
     int* item = new_integer(0);
@@ -153,7 +153,7 @@ void test_vector_fill_all() {
     delete_vector(vector);
 }
 
-void test_vector_fill_noeffect() {
+void test_vector_fill_noeffect(void) {
     Vector* vector = new_vector(&t_integer);
     int* item = NULL;
 
@@ -185,7 +185,7 @@ void test_vector_fill_noeffect() {
     delete_vector(vector);
 }
 
-void test_vector_fill_expand() {
+void test_vector_fill_expand(void) {
     Vector* vector = new_vector(&t_integer);
     int* item = NULL;
 
@@ -217,7 +217,7 @@ void test_vector_fill_expand() {
     delete_vector(vector);
 }
 
-void test_vector_set_success() {
+void test_vector_set_success(void) {
     Vector* vector = new_vector(&t_integer);
     int* item = NULL;
 
@@ -248,7 +248,7 @@ void test_vector_set_success() {
     delete_vector(vector);
 }
 
-void test_vector_set_fail() {
+void test_vector_set_fail(void) {
     Vector* vector = new_vector(&t_integer);
     int* item = NULL;
 
@@ -281,7 +281,7 @@ void test_vector_set_fail() {
     delete_vector(vector);
 }
 
-void test_vector_insert_success() {
+void test_vector_insert_success(void) {
     Vector* vector = new_vector(&t_integer);
     int* item = NULL;
 
@@ -308,7 +308,7 @@ void test_vector_insert_success() {
     delete_vector(vector);
 }
 
-void test_vector_insert_fail() {
+void test_vector_insert_fail(void) {
     Vector* vector = new_vector(&t_integer);
     int* item = NULL;
 
@@ -331,7 +331,7 @@ void test_vector_insert_fail() {
     delete_vector(vector);
 }
 
-void test_vector_erase_success() {
+void test_vector_erase_success(void) {
     Vector* vector = new_vector(&t_integer);
     int* item = NULL;
 
@@ -364,7 +364,7 @@ void test_vector_erase_success() {
     delete_vector(vector);
 }
 
-void test_vector_erase_fail() {
+void test_vector_erase_fail(void) {
     Vector* vector = new_vector(&t_integer);
     int* item = NULL;
 
@@ -394,7 +394,7 @@ void test_vector_erase_fail() {
     delete_vector(vector);
 }
 
-void test_vector_extend() {
+void test_vector_extend(void) {
     Vector* vector = new_vector(&t_integer);
     int* item = NULL;
 
@@ -439,7 +439,7 @@ void test_vector_extend() {
     delete_vector(other);
 }
 
-void test_vector_extend_empty() {
+void test_vector_extend_empty(void) {
     Vector* vector = new_vector(&t_integer);
     int* item = NULL;
 

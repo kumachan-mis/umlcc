@@ -5,7 +5,7 @@
 
 void ctoken_map_add(Map* ctoken_map, char* ctoken_str, CTokenType type);
 
-Map* new_keyword_map() {
+Map* new_keyword_map(void) {
     Map* keyword_map = new_map(&t_hashable_string, &t_integer);
 
     ctoken_map_add(keyword_map, "char", CTOKEN_KEYWORD_CHAR);
@@ -16,7 +16,7 @@ Map* new_keyword_map() {
     return keyword_map;
 }
 
-Set* new_nondigit_set() {
+Set* new_nondigit_set(void) {
     Set* nondigit_set = new_set(&t_hashable_integer);
 
     int NUM_NONDIGITS = 54;
@@ -29,7 +29,7 @@ Set* new_nondigit_set() {
     return nondigit_set;
 }
 
-Map* new_octdigit_map() {
+Map* new_octdigit_map(void) {
     Map* octdigit_map = new_map(&t_hashable_integer, &t_integer);
 
     int NUM_OCTDIGITS = 8;
@@ -42,7 +42,7 @@ Map* new_octdigit_map() {
     return octdigit_map;
 }
 
-Map* new_digit_map() {
+Map* new_digit_map(void) {
     Map* digit_map = new_map(&t_hashable_integer, &t_integer);
 
     int NUM_DIGITS = 10;
@@ -55,7 +55,7 @@ Map* new_digit_map() {
     return digit_map;
 }
 
-Map* new_hexdigit_map() {
+Map* new_hexdigit_map(void) {
     Map* hexdigit_map = new_map(&t_hashable_integer, &t_integer);
 
     int NUM_DIGITS = 10;
@@ -77,7 +77,7 @@ Map* new_hexdigit_map() {
     return hexdigit_map;
 }
 
-Map* new_punctuator_map() {
+Map* new_punctuator_map(void) {
     Map* punctuator_map = new_map(&t_hashable_string, &t_integer);
 
     ctoken_map_add(punctuator_map, "[", CTOKEN_LBRACKET);
@@ -104,7 +104,7 @@ Map* new_punctuator_map() {
     return punctuator_map;
 }
 
-Set* new_white_space_set() {
+Set* new_white_space_set(void) {
     Set* white_space_set = new_set(&t_hashable_integer);
 
     int NUM_WHITE_SPACES = 6;

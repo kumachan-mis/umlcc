@@ -3,6 +3,6 @@
 
 #include <CUnit/Basic.h>
 
-CU_Suite* add_test_suite_liveseq();
+CU_Suite* add_test_suite_liveseq(void);
 
 #endif

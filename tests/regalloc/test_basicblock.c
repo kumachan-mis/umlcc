@@ -2,17 +2,17 @@
 #include "../../src/immc/immc.h"
 #include "../../src/regalloc/basicblock.h"
 
-void test_new_basicblock();
-void test_basicblock_copy();
+void test_new_basicblock(void);
+void test_basicblock_copy(void);
 
-CU_Suite* add_test_suite_basicblock() {
+CU_Suite* add_test_suite_basicblock(void) {
     CU_Suite* suite = CU_add_suite("test_suite_basicblock", NULL, NULL);
     CU_ADD_TEST(suite, test_new_basicblock);
     CU_ADD_TEST(suite, test_basicblock_copy);
     return suite;
 }
 
-void test_new_basicblock() {
+void test_new_basicblock(void) {
     Vector* immcs = new_vector(&t_immc);
     BasicBlock* basicblock = new_basicblock(immcs);
 
@@ -42,7 +42,7 @@ void test_new_basicblock() {
     delete_basicblock(basicblock);
 }
 
-void test_basicblock_copy() {
+void test_basicblock_copy(void) {
     Vector* immcs = new_vector(&t_immc);
     BasicBlock* basicblock = new_basicblock(immcs);
     set_add(basicblock->input, new_integer(2));

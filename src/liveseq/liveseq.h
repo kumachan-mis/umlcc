@@ -12,7 +12,7 @@ typedef struct Liveseq {
 
 extern BaseType t_liveseq;
 
-Liveseq* new_liveseq();
+Liveseq* new_liveseq(void);
 Liveseq* liveseq_copy(Liveseq* liveseq);
 int liveseq_isalive(Liveseq* liveseq);
 void liveseq_goto_next(Liveseq* liveseq);

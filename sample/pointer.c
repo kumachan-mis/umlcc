@@ -1,17 +1,17 @@
-int* addr() {
+int* addr(void) {
     int x = 3;
     int* p = &x;
     return p;
 }
 
-int indir() {
+int indir(void) {
     int a = 3;
     int* p = &a;
     int b = *p;
     return b;
 }
 
-int* add() {
+int* add(void) {
     int x = 3;
     int* a = &x;
     int b = 1;
@@ -19,7 +19,7 @@ int* add() {
     return c;
 }
 
-int* sub() {
+int* sub(void) {
     int x = 3;
     int* a = &x;
     int b = 1;
@@ -27,7 +27,7 @@ int* sub() {
     return c;
 }
 
-int diff() {
+int diff(void) {
     int x = 3;
     int y = 6;
     int* a = &x;

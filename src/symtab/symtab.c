@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-SymbolTable* new_symboltable() {
+SymbolTable* new_symboltable(void) {
     SymbolTable* table = malloc(sizeof(SymbolTable));
     table->symbol_map = new_map(&t_hashable_string, &t_symbol);
     table->memory_size = 0;

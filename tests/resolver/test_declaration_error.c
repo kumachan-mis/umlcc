@@ -2,28 +2,28 @@
 #include "../../src/resolver/declaration.h"
 #include "../testlib/testlib.h"
 
-void test_resolve_decl_specifiers_error();
-void test_resolve_declarator_list_error_duplicated();
-void test_resolve_declarator_error();
-void test_resolve_array_error_size_limit();
-void test_resolve_param_list_error_duplicated();
-void test_resolve_param_error_storage_specifier();
-void test_resolve_param_error_declarator();
-void test_resolve_init_error_unassignable();
-void test_resolve_init_error_non_object();
-void test_resolve_init_error_nested_list_scalar();
-void test_resolve_init_error_empty_scalar();
-void test_resolve_init_error_too_long_scalar();
-void test_resolve_init_error_scalar_array();
-void test_resolve_init_error_empty_array();
-void test_resolve_init_error_too_long_array();
-void test_resolve_init_error_child_array();
-void test_resolve_init_error_too_long_nested_array();
+void test_resolve_decl_specifiers_error(void);
+void test_resolve_declarator_list_error_duplicated(void);
+void test_resolve_declarator_error(void);
+void test_resolve_array_error_size_limit(void);
+void test_resolve_param_list_error_duplicated(void);
+void test_resolve_param_error_storage_specifier(void);
+void test_resolve_param_error_declarator(void);
+void test_resolve_init_error_unassignable(void);
+void test_resolve_init_error_non_object(void);
+void test_resolve_init_error_nested_list_scalar(void);
+void test_resolve_init_error_empty_scalar(void);
+void test_resolve_init_error_too_long_scalar(void);
+void test_resolve_init_error_scalar_array(void);
+void test_resolve_init_error_empty_array(void);
+void test_resolve_init_error_too_long_array(void);
+void test_resolve_init_error_child_array(void);
+void test_resolve_init_error_too_long_nested_array(void);
 
 void run_local_decl_resolver_error_test(Ast* input, SymbolTable* local_table, Vector* expected);
 void run_global_decl_resolver_error_test(Ast* input, SymbolTable* global_table, Vector* expected);
 
-CU_Suite* add_test_suite_decl_resolver_error() {
+CU_Suite* add_test_suite_decl_resolver_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_decl_resolver_error", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_decl_specifiers_error);
     CU_ADD_TEST(suite, test_resolve_declarator_list_error_duplicated);
@@ -45,7 +45,7 @@ CU_Suite* add_test_suite_decl_resolver_error() {
     return suite;
 }
 
-void test_resolve_decl_specifiers_error() {
+void test_resolve_decl_specifiers_error(void) {
     Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
                                new_ast(AST_DECL_SPECIFIERS, 2, // non-terminal
                                        new_ast(AST_TYPE_CHAR, 0), new_ast(AST_TYPE_INT, 0)),
@@ -63,7 +63,7 @@ void test_resolve_decl_specifiers_error() {
     delete_vector(expected);
 }
 
-void test_resolve_declarator_list_error_duplicated() {
+void test_resolve_declarator_list_error_duplicated(void) {
     Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                                        new_ast(AST_TYPE_INT, 0)),
@@ -90,7 +90,7 @@ void test_resolve_declarator_list_error_duplicated() {
     delete_vector(expected);
 }
 
-void test_resolve_declarator_error() {
+void test_resolve_declarator_error(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -125,7 +125,7 @@ void test_resolve_declarator_error() {
     delete_vector(expected);
 }
 
-void test_resolve_array_error_size_limit() {
+void test_resolve_array_error_size_limit(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -148,7 +148,7 @@ void test_resolve_array_error_size_limit() {
     delete_vector(expected);
 }
 
-void test_resolve_param_list_error_duplicated() {
+void test_resolve_param_list_error_duplicated(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -191,7 +191,7 @@ void test_resolve_param_list_error_duplicated() {
     delete_vector(expected);
 }
 
-void test_resolve_param_error_storage_specifier() {
+void test_resolve_param_error_storage_specifier(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -216,7 +216,7 @@ void test_resolve_param_error_storage_specifier() {
     delete_vector(expected);
 }
 
-void test_resolve_param_error_declarator() {
+void test_resolve_param_error_declarator(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -246,7 +246,7 @@ void test_resolve_param_error_declarator() {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_unassignable() {
+void test_resolve_init_error_unassignable(void) {
     Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                                        new_ast(AST_TYPE_INT, 0)),
@@ -266,7 +266,7 @@ void test_resolve_init_error_unassignable() {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_non_object() {
+void test_resolve_init_error_non_object(void) {
     Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                                        new_ast(AST_TYPE_CHAR, 0)),
@@ -288,7 +288,7 @@ void test_resolve_init_error_non_object() {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_nested_list_scalar() {
+void test_resolve_init_error_nested_list_scalar(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -310,7 +310,7 @@ void test_resolve_init_error_nested_list_scalar() {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_empty_scalar() {
+void test_resolve_init_error_empty_scalar(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -329,7 +329,7 @@ void test_resolve_init_error_empty_scalar() {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_too_long_scalar() {
+void test_resolve_init_error_too_long_scalar(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -351,7 +351,7 @@ void test_resolve_init_error_too_long_scalar() {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_scalar_array() {
+void test_resolve_init_error_scalar_array(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -373,7 +373,7 @@ void test_resolve_init_error_scalar_array() {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_empty_array() {
+void test_resolve_init_error_empty_array(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -395,7 +395,7 @@ void test_resolve_init_error_empty_array() {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_too_long_array() {
+void test_resolve_init_error_too_long_array(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -420,7 +420,7 @@ void test_resolve_init_error_too_long_array() {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_child_array() {
+void test_resolve_init_error_child_array(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -450,7 +450,7 @@ void test_resolve_init_error_child_array() {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_too_long_nested_array() {
+void test_resolve_init_error_too_long_nested_array(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal

@@ -4,32 +4,32 @@
 
 #include <stdlib.h>
 
-void test_resolve_char_decl();
-void test_resolve_int_decl();
-void test_resolve_pointer_decl();
-void test_resolve_array_decl();
-void test_resolve_function_decl();
-void test_resolve_parameter_decl();
-void test_resolve_typedef_decl();
-void test_resolve_scalar_init();
-void test_resolve_scalar_init_enclosed();
-void test_resolve_sliteral_init();
-void test_resolve_sliteral_init_lacked();
-void test_resolve_sliteral_init_enclosed();
-void test_resolve_list_init_zero();
-void test_resolve_list_init_zero_nested();
-void test_resolve_list_init();
-void test_resolve_list_init_lacked();
-void test_resolve_list_init_nested();
-void test_resolve_list_init_nested_lacked();
-void test_resolve_list_init_flatten();
-void test_resolve_list_init_mix();
-void test_resolve_list_init_chararray();
+void test_resolve_char_decl(void);
+void test_resolve_int_decl(void);
+void test_resolve_pointer_decl(void);
+void test_resolve_array_decl(void);
+void test_resolve_function_decl(void);
+void test_resolve_parameter_decl(void);
+void test_resolve_typedef_decl(void);
+void test_resolve_scalar_init(void);
+void test_resolve_scalar_init_enclosed(void);
+void test_resolve_sliteral_init(void);
+void test_resolve_sliteral_init_lacked(void);
+void test_resolve_sliteral_init_enclosed(void);
+void test_resolve_list_init_zero(void);
+void test_resolve_list_init_zero_nested(void);
+void test_resolve_list_init(void);
+void test_resolve_list_init_lacked(void);
+void test_resolve_list_init_nested(void);
+void test_resolve_list_init_nested_lacked(void);
+void test_resolve_list_init_flatten(void);
+void test_resolve_list_init_mix(void);
+void test_resolve_list_init_chararray(void);
 
 void run_local_decl_resolver_test(Ast* input, SymbolTable* local_table, Srt* expected);
 void run_global_decl_resolver_test(Ast* input, SymbolTable* global_table, Srt* expected);
 
-CU_Suite* add_test_suite_decl_resolver() {
+CU_Suite* add_test_suite_decl_resolver(void) {
     CU_Suite* suite = CU_add_suite("test_suite_decl_resolver", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_char_decl);
     CU_ADD_TEST(suite, test_resolve_int_decl);
@@ -55,7 +55,7 @@ CU_Suite* add_test_suite_decl_resolver() {
     return suite;
 }
 
-void test_resolve_char_decl() {
+void test_resolve_char_decl(void) {
     Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                                        new_ast(AST_TYPE_CHAR, 0)),
@@ -74,7 +74,7 @@ void test_resolve_char_decl() {
     delete_srt(expected);
 }
 
-void test_resolve_int_decl() {
+void test_resolve_int_decl(void) {
     Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                                        new_ast(AST_TYPE_INT, 0)),
@@ -93,7 +93,7 @@ void test_resolve_int_decl() {
     delete_srt(expected);
 }
 
-void test_resolve_pointer_decl() {
+void test_resolve_pointer_decl(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -122,7 +122,7 @@ void test_resolve_pointer_decl() {
     delete_srt(expected);
 }
 
-void test_resolve_array_decl() {
+void test_resolve_array_decl(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -162,7 +162,7 @@ void test_resolve_array_decl() {
     delete_srt(expected);
 }
 
-void test_resolve_function_decl() {
+void test_resolve_function_decl(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -221,7 +221,7 @@ void test_resolve_function_decl() {
     delete_srt(expected);
 }
 
-void test_resolve_parameter_decl() {
+void test_resolve_parameter_decl(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -275,7 +275,7 @@ void test_resolve_parameter_decl() {
     delete_srt(expected);
 }
 
-void test_resolve_typedef_decl() {
+void test_resolve_typedef_decl(void) {
     Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                                        new_identifier_ast(AST_TYPEDEF_NAME, new_string("test_type"))),
@@ -302,7 +302,7 @@ void test_resolve_typedef_decl() {
     delete_srt(expected);
 }
 
-void test_resolve_scalar_init() {
+void test_resolve_scalar_init(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -339,7 +339,7 @@ void test_resolve_scalar_init() {
     delete_srt(expected);
 }
 
-void test_resolve_scalar_init_enclosed() {
+void test_resolve_scalar_init_enclosed(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -364,7 +364,7 @@ void test_resolve_scalar_init_enclosed() {
     delete_srt(expected);
 }
 
-void test_resolve_sliteral_init() {
+void test_resolve_sliteral_init(void) {
     char* sliteral_const = "test";
     int sliteral_size = 5;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
@@ -399,7 +399,7 @@ void test_resolve_sliteral_init() {
     delete_srt(expected);
 }
 
-void test_resolve_sliteral_init_lacked() {
+void test_resolve_sliteral_init_lacked(void) {
     char* sliteral_const = "test";
     int sliteral_size = 5, array_size = 10;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
@@ -435,7 +435,7 @@ void test_resolve_sliteral_init_lacked() {
     delete_srt(expected);
 }
 
-void test_resolve_sliteral_init_enclosed() {
+void test_resolve_sliteral_init_enclosed(void) {
     char* sliteral_const = "test";
     int sliteral_size = 5;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
@@ -471,7 +471,7 @@ void test_resolve_sliteral_init_enclosed() {
     delete_srt(expected);
 }
 
-void test_resolve_list_init_zero() {
+void test_resolve_list_init_zero(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -503,7 +503,7 @@ void test_resolve_list_init_zero() {
     delete_srt(expected);
 }
 
-void test_resolve_list_init_zero_nested() {
+void test_resolve_list_init_zero_nested(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -552,7 +552,7 @@ void test_resolve_list_init_zero_nested() {
     delete_srt(expected);
 }
 
-void test_resolve_list_init() {
+void test_resolve_list_init(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -589,7 +589,7 @@ void test_resolve_list_init() {
     delete_srt(expected);
 }
 
-void test_resolve_list_init_lacked() {
+void test_resolve_list_init_lacked(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -624,7 +624,7 @@ void test_resolve_list_init_lacked() {
     delete_srt(expected);
 }
 
-void test_resolve_list_init_nested() {
+void test_resolve_list_init_nested(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -680,7 +680,7 @@ void test_resolve_list_init_nested() {
     delete_srt(expected);
 }
 
-void test_resolve_list_init_nested_lacked() {
+void test_resolve_list_init_nested_lacked(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -732,7 +732,7 @@ void test_resolve_list_init_nested_lacked() {
     delete_srt(expected);
 }
 
-void test_resolve_list_init_flatten() {
+void test_resolve_list_init_flatten(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -782,7 +782,7 @@ void test_resolve_list_init_flatten() {
     delete_srt(expected);
 }
 
-void test_resolve_list_init_mix() {
+void test_resolve_list_init_mix(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -837,7 +837,7 @@ void test_resolve_list_init_mix() {
     delete_srt(expected);
 }
 
-void test_resolve_list_init_chararray() {
+void test_resolve_list_init_chararray(void) {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal

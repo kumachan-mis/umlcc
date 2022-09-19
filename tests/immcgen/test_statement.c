@@ -2,15 +2,15 @@
 #include "../../src/immcgen/statement.h"
 #include "../testlib/testlib.h"
 
-void test_immcgen_compound_stmt_integer_vardef();
-void test_immcgen_compound_stmt_pointer_typedef();
-void test_immcgen_compound_stmt_empty();
-void test_immcgen_return_stmt();
-void test_immcgen_expression_stmt();
+void test_immcgen_compound_stmt_integer_vardef(void);
+void test_immcgen_compound_stmt_pointer_typedef(void);
+void test_immcgen_compound_stmt_empty(void);
+void test_immcgen_return_stmt(void);
+void test_immcgen_expression_stmt(void);
 
 void run_stmt_immcgen_test(Srt* input, SymbolTable* local_table, int return_label_id, Vector* expected);
 
-CU_Suite* add_test_suite_stmt_immcgen() {
+CU_Suite* add_test_suite_stmt_immcgen(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_immcgen", NULL, NULL);
     CU_ADD_TEST(suite, test_immcgen_compound_stmt_integer_vardef);
     CU_ADD_TEST(suite, test_immcgen_compound_stmt_pointer_typedef);
@@ -20,7 +20,7 @@ CU_Suite* add_test_suite_stmt_immcgen() {
     return suite;
 }
 
-void test_immcgen_compound_stmt_integer_vardef() {
+void test_immcgen_compound_stmt_integer_vardef(void) {
     Srt* input = new_srt(
         SRT_CMPD_STMT, 3, // non-terminal
         new_srt(
@@ -121,7 +121,7 @@ void test_immcgen_compound_stmt_integer_vardef() {
     delete_vector(expected);
 }
 
-void test_immcgen_compound_stmt_pointer_typedef() {
+void test_immcgen_compound_stmt_pointer_typedef(void) {
     Dtype* pint_def_dtype = new_decoration_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
     pint_def_dtype->decoration->typedef_flag = 1;
 
@@ -187,7 +187,7 @@ void test_immcgen_compound_stmt_pointer_typedef() {
     delete_vector(expected);
 }
 
-void test_immcgen_compound_stmt_empty() {
+void test_immcgen_compound_stmt_empty(void) {
     Srt* input = new_srt(SRT_CMPD_STMT, 0);
 
     Vector* expected = new_vector(&t_immc);
@@ -197,7 +197,7 @@ void test_immcgen_compound_stmt_empty() {
     delete_vector(expected);
 }
 
-void test_immcgen_return_stmt() {
+void test_immcgen_return_stmt(void) {
     Srt* input =
         new_srt(SRT_RET_STMT, 1,
                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
@@ -219,7 +219,7 @@ void test_immcgen_return_stmt() {
     delete_vector(expected);
 }
 
-void test_immcgen_expression_stmt() {
+void test_immcgen_expression_stmt(void) {
     Srt* input = new_srt(
         SRT_EXPR_STMT, 1, // non-terminal
         new_dtyped_srt(

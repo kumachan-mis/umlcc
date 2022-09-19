@@ -3,21 +3,21 @@
 #include "../../src/parser/declaration.h"
 #include "../testlib/testlib.h"
 
-void test_parse_char_decl();
-void test_parse_int_decl();
-void test_parse_pointer_decl();
-void test_parse_array_decl();
-void test_parse_function_decl();
-void test_parse_parameter_decl();
-void test_parse_typedef_decl();
-void test_parse_expr_init();
-void test_parse_list_init_empty();
-void test_parse_list_init_without_trailing_comma();
-void test_parse_list_init_with_trailing_comma();
+void test_parse_char_decl(void);
+void test_parse_int_decl(void);
+void test_parse_pointer_decl(void);
+void test_parse_array_decl(void);
+void test_parse_function_decl(void);
+void test_parse_parameter_decl(void);
+void test_parse_typedef_decl(void);
+void test_parse_expr_init(void);
+void test_parse_list_init_empty(void);
+void test_parse_list_init_without_trailing_comma(void);
+void test_parse_list_init_with_trailing_comma(void);
 
 void run_decl_parser_test(Vector* input, Set* typedef_names_set, Ast* expected);
 
-CU_Suite* add_test_suite_decl_parser() {
+CU_Suite* add_test_suite_decl_parser(void) {
     CU_Suite* suite = CU_add_suite("test_suite_decl_parser", NULL, NULL);
     CU_ADD_TEST(suite, test_parse_char_decl);
     CU_ADD_TEST(suite, test_parse_int_decl);
@@ -33,7 +33,7 @@ CU_Suite* add_test_suite_decl_parser() {
     return suite;
 }
 
-void test_parse_char_decl() {
+void test_parse_char_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("c")));
@@ -52,7 +52,7 @@ void test_parse_char_decl() {
     delete_ast(expected);
 }
 
-void test_parse_int_decl() {
+void test_parse_int_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
@@ -71,7 +71,7 @@ void test_parse_int_decl() {
     delete_ast(expected);
 }
 
-void test_parse_pointer_decl() {
+void test_parse_pointer_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
@@ -100,7 +100,7 @@ void test_parse_pointer_decl() {
     delete_ast(expected);
 }
 
-void test_parse_array_decl() {
+void test_parse_array_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
@@ -166,7 +166,7 @@ void test_parse_array_decl() {
     delete_ast(expected);
 }
 
-void test_parse_function_decl() {
+void test_parse_function_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
@@ -227,7 +227,7 @@ void test_parse_function_decl() {
     delete_ast(expected);
 }
 
-void test_parse_parameter_decl() {
+void test_parse_parameter_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("func")));
@@ -283,7 +283,7 @@ void test_parse_parameter_decl() {
     delete_ast(expected);
 }
 
-void test_parse_typedef_decl() {
+void test_parse_typedef_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("test_type")));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
@@ -305,7 +305,7 @@ void test_parse_typedef_decl() {
     delete_ast(expected);
 }
 
-void test_parse_expr_init() {
+void test_parse_expr_init(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("scalar")));
@@ -332,7 +332,7 @@ void test_parse_expr_init() {
     delete_ast(expected);
 }
 
-void test_parse_list_init_empty() {
+void test_parse_list_init_empty(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("array")));
@@ -361,7 +361,7 @@ void test_parse_list_init_empty() {
     delete_ast(expected);
 }
 
-void test_parse_list_init_without_trailing_comma() {
+void test_parse_list_init_without_trailing_comma(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("array")));
@@ -395,7 +395,7 @@ void test_parse_list_init_without_trailing_comma() {
     delete_ast(expected);
 }
 
-void test_parse_list_init_with_trailing_comma() {
+void test_parse_list_init_with_trailing_comma(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("array")));

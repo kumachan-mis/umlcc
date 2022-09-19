@@ -12,7 +12,7 @@ DPointer* new_dpointer(struct Dtype* to_dtype) {
     return dpointer;
 }
 
-DPointer* new_socket_dpointer() {
+DPointer* new_socket_dpointer(void) {
     return new_dpointer(NULL);
 }
 

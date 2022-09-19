@@ -1,42 +1,42 @@
 #include "./test_dtype.h"
 #include "../../src/dtype/dtype.h"
 
-void test_new_integer_dtype_int();
-void test_new_integer_dtype_char();
-void test_new_pointer_dtype();
-void test_new_array_dtype();
-void test_new_function_dtype();
-void test_new_decoration_dtype();
-void test_socket_pointer_dtype();
-void test_socket_array_dtype();
-void test_socket_function_dtype();
-void test_socket_decoration_dtype();
-void test_socket_nested_dtype();
-void test_socket_null_dtype();
-void test_dtype_equals_int();
-void test_dtype_equals_char();
-void test_dtype_equals_pointer();
-void test_dtype_equals_array();
-void test_dtype_equals_function();
-void test_dtype_equals_decoration();
-void test_dtype_equals_diff_type();
-void test_dtype_equals_pointer_diff_to_dtype();
-void test_dtype_equals_array_diff_of_dtype();
-void test_dtype_equals_array_diff_size();
-void test_dtype_equals_function_diff_num_params();
-void test_dtype_equals_function_diff_param_dtype();
-void test_dtype_equals_function_diff_param_name();
-void test_dtype_equals_function_diff_param_order();
-void test_dtype_equals_decoration_diff_deco();
-void test_dtype_equals_decoration_diff_deco_dtype();
-void test_dtype_isinteger();
-void test_dtype_isarithmetic();
-void test_dtype_isscalar();
-void test_dtype_isaggregate();
-void test_dtype_isobject();
-void test_dtype_size();
+void test_new_integer_dtype_int(void);
+void test_new_integer_dtype_char(void);
+void test_new_pointer_dtype(void);
+void test_new_array_dtype(void);
+void test_new_function_dtype(void);
+void test_new_decoration_dtype(void);
+void test_socket_pointer_dtype(void);
+void test_socket_array_dtype(void);
+void test_socket_function_dtype(void);
+void test_socket_decoration_dtype(void);
+void test_socket_nested_dtype(void);
+void test_socket_null_dtype(void);
+void test_dtype_equals_int(void);
+void test_dtype_equals_char(void);
+void test_dtype_equals_pointer(void);
+void test_dtype_equals_array(void);
+void test_dtype_equals_function(void);
+void test_dtype_equals_decoration(void);
+void test_dtype_equals_diff_type(void);
+void test_dtype_equals_pointer_diff_to_dtype(void);
+void test_dtype_equals_array_diff_of_dtype(void);
+void test_dtype_equals_array_diff_size(void);
+void test_dtype_equals_function_diff_num_params(void);
+void test_dtype_equals_function_diff_param_dtype(void);
+void test_dtype_equals_function_diff_param_name(void);
+void test_dtype_equals_function_diff_param_order(void);
+void test_dtype_equals_decoration_diff_deco(void);
+void test_dtype_equals_decoration_diff_deco_dtype(void);
+void test_dtype_isinteger(void);
+void test_dtype_isarithmetic(void);
+void test_dtype_isscalar(void);
+void test_dtype_isaggregate(void);
+void test_dtype_isobject(void);
+void test_dtype_size(void);
 
-CU_Suite* add_test_suite_dtype() {
+CU_Suite* add_test_suite_dtype(void) {
     CU_Suite* suite = CU_add_suite("test_suite_dtype", NULL, NULL);
     CU_ADD_TEST(suite, test_new_integer_dtype_int);
     CU_ADD_TEST(suite, test_new_integer_dtype_char);
@@ -75,7 +75,7 @@ CU_Suite* add_test_suite_dtype() {
     return suite;
 }
 
-void test_new_integer_dtype_int() {
+void test_new_integer_dtype_int(void) {
     Dtype* dtype = new_integer_dtype(DTYPE_INT);
 
     for (int i = 0; i < 2; i++) {
@@ -94,7 +94,7 @@ void test_new_integer_dtype_int() {
     delete_dtype(dtype);
 }
 
-void test_new_integer_dtype_char() {
+void test_new_integer_dtype_char(void) {
     Dtype* dtype = new_integer_dtype(DTYPE_CHAR);
 
     for (int i = 0; i < 2; i++) {
@@ -113,7 +113,7 @@ void test_new_integer_dtype_char() {
     delete_dtype(dtype);
 }
 
-void test_new_pointer_dtype() {
+void test_new_pointer_dtype(void) {
     Dtype* to_dtype = new_integer_dtype(DTYPE_CHAR);
     Dtype* dtype = new_pointer_dtype(to_dtype);
 
@@ -134,7 +134,7 @@ void test_new_pointer_dtype() {
     delete_dtype(dtype);
 }
 
-void test_new_array_dtype() {
+void test_new_array_dtype(void) {
     Dtype* of_dtype = new_integer_dtype(DTYPE_INT);
     Dtype* dtype = new_array_dtype(of_dtype, 5);
 
@@ -156,7 +156,7 @@ void test_new_array_dtype() {
     delete_dtype(dtype);
 }
 
-void test_new_function_dtype() {
+void test_new_function_dtype(void) {
     char* param_name = new_string("param");
     Dtype* param_dtype = new_integer_dtype(DTYPE_CHAR);
     DParam* dparam = new_dparam(param_name, param_dtype);
@@ -191,7 +191,7 @@ void test_new_function_dtype() {
     delete_dtype(dtype);
 }
 
-void test_new_decoration_dtype() {
+void test_new_decoration_dtype(void) {
     Dtype* deco_dtype = new_integer_dtype(DTYPE_INT);
     Dtype* dtype = new_decoration_dtype(deco_dtype);
     dtype->decoration->typedef_flag = 1;
@@ -214,7 +214,7 @@ void test_new_decoration_dtype() {
     delete_dtype(dtype);
 }
 
-void test_socket_pointer_dtype() {
+void test_socket_pointer_dtype(void) {
     Dtype* to_dtype = new_integer_dtype(DTYPE_CHAR);
     Dtype* dtype = new_socket_pointer_dtype();
 
@@ -235,7 +235,7 @@ void test_socket_pointer_dtype() {
     delete_dtype(dtype);
 }
 
-void test_socket_array_dtype() {
+void test_socket_array_dtype(void) {
     Dtype* of_dtype = new_integer_dtype(DTYPE_INT);
     Dtype* dtype = new_socket_array_dtype(7);
 
@@ -258,7 +258,7 @@ void test_socket_array_dtype() {
     delete_dtype(dtype);
 }
 
-void test_socket_function_dtype() {
+void test_socket_function_dtype(void) {
     char* param_name = new_string("param");
     Dtype* param_dtype = new_integer_dtype(DTYPE_CHAR);
     DParam* dparam = new_dparam(param_name, param_dtype);
@@ -290,7 +290,7 @@ void test_socket_function_dtype() {
     delete_dtype(dtype);
 }
 
-void test_socket_decoration_dtype() {
+void test_socket_decoration_dtype(void) {
     Dtype* deco_dtype = new_integer_dtype(DTYPE_INT);
     Dtype* dtype = new_socket_decoration_dtype();
 
@@ -313,7 +313,7 @@ void test_socket_decoration_dtype() {
     delete_dtype(dtype);
 }
 
-void test_socket_nested_dtype() {
+void test_socket_nested_dtype(void) {
     Dtype* plug_dtype = new_integer_dtype(DTYPE_CHAR);
     Dtype* socket_dtype = new_array_dtype(new_socket_pointer_dtype(), 10);
     Dtype* dtype = dtype_connect(socket_dtype, plug_dtype);
@@ -329,7 +329,7 @@ void test_socket_nested_dtype() {
     delete_dtype(dtype);
 }
 
-void test_socket_null_dtype() {
+void test_socket_null_dtype(void) {
     Dtype* plug_dtype = new_integer_dtype(DTYPE_INT);
     Dtype* dtype = dtype_connect(NULL, plug_dtype);
 
@@ -342,7 +342,7 @@ void test_socket_null_dtype() {
     delete_dtype(dtype);
 }
 
-void test_dtype_equals_int() {
+void test_dtype_equals_int(void) {
     Dtype* dtype = new_integer_dtype(DTYPE_INT);
     Dtype* other = new_integer_dtype(DTYPE_INT);
 
@@ -352,7 +352,7 @@ void test_dtype_equals_int() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_char() {
+void test_dtype_equals_char(void) {
     Dtype* dtype = new_integer_dtype(DTYPE_CHAR);
     Dtype* other = new_integer_dtype(DTYPE_CHAR);
 
@@ -362,7 +362,7 @@ void test_dtype_equals_char() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_pointer() {
+void test_dtype_equals_pointer(void) {
     Dtype* dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     Dtype* other = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
 
@@ -372,7 +372,7 @@ void test_dtype_equals_pointer() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_array() {
+void test_dtype_equals_array(void) {
     Dtype* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 23);
     Dtype* other = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 23);
 
@@ -382,7 +382,7 @@ void test_dtype_equals_array() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_function() {
+void test_dtype_equals_function(void) {
     Vector* dtype_params = new_vector(&t_dparam);
     vector_push(dtype_params, new_dparam(new_string("param"), new_integer_dtype(DTYPE_INT)));
     Dtype* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
@@ -399,7 +399,7 @@ void test_dtype_equals_function() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_decoration() {
+void test_dtype_equals_decoration(void) {
     Dtype* dtype = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
     dtype->decoration->typedef_flag = 1;
     Dtype* other = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
@@ -411,7 +411,7 @@ void test_dtype_equals_decoration() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_diff_type() {
+void test_dtype_equals_diff_type(void) {
     Dtype* dtype = new_integer_dtype(DTYPE_INT);
     Dtype* other = new_integer_dtype(DTYPE_CHAR);
 
@@ -421,7 +421,7 @@ void test_dtype_equals_diff_type() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_pointer_diff_to_dtype() {
+void test_dtype_equals_pointer_diff_to_dtype(void) {
     Dtype* dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     Dtype* other = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
 
@@ -431,7 +431,7 @@ void test_dtype_equals_pointer_diff_to_dtype() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_array_diff_of_dtype() {
+void test_dtype_equals_array_diff_of_dtype(void) {
     Dtype* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 23);
     Dtype* other = new_array_dtype(new_integer_dtype(DTYPE_INT), 23);
 
@@ -441,7 +441,7 @@ void test_dtype_equals_array_diff_of_dtype() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_array_diff_size() {
+void test_dtype_equals_array_diff_size(void) {
     Dtype* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 14);
     Dtype* other = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 15);
 
@@ -451,7 +451,7 @@ void test_dtype_equals_array_diff_size() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_function_diff_num_params() {
+void test_dtype_equals_function_diff_num_params(void) {
     Vector* dtype_params = new_vector(&t_dparam);
     vector_push(dtype_params, new_dparam(new_string("param"), new_integer_dtype(DTYPE_CHAR)));
     Dtype* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
@@ -467,7 +467,7 @@ void test_dtype_equals_function_diff_num_params() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_function_diff_param_dtype() {
+void test_dtype_equals_function_diff_param_dtype(void) {
     Vector* dtype_params = new_vector(&t_dparam);
     vector_push(dtype_params, new_dparam(new_string("param"), new_integer_dtype(DTYPE_INT)));
     Dtype* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
@@ -484,7 +484,7 @@ void test_dtype_equals_function_diff_param_dtype() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_function_diff_param_name() {
+void test_dtype_equals_function_diff_param_name(void) {
     Vector* dtype_params = new_vector(&t_dparam);
     vector_push(dtype_params, new_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
     vector_push(dtype_params, new_dparam(new_string("b"), new_integer_dtype(DTYPE_CHAR)));
@@ -504,7 +504,7 @@ void test_dtype_equals_function_diff_param_name() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_function_diff_param_order() {
+void test_dtype_equals_function_diff_param_order(void) {
     Vector* dtype_params = new_vector(&t_dparam);
     vector_push(dtype_params, new_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
     vector_push(dtype_params, new_dparam(new_string("b"), new_integer_dtype(DTYPE_CHAR)));
@@ -524,7 +524,7 @@ void test_dtype_equals_function_diff_param_order() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_decoration_diff_deco() {
+void test_dtype_equals_decoration_diff_deco(void) {
     Dtype* dtype = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
     dtype->decoration->typedef_flag = 0;
     Dtype* other = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
@@ -536,7 +536,7 @@ void test_dtype_equals_decoration_diff_deco() {
     delete_dtype(other);
 }
 
-void test_dtype_equals_decoration_diff_deco_dtype() {
+void test_dtype_equals_decoration_diff_deco_dtype(void) {
     Dtype* dtype = new_decoration_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
     dtype->decoration->typedef_flag = 1;
     Dtype* other = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
@@ -548,7 +548,7 @@ void test_dtype_equals_decoration_diff_deco_dtype() {
     delete_dtype(other);
 }
 
-void test_dtype_isinteger() {
+void test_dtype_isinteger(void) {
     Dtype* char_dtype = new_integer_dtype(DTYPE_CHAR);
     CU_ASSERT_TRUE(dtype_isinteger(char_dtype));
     delete_dtype(char_dtype);
@@ -575,7 +575,7 @@ void test_dtype_isinteger() {
     delete_dtype(typedef_dtype);
 }
 
-void test_dtype_isarithmetic() {
+void test_dtype_isarithmetic(void) {
     Dtype* char_dtype = new_integer_dtype(DTYPE_CHAR);
     CU_ASSERT_TRUE(dtype_isarithmetic(char_dtype));
     delete_dtype(char_dtype);
@@ -602,7 +602,7 @@ void test_dtype_isarithmetic() {
     delete_dtype(typedef_dtype);
 }
 
-void test_dtype_isscalar() {
+void test_dtype_isscalar(void) {
     Dtype* char_dtype = new_integer_dtype(DTYPE_CHAR);
     CU_ASSERT_TRUE(dtype_isscalar(char_dtype));
     delete_dtype(char_dtype);
@@ -629,7 +629,7 @@ void test_dtype_isscalar() {
     delete_dtype(typedef_dtype);
 }
 
-void test_dtype_isaggregate() {
+void test_dtype_isaggregate(void) {
     Dtype* char_dtype = new_integer_dtype(DTYPE_CHAR);
     CU_ASSERT_FALSE(dtype_isaggregate(char_dtype));
     delete_dtype(char_dtype);
@@ -656,7 +656,7 @@ void test_dtype_isaggregate() {
     delete_dtype(typedef_dtype);
 }
 
-void test_dtype_isobject() {
+void test_dtype_isobject(void) {
     Dtype* char_dtype = new_integer_dtype(DTYPE_CHAR);
     CU_ASSERT_TRUE(dtype_isobject(char_dtype));
     delete_dtype(char_dtype);
@@ -683,7 +683,7 @@ void test_dtype_isobject() {
     delete_dtype(typedef_dtype);
 }
 
-void test_dtype_size() {
+void test_dtype_size(void) {
     Dtype* char_dtype = new_integer_dtype(DTYPE_CHAR);
     CU_ASSERT_EQUAL(dtype_size(char_dtype), 1);
     delete_dtype(char_dtype);

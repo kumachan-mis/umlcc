@@ -3,17 +3,17 @@
 #include "../testlib/testlib.h"
 #include "./test_external.h"
 
-void test_parse_external_decl_error();
-void test_parse_function_definition_error_decl_specifier();
-void test_parse_function_definition_error_empty_param_specifier();
-void test_parse_function_definition_error_no_param_identifier();
-void test_parse_function_definition_error_param_list();
-void test_parse_function_definition_error_body();
+void test_parse_external_decl_error(void);
+void test_parse_function_definition_error_decl_specifier(void);
+void test_parse_function_definition_error_empty_param_specifier(void);
+void test_parse_function_definition_error_no_param_identifier(void);
+void test_parse_function_definition_error_param_list(void);
+void test_parse_function_definition_error_body(void);
 
 void run_parser_error_test(Vector* input, Error* expected);
 void run_function_definition_parser_error_test(Vector* input, Error* expected);
 
-CU_Suite* add_test_suite_external_parser_error() {
+CU_Suite* add_test_suite_external_parser_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_external_parser_error", NULL, NULL);
     CU_ADD_TEST(suite, test_parse_external_decl_error);
     CU_ADD_TEST(suite, test_parse_function_definition_error_decl_specifier);
@@ -24,7 +24,7 @@ CU_Suite* add_test_suite_external_parser_error() {
     return suite;
 }
 
-void test_parse_external_decl_error() {
+void test_parse_external_decl_error(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
@@ -39,7 +39,7 @@ void test_parse_external_decl_error() {
     delete_error(expected);
 }
 
-void test_parse_function_definition_error_decl_specifier() {
+void test_parse_function_definition_error_decl_specifier(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
     vector_push(input, new_ctoken(CTOKEN_LPALEN));
@@ -58,7 +58,7 @@ void test_parse_function_definition_error_decl_specifier() {
     delete_error(expected);
 }
 
-void test_parse_function_definition_error_empty_param_specifier() {
+void test_parse_function_definition_error_empty_param_specifier(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
@@ -79,7 +79,7 @@ void test_parse_function_definition_error_empty_param_specifier() {
     delete_error(expected);
 }
 
-void test_parse_function_definition_error_no_param_identifier() {
+void test_parse_function_definition_error_no_param_identifier(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
@@ -98,7 +98,7 @@ void test_parse_function_definition_error_no_param_identifier() {
     delete_error(expected);
 }
 
-void test_parse_function_definition_error_param_list() {
+void test_parse_function_definition_error_param_list(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
@@ -117,7 +117,7 @@ void test_parse_function_definition_error_param_list() {
     delete_error(expected);
 }
 
-void test_parse_function_definition_error_body() {
+void test_parse_function_definition_error_body(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
