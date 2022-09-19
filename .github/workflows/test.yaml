@@ -22,11 +22,26 @@ jobs:
       - name: Show gcc version
         run: gcc --version
 
-      - name: Show gcov version
-        run: gcov --version
-
       - name: Run unit test
         run: make unittest
+
+  unittest-debug:
+    if: ${{ !startsWith(github.event.pull_request.title, '[WIP]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+             sudo apt-get update
+             export DEBIAN_FRONTEND=noninteractive
+             sudo apt-get -y install --no-install-recommends libcunit1 libcunit1-dev
+
+      - name: Show gcc version
+        run: gcc --version
+
+      - name: Run unit test with detection of memory leak
+        run: make unittest-debug
 
   unittest-cov:
     if: ${{ !startsWith(github.event.pull_request.title, '[WIP]') }}
@@ -46,7 +61,7 @@ jobs:
       - name: Show gcov version
         run: gcov --version
 
-      - name: Run unit test with coverage
+      - name: Run unit test with detection of low test coverage
         run: make unittest-cov
 
   e2etest:
@@ -58,8 +73,17 @@ jobs:
       - name: Show gcc version
         run: gcc --version
 
-      - name: Show gcov version
-        run: gcov --version
-
       - name: Run end-to-end test
         run: make e2etest
+
+  e2etest-debug:
+    if: ${{ !startsWith(github.event.pull_request.title, '[WIP]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Show gcc version
+        run: gcc --version
+
+      - name: Run end-to-end test with detection of memory leak
+        run: make e2etest-debug

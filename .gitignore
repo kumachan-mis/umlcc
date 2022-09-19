@@ -10,6 +10,7 @@ sample-out/
 test-fixtures/**/*.s
 test-fixtures/**/*.i
 test-fixtures/**/actual.txt
+tmp/
 
 ### C ###
 # Prerequisites

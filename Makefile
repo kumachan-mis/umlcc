@@ -38,17 +38,19 @@ DEP_EXT  := .d
 MKDIR := mkdir -p
 RM    := rm -rf
 
-ifeq ($(COVERAGE),true)
+
+ifeq ($(MAKE_ENV),coverage)
 CFLAGS    += -O0 -fprofile-arcs -ftest-coverage
 TEST_LIBS += -lgcov
 OBJ_DIR   := $(BLD_DIR)/src/cobject
 else
-ifeq ($(DEBUG),true)
+ifeq ($(MAKE_ENV),debug)
 CFLAGS    += -O0 -g -fsanitize=address -fno-omit-frame-pointer
+OBJ_DIR   := $(BLD_DIR)/src/gobject
 else
 CFLAGS    += -O3
-endif
 OBJ_DIR   := $(BLD_DIR)/src/object
+endif
 endif
 
 SRCS  := $(wildcard $(SRC_DIR)/*$(SRC_EXT)) $(wildcard $(SRC_DIR)/**/*$(SRC_EXT))
@@ -62,30 +64,35 @@ TEST_DEPS := $(patsubst $(TEST_DIR)/%$(TEST_EXT),$(TEST_DEP_DIR)/%$(DEP_EXT),$(T
 SAMPLES     := $(wildcard $(SAMPLE_DIR)/*$(SRC_EXT))
 SAMPLE_ASMS := $(patsubst $(SAMPLE_DIR)/%$(SRC_EXT),$(SAMPLE_OUT)/%$(ASM_EXT),$(SAMPLES))
 
-.PRECIOUS: $(OBJS) $(DEPS) $(TEST_OBJS) $(TEST_DEPS)
-.PHONY: build build-debug unittest unittest-debug unittest-cov e2etest sample clean clean-sample format install-pre-commit
+.PRECIOUS: $(DEPS) $(TEST_DEPS)
+.PHONY: build build-debug unittest unittest-debug unittest-cov e2etest e2etest-debug clean
+.PHONY: sample clean-sample format install-pre-commit
 
 build:
 	$(MAKE) $(BIN_DIR)/$(UMLCC)
 
 build-debug:
-	$(MAKE) $(BIN_DIR)/$(UMLCC) DEBUG=true
+	$(MAKE) $(BIN_DIR)/$(UMLCC) MAKE_ENV=debug
 
 unittest:
 	$(MAKE) $(BIN_DIR)/$(TEST)
 	$(BIN_DIR)/$(TEST)
 
 unittest-debug:
-	$(MAKE) $(BIN_DIR)/$(TEST) DEBUG=true
+	$(MAKE) $(BIN_DIR)/$(TEST) MAKE_ENV=debug
 	$(DB) $(BIN_DIR)/$(TEST)
 
 unittest-cov:
-	$(MAKE) $(BIN_DIR)/$(TEST) COVERAGE=true
+	$(MAKE) $(BIN_DIR)/$(TEST) MAKE_ENV=coverage
 	$(BIN_DIR)/$(TEST)
 	$(TEST_COV)
 
 e2etest:
 	$(MAKE) $(BIN_DIR)/$(UMLCC)
+	$(E2E_TEST)
+
+e2etest-debug:
+	$(MAKE) $(BIN_DIR)/$(UMLCC) MAKE_ENV=debug
 	$(E2E_TEST)
 
 sample:
@@ -96,7 +103,7 @@ $(BIN_DIR)/$(UMLCC): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
 $(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
-ifeq ($(COVERAGE),true)
+ifeq ($(MAKE_ENV),coverage)
 	@$(RM) $(patsubst $(OBJ_DIR)/%$(OBJ_EXT),$(OBJ_DIR)/%$(GCDA_EXT),$@) \
 		   $(patsubst $(OBJ_DIR)/%$(OBJ_EXT),$(OBJ_DIR)/%$(GCNO_EXT),$@)
 endif
@@ -151,6 +158,10 @@ ifeq ($(MAKECMDGOALS),build-debug)
 endif
 
 ifeq ($(MAKECMDGOALS),e2etest)
+-include $(DEPS)
+endif
+
+ifeq ($(MAKECMDGOALS),e2etest-debug)
 -include $(DEPS)
 endif
 
