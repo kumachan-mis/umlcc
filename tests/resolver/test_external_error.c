@@ -3,7 +3,7 @@
 #include "../testlib/testlib.h"
 
 void test_resolve_translation_unit_error_child();
-void test_resolve_function_definition_error_declaration_specifier();
+void test_resolve_function_definition_error_decl_specifier();
 void test_resolve_function_definition_error_storage_specifier();
 void test_resolve_function_definition_error_non_func();
 void test_resolve_function_definition_error_declarator();
@@ -15,7 +15,7 @@ void run_resolver_error_test(Ast* __restrict__ input, Vector* __restrict__ messa
 CU_Suite* add_test_suite_external_resolver_error() {
     CU_Suite* suite = CU_add_suite("test_suite_external_resolver_error", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_translation_unit_error_child);
-    CU_ADD_TEST(suite, test_resolve_function_definition_error_declaration_specifier);
+    CU_ADD_TEST(suite, test_resolve_function_definition_error_decl_specifier);
     CU_ADD_TEST(suite, test_resolve_function_definition_error_storage_specifier);
     CU_ADD_TEST(suite, test_resolve_function_definition_error_non_func);
     CU_ADD_TEST(suite, test_resolve_function_definition_error_declarator);
@@ -78,7 +78,7 @@ void test_resolve_translation_unit_error_child() {
     delete_vector(messages);
 }
 
-void test_resolve_function_definition_error_declaration_specifier() {
+void test_resolve_function_definition_error_decl_specifier() {
     Ast* input =
         new_ast(AST_TRAS_UNIT, 1,
                 new_ast(AST_FUNC_DEF, 3,                // non-terminal

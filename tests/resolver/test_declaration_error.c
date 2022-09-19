@@ -5,20 +5,20 @@
 void test_resolve_decl_specifiers_error();
 void test_resolve_declarator_list_error_duplicated();
 void test_resolve_declarator_error();
-void test_resolve_array_error_size_limitation();
-void test_resolve_parameter_list_error_duplicated();
-void test_resolve_parameter_error_storage_specifier();
-void test_resolve_parameter_error_declarator();
-void test_resolve_initializer_error_unassignable();
-void test_resolve_initializer_error_non_object();
-void test_resolve_initializer_error_nested_list_scalar();
-void test_resolve_initializer_error_empty_scalar();
-void test_resolve_initializer_error_too_long_scalar();
-void test_resolve_initializer_error_scalar_array();
-void test_resolve_initializer_error_empty_array();
-void test_resolve_initializer_error_too_long_array();
-void test_resolve_initializer_error_child_array();
-void test_resolve_initializer_error_too_long_nested_array();
+void test_resolve_array_error_size_limit();
+void test_resolve_param_list_error_duplicated();
+void test_resolve_param_error_storage_specifier();
+void test_resolve_param_error_declarator();
+void test_resolve_init_error_unassignable();
+void test_resolve_init_error_non_object();
+void test_resolve_init_error_nested_list_scalar();
+void test_resolve_init_error_empty_scalar();
+void test_resolve_init_error_too_long_scalar();
+void test_resolve_init_error_scalar_array();
+void test_resolve_init_error_empty_array();
+void test_resolve_init_error_too_long_array();
+void test_resolve_init_error_child_array();
+void test_resolve_init_error_too_long_nested_array();
 
 void run_local_decl_resolver_error_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
                                         Vector* __restrict__ messages);
@@ -30,20 +30,20 @@ CU_Suite* add_test_suite_decl_resolver_error() {
     CU_ADD_TEST(suite, test_resolve_decl_specifiers_error);
     CU_ADD_TEST(suite, test_resolve_declarator_list_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_declarator_error);
-    CU_ADD_TEST(suite, test_resolve_array_error_size_limitation);
-    CU_ADD_TEST(suite, test_resolve_parameter_list_error_duplicated);
-    CU_ADD_TEST(suite, test_resolve_parameter_error_storage_specifier);
-    CU_ADD_TEST(suite, test_resolve_parameter_error_declarator);
-    CU_ADD_TEST(suite, test_resolve_initializer_error_unassignable);
-    CU_ADD_TEST(suite, test_resolve_initializer_error_non_object);
-    CU_ADD_TEST(suite, test_resolve_initializer_error_nested_list_scalar);
-    CU_ADD_TEST(suite, test_resolve_initializer_error_empty_scalar);
-    CU_ADD_TEST(suite, test_resolve_initializer_error_too_long_scalar);
-    CU_ADD_TEST(suite, test_resolve_initializer_error_scalar_array);
-    CU_ADD_TEST(suite, test_resolve_initializer_error_empty_array);
-    CU_ADD_TEST(suite, test_resolve_initializer_error_too_long_array);
-    CU_ADD_TEST(suite, test_resolve_initializer_error_child_array);
-    CU_ADD_TEST(suite, test_resolve_initializer_error_too_long_nested_array);
+    CU_ADD_TEST(suite, test_resolve_array_error_size_limit);
+    CU_ADD_TEST(suite, test_resolve_param_list_error_duplicated);
+    CU_ADD_TEST(suite, test_resolve_param_error_storage_specifier);
+    CU_ADD_TEST(suite, test_resolve_param_error_declarator);
+    CU_ADD_TEST(suite, test_resolve_init_error_unassignable);
+    CU_ADD_TEST(suite, test_resolve_init_error_non_object);
+    CU_ADD_TEST(suite, test_resolve_init_error_nested_list_scalar);
+    CU_ADD_TEST(suite, test_resolve_init_error_empty_scalar);
+    CU_ADD_TEST(suite, test_resolve_init_error_too_long_scalar);
+    CU_ADD_TEST(suite, test_resolve_init_error_scalar_array);
+    CU_ADD_TEST(suite, test_resolve_init_error_empty_array);
+    CU_ADD_TEST(suite, test_resolve_init_error_too_long_array);
+    CU_ADD_TEST(suite, test_resolve_init_error_child_array);
+    CU_ADD_TEST(suite, test_resolve_init_error_too_long_nested_array);
     return suite;
 }
 
@@ -127,7 +127,7 @@ void test_resolve_declarator_error() {
     delete_vector(messages);
 }
 
-void test_resolve_array_error_size_limitation() {
+void test_resolve_array_error_size_limit() {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -150,7 +150,7 @@ void test_resolve_array_error_size_limitation() {
     delete_vector(messages);
 }
 
-void test_resolve_parameter_list_error_duplicated() {
+void test_resolve_param_list_error_duplicated() {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -184,8 +184,8 @@ void test_resolve_parameter_list_error_duplicated() {
     Ast* global_input = ast_copy(local_input);
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: parameter 'x' is already declared\n"));
-    vector_push(messages, new_string("Error: parameter 'y' is already declared\n"));
+    vector_push(messages, new_string("Error: param 'x' is already declared\n"));
+    vector_push(messages, new_string("Error: param 'y' is already declared\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, messages);
     run_global_decl_resolver_error_test(global_input, NULL, messages);
@@ -193,7 +193,7 @@ void test_resolve_parameter_list_error_duplicated() {
     delete_vector(messages);
 }
 
-void test_resolve_parameter_error_storage_specifier() {
+void test_resolve_param_error_storage_specifier() {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -210,7 +210,7 @@ void test_resolve_parameter_error_storage_specifier() {
     Ast* global_input = ast_copy(local_input);
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: storage specifiers are invalid for a function parameter\n"));
+    vector_push(messages, new_string("Error: storage specifiers are invalid for a function param\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, messages);
     run_global_decl_resolver_error_test(global_input, NULL, messages);
@@ -218,7 +218,7 @@ void test_resolve_parameter_error_storage_specifier() {
     delete_vector(messages);
 }
 
-void test_resolve_parameter_error_declarator() {
+void test_resolve_param_error_declarator() {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -248,7 +248,7 @@ void test_resolve_parameter_error_declarator() {
     delete_vector(messages);
 }
 
-void test_resolve_initializer_error_unassignable() {
+void test_resolve_init_error_unassignable() {
     Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                                        new_ast(AST_TYPE_INT, 0)),
@@ -268,7 +268,7 @@ void test_resolve_initializer_error_unassignable() {
     delete_vector(messages);
 }
 
-void test_resolve_initializer_error_non_object() {
+void test_resolve_init_error_non_object() {
     Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                                        new_ast(AST_TYPE_CHAR, 0)),
@@ -290,7 +290,7 @@ void test_resolve_initializer_error_non_object() {
     delete_vector(messages);
 }
 
-void test_resolve_initializer_error_nested_list_scalar() {
+void test_resolve_init_error_nested_list_scalar() {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -312,7 +312,7 @@ void test_resolve_initializer_error_nested_list_scalar() {
     delete_vector(messages);
 }
 
-void test_resolve_initializer_error_empty_scalar() {
+void test_resolve_init_error_empty_scalar() {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -323,7 +323,7 @@ void test_resolve_initializer_error_empty_scalar() {
     Ast* global_input = ast_copy(local_input);
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: one or more initializer is required in an initializer list\n"));
+    vector_push(messages, new_string("Error: one or more init is required in an init list\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, messages);
     run_global_decl_resolver_error_test(global_input, NULL, messages);
@@ -331,7 +331,7 @@ void test_resolve_initializer_error_empty_scalar() {
     delete_vector(messages);
 }
 
-void test_resolve_initializer_error_too_long_scalar() {
+void test_resolve_init_error_too_long_scalar() {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -345,7 +345,7 @@ void test_resolve_initializer_error_too_long_scalar() {
     Ast* global_input = ast_copy(local_input);
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: initializer list is too long\n"));
+    vector_push(messages, new_string("Error: init list is too long\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, messages);
     run_global_decl_resolver_error_test(global_input, NULL, messages);
@@ -353,7 +353,7 @@ void test_resolve_initializer_error_too_long_scalar() {
     delete_vector(messages);
 }
 
-void test_resolve_initializer_error_scalar_array() {
+void test_resolve_init_error_scalar_array() {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -367,7 +367,7 @@ void test_resolve_initializer_error_scalar_array() {
     Ast* global_input = ast_copy(local_input);
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: an array should be initialized with an initializer list\n"));
+    vector_push(messages, new_string("Error: an array should be initialized with an init list\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, messages);
     run_global_decl_resolver_error_test(global_input, NULL, messages);
@@ -375,7 +375,7 @@ void test_resolve_initializer_error_scalar_array() {
     delete_vector(messages);
 }
 
-void test_resolve_initializer_error_empty_array() {
+void test_resolve_init_error_empty_array() {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -389,7 +389,7 @@ void test_resolve_initializer_error_empty_array() {
     Ast* global_input = ast_copy(local_input);
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: one or more initializer is required in an initializer list\n"));
+    vector_push(messages, new_string("Error: one or more init is required in an init list\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, messages);
     run_global_decl_resolver_error_test(global_input, NULL, messages);
@@ -397,7 +397,7 @@ void test_resolve_initializer_error_empty_array() {
     delete_vector(messages);
 }
 
-void test_resolve_initializer_error_too_long_array() {
+void test_resolve_init_error_too_long_array() {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -414,7 +414,7 @@ void test_resolve_initializer_error_too_long_array() {
     Ast* global_input = ast_copy(local_input);
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: initializer list is too long\n"));
+    vector_push(messages, new_string("Error: init list is too long\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, messages);
     run_global_decl_resolver_error_test(global_input, NULL, messages);
@@ -422,7 +422,7 @@ void test_resolve_initializer_error_too_long_array() {
     delete_vector(messages);
 }
 
-void test_resolve_initializer_error_child_array() {
+void test_resolve_init_error_child_array() {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -452,7 +452,7 @@ void test_resolve_initializer_error_child_array() {
     delete_vector(messages);
 }
 
-void test_resolve_initializer_error_too_long_nested_array() {
+void test_resolve_init_error_too_long_nested_array() {
     Ast* local_input =
         new_ast(AST_DECL, 2,                    // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
@@ -473,7 +473,7 @@ void test_resolve_initializer_error_too_long_nested_array() {
     Ast* global_input = ast_copy(local_input);
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: initializer list is too long\n"));
+    vector_push(messages, new_string("Error: init list is too long\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, messages);
     run_global_decl_resolver_error_test(global_input, NULL, messages);

@@ -47,7 +47,7 @@ void test_resolve_call_expr_error_non_func();
 void test_resolve_call_expr_error_num_params();
 void test_resolve_call_expr_error_param_dtype();
 void test_resolve_call_expr_error_child();
-void test_resolve_subscription_expr_error_non_pointer_to_object();
+void test_resolve_subscription_expr_error_non_obj_pointer();
 void test_resolve_subscription_expr_error_non_pointer();
 void test_resolve_subscription_expr_error_non_integer();
 void test_resolve_subscription_expr_error_lhs();
@@ -104,7 +104,7 @@ CU_Suite* add_test_suite_expr_resolver_error() {
     CU_ADD_TEST(suite, test_resolve_call_expr_error_num_params);
     CU_ADD_TEST(suite, test_resolve_call_expr_error_param_dtype);
     CU_ADD_TEST(suite, test_resolve_call_expr_error_child);
-    CU_ADD_TEST(suite, test_resolve_subscription_expr_error_non_pointer_to_object);
+    CU_ADD_TEST(suite, test_resolve_subscription_expr_error_non_obj_pointer);
     CU_ADD_TEST(suite, test_resolve_subscription_expr_error_non_pointer);
     CU_ADD_TEST(suite, test_resolve_subscription_expr_error_non_integer);
     CU_ADD_TEST(suite, test_resolve_subscription_expr_error_lhs);
@@ -786,7 +786,7 @@ void test_resolve_call_expr_error_child() {
     delete_vector(messages);
 }
 
-void test_resolve_subscription_expr_error_non_pointer_to_object() {
+void test_resolve_subscription_expr_error_non_obj_pointer() {
     Ast* input = new_ast(AST_SUBSC_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
