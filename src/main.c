@@ -12,19 +12,19 @@
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         fprintf(stderr, "Error: no input file\n");
-        exit(1);
+        return 1;
     }
 
     FILE* src = fopen(argv[1], "r");
     if (src == NULL) {
         fprintf(stderr, "Error: %s: no such file or directory\n", argv[1]);
-        exit(1);
+        return 1;
     }
 
     char* ext = strrchr(argv[1], '.');
     if (ext == NULL || strcmp(ext, ".c") != 0) {
         fprintf(stderr, "Error: file format is not .c\n");
-        exit(1);
+        return 1;
     }
 
     int src_filename_len = strlen(argv[1]);
@@ -41,6 +41,7 @@ int main(int argc, char* argv[]) {
     free(dst_filename);
     free(imm_filename);
 
+    Vector* errs = NULL;
     Error* err = NULL;
 
     Lexer* lexer = new_lexer(src);
@@ -50,7 +51,7 @@ int main(int argc, char* argv[]) {
 
     if (err != NULL) {
         fprintf(stderr, "@@@@@ Error occured in lexer @@@@@\n");
-        fprintf(stderr, "%s", err->message);
+        fprintf(stderr, "    %s", err->message);
         delete_error(err);
         // files are implicitly closed
         return 1;
@@ -63,15 +64,28 @@ int main(int argc, char* argv[]) {
 
     if (err != NULL) {
         fprintf(stderr, "@@@@@ Error occured in parser @@@@@\n");
-        fprintf(stderr, "%s", err->message);
+        fprintf(stderr, "    %s", err->message);
         delete_error(err);
         // files are implicitly closed
         return 1;
     }
 
     Resolver* resolver = new_resolver(ast);
-    Srt* srt = resolver_resolve_semantics(resolver);
+    Srt* srt = NULL;
+    resolverret_assign(&srt, &errs, resolver_resolve_semantics(resolver));
     delete_resolver(resolver);
+
+    if (errs != NULL) {
+        fprintf(stderr, "@@@@@ Error occured in resolver @@@@@\n");
+        int num_errs = vector_size(errs);
+        for (int i = 0; i < num_errs; i++) {
+            err = vector_at(errs, i);
+            fprintf(stderr, "    %s", err->message);
+        }
+        delete_vector(errs);
+        // files are implicitly closed
+        return 1;
+    }
 
     Immcgen* immcgen = new_immcgen(srt);
     Vector* immcs = immcgen_generate_immcode(immcgen);

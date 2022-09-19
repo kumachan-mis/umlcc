@@ -254,9 +254,12 @@ void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ l
     if (local_table != NULL) resolver->local_table = local_table;
     resolver->return_dtype = return_dtype;
 
-    Srt* actual = resolve_stmt(resolver);
+    Srt* actual = NULL;
+    Vector* errs = NULL;
+    resolverret_assign(&actual, &errs, resolve_stmt(resolver));
 
     CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+    CU_ASSERT_PTR_NULL(errs);
 
     delete_srt(actual);
     delete_resolver(resolver);

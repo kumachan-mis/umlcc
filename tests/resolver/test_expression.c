@@ -299,13 +299,15 @@ void test_resolve_subtract_expr() {
 
 void test_resolve_pointer_add_expr() {
     Ast* input = new_ast(AST_ADD_EXPR, 2, // non-terminal
-                         new_identifier_ast(AST_IDENT_EXPR, new_string("ptr")),
-                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)));
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("ptr")));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("ptr"),
                               new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
 
+    // In current implementation,
+    // if a pointer is placed on the right side of add operator, the operands will be swaped
     Srt* expected = new_dtyped_srt(
         SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 2, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)),
@@ -320,15 +322,13 @@ void test_resolve_pointer_add_expr() {
 
 void test_resolve_pointer_subtract_expr() {
     Ast* input = new_ast(AST_SUB_EXPR, 2, // non-terminal
-                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4)),
-                         new_identifier_ast(AST_IDENT_EXPR, new_string("ptr")));
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("ptr")),
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("ptr"),
                               new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
-    // In current implementation,
-    // if a pointer is placed on the right side of additive operator, the operands will be swaped
     Srt* expected = new_dtyped_srt(
         SRT_PSUB_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
@@ -448,7 +448,7 @@ void test_resolve_address_expr() {
     symboltable_define_memory(local_table, new_string("a"), array_dtype);
 
     Srt* expected = new_dtyped_srt(
-        SRT_ADDR_EXPR, dtype_copy(pointer_dtype), 1, // non-terminal
+        SRT_ADDR_EXPR, pointer_dtype, 1, // non-terminal
         new_dtyped_srt(
             SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
             new_dtyped_srt(
@@ -514,7 +514,7 @@ void test_resolve_call_expr() {
     vector_push(params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
     vector_push(params, new_dparam(new_string("y"), new_integer_dtype(DTYPE_INT)));
     Dtype* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
-    symboltable_define_memory(local_table, new_string("function"), func_dtype);
+    symboltable_define_label(local_table, new_string("function"), func_dtype);
     symboltable_define_memory(local_table, new_string("a"), new_integer_dtype(DTYPE_CHAR));
 
     Srt* expected = new_dtyped_srt(
@@ -612,7 +612,7 @@ void test_resolve_sliteral_expr() {
     Ast* input = new_sliteral_ast(AST_STRING_EXPR, new_sliteral(new_string("Hello"), 6));
 
     Srt* expected = new_identifier_srt(
-        SRT_IDENT_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), new_string("LC0"));
+        SRT_IDENT_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), new_string(".SL0"));
 
     Srt* expected_trans_unit = new_srt(
         SRT_TRAS_UNIT, 1, // non-terminal
@@ -620,7 +620,7 @@ void test_resolve_sliteral_expr() {
             SRT_DECL_LIST, 1,         // non-terminal
             new_srt(SRT_INIT_DECL, 2, // non-terminal
                     new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6),
-                                       new_string("LC0")),
+                                       new_string(".SL0")),
                     new_srt(SRT_INIT, 1, // non-terminal
                             new_sliteral_srt(SRT_STRING_EXPR,
                                              new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6),
@@ -643,9 +643,12 @@ void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ l
     }
     if (local_table != NULL) resolver->local_table = local_table;
 
-    Srt* actual = resolve_expr(resolver);
+    Srt* actual = NULL;
+    Vector* errs = NULL;
+    resolverret_assign(&actual, &errs, resolve_expr(resolver));
 
     CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+    CU_ASSERT_PTR_NULL(errs);
     if (expected_trans_unit != NULL) {
         CU_ASSERT_TRUE(testlib_srt_equals(resolver->trans_unit_srt, expected_trans_unit));
     }

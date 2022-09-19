@@ -178,7 +178,7 @@ void test_new_function_dtype() {
             return_dtype = copied_dtype->function->return_dtype;
             dtype = copied_dtype;
         }
-        CU_ASSERT_EQUAL(dtype->type, DTYPE_FUNCUCTION);
+        CU_ASSERT_EQUAL(dtype->type, DTYPE_FUNCTION);
         CU_ASSERT_PTR_NULL(dtype->pointer);
         CU_ASSERT_PTR_NULL(dtype->array);
         CU_ASSERT_PTR_EQUAL(dtype->function->params, params);
@@ -267,7 +267,7 @@ void test_socket_function_dtype() {
     Dtype* return_dtype = new_integer_dtype(DTYPE_INT);
     Dtype* dtype = new_socket_function_dtype(params);
 
-    CU_ASSERT_EQUAL(dtype->type, DTYPE_FUNCUCTION);
+    CU_ASSERT_EQUAL(dtype->type, DTYPE_FUNCTION);
     CU_ASSERT_PTR_NULL(dtype->pointer);
     CU_ASSERT_PTR_NULL(dtype->array);
     CU_ASSERT_PTR_EQUAL(dtype->function->params, params);
@@ -278,7 +278,7 @@ void test_socket_function_dtype() {
 
     dtype = dtype_connect(dtype, return_dtype);
 
-    CU_ASSERT_EQUAL(dtype->type, DTYPE_FUNCUCTION);
+    CU_ASSERT_EQUAL(dtype->type, DTYPE_FUNCTION);
     CU_ASSERT_PTR_NULL(dtype->pointer);
     CU_ASSERT_PTR_NULL(dtype->array);
     CU_ASSERT_PTR_EQUAL(dtype->function->params, params);

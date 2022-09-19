@@ -24,7 +24,7 @@ Liveseq* liveseq_copy(Liveseq* liveseq) {
     return copied_liveseq;
 }
 
-int liveseq_is_alive(Liveseq* liveseq) {
+int liveseq_isalive(Liveseq* liveseq) {
     int index = liveseq->index;
 
     int livenesses_len = vector_size(liveseq->livenesses);

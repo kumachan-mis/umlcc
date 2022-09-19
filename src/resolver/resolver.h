@@ -2,8 +2,8 @@
 #define UMLCC_RESOLVER_H
 
 #include "../ast/ast.h"
-#include "../srt/srt.h"
 #include "../symtab/symtab.h"
+#include "./resolverret.h"
 
 typedef struct Resolver {
     Ast* ast;
@@ -14,12 +14,13 @@ typedef struct Resolver {
     Dtype* specifier_dtype;
     Dtype* initialized_dtype;
     int initialized_offset;
+    int is_nested_initializing;
     int sliteral_id;
     Dtype* call_dtype;
 } Resolver;
 
 Resolver* new_resolver(Ast* ast);
-Srt* resolver_resolve_semantics(Resolver* resolver);
+ResolverReturn* resolver_resolve_semantics(Resolver* resolver);
 void delete_resolver(Resolver* resolver);
 
 #endif

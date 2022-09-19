@@ -1,6 +1,7 @@
 #include "./ast/test_ast.h"
 #include "./ctoken/test_ctoken.h"
 #include "./dtype/test_dtype.h"
+#include "./error/test_error.h"
 #include "./immc/test_immc.h"
 #include "./immc/test_ope.h"
 #include "./immc/test_suffix.h"
@@ -26,9 +27,13 @@
 #include "./regalloc/test_basicblock.h"
 #include "./regalloc/test_regalloc.h"
 #include "./resolver/test_declaration.h"
+#include "./resolver/test_declaration_error.h"
 #include "./resolver/test_expression.h"
+#include "./resolver/test_expression_error.h"
 #include "./resolver/test_external.h"
+#include "./resolver/test_external_error.h"
 #include "./resolver/test_statement.h"
+#include "./resolver/test_statement_error.h"
 #include "./set/test_set.h"
 #include "./srt/test_srt.h"
 #include "./symtab/test_symbol.h"
@@ -64,6 +69,7 @@ int main(void) {
     add_test_suite_symboltable();
     add_test_suite_liveness();
     add_test_suite_liveseq();
+    add_test_suite_error();
 
     // internal data structure tests
     add_test_suite_basicblock();
@@ -95,9 +101,13 @@ int main(void) {
 
     // resolver tests
     add_test_suite_expr_resolver();
+    add_test_suite_expr_resolver_error();
     add_test_suite_stmt_resolver();
+    add_test_suite_stmt_resolver_error();
     add_test_suite_decl_resolver();
+    add_test_suite_decl_resolver_error();
     add_test_suite_external_resolver();
+    add_test_suite_external_resolver_error();
 
     // immcgen tests
     add_test_suite_expr_immcgen();

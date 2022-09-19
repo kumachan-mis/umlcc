@@ -7,6 +7,8 @@ BaseType t_dtype = {
     .delete_object = (void (*)(void*))delete_dtype,
 };
 
+char* dtype_types[] = {"char", "int", "pointer", "array", "function", "decoration"};
+
 Dtype* new_integer_dtype(DtypeType type) {
     Dtype* dtype = malloc(sizeof(Dtype));
     dtype->type = type;
@@ -39,7 +41,7 @@ Dtype* new_array_dtype(Dtype* of_dtype, int size) {
 
 Dtype* new_function_dtype(Vector* params, Dtype* return_dtype) {
     Dtype* dtype = malloc(sizeof(Dtype));
-    dtype->type = DTYPE_FUNCUCTION;
+    dtype->type = DTYPE_FUNCTION;
     dtype->pointer = NULL;
     dtype->array = NULL;
     dtype->function = new_dfunction(params, return_dtype);
@@ -94,7 +96,7 @@ Dtype* new_socket_array_dtype(int size) {
 
 Dtype* new_socket_function_dtype(Vector* params) {
     Dtype* dtype = malloc(sizeof(Dtype));
-    dtype->type = DTYPE_FUNCUCTION;
+    dtype->type = DTYPE_FUNCTION;
     dtype->pointer = NULL;
     dtype->array = NULL;
     dtype->function = new_socket_dfunction(params);
@@ -139,7 +141,7 @@ Dtype* dtype_connect(Dtype* socket_dtype, Dtype* plug_dtype) {
                 tail = next;
                 break;
             }
-            case DTYPE_FUNCUCTION: {
+            case DTYPE_FUNCTION: {
                 Dtype* next = dfunction_next(tail->function);
                 if (next == NULL) {
                     tail->function = dfunction_connect(tail->function, plug_dtype);
@@ -172,13 +174,32 @@ int dtype_equals(Dtype* dtype, Dtype* other) {
             return dpointer_equals(dtype->pointer, other->pointer);
         case DTYPE_ARRAY:
             return darray_equals(dtype->array, other->array);
-        case DTYPE_FUNCUCTION:
+        case DTYPE_FUNCTION:
             return dfunction_equals(dtype->function, other->function);
         case DTYPE_DECORATION:
             return ddecoration_equals(dtype->decoration, other->decoration);
         default:
             return 0;
     }
+}
+
+int dtype_iscompatible(Dtype* dtype, Dtype* other) {
+    if (dtype_equals(dtype, other)) return 1;
+
+    // TODO: more rules may be added
+    return 0;
+}
+
+int dtype_isassignable(Dtype* dtype, Dtype* other) {
+    if (dtype_isarithmetic(dtype) && dtype_isarithmetic(other)) return 1;
+
+    if (dtype->type == DTYPE_POINTER && other->type == DTYPE_POINTER &&
+        dtype_iscompatible(dtype->pointer->to_dtype, other->pointer->to_dtype)) {
+        return 1;
+    }
+
+    // TODO: more rules may be added
+    return 0;
 }
 
 int dtype_isinteger(Dtype* dtype) {

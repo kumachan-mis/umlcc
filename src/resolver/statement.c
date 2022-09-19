@@ -2,69 +2,114 @@
 #include "./declaration.h"
 #include "./expression.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 
-Srt* resolve_stmt(Resolver* resolver) {
+ResolverReturn* resolve_stmt(Resolver* resolver) {
     Srt* srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
     Ast* ast = resolver->ast;
+
     switch (ast->type) {
         case AST_CMPD_STMT:
             resolver->local_table = symboltable_enter_scope(resolver->local_table);
-            srt = resolve_compound_stmt(resolver);
+            resolverret_assign(&srt, &errs, resolve_compound_stmt(resolver));
             resolver->local_table = symboltable_exit_scope(resolver->local_table);
             break;
         case AST_RET_STMT:
-            srt = resolve_return_stmt(resolver);
+            resolverret_assign(&srt, &errs, resolve_return_stmt(resolver));
             break;
         case AST_EXPR_STMT:
-            srt = resolve_expression_stmt(resolver);
+            resolverret_assign(&srt, &errs, resolve_expression_stmt(resolver));
             break;
         default:
-            fprintf(stderr, "Error: unexpected ast type %d\n", ast->type);
-            exit(1);
+            errs = new_vector(&t_error);
+            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
+            vector_push(errs, err);
+            break;
     }
-    return srt;
+
+    if (errs != NULL) return new_resolverret_errors(errs);
+    return new_resolverret(srt);
 }
 
-Srt* resolve_compound_stmt(Resolver* resolver) {
+ResolverReturn* resolve_compound_stmt(Resolver* resolver) {
     Srt* srt = new_srt(SRT_CMPD_STMT, 0);
+    Vector* errs = NULL;
     Ast* ast = resolver->ast;
 
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
+        Srt* child_srt = NULL;
+        Vector* child_errs = NULL;
+
         resolver->ast = vector_at(ast->children, i);
         if (resolver->ast->type == AST_DECL) {
-            vector_push(srt->children, resolve_decl(resolver));
+            resolverret_assign(&child_srt, &child_errs, resolve_decl(resolver));
         } else {
-            vector_push(srt->children, resolve_stmt(resolver));
+            resolverret_assign(&child_srt, &child_errs, resolve_stmt(resolver));
         }
+
+        if (child_errs != NULL) {
+            if (errs == NULL) errs = new_vector(&t_error);
+            vector_extend(errs, child_errs);
+            delete_vector(child_errs);
+            continue;
+        } else if (errs != NULL) {
+            delete_srt(child_srt);
+            continue;
+        }
+
+        vector_push(srt->children, child_srt);
     }
 
     resolver->ast = ast;
-    return srt;
-}
-
-Srt* resolve_return_stmt(Resolver* resolver) {
-    Ast* ast = resolver->ast;
-
-    resolver->ast = vector_at(ast->children, 0);
-    Srt* expr_srt = resolve_expr(resolver);
-    if (!dtype_equals(expr_srt->dtype, resolver->return_dtype)) {
-        expr_srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(resolver->return_dtype), 1, expr_srt);
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
     }
-    Srt* srt = new_srt(SRT_RET_STMT, 1, expr_srt);
-
-    resolver->ast = ast;
-    return srt;
+    return new_resolverret(srt);
 }
 
-Srt* resolve_expression_stmt(Resolver* resolver) {
+ResolverReturn* resolve_return_stmt(Resolver* resolver) {
+    Ast* ast = resolver->ast;
+    Srt* srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+
+    if (errs != NULL) return new_resolverret_errors(errs);
+
+    if (!dtype_isassignable(srt->dtype, resolver->return_dtype)) {
+        errs = new_vector(&t_error);
+        err = new_error("Error: expression is not assignable to function return\n");
+        vector_push(errs, err);
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    if (!dtype_equals(srt->dtype, resolver->return_dtype)) {
+        srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(resolver->return_dtype), 1, srt);
+    }
+    srt = new_srt(SRT_RET_STMT, 1, srt);
+
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_expression_stmt(Resolver* resolver) {
+    Srt* srt = NULL;
+    Vector* errs = NULL;
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    Srt* srt = new_srt(SRT_EXPR_STMT, 1, resolve_expr(resolver));
-
+    resolverret_assign(&srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    return srt;
+
+    if (errs != NULL) return new_resolverret_errors(errs);
+
+    srt = new_srt(SRT_EXPR_STMT, 1, srt);
+    return new_resolverret(srt);
 }

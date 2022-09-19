@@ -1,7 +1,6 @@
 #include "./util.h"
 #include "./declaration.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 
 ErrorableInt* external_may_function_definition(Parser* parser) {

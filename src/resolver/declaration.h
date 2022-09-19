@@ -3,13 +3,13 @@
 
 #include "./resolver.h"
 
-Srt* resolve_decl(Resolver* resolver);
-Dtype* resolve_decl_specifiers(Resolver* resolver);
-Srt* resolve_init_declarator_list(Resolver* resolver);
-Srt* resolve_init_declarator(Resolver* resolver);
-Srt* resolve_declarator(Resolver* resolver);
-Vector* resolve_parameter_list(Resolver* resolver);
-DParam* resolve_parameter_decl(Resolver* resolver);
-Srt* resolve_initializer(Resolver* resolver);
+ResolverReturn* resolve_decl(Resolver* resolver);
+ResolverReturnDtype* resolve_decl_specifiers(Resolver* resolver);
+ResolverReturn* resolve_init_declarator_list(Resolver* resolver);
+ResolverReturn* resolve_init_declarator(Resolver* resolver);
+ResolverReturn* resolve_declarator(Resolver* resolver);
+ResolverReturnDParams* resolve_parameter_list(Resolver* resolver);
+ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver);
+ResolverReturn* resolve_initializer(Resolver* resolver);
 
 #endif

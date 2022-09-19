@@ -103,9 +103,12 @@ void test_resolve_transration_unit() {
 void run_resolver_test(Ast* __restrict__ input, Srt* __restrict__ expected) {
     Resolver* resolver = new_resolver(input);
 
-    Srt* actual = resolver_resolve_semantics(resolver);
+    Srt* actual = NULL;
+    Vector* errs = NULL;
+    resolverret_assign(&actual, &errs, resolver_resolve_semantics(resolver));
 
     CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+    CU_ASSERT_PTR_NULL(errs);
 
     delete_srt(actual);
     delete_resolver(resolver);

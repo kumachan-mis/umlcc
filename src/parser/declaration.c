@@ -4,7 +4,6 @@
 #include "./expression.h"
 #include "./util.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 
 ParserReturn* parse_decl(Parser* parser) {

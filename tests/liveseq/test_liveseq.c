@@ -47,12 +47,12 @@ void test_liveseq_empty() {
 
     CU_ASSERT_EQUAL(vector_size(liveseq->livenesses), 0);
     CU_ASSERT_EQUAL(liveseq->index, 0);
-    CU_ASSERT_FALSE(liveseq_is_alive(liveseq));
+    CU_ASSERT_FALSE(liveseq_isalive(liveseq));
 
     liveseq_goto_next(liveseq);
 
     CU_ASSERT_EQUAL(liveseq->index, 1);
-    CU_ASSERT_FALSE(liveseq_is_alive(liveseq));
+    CU_ASSERT_FALSE(liveseq_isalive(liveseq));
 
     delete_liveseq(liveseq);
 }
@@ -67,10 +67,10 @@ void test_liveseq_unused_liveness() {
     liveness = new_liveness(2);
     vector_push(liveseq->livenesses, liveness);
 
-    int expected_is_alives[4] = {0, 0, 0, 0};
+    int expected_isalives[4] = {0, 0, 0, 0};
     for (int i = 0; i < 4; i++) {
         CU_ASSERT_EQUAL(liveseq->index, i);
-        CU_ASSERT_EQUAL(liveseq_is_alive(liveseq), expected_is_alives[i]);
+        CU_ASSERT_EQUAL(liveseq_isalive(liveseq), expected_isalives[i]);
         liveseq_goto_next(liveseq);
     }
 
@@ -89,10 +89,10 @@ void test_liveseq_starts_with_zero() {
     liveness->last_use_index = 5;
     vector_push(liveseq->livenesses, liveness);
 
-    int expected_is_alives[8] = {1, 1, 0, 0, 1, 0, 0, 0};
+    int expected_isalives[8] = {1, 1, 0, 0, 1, 0, 0, 0};
     for (int i = 0; i < 8; i++) {
         CU_ASSERT_EQUAL(liveseq->index, i);
-        CU_ASSERT_EQUAL(liveseq_is_alive(liveseq), expected_is_alives[i]);
+        CU_ASSERT_EQUAL(liveseq_isalive(liveseq), expected_isalives[i]);
         liveseq_goto_next(liveseq);
     }
 
@@ -111,10 +111,10 @@ void test_liveseq_starts_with_nonzero() {
     liveness->last_use_index = 6;
     vector_push(liveseq->livenesses, liveness);
 
-    int expected_is_alives[8] = {0, 0, 1, 0, 1, 1, 0, 0};
+    int expected_isalives[8] = {0, 0, 1, 0, 1, 1, 0, 0};
     for (int i = 0; i < 7; i++) {
         CU_ASSERT_EQUAL(liveseq->index, i);
-        CU_ASSERT_EQUAL(liveseq_is_alive(liveseq), expected_is_alives[i]);
+        CU_ASSERT_EQUAL(liveseq_isalive(liveseq), expected_isalives[i]);
         liveseq_goto_next(liveseq);
     }
 
@@ -133,10 +133,10 @@ void test_liveseq_redef_without_interval() {
     liveness->last_use_index = 6;
     vector_push(liveseq->livenesses, liveness);
 
-    int expected_is_alives[8] = {0, 0, 1, 1, 1, 1, 0, 0};
+    int expected_isalives[8] = {0, 0, 1, 1, 1, 1, 0, 0};
     for (int i = 0; i < 7; i++) {
         CU_ASSERT_EQUAL(liveseq->index, i);
-        CU_ASSERT_EQUAL(liveseq_is_alive(liveseq), expected_is_alives[i]);
+        CU_ASSERT_EQUAL(liveseq_isalive(liveseq), expected_isalives[i]);
         liveseq_goto_next(liveseq);
     }
 

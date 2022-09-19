@@ -3,7 +3,6 @@
 #include "../ctoken/ctoken.h"
 #include "./util.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 
 ParserReturn* parse_expr(Parser* parser) {

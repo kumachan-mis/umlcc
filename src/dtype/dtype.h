@@ -13,7 +13,7 @@ typedef enum DtypeType {
     DTYPE_INT,
     DTYPE_POINTER,
     DTYPE_ARRAY,
-    DTYPE_FUNCUCTION,
+    DTYPE_FUNCTION,
     DTYPE_DECORATION,
 } DtypeType;
 
@@ -27,6 +27,8 @@ typedef struct Dtype {
 
 extern BaseType t_dtype;
 
+extern char* dtype_types[];
+
 Dtype* new_integer_dtype(DtypeType type);
 Dtype* new_pointer_dtype(Dtype* to_dtype);
 Dtype* new_array_dtype(Dtype* of_dtype, int size);
@@ -39,6 +41,8 @@ Dtype* new_socket_function_dtype(Vector* params);
 Dtype* new_socket_decoration_dtype();
 Dtype* dtype_connect(Dtype* socket_dtype, Dtype* plug_dtype);
 int dtype_equals(Dtype* dtype, Dtype* other);
+int dtype_iscompatible(Dtype* dtype, Dtype* other);
+int dtype_isassignable(Dtype* dtype, Dtype* other);
 int dtype_isinteger(Dtype* dtype);
 int dtype_isarithmetic(Dtype* dtype);
 int dtype_isscalar(Dtype* dtype);

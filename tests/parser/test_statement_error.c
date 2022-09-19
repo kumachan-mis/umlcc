@@ -8,7 +8,7 @@ void test_parse_compound_stmt_brace_error();
 void test_parse_return_stmt_error();
 void test_parse_expression_stmt_error();
 
-void run_stmt_parser_test_error(Vector* __restrict__ input, const char* message);
+void run_stmt_parser_error_test(Vector* __restrict__ input, const char* message);
 
 CU_Suite* add_test_suite_stmt_parser_error() {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_parser_error", NULL, NULL);
@@ -33,7 +33,7 @@ void test_parse_compound_stmt_inner_stmt_error() {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     const char* message = "Error: token ; expected, but got integer-constant\n";
-    run_stmt_parser_test_error(input, message);
+    run_stmt_parser_error_test(input, message);
 }
 
 void test_parse_compound_stmt_brace_error() {
@@ -49,7 +49,7 @@ void test_parse_compound_stmt_brace_error() {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     const char* message = "Error: unexpected token EOF\n";
-    run_stmt_parser_test_error(input, message);
+    run_stmt_parser_error_test(input, message);
 }
 
 void test_parse_return_stmt_error() {
@@ -61,7 +61,7 @@ void test_parse_return_stmt_error() {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     const char* message = "Error: token ; expected, but got integer-constant\n";
-    run_stmt_parser_test_error(input, message);
+    run_stmt_parser_error_test(input, message);
 }
 
 void test_parse_expression_stmt_error() {
@@ -74,10 +74,10 @@ void test_parse_expression_stmt_error() {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     const char* message = "Error: token ; expected, but got identifier\n";
-    run_stmt_parser_test_error(input, message);
+    run_stmt_parser_error_test(input, message);
 }
 
-void run_stmt_parser_test_error(Vector* __restrict__ input, const char* message) {
+void run_stmt_parser_error_test(Vector* __restrict__ input, const char* message) {
     Parser* parser = new_parser(input);
     Ast* actual = NULL;
     Error* err = NULL;
