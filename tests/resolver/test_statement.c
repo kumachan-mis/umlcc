@@ -9,8 +9,7 @@ void test_resolve_return_stmt_without_cast();
 void test_resolve_return_stmt_with_cast();
 void test_resolve_expression_stmt();
 
-void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                            Dtype* __restrict__ return_dtype, Srt* __restrict__ expected);
+void run_stmt_resolver_test(Ast* input, SymbolTable* local_table, Dtype* return_dtype, Srt* expected);
 
 CU_Suite* add_test_suite_stmt_resolver() {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver", NULL, NULL);
@@ -223,8 +222,7 @@ void test_resolve_expression_stmt() {
     delete_srt(expected);
 }
 
-void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                            Dtype* __restrict__ return_dtype, Srt* __restrict__ expected) {
+void run_stmt_resolver_test(Ast* input, SymbolTable* local_table, Dtype* return_dtype, Srt* expected) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
     if (local_table != NULL) resolver->local_table = local_table;
@@ -234,9 +232,9 @@ void run_stmt_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ l
     Vector* errs = NULL;
     resolverret_assign(&actual, &errs, resolve_stmt(resolver));
 
-    CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+    testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
 
-    delete_srt(actual);
+    if (actual != NULL) delete_srt(actual);
     delete_resolver(resolver);
 }

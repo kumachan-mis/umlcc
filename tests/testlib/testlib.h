@@ -3,6 +3,7 @@
 
 #include "../../src/ast/ast.h"
 #include "../../src/ctoken/ctoken.h"
+#include "../../src/error/error.h"
 #include "../../src/immc/immc.h"
 #include "../../src/literal/iliteral.h"
 #include "../../src/literal/sliteral.h"
@@ -12,22 +13,24 @@
 #include "../../src/vector/vector.h"
 #include "../../src/x64/x64.h"
 
-int testlib_ctokens_equals(Vector* actual, Vector* expected);
-int testlib_ctoken_equals(CToken* actual, CToken* expected);
-int testlib_ast_equals(Ast* actual, Ast* expected);
-int testlib_srt_equals(Srt* actual, Srt* expected);
-int testlib_immcs_equals(Vector* actual, Vector* expected);
-int testlib_immc_equals(Immc* actual, Immc* expected);
-int testlib_immcope_equals(ImmcOpe* actual, ImmcOpe* expected);
-int testlib_x64codes_equals(Vector* actual, Vector* expected);
-int testlib_x64code_equals(X64* actual, X64* expected);
-int testlib_x64ope_equals(X64Ope* actual, X64Ope* expected);
-int testlib_dtype_equals(Dtype* actual, Dtype* expected);
-int testlib_liveseqs_equals(Vector* actual, Vector* expected);
-int testlib_liveseq_equals(Liveseq* actual, Liveseq* expected);
-int testlib_liveness_equals(Liveness* actual, Liveness* expected);
-int testlib_iliteral_equals(IntegerLiteral* actual, IntegerLiteral* expected);
-int testlib_sliteral_equals(StringLiteral* actual, StringLiteral* expected);
-int testlib_string_equals(char* actual, char* expected);
+void testlib_assert_ctokens_equal(Vector* actual, Vector* expected);
+void testlib_assert_ctoken_equal(CToken* actual, CToken* expected);
+void testlib_assert_ast_equal(Ast* actual, Ast* expected);
+void testlib_assert_srt_equal(Srt* actual, Srt* expected);
+void testlib_assert_immcs_equal(Vector* actual, Vector* expected);
+void testlib_assert_immc_equal(Immc* actual, Immc* expected);
+void testlib_assert_immcope_equal(ImmcOpe* actual, ImmcOpe* expected);
+void testlib_assert_x64codes_equal(Vector* actual, Vector* expected);
+void testlib_assert_x64code_equal(X64* actual, X64* expected);
+void testlib_assert_x64ope_equal(X64Ope* actual, X64Ope* expected);
+void testlib_assert_dtype_equal(Dtype* actual, Dtype* expected);
+void testlib_assert_liveseqs_equal(Vector* actual, Vector* expected);
+void testlib_assert_liveseq_equal(Liveseq* actual, Liveseq* expected);
+void testlib_assert_liveness_equal(Liveness* actual, Liveness* expected);
+void testlib_assert_iliteral_equal(IntegerLiteral* actual, IntegerLiteral* expected);
+void testlib_assert_sliteral_equal(StringLiteral* actual, StringLiteral* expected);
+void testlib_assert_errors_equal(Vector* actual, Vector* expected);
+void testlib_assert_error_equal(Error* actual, Error* expected);
+void testlib_assert_string_equal(char* actual, char* expected);
 
 #endif

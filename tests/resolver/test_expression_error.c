@@ -54,8 +54,7 @@ void test_resolve_subscription_expr_error_lhs();
 void test_resolve_subscription_expr_error_rhs();
 void test_resolve_ident_expr_error();
 
-void run_expr_resolver_error_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                                  SymbolTable* __restrict__ global_table, Vector* __restrict__ messages);
+void run_expr_resolver_error_test(Ast* input, SymbolTable* local_table, SymbolTable* global_table, Vector* expected);
 
 CU_Suite* add_test_suite_expr_resolver_error() {
     CU_Suite* suite = CU_add_suite("test_suite_expr_resolver_error", NULL, NULL);
@@ -118,16 +117,16 @@ void test_resolve_assign_expr_error_unassignable() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: expression is not assignable to lvalue\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: expression is not assignable to lvalue\n"));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("y"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_assign_expr_error_unmodifiable() {
@@ -135,16 +134,16 @@ void test_resolve_assign_expr_error_unmodifiable() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: left operand of assignment should be modifiable lvalue\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: left operand of assignment should be modifiable lvalue\n"));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_array_dtype(new_integer_dtype(DTYPE_INT), 3));
     symboltable_define_memory(local_table, new_string("y"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_assign_expr_error_lhs() {
@@ -152,12 +151,12 @@ void test_resolve_assign_expr_error_lhs() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_assign_expr_error_rhs() {
@@ -168,12 +167,12 @@ void test_resolve_assign_expr_error_rhs() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_logical_or_expr_error_non_scalar() {
@@ -185,12 +184,12 @@ void test_resolve_logical_or_expr_error_lhs() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_logical_or_expr_error_rhs() {
@@ -201,12 +200,12 @@ void test_resolve_logical_or_expr_error_rhs() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_logical_and_expr_error_non_scalar_rhs() {
@@ -222,12 +221,12 @@ void test_resolve_logical_and_expr_error_lhs() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_logical_and_expr_error_rhs() {
@@ -238,12 +237,12 @@ void test_resolve_logical_and_expr_error_rhs() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_equal_expr_error_operand_dtype() {
@@ -255,13 +254,13 @@ void test_resolve_equal_expr_error_operand_dtype() {
     symboltable_define_memory(local_table, new_string("x"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
     symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_CHAR));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: binary == expression should be "
-                                     "either arithmetic == arithmetic or pointer == pointer\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: binary == expression should be "
+                                    "either arithmetic == arithmetic or pointer == pointer\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_equal_expr_error_incompatible_pointer() {
@@ -273,12 +272,12 @@ void test_resolve_equal_expr_error_incompatible_pointer() {
     symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
     symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: operands of pointer == pointer are not compatible\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: operands of pointer == pointer are not compatible\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_equal_expr_error_lhs() {
@@ -286,12 +285,12 @@ void test_resolve_equal_expr_error_lhs() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_equal_expr_error_rhs() {
@@ -302,12 +301,12 @@ void test_resolve_equal_expr_error_rhs() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_not_equal_expr_error_operand_dtype() {
@@ -319,13 +318,13 @@ void test_resolve_not_equal_expr_error_operand_dtype() {
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("y"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: binary != expression should be "
-                                     "either arithmetic != arithmetic or pointer != pointer\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: binary != expression should be "
+                                    "either arithmetic != arithmetic or pointer != pointer\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_not_equal_expr_error_incompatible_pointer() {
@@ -337,12 +336,12 @@ void test_resolve_not_equal_expr_error_incompatible_pointer() {
     symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
     symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: operands of pointer != pointer are not compatible\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: operands of pointer != pointer are not compatible\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_not_equal_expr_error_lhs() {
@@ -350,12 +349,12 @@ void test_resolve_not_equal_expr_error_lhs() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_not_equal_expr_error_rhs() {
@@ -366,12 +365,12 @@ void test_resolve_not_equal_expr_error_rhs() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_add_expr_error_operand_dtype() {
@@ -383,13 +382,13 @@ void test_resolve_add_expr_error_operand_dtype() {
     symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
     symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: binary + expression should be either arithmetic + arithmetic, "
-                                     "pointer + integer, or integer + pointer\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: binary + expression should be either arithmetic + arithmetic, "
+                                    "pointer + integer, or integer + pointer\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_add_expr_error_lhs() {
@@ -397,12 +396,12 @@ void test_resolve_add_expr_error_lhs() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_add_expr_error_rhs() {
@@ -413,12 +412,12 @@ void test_resolve_add_expr_error_rhs() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_subtract_expr_error_operand_dtype() {
@@ -429,13 +428,13 @@ void test_resolve_subtract_expr_error_operand_dtype() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("ptr"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: binary - expression should be either arithmetic - arithmetic, "
-                                     "pointer - integer, or pointer - pointer\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: binary - expression should be either arithmetic - arithmetic, "
+                                    "pointer - integer, or pointer - pointer\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_subtract_expr_error_incompatible_pointer() {
@@ -447,12 +446,12 @@ void test_resolve_subtract_expr_error_incompatible_pointer() {
     symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
     symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: operands of pointer - pointer are not compatible\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: operands of pointer - pointer are not compatible\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_subtract_expr_error_lhs() {
@@ -460,12 +459,12 @@ void test_resolve_subtract_expr_error_lhs() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_subtract_expr_error_rhs() {
@@ -476,12 +475,12 @@ void test_resolve_subtract_expr_error_rhs() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_multiply_expr_error_non_arithmetic() {
@@ -492,12 +491,12 @@ void test_resolve_multiply_expr_error_non_arithmetic() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("value"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: binary * expression should be arithmetic * arithmetic\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: binary * expression should be arithmetic * arithmetic\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_multiply_expr_error_lhs() {
@@ -505,12 +504,12 @@ void test_resolve_multiply_expr_error_lhs() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_multiply_expr_error_rhs() {
@@ -521,12 +520,12 @@ void test_resolve_multiply_expr_error_rhs() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_division_expr_error_non_arithmetic() {
@@ -537,12 +536,12 @@ void test_resolve_division_expr_error_non_arithmetic() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("value"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: binary / expression should be arithmetic / arithmetic\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: binary / expression should be arithmetic / arithmetic\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_division_expr_error_lhs() {
@@ -550,12 +549,12 @@ void test_resolve_division_expr_error_lhs() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_division_expr_error_rhs() {
@@ -566,12 +565,12 @@ void test_resolve_division_expr_error_rhs() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_modulo_expr_error_non_integer() {
@@ -582,12 +581,12 @@ void test_resolve_modulo_expr_error_non_integer() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("value"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: binary % expression should be integer % integer\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: binary %% expression should be integer %% integer\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_modulo_expr_error_lhs() {
@@ -595,12 +594,12 @@ void test_resolve_modulo_expr_error_lhs() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_modulo_expr_error_rhs() {
@@ -611,37 +610,37 @@ void test_resolve_modulo_expr_error_rhs() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_address_expr_error_operand_dtype() {
     Ast* input = new_ast(AST_ADDR_EXPR, 1, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6)));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: operand of unary & is neither a function designator, "
-                                     "a indirection, nor an object lvalue\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: operand of unary & is neither a function designator, "
+                                    "a indirection, nor an object lvalue\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_address_expr_error_child() {
     Ast* input = new_ast(AST_ADDR_EXPR, 1, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("value")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'value' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'value' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_indirection_expr_error_non_pointer() {
@@ -651,24 +650,24 @@ void test_resolve_indirection_expr_error_non_pointer() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("p"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: operand of unary * does not have pointer type\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: operand of unary * does not have pointer type\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_indirection_expr_error_child() {
     Ast* input = new_ast(AST_INDIR_EXPR, 1, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'p' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'p' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_logical_not_expr_error_non_scalar() {
@@ -680,12 +679,12 @@ void test_resolve_logical_not_expr_error_child() {
                          new_ast(AST_LNOT_EXPR, 1, // non-terminal
                                  new_identifier_ast(AST_IDENT_EXPR, new_string("flag"))));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'flag' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'flag' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_call_expr_error_non_func() {
@@ -701,12 +700,12 @@ void test_resolve_call_expr_error_non_func() {
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_CHAR));
     symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: called object is not a function or a function pointer\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: called object is not a function or a function pointer\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_call_expr_error_num_params() {
@@ -724,12 +723,12 @@ void test_resolve_call_expr_error_num_params() {
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_CHAR));
     symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: function takes 1 params, but passed 2 arguments\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: function takes 1 params, but passed 2 arguments\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_call_expr_error_param_dtype() {
@@ -751,13 +750,13 @@ void test_resolve_call_expr_error_param_dtype() {
     symboltable_define_memory(local_table, new_string("y"), new_array_dtype(new_integer_dtype(DTYPE_INT), 2));
     symboltable_define_memory(local_table, new_string("z"), new_integer_dtype(DTYPE_CHAR));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: argument is not assignable to parameter\n"));
-    vector_push(messages, new_string("Error: argument is not assignable to parameter\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: argument is not assignable to parameter\n"));
+    vector_push(expected, new_error("Error: argument is not assignable to parameter\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_call_expr_error_child() {
@@ -777,13 +776,13 @@ void test_resolve_call_expr_error_child() {
     symboltable_define_label(local_table, new_string("function"), func_dtype);
     symboltable_define_memory(local_table, new_string("z"), new_integer_dtype(DTYPE_CHAR));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is used before declared\n"));
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is used before declared\n"));
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_subscription_expr_error_non_obj_pointer() {
@@ -795,12 +794,12 @@ void test_resolve_subscription_expr_error_non_obj_pointer() {
     Dtype* func_dtype = new_function_dtype(new_vector(&t_dparam), new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("a"), func_dtype);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: subscribed object should have pointer to object type\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: subscribed object should have pointer to object type\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_subscription_expr_error_non_pointer() {
@@ -811,12 +810,12 @@ void test_resolve_subscription_expr_error_non_pointer() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("a"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: subscription should be pointer[integer] or integer[pointer]\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: subscription should be pointer[integer] or integer[pointer]\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_subscription_expr_error_non_integer() {
@@ -830,12 +829,12 @@ void test_resolve_subscription_expr_error_non_integer() {
     Dtype* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("i"), pointer_dtype);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: subscription should be pointer[integer] or integer[pointer]\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: subscription should be pointer[integer] or integer[pointer]\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_subscription_expr_error_lhs() {
@@ -843,12 +842,12 @@ void test_resolve_subscription_expr_error_lhs() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'a' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'a' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_subscription_expr_error_rhs() {
@@ -860,27 +859,26 @@ void test_resolve_subscription_expr_error_rhs() {
     Dtype* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
     symboltable_define_memory(local_table, new_string("a"), array_dtype);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'i' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'i' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, local_table, NULL, messages);
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_ident_expr_error() {
     Ast* input = new_identifier_ast(AST_IDENT_EXPR, new_string("x"));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is used before declared\n"));
 
-    run_expr_resolver_error_test(input, NULL, NULL, messages);
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
-void run_expr_resolver_error_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                                  SymbolTable* __restrict__ global_table, Vector* __restrict__ messages) {
+void run_expr_resolver_error_test(Ast* input, SymbolTable* local_table, SymbolTable* global_table, Vector* expected) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
     if (global_table != NULL) {
@@ -889,20 +887,13 @@ void run_expr_resolver_error_test(Ast* __restrict__ input, SymbolTable* __restri
     }
     if (local_table != NULL) resolver->local_table = local_table;
 
-    Srt* actual = NULL;
-    Vector* errs = NULL;
-    resolverret_assign(&actual, &errs, resolve_expr(resolver));
+    Srt* ret = NULL;
+    Vector* actual = NULL;
+    resolverret_assign(&ret, &actual, resolve_expr(resolver));
 
-    CU_ASSERT_PTR_NULL(actual);
+    CU_ASSERT_PTR_NULL(ret);
+    testlib_assert_errors_equal(actual, expected);
 
-    CU_ASSERT_EQUAL(vector_size(errs), vector_size(messages));
-    int num_messages = vector_size(messages);
-    for (int i = 0; i < num_messages; i++) {
-        Error* err = vector_at(errs, i);
-        char* message = vector_at(messages, i);
-        CU_ASSERT_STRING_EQUAL(err->message, message);
-    }
-
-    delete_vector(errs);
+    if (actual != NULL) delete_vector(actual);
     delete_resolver(resolver);
 }

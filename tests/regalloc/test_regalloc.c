@@ -10,8 +10,7 @@ void test_regalloc_jump();
 void test_regalloc_global_variable();
 void test_regalloc_function_variable_mixed();
 
-void run_regalloc_test(Vector* __restrict__ input, int num_regs, Vector* __restrict__ expected_immcs,
-                       Vector* __restrict__ expected_liveseqs);
+void run_regalloc_test(Vector* input, int num_regs, Vector* expected_immcs, Vector* expected_liveseqs);
 
 CU_Suite* add_test_suite_regalloc() {
     CU_Suite* suite = CU_add_suite("test_suite_regalloc", NULL, NULL);
@@ -744,15 +743,14 @@ void test_regalloc_function_variable_mixed() {
     delete_vector(expected_liveseqs);
 }
 
-void run_regalloc_test(Vector* __restrict__ input, int num_regs, Vector* __restrict__ expected_immcs,
-                       Vector* __restrict__ expected_liveseqs) {
+void run_regalloc_test(Vector* input, int num_regs, Vector* expected_immcs, Vector* expected_liveseqs) {
     RegAlloc* regalloc = new_regalloc(input, num_regs);
     Vector* actual_immcs = NULL;
     Vector* actual_liveseqs = NULL;
     regallocret_assign(&actual_immcs, &actual_liveseqs, regalloc_allocate_regs(regalloc));
 
-    CU_ASSERT_TRUE(testlib_immcs_equals(actual_immcs, expected_immcs));
-    CU_ASSERT_TRUE(testlib_liveseqs_equals(actual_liveseqs, expected_liveseqs));
+    testlib_assert_immcs_equal(actual_immcs, expected_immcs);
+    testlib_assert_liveseqs_equal(actual_liveseqs, expected_liveseqs);
 
     delete_vector(actual_immcs);
     delete_vector(actual_liveseqs);

@@ -26,10 +26,8 @@ void test_resolve_list_init_flatten();
 void test_resolve_list_init_mix();
 void test_resolve_list_init_chararray();
 
-void run_local_decl_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                                  Srt* __restrict__ expected);
-void run_global_decl_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ global_table,
-                                   Srt* __restrict__ expected);
+void run_local_decl_resolver_test(Ast* input, SymbolTable* local_table, Srt* expected);
+void run_global_decl_resolver_test(Ast* input, SymbolTable* global_table, Srt* expected);
 
 CU_Suite* add_test_suite_decl_resolver() {
     CU_Suite* suite = CU_add_suite("test_suite_decl_resolver", NULL, NULL);
@@ -367,8 +365,8 @@ void test_resolve_scalar_init_enclosed() {
 }
 
 void test_resolve_sliteral_init() {
-    const char* sliteral_const = "test";
-    const int sliteral_size = 5;
+    char* sliteral_const = "test";
+    int sliteral_size = 5;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
@@ -402,8 +400,8 @@ void test_resolve_sliteral_init() {
 }
 
 void test_resolve_sliteral_init_lacked() {
-    const char* sliteral_const = "test";
-    const int sliteral_size = 5, array_size = 10;
+    char* sliteral_const = "test";
+    int sliteral_size = 5, array_size = 10;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
@@ -438,8 +436,8 @@ void test_resolve_sliteral_init_lacked() {
 }
 
 void test_resolve_sliteral_init_enclosed() {
-    const char* sliteral_const = "test";
-    const int sliteral_size = 5;
+    char* sliteral_const = "test";
+    int sliteral_size = 5;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
@@ -877,8 +875,7 @@ void test_resolve_list_init_chararray() {
     delete_srt(expected);
 }
 
-void run_local_decl_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                                  Srt* __restrict__ expected) {
+void run_local_decl_resolver_test(Ast* input, SymbolTable* local_table, Srt* expected) {
     Resolver* resolver = new_resolver(input);
     if (local_table != NULL) {
         resolver->local_table = local_table;
@@ -892,15 +889,14 @@ void run_local_decl_resolver_test(Ast* __restrict__ input, SymbolTable* __restri
     Vector* errs = NULL;
     resolverret_assign(&actual, &errs, resolve_decl(resolver));
 
-    CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+    testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
 
-    delete_srt(actual);
+    if (actual != NULL) delete_srt(actual);
     delete_resolver(resolver);
 }
 
-void run_global_decl_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ global_table,
-                                   Srt* __restrict__ expected) {
+void run_global_decl_resolver_test(Ast* input, SymbolTable* global_table, Srt* expected) {
     Resolver* resolver = new_resolver(input);
     if (global_table != NULL) {
         delete_symboltable(resolver->global_table);
@@ -912,9 +908,9 @@ void run_global_decl_resolver_test(Ast* __restrict__ input, SymbolTable* __restr
     Vector* errs = NULL;
     resolverret_assign(&actual, &errs, resolve_decl(resolver));
 
-    CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+    testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
 
-    delete_srt(actual);
+    if (actual != NULL) delete_srt(actual);
     delete_resolver(resolver);
 }

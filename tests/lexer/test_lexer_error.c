@@ -9,7 +9,7 @@ void test_read_character_constant_error_escape_sequence();
 void test_read_string_literal_error_newline();
 void test_read_string_literal_error_escape_sequence();
 
-void run_lexer_error_test(const char* __restrict__ input, const char* __restrict__ message);
+void run_lexer_error_test(char* input, Error* expected);
 
 CU_Suite* add_test_suite_lexer_error() {
     CU_Suite* suite = CU_add_suite("test_suite_lexer_error", NULL, NULL);
@@ -23,65 +23,81 @@ CU_Suite* add_test_suite_lexer_error() {
 }
 
 void test_read_error_character() {
-    const char* input = "@variable = 1;\n";
-    const char* message = "Error: unexpected character '@'\n";
-    run_lexer_error_test(input, message);
+    char* input = "@variable = 1;\n";
+    Error* expected = new_error("Error: unexpected character '@'\n");
+
+    run_lexer_error_test(input, expected);
+
+    delete_error(expected);
 }
 
 void test_read_character_constant_error_empty() {
-    const char* input = "ch = '';\n";
-    const char* message = "Error: character constant is empty\n";
-    run_lexer_error_test(input, message);
+    char* input = "ch = '';\n";
+    Error* expected = new_error("Error: character constant is empty\n");
+
+    run_lexer_error_test(input, expected);
+
+    delete_error(expected);
 }
 
 void test_read_character_constant_error_newline() {
-    const char* input = NULL;
-    const char* message = "Error: newline appeared in character constant\n";
+    char* input = NULL;
+    Error* expected = new_error("Error: newline appeared in character constant\n");
 
     input = "ch = '\n';\n";
-    run_lexer_error_test(input, message);
+    run_lexer_error_test(input, expected);
 
     input = "ch = 'a\n';\n";
-    run_lexer_error_test(input, message);
+    run_lexer_error_test(input, expected);
+
+    delete_error(expected);
 }
 
 void test_read_character_constant_error_escape_sequence() {
-    const char* input = NULL;
-    const char* message = "Error: invalid escape sequence \\!\n";
+    char* input = NULL;
+    Error* expected = new_error("Error: invalid escape sequence \\!\n");
 
     input = "ch = '\\!';\n";
-    run_lexer_error_test(input, message);
+    run_lexer_error_test(input, expected);
 
     input = "ch = 'a\\!';\n";
-    run_lexer_error_test(input, message);
+    run_lexer_error_test(input, expected);
+
+    delete_error(expected);
 }
 
 void test_read_string_literal_error_newline() {
-    const char* input = "str = \"\n\";\n";
-    const char* message = "Error: newline appeared in string literal\n";
-    run_lexer_error_test(input, message);
+    char* input = "str = \"\n\";\n";
+    Error* expected = new_error("Error: newline appeared in string literal\n");
+
+    run_lexer_error_test(input, expected);
+
+    delete_error(expected);
 }
 
 void test_read_string_literal_error_escape_sequence() {
-    const char* input = "str = \"\\~\";\n";
-    const char* message = "Error: invalid escape sequence \\~\n";
-    run_lexer_error_test(input, message);
+    char* input = "str = \"\\~\";\n";
+    Error* expected = new_error("Error: invalid escape sequence \\~\n");
+
+    run_lexer_error_test(input, expected);
+
+    delete_error(expected);
 }
 
-void run_lexer_error_test(const char* __restrict__ input, const char* __restrict__ message) {
+void run_lexer_error_test(char* input, Error* expected) {
     FILE* file_ptr = tmpfile();
     fprintf(file_ptr, "%s", input);
     rewind(file_ptr);
 
     Lexer* lexer = new_lexer(file_ptr);
-    Vector* actual = NULL;
-    Error* err = NULL;
-    lexerret_assign(&actual, &err, lexer_read_ctokens(lexer));
+    Vector* ret = NULL;
+    Error* actual = NULL;
+    lexerret_assign(&ret, &actual, lexer_read_ctokens(lexer));
 
-    CU_ASSERT_PTR_NULL(actual);
-    CU_ASSERT_STRING_EQUAL(err->message, message);
+    CU_ASSERT_PTR_NULL(ret);
+    testlib_assert_error_equal(actual, expected);
 
-    delete_error(err);
+    if (actual != NULL) delete_error(actual);
     delete_lexer(lexer);
 
     fclose(file_ptr);

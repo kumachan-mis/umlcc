@@ -24,7 +24,7 @@ void test_parse_iliteral_expr_char();
 void test_parse_sliteral_expr();
 void test_parse_parenthesized_expr();
 
-void run_expr_parser_test(Vector* __restrict__ input, Ast* __restrict__ expected);
+void run_expr_parser_test(Vector* input, Ast* expected);
 
 CU_Suite* add_test_suite_expr_parser() {
     CU_Suite* suite = CU_add_suite("test_suite_expr_parser", NULL, NULL);
@@ -455,15 +455,15 @@ void test_parse_parenthesized_expr() {
     delete_ast(expected);
 }
 
-void run_expr_parser_test(Vector* __restrict__ input, Ast* __restrict__ expected) {
+void run_expr_parser_test(Vector* input, Ast* expected) {
     Parser* parser = new_parser(input);
     Ast* actual = NULL;
     Error* err = NULL;
     parserret_assign(&actual, &err, parse_expr(parser));
 
-    CU_ASSERT_TRUE(testlib_ast_equals(actual, expected));
+    testlib_assert_ast_equal(actual, expected);
     CU_ASSERT_PTR_NULL(err);
 
-    delete_ast(actual);
+    if (actual != NULL) delete_ast(actual);
     delete_parser(parser);
 }

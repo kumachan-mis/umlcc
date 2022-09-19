@@ -4,7 +4,7 @@
 
 void test_resolve_transration_unit();
 
-void run_resolver_test(Ast* __restrict__ input, Srt* __restrict__ expected);
+void run_resolver_test(Ast* input, Srt* expected);
 
 CU_Suite* add_test_suite_external_resolver() {
     CU_Suite* suite = CU_add_suite("test_suite_external_resolver", NULL, NULL);
@@ -95,16 +95,16 @@ void test_resolve_transration_unit() {
     delete_srt(expected);
 }
 
-void run_resolver_test(Ast* __restrict__ input, Srt* __restrict__ expected) {
+void run_resolver_test(Ast* input, Srt* expected) {
     Resolver* resolver = new_resolver(input);
 
     Srt* actual = NULL;
     Vector* errs = NULL;
     resolverret_assign(&actual, &errs, resolver_resolve_semantics(resolver));
 
-    CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+    testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
 
-    delete_srt(actual);
+    if (actual != NULL) delete_srt(actual);
     delete_resolver(resolver);
 }

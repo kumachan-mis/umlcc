@@ -26,9 +26,8 @@ void test_resolve_iliteral_expr_int();
 void test_resolve_iliteral_expr_char();
 void test_resolve_sliteral_expr();
 
-void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                            SymbolTable* __restrict__ global_table, Srt* __restrict__ expected,
-                            Srt* __restrict__ expected_trans_unit);
+void run_expr_resolver_test(Ast* input, SymbolTable* local_table, SymbolTable* global_table, Srt* expected,
+                            Srt* expected_trans_unit);
 
 CU_Suite* add_test_suite_expr_resolver() {
     CU_Suite* suite = CU_add_suite("test_suite_expr_resolver", NULL, NULL);
@@ -571,9 +570,8 @@ void test_resolve_sliteral_expr() {
     delete_srt(expected_trans_unit);
 }
 
-void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                            SymbolTable* __restrict__ global_table, Srt* __restrict__ expected,
-                            Srt* __restrict__ expected_trans_unit) {
+void run_expr_resolver_test(Ast* input, SymbolTable* local_table, SymbolTable* global_table, Srt* expected,
+                            Srt* expected_trans_unit) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
     if (global_table != NULL) {
@@ -586,12 +584,10 @@ void run_expr_resolver_test(Ast* __restrict__ input, SymbolTable* __restrict__ l
     Vector* errs = NULL;
     resolverret_assign(&actual, &errs, resolve_expr(resolver));
 
-    CU_ASSERT_TRUE(testlib_srt_equals(actual, expected));
+    testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
-    if (expected_trans_unit != NULL) {
-        CU_ASSERT_TRUE(testlib_srt_equals(resolver->trans_unit_srt, expected_trans_unit));
-    }
+    if (expected_trans_unit != NULL) { testlib_assert_srt_equal(resolver->trans_unit_srt, expected_trans_unit); }
 
-    delete_srt(actual);
+    if (actual != NULL) delete_srt(actual);
     delete_resolver(resolver);
 }

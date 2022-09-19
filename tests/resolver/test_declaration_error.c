@@ -20,10 +20,8 @@ void test_resolve_init_error_too_long_array();
 void test_resolve_init_error_child_array();
 void test_resolve_init_error_too_long_nested_array();
 
-void run_local_decl_resolver_error_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                                        Vector* __restrict__ messages);
-void run_global_decl_resolver_error_test(Ast* __restrict__ input, SymbolTable* __restrict__ global_table,
-                                         Vector* __restrict__ messages);
+void run_local_decl_resolver_error_test(Ast* input, SymbolTable* local_table, Vector* expected);
+void run_global_decl_resolver_error_test(Ast* input, SymbolTable* global_table, Vector* expected);
 
 CU_Suite* add_test_suite_decl_resolver_error() {
     CU_Suite* suite = CU_add_suite("test_suite_decl_resolver_error", NULL, NULL);
@@ -56,13 +54,13 @@ void test_resolve_decl_specifiers_error() {
                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("x")))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: declaration specifiers are invalid\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: declaration specifiers are invalid\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_declarator_list_error_duplicated() {
@@ -82,14 +80,14 @@ void test_resolve_declarator_list_error_duplicated() {
                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("z")))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is already declared\n"));
-    vector_push(messages, new_string("Error: identifier 'x' is already declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is already declared\n"));
+    vector_push(expected, new_error("Error: identifier 'x' is already declared\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_declarator_error() {
@@ -116,15 +114,15 @@ void test_resolve_declarator_error() {
                                 new_ast(AST_PARAM_LIST, 0)))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: array of functions is invalid\n"));
-    vector_push(messages, new_string("Error: function returning function is invalid\n"));
-    vector_push(messages, new_string("Error: function returning array is invalid\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: array of functions is invalid\n"));
+    vector_push(expected, new_error("Error: function returning function is invalid\n"));
+    vector_push(expected, new_error("Error: function returning array is invalid\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_array_error_size_limit() {
@@ -141,13 +139,13 @@ void test_resolve_array_error_size_limit() {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: only direct integer is supported as array size\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: only direct integer is supported as array size\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_param_list_error_duplicated() {
@@ -183,14 +181,14 @@ void test_resolve_param_list_error_duplicated() {
                                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("z")))))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: param 'x' is already declared\n"));
-    vector_push(messages, new_string("Error: param 'y' is already declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: parameter 'x' is already declared\n"));
+    vector_push(expected, new_error("Error: parameter 'y' is already declared\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_param_error_storage_specifier() {
@@ -209,13 +207,13 @@ void test_resolve_param_error_storage_specifier() {
                                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: storage specifiers are invalid for a function param\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: storage specifiers are invalid for a function parameter\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_param_error_declarator() {
@@ -239,13 +237,13 @@ void test_resolve_param_error_declarator() {
                                                                          new_signed_iliteral(INTEGER_INT, 5)))))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: array of functions is invalid\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: array of functions is invalid\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_init_error_unassignable() {
@@ -259,13 +257,13 @@ void test_resolve_init_error_unassignable() {
                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: expression is not assignable to declared object\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: expression is not assignable to declared object\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_init_error_non_object() {
@@ -281,13 +279,13 @@ void test_resolve_init_error_non_object() {
                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 9)))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: function cannot be initialized\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: function cannot be initialized\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_init_error_nested_list_scalar() {
@@ -303,13 +301,13 @@ void test_resolve_init_error_nested_list_scalar() {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 9)))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: expression or that enclosed with braces is required\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: expression or that enclosed with braces is required\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_init_error_empty_scalar() {
@@ -322,13 +320,13 @@ void test_resolve_init_error_empty_scalar() {
                         new_identifier_ast(AST_IDENT_DECLOR, new_string("scalar")), new_ast(AST_INIT_LIST, 0))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: one or more init is required in an init list\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: one or more initializer is required in an initializer list\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_init_error_too_long_scalar() {
@@ -344,13 +342,13 @@ void test_resolve_init_error_too_long_scalar() {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: init list is too long\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: initializer list is too long\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_init_error_scalar_array() {
@@ -366,13 +364,13 @@ void test_resolve_init_error_scalar_array() {
                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3)))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: an array should be initialized with an init list\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: an array should be initialized with an initializer list\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_init_error_empty_array() {
@@ -388,13 +386,13 @@ void test_resolve_init_error_empty_array() {
                                 new_ast(AST_INIT_LIST, 0))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: one or more init is required in an init list\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: one or more initializer is required in an initializer list\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_init_error_too_long_array() {
@@ -413,13 +411,13 @@ void test_resolve_init_error_too_long_array() {
                                         new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 90))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: init list is too long\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: initializer list is too long\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_init_error_child_array() {
@@ -442,14 +440,14 @@ void test_resolve_init_error_child_array() {
                                 new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 90))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: expression or that enclosed with braces is required\n"));
-    vector_push(messages, new_string("Error: expression or that enclosed with braces is required\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: expression or that enclosed with braces is required\n"));
+    vector_push(expected, new_error("Error: expression or that enclosed with braces is required\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_init_error_too_long_nested_array() {
@@ -472,17 +470,16 @@ void test_resolve_init_error_too_long_nested_array() {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: init list is too long\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: initializer list is too long\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, messages);
-    run_global_decl_resolver_error_test(global_input, NULL, messages);
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
-void run_local_decl_resolver_error_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                                        Vector* __restrict__ messages) {
+void run_local_decl_resolver_error_test(Ast* input, SymbolTable* local_table, Vector* expected) {
     Resolver* resolver = new_resolver(input);
     if (local_table != NULL) {
         resolver->local_table = local_table;
@@ -492,26 +489,18 @@ void run_local_decl_resolver_error_test(Ast* __restrict__ input, SymbolTable* __
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
     input = ast_copy(resolver->ast);
 
-    Srt* actual = NULL;
-    Vector* errs = NULL;
-    resolverret_assign(&actual, &errs, resolve_decl(resolver));
+    Srt* ret = NULL;
+    Vector* actual = NULL;
+    resolverret_assign(&ret, &actual, resolve_decl(resolver));
 
-    CU_ASSERT_PTR_NULL(actual);
+    CU_ASSERT_PTR_NULL(ret);
+    testlib_assert_errors_equal(actual, expected);
 
-    CU_ASSERT_EQUAL(vector_size(errs), vector_size(messages));
-    int num_messages = vector_size(messages);
-    for (int i = 0; i < num_messages; i++) {
-        Error* err = vector_at(errs, i);
-        char* message = vector_at(messages, i);
-        CU_ASSERT_STRING_EQUAL(err->message, message);
-    }
-
-    delete_vector(errs);
+    if (actual != NULL) delete_vector(actual);
     delete_resolver(resolver);
 }
 
-void run_global_decl_resolver_error_test(Ast* __restrict__ input, SymbolTable* __restrict__ global_table,
-                                         Vector* __restrict__ messages) {
+void run_global_decl_resolver_error_test(Ast* input, SymbolTable* global_table, Vector* expected) {
     Resolver* resolver = new_resolver(input);
     if (global_table != NULL) {
         delete_symboltable(resolver->global_table);
@@ -519,20 +508,13 @@ void run_global_decl_resolver_error_test(Ast* __restrict__ input, SymbolTable* _
     }
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
 
-    Srt* actual = NULL;
-    Vector* errs = NULL;
-    resolverret_assign(&actual, &errs, resolve_decl(resolver));
+    Srt* ret = NULL;
+    Vector* actual = NULL;
+    resolverret_assign(&ret, &actual, resolve_decl(resolver));
 
-    CU_ASSERT_PTR_NULL(actual);
+    CU_ASSERT_PTR_NULL(ret);
+    testlib_assert_errors_equal(actual, expected);
 
-    CU_ASSERT_EQUAL(vector_size(errs), vector_size(messages));
-    int num_messages = vector_size(messages);
-    for (int i = 0; i < num_messages; i++) {
-        Error* err = vector_at(errs, i);
-        char* message = vector_at(messages, i);
-        CU_ASSERT_STRING_EQUAL(err->message, message);
-    }
-
-    delete_vector(errs);
+    if (actual != NULL) delete_vector(actual);
     delete_resolver(resolver);
 }

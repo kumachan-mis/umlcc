@@ -4,7 +4,7 @@
 
 void test_immcgen_transration_unit();
 
-void run_immcgen_test(Srt* __restrict__ input, Vector* __restrict__ expected);
+void run_immcgen_test(Srt* input, Vector* expected);
 
 CU_Suite* add_test_suite_exteral_immcgen() {
     CU_Suite* suite = CU_add_suite("test_suite_exteral_immcgen", NULL, NULL);
@@ -128,13 +128,13 @@ void test_immcgen_transration_unit() {
     delete_vector(expected);
 }
 
-void run_immcgen_test(Srt* __restrict__ input, Vector* __restrict__ expected) {
+void run_immcgen_test(Srt* input, Vector* expected) {
     Immcgen* immcgen = new_immcgen(input);
 
     Vector* actual = immcgen_generate_immcode(immcgen);
 
-    CU_ASSERT_TRUE(testlib_immcs_equals(actual, expected));
+    testlib_assert_immcs_equal(actual, expected);
 
-    delete_vector(actual);
+    if (actual != NULL) delete_vector(actual);
     delete_immcgen(immcgen);
 }
