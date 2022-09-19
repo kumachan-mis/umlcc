@@ -50,7 +50,8 @@ Vector* gen_additive_common_x64code(X64gen* x64gen, X64InstType type) {
             break;
         }
         default:
-            fprintf(stderr, "Error: unexpected operand %d\n", immc_snd_src->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_additive_common_x64code)\n");
             exit(1);
     }
 
@@ -94,7 +95,8 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
             break;
         }
         default:
-            fprintf(stderr, "Error: unexpected operand %d\n", immc_snd_src->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_mul_x64code)\n");
             exit(1);
     }
 
@@ -150,7 +152,8 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
             break;
         }
         default:
-            fprintf(stderr, "Error: unexpected operand %d\n", immc_snd_src->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_divisional_common_x64code)\n");
             exit(1);
     }
 

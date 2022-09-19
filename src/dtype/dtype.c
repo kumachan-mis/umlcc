@@ -7,8 +7,6 @@ BaseType t_dtype = {
     .delete_object = (void (*)(void*))delete_dtype,
 };
 
-char* dtype_types[] = {"char", "int", "pointer", "array", "function", "decoration"};
-
 Dtype* new_integer_dtype(DtypeType type) {
     Dtype* dtype = malloc(sizeof(Dtype));
     dtype->type = type;

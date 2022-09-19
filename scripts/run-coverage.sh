@@ -12,11 +12,11 @@ RED_THRESHOLD=$(echo ${CONFIG} | jq ".colorThreshold.red")
 YELLOW_THRESHOLD=$(echo ${CONFIG} | jq ".colorThreshold.yellow")
 GREEN_THRESHOLD=$(echo ${CONFIG} | jq ".colorThreshold.green")
 
-RED="\e[1;31m"
-GREEN="\e[1;32m"
-YELLOW="\e[1;33m"
-BLUE="\e[1;34m"
-END="\e[0m"
+RED="\x1b[1;31m"
+GREEN="\x1b[1;32m"
+YELLOW="\x1b[1;33m"
+BLUE="\x1b[1;34m"
+END="\x1b[0m"
 
 print_gcov () {
     gcov_summary=$1

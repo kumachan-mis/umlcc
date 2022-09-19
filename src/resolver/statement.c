@@ -2,12 +2,12 @@
 #include "./declaration.h"
 #include "./expression.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 ResolverReturn* resolve_stmt(Resolver* resolver) {
     Srt* srt = NULL;
     Vector* errs = NULL;
-    Error* err = NULL;
     Ast* ast = resolver->ast;
 
     switch (ast->type) {
@@ -23,10 +23,9 @@ ResolverReturn* resolve_stmt(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_expression_stmt(resolver));
             break;
         default:
-            errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
-            vector_push(errs, err);
-            break;
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_stmt)\n");
+            exit(1);
     }
 
     if (errs != NULL) return new_resolverret_errors(errs);

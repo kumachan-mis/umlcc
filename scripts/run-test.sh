@@ -13,9 +13,9 @@ BINARY=main.out
 EXPECTED=expected.txt
 ACTUAL=actual.txt
 
-RED="\e[1;31m"
-GREEN="\e[1;32m"
-END="\e[0m"
+RED="\x1b[1;31m"
+GREEN="\x1b[1;32m"
+END="\x1b[0m"
 
 if [ ! -f ${TARGET} ]
 then

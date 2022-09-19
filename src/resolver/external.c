@@ -82,8 +82,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
 
     if (child_srt->dtype->type != DTYPE_FUNCTION) {
         errs = new_vector(&t_error);
-        err = new_error("Error: declaration of %s should not have body like a function\n",
-                        dtype_types[child_srt->dtype->type]);
+        err = new_error("Error: non-function declaration should not have body\n");
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);

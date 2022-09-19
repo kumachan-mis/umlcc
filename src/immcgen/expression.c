@@ -130,7 +130,8 @@ Vector* gen_equality_expr_immcode(Immcgen* immcgen) {
             vector_push(codes, new_inst_immc(IMMC_INST_SETNEQ, dst, fst_src, snd_src));
             break;
         default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_equality_expr_immcode)\n");
             exit(1);
     }
 
@@ -154,7 +155,8 @@ Vector* gen_additive_expr_immcode(Immcgen* immcgen) {
             vector_push(codes, new_inst_immc(IMMC_INST_SUB, dst, fst_src, snd_src));
             break;
         default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_additive_expr_immcode)\n");
             exit(1);
     }
 
@@ -202,7 +204,8 @@ Vector* gen_pointer_additive_expr_immcode(Immcgen* immcgen) {
             break;
         }
         default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_pointer_additive_expr_immcode)\n");
             exit(1);
     }
 
@@ -229,7 +232,8 @@ Vector* gen_multiplicative_expr_immcode(Immcgen* immcgen) {
             vector_push(codes, new_inst_immc(IMMC_INST_MOD, dst, fst_src, snd_src));
             break;
         default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_multiplicative_expr_immcode)\n");
             exit(1);
     }
 
@@ -255,7 +259,8 @@ Vector* gen_unary_expr_immcode(Immcgen* immcgen) {
             codes = gen_not_expr_immcode(immcgen);
             break;
         default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_unary_expr_immcode)\n");
             exit(1);
     }
 
@@ -305,7 +310,8 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             immcgen->srt = srt;
             break;
         default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_address_expr_immcode)\n");
             exit(1);
     }
 
@@ -326,7 +332,8 @@ Vector* gen_not_expr_immcode(Immcgen* immcgen) {
             break;
         }
         default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_not_expr_immcode)\n");
             exit(1);
     }
 
@@ -344,7 +351,8 @@ Vector* gen_postfix_expr_immcode(Immcgen* immcgen) {
             codes = gen_call_expr_immcode(immcgen);
             break;
         default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_postfix_expr_immcode)\n");
             exit(1);
     }
 
@@ -408,7 +416,8 @@ Vector* gen_primary_expr_immcode(Immcgen* immcgen) {
             src = new_int_immcope(IMMC_SUFFIX_LONG, iliteral_copy(srt->iliteral));
             break;
         default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_primary_expr_immcode)\n");
             exit(1);
     }
 
