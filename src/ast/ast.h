@@ -81,8 +81,6 @@ typedef struct Ast {
 
 extern BaseType t_ast;
 
-extern char* ast_types[];
-
 Ast* new_ast(AstType type, int num_children, ...);
 Ast* new_identifier_ast(AstType type, char* name);
 Ast* new_iliteral_ast(AstType type, IntegerLiteral* iliteral);

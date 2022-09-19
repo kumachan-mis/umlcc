@@ -5,8 +5,8 @@
 #include "./conversion.h"
 #include "./expression.h"
 
+#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 ResolverReturn* resolve_decl(Resolver* resolver) {
     Srt* srt = NULL;
@@ -79,10 +79,9 @@ ResolverReturnDtype* resolve_decl_specifiers(Resolver* resolver) {
             break;
         }
         default:
-            errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
-            vector_push(errs, err);
-            break;
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                            " (in resolve_decl_specifiers)\n");
+            exit(1);
     }
 
     if (errs != NULL) {
@@ -272,10 +271,9 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                 srt = new_identifier_srt(SRT_DECL, dtype, new_string(ast_ptr->ident_name));
                 break;
             default:
-                errs = new_vector(&t_error);
-                err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast_ptr->type]);
-                vector_push(errs, err);
-                break;
+                fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                                " (in resolve_declarator)\n");
+                exit(1);
         }
     }
 
@@ -403,11 +401,20 @@ ResolverReturn* resolve_initializer(Resolver* resolver) {
                 resolverret_assign(&srt, &errs, resolve_array_initializer(resolver));
             }
             break;
-        default:
+        case DTYPE_FUNCTION:
             errs = new_vector(&t_error);
-            err = new_error("Error: %s cannot be initialized\n", dtype_types[dtype->type]);
+            err = new_error("Error: function cannot be initialized\n");
             vector_push(errs, err);
             break;
+        case DTYPE_DECORATION:
+            errs = new_vector(&t_error);
+            err = new_error("Error: typedef-name cannot be initialized\n");
+            vector_push(errs, err);
+            break;
+        default:
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                            " (in resolve_initializer)\n");
+            exit(1);
     }
 
     if (errs != NULL) return new_resolverret_errors(errs);
@@ -420,7 +427,6 @@ ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
 
     Srt* srt = NULL;
     Vector* errs = NULL;
-    Error* err = NULL;
 
     Dtype* dtype = resolver->initialized_dtype;
 
@@ -428,19 +434,19 @@ ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
         case DTYPE_CHAR:
         case DTYPE_INT:
         case DTYPE_POINTER:
+            // resolve_zero_scalar_initializer does not return an error
             resolverret_assign(&srt, &errs, resolve_zero_scalar_initializer(resolver));
             break;
         case DTYPE_ARRAY:
+            // resolve_zero_array_initializer does not return an error
             resolverret_assign(&srt, &errs, resolve_zero_array_initializer(resolver));
             break;
         default:
-            errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (dtype_type=%s)\n", dtype_types[dtype->type]);
-            vector_push(errs, err);
-            break;
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                            " (in resolve_zero_initializer)\n");
+            exit(1);
     }
 
-    if (errs != NULL) return new_resolverret_errors(errs);
     return new_resolverret(srt);
 }
 
@@ -516,18 +522,8 @@ ResolverReturn* resolve_array_initializer(Resolver* resolver) {
         resolver->ast = NULL;
         resolver->initialized_dtype = dtype->array->of_dtype;
 
+        // resolve_zero_initializer does not return an error
         resolverret_assign(&child_srt, &child_errs, resolve_zero_initializer(resolver));
-
-        if (child_errs != NULL) {
-            if (errs == NULL) errs = new_vector(&t_error);
-            vector_extend(errs, child_errs);
-            delete_vector(child_errs);
-            continue;
-        } else if (errs != NULL) {
-            delete_srt(child_srt);
-            continue;
-        }
-
         vector_push(srt->children, child_srt);
     }
 
@@ -569,7 +565,6 @@ ResolverReturn* resolve_string_initializer(Resolver* resolver) {
 
 ResolverReturn* resolve_zero_array_initializer(Resolver* resolver) {
     Srt* srt = new_srt(SRT_INIT, 0);
-    Vector* errs = NULL;
 
     Dtype* dtype = resolver->initialized_dtype;
 
@@ -578,27 +573,12 @@ ResolverReturn* resolve_zero_array_initializer(Resolver* resolver) {
         Vector* child_errs = NULL;
         resolver->initialized_dtype = dtype->array->of_dtype;
 
+        // resolve_zero_initializer does not return an error
         resolverret_assign(&child_srt, &child_errs, resolve_zero_initializer(resolver));
-
-        if (child_errs != NULL) {
-            if (errs == NULL) errs = new_vector(&t_error);
-            vector_extend(errs, child_errs);
-            delete_vector(child_errs);
-            continue;
-        } else if (errs != NULL) {
-            delete_srt(child_srt);
-            continue;
-        }
-
         vector_push(srt->children, child_srt);
     }
 
     resolver->initialized_dtype = dtype;
-
-    if (errs != NULL) {
-        delete_srt(srt);
-        return new_resolverret_errors(errs);
-    }
     return new_resolverret(srt);
 }
 

@@ -27,8 +27,6 @@ typedef struct Dtype {
 
 extern BaseType t_dtype;
 
-extern char* dtype_types[];
-
 Dtype* new_integer_dtype(DtypeType type);
 Dtype* new_pointer_dtype(Dtype* to_dtype);
 Dtype* new_array_dtype(Dtype* of_dtype, int size);

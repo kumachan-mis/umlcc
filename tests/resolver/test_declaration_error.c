@@ -10,7 +10,8 @@ void test_resolve_param_list_error_duplicated(void);
 void test_resolve_param_error_storage_specifier(void);
 void test_resolve_param_error_declarator(void);
 void test_resolve_init_error_unassignable(void);
-void test_resolve_init_error_non_object(void);
+void test_resolve_init_error_function(void);
+void test_resolve_init_error_typedef_name(void);
 void test_resolve_init_error_nested_list_scalar(void);
 void test_resolve_init_error_empty_scalar(void);
 void test_resolve_init_error_too_long_scalar(void);
@@ -33,7 +34,8 @@ CU_Suite* add_test_suite_decl_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_param_error_storage_specifier);
     CU_ADD_TEST(suite, test_resolve_param_error_declarator);
     CU_ADD_TEST(suite, test_resolve_init_error_unassignable);
-    CU_ADD_TEST(suite, test_resolve_init_error_non_object);
+    CU_ADD_TEST(suite, test_resolve_init_error_function);
+    CU_ADD_TEST(suite, test_resolve_init_error_typedef_name);
     CU_ADD_TEST(suite, test_resolve_init_error_nested_list_scalar);
     CU_ADD_TEST(suite, test_resolve_init_error_empty_scalar);
     CU_ADD_TEST(suite, test_resolve_init_error_too_long_scalar);
@@ -266,7 +268,7 @@ void test_resolve_init_error_unassignable(void) {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_non_object(void) {
+void test_resolve_init_error_function(void) {
     Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                                        new_ast(AST_TYPE_CHAR, 0)),
@@ -281,6 +283,25 @@ void test_resolve_init_error_non_object(void) {
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("Error: function cannot be initialized\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_init_error_typedef_name() {
+    Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
+                               new_ast(AST_DECL_SPECIFIERS, 2, // non-terminal
+                                       new_ast(AST_STG_TYPEDEF, 0), new_ast(AST_TYPE_INT, 0)),
+                               new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                       new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                               new_identifier_ast(AST_IDENT_DECLOR, new_string("tint")),
+                                               new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 9)))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: typedef-name cannot be initialized\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, expected);
     run_global_decl_resolver_error_test(global_input, NULL, expected);

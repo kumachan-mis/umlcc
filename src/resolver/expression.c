@@ -3,12 +3,12 @@
 #include "../common/util.h"
 #include "./conversion.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 ResolverReturn* resolve_expr(Resolver* resolver) {
     Srt* srt = NULL;
     Vector* errs = NULL;
-    Error* err = NULL;
     Ast* ast = resolver->ast;
 
     switch (ast->type) {
@@ -48,10 +48,9 @@ ResolverReturn* resolve_expr(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_primary_expr(resolver));
             break;
         default:
-            errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
-            vector_push(errs, err);
-            break;
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                            " (in resolve_expr)\n");
+            exit(1);
     }
 
     if (errs != NULL) return new_resolverret_errors(errs);
@@ -168,10 +167,9 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver) {
             if (errs == NULL) srt = new_dtyped_srt(SRT_LAND_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         default:
-            errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
-            vector_push(errs, err);
-            break;
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                            " (in resolve_logical_expr)\n");
+            exit(1);
     }
 
     if (errs != NULL) {
@@ -249,10 +247,9 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
             srt = new_dtyped_srt(SRT_NEQUAL_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         default:
-            if (errs == NULL) errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
-            vector_push(errs, err);
-            break;
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                            " (in resolve_equality_expr)\n");
+            exit(1);
     }
 
     if (errs != NULL) {
@@ -269,7 +266,6 @@ ResolverReturn* resolve_additive_expr(Resolver* resolver) {
 
     Srt* srt = NULL;
     Vector* errs = NULL;
-    Error* err = NULL;
     Ast* ast = resolver->ast;
 
     switch (ast->type) {
@@ -280,10 +276,9 @@ ResolverReturn* resolve_additive_expr(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_subtract_expr(resolver));
             break;
         default:
-            errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
-            vector_push(errs, err);
-            break;
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                            " (in resolve_additive_expr)\n");
+            exit(1);
     }
 
     if (errs != NULL) return new_resolverret_errors(errs);
@@ -473,10 +468,9 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
             srt = new_dtyped_srt(SRT_MOD_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         default:
-            errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
-            vector_push(errs, err);
-            break;
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                            " (in resolve_multiplicative_expr)\n");
+            exit(1);
     }
 
     if (errs != NULL) {
@@ -494,7 +488,6 @@ ResolverReturn* resolve_unary_expr(Resolver* resolver) {
 
     Srt* srt = NULL;
     Vector* errs = NULL;
-    Error* err = NULL;
     Ast* ast = resolver->ast;
 
     switch (ast->type) {
@@ -508,10 +501,9 @@ ResolverReturn* resolve_unary_expr(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_logical_not_expr(resolver));
             break;
         default:
-            errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
-            vector_push(errs, err);
-            break;
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                            " (in resolve_unary_expr)\n");
+            exit(1);
     }
 
     if (errs != NULL) return new_resolverret_errors(errs);
@@ -609,7 +601,6 @@ ResolverReturn* resolve_postfix_expr(Resolver* resolver) {
 
     Srt* srt = NULL;
     Vector* errs = NULL;
-    Error* err = NULL;
     Ast* ast = resolver->ast;
 
     switch (ast->type) {
@@ -620,10 +611,9 @@ ResolverReturn* resolve_postfix_expr(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_call_expr(resolver));
             break;
         default:
-            errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
-            vector_push(errs, err);
-            break;
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                            " (in resolve_postfix_expr)\n");
+            exit(1);
     }
 
     if (errs != NULL) return new_resolverret_errors(errs);
@@ -844,10 +834,9 @@ ResolverReturn* resolve_primary_expr(Resolver* resolver) {
             break;
         }
         default:
-            errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast->type]);
-            vector_push(errs, err);
-            break;
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                            " (in resolve_primary_expr)\n");
+            exit(1);
     }
 
     if (errs != NULL) return new_resolverret_errors(errs);

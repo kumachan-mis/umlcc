@@ -97,7 +97,8 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
             codes = gen_primary_expr_immcode(immcgen);
             break;
         default:
-            fprintf(stderr, "Error: unexpected srt type %d\n", srt->type);
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                            " (in immcgen_generate_immcode)\n");
             exit(1);
     }
 

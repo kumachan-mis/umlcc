@@ -38,7 +38,8 @@ Vector* x64gen_generate_x64code(X64gen* x64gen) {
                 sub_codes = gen_variable_x64code(x64gen);
                 break;
             default:
-                fprintf(stderr, "Error: unexpected external label type %d\n", immc->label->type);
+                fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                                " (in x64gen_generate_x64code)\n");
                 exit(1);
         }
         vector_extend(codes, sub_codes);
@@ -78,7 +79,8 @@ Vector* gen_function_x64code(X64gen* x64gen) {
                 sub_codes = gen_label_x64code(x64gen);
                 break;
             default:
-                fprintf(stderr, "Error: unexpected immc type %d\n", immc->type);
+                fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                                " (in gen_function_x64code)\n");
                 exit(1);
         }
         vector_extend(body_codes, sub_codes);
@@ -138,7 +140,8 @@ Vector* gen_variable_x64code(X64gen* x64gen) {
                 sub_codes = gen_data_x64code(x64gen);
                 break;
             default:
-                fprintf(stderr, "Error: unexpected immc type %d\n", immc->type);
+                fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
+                                " (in gen_variable_x64code)\n");
                 exit(1);
         }
         vector_extend(codes, sub_codes);
