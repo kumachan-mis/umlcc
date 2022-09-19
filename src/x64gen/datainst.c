@@ -49,8 +49,8 @@ Vector* gen_load_x64code(X64gen* x64gen) {
             break;
         }
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in gen_load_x64code)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_load_x64code)\n");
             exit(1);
     }
 
@@ -82,8 +82,8 @@ Vector* gen_addr_x64code(X64gen* x64gen) {
             break;
         }
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in gen_addr_x64code)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_addr_x64code)\n");
             exit(1);
     }
 
@@ -189,8 +189,8 @@ Vector* gen_store_x64code(X64gen* x64gen) {
             dst = new_label_x64ope(new_string(immc_dst->label_name));
             break;
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in gen_store_x64code dst)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_store_x64code dst)\n");
             exit(1);
     }
 
@@ -206,8 +206,8 @@ Vector* gen_store_x64code(X64gen* x64gen) {
             break;
         }
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in gen_store_x64code src)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_store_x64code src)\n");
             exit(1);
     }
 
@@ -272,8 +272,8 @@ Vector* gen_starg_x64code(X64gen* x64gen) {
             break;
         }
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in gen_starg_x64code)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_starg_x64code)\n");
             exit(1);
     }
 
@@ -302,8 +302,8 @@ Vector* gen_stret_x64code(X64gen* x64gen) {
             break;
         }
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in gen_stret_x64code)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_stret_x64code)\n");
             exit(1);
     }
 

@@ -62,8 +62,8 @@ Vector* gen_jcmp_common_x64code(X64gen* x64gen, X64InstType type) {
             break;
         }
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in gen_jcmp_common_x64code)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_jcmp_common_x64code)\n");
             exit(1);
     }
 
@@ -130,8 +130,8 @@ Vector* gen_call_x64code(X64gen* x64gen) {
             break;
         }
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in gen_call_x64code)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_call_x64code)\n");
             exit(1);
     }
 

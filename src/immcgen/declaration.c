@@ -175,8 +175,8 @@ Vector* gen_global_scalar_initializer_immcode(Immcgen* immcgen) {
             vector_push(codes, new_int_data_immc(IMMC_DATA_QUAD, iliteral_copy(srt->iliteral)));
             break;
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in gen_global_scalar_initializer_immcode)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_global_scalar_initializer_immcode)\n");
             exit(1);
     }
 

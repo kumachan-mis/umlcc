@@ -23,8 +23,8 @@ ResolverReturn* resolve_stmt(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_expression_stmt(resolver));
             break;
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in resolve_stmt)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_stmt)\n");
             exit(1);
     }
 

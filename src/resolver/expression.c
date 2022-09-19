@@ -48,8 +48,8 @@ ResolverReturn* resolve_expr(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_primary_expr(resolver));
             break;
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in resolve_expr)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_expr)\n");
             exit(1);
     }
 
@@ -167,8 +167,8 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver) {
             if (errs == NULL) srt = new_dtyped_srt(SRT_LAND_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in resolve_logical_expr)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_logical_expr)\n");
             exit(1);
     }
 
@@ -247,8 +247,8 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
             srt = new_dtyped_srt(SRT_NEQUAL_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in resolve_equality_expr)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_equality_expr)\n");
             exit(1);
     }
 
@@ -276,8 +276,8 @@ ResolverReturn* resolve_additive_expr(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_subtract_expr(resolver));
             break;
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in resolve_additive_expr)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_additive_expr)\n");
             exit(1);
     }
 
@@ -468,8 +468,8 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
             srt = new_dtyped_srt(SRT_MOD_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in resolve_multiplicative_expr)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_multiplicative_expr)\n");
             exit(1);
     }
 
@@ -501,8 +501,8 @@ ResolverReturn* resolve_unary_expr(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_logical_not_expr(resolver));
             break;
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in resolve_unary_expr)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_unary_expr)\n");
             exit(1);
     }
 
@@ -611,8 +611,8 @@ ResolverReturn* resolve_postfix_expr(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_call_expr(resolver));
             break;
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in resolve_postfix_expr)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_postfix_expr)\n");
             exit(1);
     }
 
@@ -834,8 +834,8 @@ ResolverReturn* resolve_primary_expr(Resolver* resolver) {
             break;
         }
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in resolve_primary_expr)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_primary_expr)\n");
             exit(1);
     }
 

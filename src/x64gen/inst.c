@@ -60,8 +60,8 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
         case IMMC_INST_CLEAN:
             return gen_clean_x64code(x64gen);
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in gen_inst_x64code)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_inst_x64code)\n");
             exit(1);
     }
 }

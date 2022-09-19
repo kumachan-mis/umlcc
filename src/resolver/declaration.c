@@ -79,8 +79,8 @@ ResolverReturnDtype* resolve_decl_specifiers(Resolver* resolver) {
             break;
         }
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in resolve_decl_specifiers)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_decl_specifiers)\n");
             exit(1);
     }
 
@@ -412,8 +412,8 @@ ResolverReturn* resolve_initializer(Resolver* resolver) {
             vector_push(errs, err);
             break;
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in resolve_initializer)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_initializer)\n");
             exit(1);
     }
 
@@ -442,8 +442,8 @@ ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_zero_array_initializer(resolver));
             break;
         default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
-                            " (in resolve_zero_initializer)\n");
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_zero_initializer)\n");
             exit(1);
     }
 
