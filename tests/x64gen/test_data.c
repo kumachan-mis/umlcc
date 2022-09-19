@@ -8,7 +8,7 @@
 void test_x64gen_data_int();
 void test_x64gen_data_str();
 
-void run_data_x64gen_test(Vector* __restrict__ input, Vector* __restrict__ expected);
+void run_data_x64gen_test(Vector* input, Vector* expected);
 
 CU_Suite* add_test_suite_data_x64gen() {
     CU_Suite* suite = CU_add_suite("test_suite_data_x64gen", NULL, NULL);
@@ -58,8 +58,8 @@ void test_x64gen_data_int() {
 }
 
 void test_x64gen_data_str() {
-    const char* sliteral_const = "string\0literal";
-    const int sliteral_size = 15;
+    char* sliteral_const = "string\0literal";
+    int sliteral_size = 15;
 
     char* immc_sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(immc_sliteral_value, sliteral_const, sliteral_size * sizeof(char));
@@ -82,15 +82,15 @@ void test_x64gen_data_str() {
     delete_vector(expected);
 }
 
-void run_data_x64gen_test(Vector* __restrict__ input, Vector* __restrict__ expected) {
+void run_data_x64gen_test(Vector* input, Vector* expected) {
     Vector* liveseqs = new_vector(&t_liveseq);
     vector_fill(liveseqs, 8, new_liveseq());
     X64gen* x64gen = new_x64gen(input, liveseqs);
 
     Vector* actual = gen_data_x64code(x64gen);
 
-    CU_ASSERT_TRUE(testlib_x64codes_equals(actual, expected));
+    testlib_assert_x64codes_equal(actual, expected);
 
-    delete_vector(actual);
+    if (actual != NULL) delete_vector(actual);
     delete_x64gen(x64gen);
 }

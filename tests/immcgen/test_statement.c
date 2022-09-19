@@ -8,8 +8,7 @@ void test_immcgen_compound_stmt_empty();
 void test_immcgen_return_stmt();
 void test_immcgen_expression_stmt();
 
-void run_stmt_immcgen_test(Srt* __restrict__ input, SymbolTable* __restrict__ local_table, int return_label_id,
-                           Vector* __restrict__ expected);
+void run_stmt_immcgen_test(Srt* input, SymbolTable* local_table, int return_label_id, Vector* expected);
 
 CU_Suite* add_test_suite_stmt_immcgen() {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_immcgen", NULL, NULL);
@@ -249,16 +248,15 @@ void test_immcgen_expression_stmt() {
     delete_vector(expected);
 }
 
-void run_stmt_immcgen_test(Srt* __restrict__ input, SymbolTable* __restrict__ local_table, int return_label_id,
-                           Vector* __restrict__ expected) {
+void run_stmt_immcgen_test(Srt* input, SymbolTable* local_table, int return_label_id, Vector* expected) {
     Immcgen* immcgen = new_immcgen(input);
     if (local_table != NULL) immcgen->local_table = local_table;
     immcgen->return_label_id = return_label_id;
 
     Vector* actual = immcgen_generate_immcode(immcgen);
 
-    CU_ASSERT_TRUE(testlib_immcs_equals(actual, expected));
+    testlib_assert_immcs_equal(actual, expected);
 
-    delete_vector(actual);
+    if (actual != NULL) delete_vector(actual);
     delete_immcgen(immcgen);
 }

@@ -16,10 +16,8 @@ void test_immcgen_local_sliteral_init();
 void test_immcgen_global_sliteral_init();
 void test_immcgen_local_array_init();
 void test_immcgen_global_array_init();
-void run_local_decl_immcgen_test(Srt* __restrict__ input, SymbolTable* __restrict__ local_table,
-                                 Vector* __restrict__ expected);
-void run_global_decl_immcgen_test(Srt* __restrict__ input, SymbolTable* __restrict__ global_table,
-                                  Vector* __restrict__ expected);
+void run_local_decl_immcgen_test(Srt* input, SymbolTable* local_table, Vector* expected);
+void run_global_decl_immcgen_test(Srt* input, SymbolTable* global_table, Vector* expected);
 
 CU_Suite* add_test_suite_decl_immcgen() {
     CU_Suite* suite = CU_add_suite("test_suite_decl_immcgen", NULL, NULL);
@@ -246,8 +244,8 @@ void test_immcgen_global_scalar_init() {
 }
 
 void test_immcgen_local_sliteral_init() {
-    const char* sliteral_const = "local";
-    const int sliteral_size = 6;
+    char* sliteral_const = "local";
+    int sliteral_size = 6;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
@@ -275,8 +273,8 @@ void test_immcgen_local_sliteral_init() {
 }
 
 void test_immcgen_global_sliteral_init() {
-    const char* sliteral_const = "global";
-    const int sliteral_size = 7;
+    char* sliteral_const = "global";
+    int sliteral_size = 7;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
@@ -440,8 +438,7 @@ void test_immcgen_global_array_init() {
     delete_vector(expected);
 }
 
-void run_local_decl_immcgen_test(Srt* __restrict__ input, SymbolTable* __restrict__ local_table,
-                                 Vector* __restrict__ expected) {
+void run_local_decl_immcgen_test(Srt* input, SymbolTable* local_table, Vector* expected) {
     Immcgen* immcgen = new_immcgen(input);
     if (local_table != NULL) {
         immcgen->local_table = local_table;
@@ -451,14 +448,13 @@ void run_local_decl_immcgen_test(Srt* __restrict__ input, SymbolTable* __restric
 
     Vector* actual = immcgen_generate_immcode(immcgen);
 
-    CU_ASSERT_TRUE(testlib_immcs_equals(actual, expected));
+    testlib_assert_immcs_equal(actual, expected);
 
-    delete_vector(actual);
+    if (actual != NULL) delete_vector(actual);
     delete_immcgen(immcgen);
 }
 
-void run_global_decl_immcgen_test(Srt* __restrict__ input, SymbolTable* __restrict__ global_table,
-                                  Vector* __restrict__ expected) {
+void run_global_decl_immcgen_test(Srt* input, SymbolTable* global_table, Vector* expected) {
     Immcgen* immcgen = new_immcgen(input);
     if (global_table != NULL) {
         delete_symboltable(immcgen->global_table);
@@ -467,8 +463,8 @@ void run_global_decl_immcgen_test(Srt* __restrict__ input, SymbolTable* __restri
 
     Vector* actual = immcgen_generate_immcode(immcgen);
 
-    CU_ASSERT_TRUE(testlib_immcs_equals(actual, expected));
+    testlib_assert_immcs_equal(actual, expected);
 
-    delete_vector(actual);
+    if (actual != NULL) delete_vector(actual);
     delete_immcgen(immcgen);
 }

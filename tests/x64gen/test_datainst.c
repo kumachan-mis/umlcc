@@ -29,8 +29,7 @@ void test_x64gen_starg_reg();
 void test_x64gen_stret_int();
 void test_x64gen_stret_reg();
 
-void run_datainst_x64gen_test(Vector* __restrict__ input_immcs, Vector* __restrict__ input_liveseqs,
-                              Vector* __restrict__ expected);
+void run_datainst_x64gen_test(Vector* input_immcs, Vector* input_liveseqs, Vector* expected);
 
 CU_Suite* add_test_suite_datainst_x64gen() {
     CU_Suite* suite = CU_add_suite("test_suite_datainst_x64gen", NULL, NULL);
@@ -264,8 +263,8 @@ void test_x64gen_addr_label() {
 }
 
 void test_x64gen_str_byte() {
-    const char* sliteral_const = "";
-    const int sliteral_size = 1;
+    char* sliteral_const = "";
+    int sliteral_size = 1;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
@@ -293,8 +292,8 @@ void test_x64gen_str_byte() {
 }
 
 void test_x64gen_str_word() {
-    const char* sliteral_const = "123456789";
-    const int sliteral_size = 10;
+    char* sliteral_const = "123456789";
+    int sliteral_size = 10;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
@@ -331,8 +330,8 @@ void test_x64gen_str_word() {
 }
 
 void test_x64gen_str_long() {
-    const char* sliteral_const = "ABCDEFGHIJK";
-    const int sliteral_size = 12;
+    char* sliteral_const = "ABCDEFGHIJK";
+    int sliteral_size = 12;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
@@ -369,8 +368,8 @@ void test_x64gen_str_long() {
 }
 
 void test_x64gen_str_quad() {
-    const char* sliteral_const = "ABCDEFGHIJKLMNO";
-    const int sliteral_size = 16;
+    char* sliteral_const = "ABCDEFGHIJKLMNO";
+    int sliteral_size = 16;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
@@ -412,8 +411,8 @@ void test_x64gen_str_quad() {
 }
 
 void test_x64gen_str_other() {
-    const char* sliteral_const = "ABCDEFGHIJ";
-    const int sliteral_size = 11;
+    char* sliteral_const = "ABCDEFGHIJ";
+    int sliteral_size = 11;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
@@ -802,8 +801,7 @@ void test_x64gen_stret_reg() {
     delete_vector(expected);
 }
 
-void run_datainst_x64gen_test(Vector* __restrict__ input_immcs, Vector* __restrict__ input_liveseqs,
-                              Vector* __restrict__ expected) {
+void run_datainst_x64gen_test(Vector* input_immcs, Vector* input_liveseqs, Vector* expected) {
     X64gen* x64gen = new_x64gen(input_immcs, input_liveseqs);
 
     Vector* actual = new_vector(&t_x64);
@@ -814,8 +812,8 @@ void run_datainst_x64gen_test(Vector* __restrict__ input_immcs, Vector* __restri
         delete_vector(actual_sub);
     }
 
-    CU_ASSERT_TRUE(testlib_x64codes_equals(actual, expected));
+    testlib_assert_x64codes_equal(actual, expected);
 
-    delete_vector(actual);
+    if (actual != NULL) delete_vector(actual);
     delete_x64gen(x64gen);
 }

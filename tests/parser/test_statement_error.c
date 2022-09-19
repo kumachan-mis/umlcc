@@ -3,23 +3,23 @@
 #include "../../src/parser/statement.h"
 #include "../testlib/testlib.h"
 
-void test_parse_compound_stmt_inner_stmt_error();
-void test_parse_compound_stmt_brace_error();
+void test_parse_compound_stmt_error_child();
+void test_parse_compound_stmt_error_braces();
 void test_parse_return_stmt_error();
 void test_parse_expression_stmt_error();
 
-void run_stmt_parser_error_test(Vector* __restrict__ input, const char* message);
+void run_stmt_parser_error_test(Vector* input, Error* expected);
 
 CU_Suite* add_test_suite_stmt_parser_error() {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_parser_error", NULL, NULL);
-    CU_ADD_TEST(suite, test_parse_compound_stmt_inner_stmt_error);
-    CU_ADD_TEST(suite, test_parse_compound_stmt_brace_error);
+    CU_ADD_TEST(suite, test_parse_compound_stmt_error_child);
+    CU_ADD_TEST(suite, test_parse_compound_stmt_error_braces);
     CU_ADD_TEST(suite, test_parse_return_stmt_error);
     CU_ADD_TEST(suite, test_parse_expression_stmt_error);
     return suite;
 }
 
-void test_parse_compound_stmt_inner_stmt_error() {
+void test_parse_compound_stmt_error_child() {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_LBRACE));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
@@ -32,11 +32,14 @@ void test_parse_compound_stmt_inner_stmt_error() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    const char* message = "Error: token ; expected, but got integer-constant\n";
-    run_stmt_parser_error_test(input, message);
+    Error* expected = new_error("Error: token ; expected, but got integer-constant\n");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
 }
 
-void test_parse_compound_stmt_brace_error() {
+void test_parse_compound_stmt_error_braces() {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_LBRACE));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
@@ -48,8 +51,11 @@ void test_parse_compound_stmt_brace_error() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    const char* message = "Error: unexpected token EOF\n";
-    run_stmt_parser_error_test(input, message);
+    Error* expected = new_error("Error: unexpected token EOF\n");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
 }
 
 void test_parse_return_stmt_error() {
@@ -60,8 +66,11 @@ void test_parse_return_stmt_error() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    const char* message = "Error: token ; expected, but got integer-constant\n";
-    run_stmt_parser_error_test(input, message);
+    Error* expected = new_error("Error: token ; expected, but got integer-constant\n");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
 }
 
 void test_parse_expression_stmt_error() {
@@ -73,19 +82,22 @@ void test_parse_expression_stmt_error() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    const char* message = "Error: token ; expected, but got identifier\n";
-    run_stmt_parser_error_test(input, message);
+    Error* expected = new_error("Error: token ; expected, but got identifier\n");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
 }
 
-void run_stmt_parser_error_test(Vector* __restrict__ input, const char* message) {
+void run_stmt_parser_error_test(Vector* input, Error* expected) {
     Parser* parser = new_parser(input);
-    Ast* actual = NULL;
-    Error* err = NULL;
-    parserret_assign(&actual, &err, parse_stmt(parser));
+    Ast* ret = NULL;
+    Error* actual = NULL;
+    parserret_assign(&ret, &actual, parse_stmt(parser));
 
-    CU_ASSERT_PTR_NULL(actual);
-    CU_ASSERT_STRING_EQUAL(err->message, message);
+    CU_ASSERT_PTR_NULL(ret);
+    testlib_assert_error_equal(actual, expected);
 
-    delete_error(err);
+    if (actual != NULL) delete_error(actual);
     delete_parser(parser);
 }

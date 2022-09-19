@@ -17,8 +17,7 @@ void test_x64gen_mod_reg_reg();
 void test_x64gen_mod_rdx_inarg();
 void test_x64gen_mod_rdx_inuse();
 
-void run_arithinst_x64gen_test(Vector* __restrict__ input_immcs, Vector* __restrict__ input_liveseqs,
-                               Vector* __restrict__ expected);
+void run_arithinst_x64gen_test(Vector* input_immcs, Vector* input_liveseqs, Vector* expected);
 
 CU_Suite* add_test_suite_arithinst_x64gen() {
     CU_Suite* suite = CU_add_suite("test_suite_arithinst_x64gen", NULL, NULL);
@@ -902,8 +901,7 @@ void test_x64gen_mod_rdx_inuse() {
     delete_vector(expected);
 }
 
-void run_arithinst_x64gen_test(Vector* __restrict__ input_immcs, Vector* __restrict__ input_liveseqs,
-                               Vector* __restrict__ expected) {
+void run_arithinst_x64gen_test(Vector* input_immcs, Vector* input_liveseqs, Vector* expected) {
     X64gen* x64gen = new_x64gen(input_immcs, input_liveseqs);
 
     Vector* actual = new_vector(&t_x64);
@@ -914,8 +912,8 @@ void run_arithinst_x64gen_test(Vector* __restrict__ input_immcs, Vector* __restr
         delete_vector(actual_sub);
     }
 
-    CU_ASSERT_TRUE(testlib_x64codes_equals(actual, expected));
+    testlib_assert_x64codes_equal(actual, expected);
 
-    delete_vector(actual);
+    if (actual != NULL) delete_vector(actual);
     delete_x64gen(x64gen);
 }

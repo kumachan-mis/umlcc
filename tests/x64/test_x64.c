@@ -129,8 +129,8 @@ void test_new_int_data_x64() {
 }
 
 void test_new_str_data_x64() {
-    const char* sliteral_const = "string\0literal";
-    const int sliteral_size = 15;
+    char* sliteral_const = "string\0literal";
+    int sliteral_size = 15;
 
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
@@ -299,8 +299,8 @@ void test_x64_tostring_int_data() {
 }
 
 void test_x64_tostring_str_data() {
-    const char* sliteral_const = "string\0literal";
-    const int sliteral_size = 15;
+    char* sliteral_const = "string\0literal";
+    int sliteral_size = 15;
 
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));

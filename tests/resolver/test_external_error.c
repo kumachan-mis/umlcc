@@ -3,19 +3,19 @@
 #include "../testlib/testlib.h"
 
 void test_resolve_translation_unit_error_child();
-void test_resolve_function_definition_error_declaration_specifier();
+void test_resolve_function_definition_error_decl_specifier();
 void test_resolve_function_definition_error_storage_specifier();
 void test_resolve_function_definition_error_non_func();
 void test_resolve_function_definition_error_declarator();
 void test_resolve_function_definition_error_duplicated();
 void test_resolve_function_definition_error_body();
 
-void run_resolver_error_test(Ast* __restrict__ input, Vector* __restrict__ messages);
+void run_resolver_error_test(Ast* input, Vector* expected);
 
 CU_Suite* add_test_suite_external_resolver_error() {
     CU_Suite* suite = CU_add_suite("test_suite_external_resolver_error", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_translation_unit_error_child);
-    CU_ADD_TEST(suite, test_resolve_function_definition_error_declaration_specifier);
+    CU_ADD_TEST(suite, test_resolve_function_definition_error_decl_specifier);
     CU_ADD_TEST(suite, test_resolve_function_definition_error_storage_specifier);
     CU_ADD_TEST(suite, test_resolve_function_definition_error_non_func);
     CU_ADD_TEST(suite, test_resolve_function_definition_error_declarator);
@@ -69,16 +69,16 @@ void test_resolve_translation_unit_error_child() {
                         new_ast(AST_RET_STMT, 1, // non-terminal
                                 new_identifier_ast(AST_IDENT_EXPR, new_string("x"))))));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: storage specifiers are invalid for a function parameter\n"));
-    vector_push(messages, new_string("Error: expression is not assignable to function return\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: storage specifiers are invalid for a function parameter\n"));
+    vector_push(expected, new_error("Error: expression is not assignable to function return\n"));
 
-    run_resolver_error_test(input, messages);
+    run_resolver_error_test(input, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
-void test_resolve_function_definition_error_declaration_specifier() {
+void test_resolve_function_definition_error_decl_specifier() {
     Ast* input =
         new_ast(AST_TRAS_UNIT, 1,
                 new_ast(AST_FUNC_DEF, 3,                // non-terminal
@@ -90,12 +90,12 @@ void test_resolve_function_definition_error_declaration_specifier() {
                                 new_ast(AST_RET_STMT, 1, // non-terminal
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: declaration specifiers are invalid\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: declaration specifiers are invalid\n"));
 
-    run_resolver_error_test(input, messages);
+    run_resolver_error_test(input, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_function_definition_error_storage_specifier() {
@@ -110,11 +110,11 @@ void test_resolve_function_definition_error_storage_specifier() {
                                 new_ast(AST_RET_STMT, 1, // non-terminal
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: storage specifiers are invalid for a function definition\n"));
-    run_resolver_error_test(input, messages);
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: storage specifiers are invalid for a function definition\n"));
+    run_resolver_error_test(input, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_function_definition_error_non_func() {
@@ -130,11 +130,11 @@ void test_resolve_function_definition_error_non_func() {
                                 new_ast(AST_RET_STMT, 1, // non-terminal
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: declaration of array should not have body like a function\n"));
-    run_resolver_error_test(input, messages);
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: declaration of array should not have body like a function\n"));
+    run_resolver_error_test(input, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_function_definition_error_declarator() {
@@ -159,11 +159,11 @@ void test_resolve_function_definition_error_declarator() {
                                                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                                                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")))))));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: parameter 'x' is already declared\n"));
-    run_resolver_error_test(input, messages);
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: parameter 'x' is already declared\n"));
+    run_resolver_error_test(input, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_function_definition_error_duplicated() {
@@ -194,11 +194,11 @@ void test_resolve_function_definition_error_duplicated() {
                                 new_ast(AST_RET_STMT, 1, // non-terminal
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'error' is already declared\n"));
-    run_resolver_error_test(input, messages);
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'error' is already declared\n"));
+    run_resolver_error_test(input, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_function_definition_error_body() {
@@ -228,31 +228,24 @@ void test_resolve_function_definition_error_body() {
                         new_ast(AST_RET_STMT, 1, // non-terminal
                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'x' is already declared\n"));
-    vector_push(messages, new_string("Error: left operand of assignment should be modifiable lvalue\n"));
-    run_resolver_error_test(input, messages);
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'x' is already declared\n"));
+    vector_push(expected, new_error("Error: left operand of assignment should be modifiable lvalue\n"));
+    run_resolver_error_test(input, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
-void run_resolver_error_test(Ast* __restrict__ input, Vector* __restrict__ messages) {
+void run_resolver_error_test(Ast* input, Vector* expected) {
     Resolver* resolver = new_resolver(input);
 
-    Srt* actual = NULL;
-    Vector* errs = NULL;
-    resolverret_assign(&actual, &errs, resolver_resolve_semantics(resolver));
+    Srt* ret = NULL;
+    Vector* actual = NULL;
+    resolverret_assign(&ret, &actual, resolver_resolve_semantics(resolver));
 
-    CU_ASSERT_PTR_NULL(actual);
+    CU_ASSERT_PTR_NULL(ret);
+    testlib_assert_errors_equal(actual, expected);
 
-    CU_ASSERT_EQUAL(vector_size(errs), vector_size(messages));
-    int num_messages = vector_size(messages);
-    for (int i = 0; i < num_messages; i++) {
-        Error* err = vector_at(errs, i);
-        char* message = vector_at(messages, i);
-        CU_ASSERT_STRING_EQUAL(err->message, message);
-    }
-
-    delete_vector(errs);
+    if (actual != NULL) delete_vector(actual);
     delete_resolver(resolver);
 }

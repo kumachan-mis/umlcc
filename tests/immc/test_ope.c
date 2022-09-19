@@ -223,8 +223,8 @@ void test_new_unsigned_immcope() {
 }
 
 void test_new_str_immcope() {
-    const char* sliteral_const = "string\0literal";
-    const int sliteral_size = 15;
+    char* sliteral_const = "string\0literal";
+    int sliteral_size = 15;
 
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
@@ -332,8 +332,8 @@ void test_immcope_tostring_unsigned() {
 }
 
 void test_immcope_tostring_str() {
-    const char* sliteral_const = "string\0literal";
-    const int sliteral_size = 15;
+    char* sliteral_const = "string\0literal";
+    int sliteral_size = 15;
 
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));

@@ -7,8 +7,7 @@ void test_resolve_return_stmt_error_child();
 void test_resolve_return_stmt_error_unassignable();
 void test_resolve_expression_stmt_error_child();
 
-void run_stmt_resolver_error_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                                  Dtype* __restrict__ return_dtype, Vector* __restrict__ messages);
+void run_stmt_resolver_error_test(Ast* input, SymbolTable* local_table, Dtype* return_dtype, Vector* expected);
 
 CU_Suite* add_test_suite_stmt_resolver_error() {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver_error", NULL, NULL);
@@ -44,13 +43,13 @@ void test_resolve_compound_stmt_error_child() {
                                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)))));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
-    vector_push(messages, new_string("Error: operand of unary * does not have pointer type\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
+    vector_push(expected, new_error("Error: operand of unary * does not have pointer type\n"));
 
-    run_stmt_resolver_error_test(input, NULL, NULL, messages);
+    run_stmt_resolver_error_test(input, NULL, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_return_stmt_error_child() {
@@ -62,12 +61,12 @@ void test_resolve_return_stmt_error_child() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_stmt_resolver_error_test(input, local_table, NULL, messages);
+    run_stmt_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_return_stmt_error_unassignable() {
@@ -81,12 +80,12 @@ void test_resolve_return_stmt_error_unassignable() {
 
     Dtype* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: expression is not assignable to function return\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: expression is not assignable to function return\n"));
 
-    run_stmt_resolver_error_test(input, local_table, return_dtype, messages);
+    run_stmt_resolver_error_test(input, local_table, return_dtype, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
 void test_resolve_expression_stmt_error_child() {
@@ -100,35 +99,27 @@ void test_resolve_expression_stmt_error_child() {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Vector* messages = new_vector(&t_string);
-    vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("Error: identifier 'y' is used before declared\n"));
 
-    run_stmt_resolver_error_test(input, local_table, NULL, messages);
+    run_stmt_resolver_error_test(input, local_table, NULL, expected);
 
-    delete_vector(messages);
+    delete_vector(expected);
 }
 
-void run_stmt_resolver_error_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                                  Dtype* __restrict__ return_dtype, Vector* __restrict__ messages) {
+void run_stmt_resolver_error_test(Ast* input, SymbolTable* local_table, Dtype* return_dtype, Vector* expected) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
     if (local_table != NULL) resolver->local_table = local_table;
     resolver->return_dtype = return_dtype;
 
-    Srt* actual = NULL;
-    Vector* errs = NULL;
-    resolverret_assign(&actual, &errs, resolve_stmt(resolver));
+    Srt* ret = NULL;
+    Vector* actual = NULL;
+    resolverret_assign(&ret, &actual, resolve_stmt(resolver));
 
-    CU_ASSERT_PTR_NULL(actual);
+    CU_ASSERT_PTR_NULL(ret);
+    testlib_assert_errors_equal(actual, expected);
 
-    CU_ASSERT_EQUAL(vector_size(errs), vector_size(messages));
-    int num_messages = vector_size(messages);
-    for (int i = 0; i < num_messages; i++) {
-        Error* err = vector_at(errs, i);
-        char* message = vector_at(messages, i);
-        CU_ASSERT_STRING_EQUAL(err->message, message);
-    }
-
-    delete_vector(errs);
+    if (actual != NULL) delete_vector(actual);
     delete_resolver(resolver);
 }

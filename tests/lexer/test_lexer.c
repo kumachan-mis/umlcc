@@ -20,7 +20,7 @@ void test_read_octal_character_constant();
 void test_read_hexadecimal_character_constant();
 void test_read_string_literal();
 
-void run_lexer_test(const char* __restrict__ input, Vector* __restrict__ expected);
+void run_lexer_test(char* input, Vector* expected);
 
 CU_Suite* add_test_suite_lexer() {
     CU_Suite* suite = CU_add_suite("test_suite_lexer", NULL, NULL);
@@ -45,10 +45,10 @@ CU_Suite* add_test_suite_lexer() {
 }
 
 void test_read_function_definition() {
-    const char* input = "int test_read_function_definition() {\n"
-                        "    printf(\"OK\\n\");"
-                        "    return 0;"
-                        "}\n";
+    char* input = "int test_read_function_definition() {\n"
+                  "    printf(\"OK\\n\");"
+                  "    return 0;"
+                  "}\n";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_INT));
@@ -73,7 +73,7 @@ void test_read_function_definition() {
 }
 
 void test_read_declaration_without_init() {
-    const char* input = "typedef int* ptr2int; char* input;";
+    char* input = "typedef int* ptr2int; char* input;";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_TYPEDEF));
@@ -93,7 +93,7 @@ void test_read_declaration_without_init() {
 }
 
 void test_read_declaration_with_init() {
-    const char* input = "int int_array[3] = {8, 2, 0};";
+    char* input = "int int_array[3] = {8, 2, 0};";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_INT));
@@ -118,7 +118,7 @@ void test_read_declaration_with_init() {
 }
 
 void test_read_assignment_expr() {
-    const char* input = "x86 = 64;";
+    char* input = "x86 = 64;";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("x86")));
@@ -133,7 +133,7 @@ void test_read_assignment_expr() {
 }
 
 void test_read_logical_expr() {
-    const char* input = "a && xyz; b || _123;";
+    char* input = "a && xyz; b || _123;";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
@@ -152,7 +152,7 @@ void test_read_logical_expr() {
 }
 
 void test_read_equality_expr() {
-    const char* input = "flag == 0; flag != 1;";
+    char* input = "flag == 0; flag != 1;";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("flag")));
@@ -171,7 +171,7 @@ void test_read_equality_expr() {
 }
 
 void test_read_additive_expr() {
-    const char* input = "3 + 6; ptr - 1;";
+    char* input = "3 + 6; ptr - 1;";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
@@ -190,7 +190,7 @@ void test_read_additive_expr() {
 }
 
 void test_read_multiplicative_expr() {
-    const char* input = "n * 4; m / 8; offset % 2;";
+    char* input = "n * 4; m / 8; offset % 2;";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("n")));
@@ -213,7 +213,7 @@ void test_read_multiplicative_expr() {
 }
 
 void test_read_unary_expr() {
-    const char* input = "&a; *ptr; !false_flag; !!true_flag;";
+    char* input = "&a; *ptr; !false_flag; !!true_flag;";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_AND));
@@ -237,7 +237,7 @@ void test_read_unary_expr() {
 }
 
 void test_read_postfix_expr() {
-    const char* input = "arr[10][4]; exec_process(a,  b);";
+    char* input = "arr[10][4]; exec_process(a,  b);";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("arr")));
@@ -263,7 +263,7 @@ void test_read_postfix_expr() {
 }
 
 void test_read_decimal_integer_constant() {
-    const char* input = "1 23 456 789 10 2147483647\n";
+    char* input = "1 23 456 789 10 2147483647\n";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
@@ -280,7 +280,7 @@ void test_read_decimal_integer_constant() {
 }
 
 void test_read_octal_integer_constant() {
-    const char* input = "04 076 0123 05 0 017777777777\n";
+    char* input = "04 076 0123 05 0 017777777777\n";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 04)));
@@ -297,7 +297,7 @@ void test_read_octal_integer_constant() {
 }
 
 void test_read_hexadecimal_integer_constant() {
-    const char* input = "0x12 0X034 0XaFd 0X6cB 0x7e 0x598 0X0 0x7FFFFFFF\n";
+    char* input = "0x12 0X034 0XaFd 0X6cB 0x7e 0x598 0X0 0x7FFFFFFF\n";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0x12)));
@@ -316,8 +316,7 @@ void test_read_hexadecimal_integer_constant() {
 }
 
 void test_read_character_constant() {
-    const char* input = "'0' 'a' 'xy' '#' "
-                        "'\\a' '\\b' '\\f' '\\r' '\\t' '\\v' '\\\"' '\\'' '\\?' '\\\\' '\\r\\n'\n";
+    char* input = "'0' 'a' 'xy' '#' '\\a' '\\b' '\\f' '\\r' '\\t' '\\v' '\\\"' '\\'' '\\?' '\\\\' '\\r\\n'\n";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, '0')));
@@ -343,7 +342,7 @@ void test_read_character_constant() {
 }
 
 void test_read_octal_character_constant() {
-    const char* input = "'\\0' '\\13' '\\107'\n";
+    char* input = "'\\0' '\\13' '\\107'\n";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, 0)));
@@ -357,7 +356,7 @@ void test_read_octal_character_constant() {
 }
 
 void test_read_hexadecimal_character_constant() {
-    const char* input = "'\\x12' '\\x034' '\\xaF' '\\xcB' '\\x7e' '\\x59' '\\xff' '\\x0'\n";
+    char* input = "'\\x12' '\\x034' '\\xaF' '\\xcB' '\\x7e' '\\x59' '\\xff' '\\x0'\n";
 
     // In current implementation, char has the same range of values as signed char
     Vector* expected = new_vector(&t_ctoken);
@@ -377,7 +376,7 @@ void test_read_hexadecimal_character_constant() {
 }
 
 void test_read_string_literal() {
-    const char* input = "\"\" \"str literal\" \"str\\tliteral\"\n";
+    char* input = "\"\" \"str literal\" \"str\\tliteral\"\n";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(new_string(""), 1)));
@@ -390,7 +389,7 @@ void test_read_string_literal() {
     delete_vector(expected);
 }
 
-void run_lexer_test(const char* __restrict__ input, Vector* __restrict__ expected) {
+void run_lexer_test(char* input, Vector* expected) {
     FILE* file_ptr = tmpfile();
     fprintf(file_ptr, "%s", input);
     rewind(file_ptr);
@@ -400,10 +399,10 @@ void run_lexer_test(const char* __restrict__ input, Vector* __restrict__ expecte
     Error* err = NULL;
     lexerret_assign(&actual, &err, lexer_read_ctokens(lexer));
 
-    CU_ASSERT_TRUE(testlib_ctokens_equals(actual, expected));
+    testlib_assert_ctokens_equal(actual, expected);
     CU_ASSERT_PTR_NULL(err);
 
-    delete_vector(actual);
+    if (actual != NULL) delete_vector(actual);
     delete_lexer(lexer);
 
     fclose(file_ptr);
