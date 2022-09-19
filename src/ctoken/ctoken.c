@@ -9,11 +9,9 @@ BaseType t_ctoken = {
 
 char* ctoken_types[] = {
     // non-punctuators
-    "char", "int", "return", "typedef", "identifier", "integer-constant", "character-constant",
-    "string-literal",
+    "char", "int", "return", "typedef", "identifier", "integer-constant", "character-constant", "string-literal",
     // punctuators
-    "[", "]", "(", ")", "{", "}", "&", "*", "+", "-", "!", "/", "%", "==", "!=", "&&", "||", ";",
-    "=", ",", "EOF"};
+    "[", "]", "(", ")", "{", "}", "&", "*", "+", "-", "!", "/", "%", "==", "!=", "&&", "||", ";", "=", ",", "EOF"};
 
 CToken* new_ctoken(CTokenType type) {
     CToken* ctoken = malloc(sizeof(CToken));

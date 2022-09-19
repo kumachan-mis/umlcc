@@ -15,20 +15,18 @@ CU_Suite* add_test_suite_external_resolver() {
 void test_resolve_transration_unit() {
     Ast* input = new_ast(
         AST_TRAS_UNIT, 3,
-        new_ast(
-            AST_DECL, 2,                    // non-terminal
-            new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                    new_ast(AST_TYPE_INT, 0)),
-            new_ast(AST_INIT_DECLOR_LIST, 1,            // non-terminal
-                    new_ast(AST_INIT_DECLOR, 1,         // non-terminal
-                            new_ast(AST_FUNC_DECLOR, 2, // non-terminal
-                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("incriment")),
-                                    new_ast(AST_PARAM_LIST, 1,                      // non-terminal
-                                            new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                                    new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                                            new_ast(AST_TYPE_INT, 0)),
-                                                    new_identifier_ast(AST_IDENT_DECLOR,
-                                                                       new_string("x")))))))),
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,            // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("incriment")),
+                                        new_ast(AST_PARAM_LIST, 1,                      // non-terminal
+                                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_INT, 0)),
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("x")))))))),
         new_ast(AST_FUNC_DEF, 3,                // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                         new_ast(AST_TYPE_INT, 0)),
@@ -43,8 +41,7 @@ void test_resolve_transration_unit() {
                         new_ast(AST_RET_STMT, 1,         // non-terminal
                                 new_ast(AST_SUB_EXPR, 2, // non-terminal
                                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
-                                        new_iliteral_ast(AST_INT_EXPR,
-                                                         new_signed_iliteral(INTEGER_INT, 1)))))),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)))))),
         new_ast(AST_FUNC_DEF, 3,                // non-terminal
                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                         new_ast(AST_TYPE_CHAR, 0)),
@@ -71,29 +68,27 @@ void test_resolve_transration_unit() {
     vector_push(cast_params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
     Dtype* cast_dtype = new_function_dtype(cast_params, new_integer_dtype(DTYPE_CHAR));
 
-    Srt* expected = new_srt(
-        SRT_TRAS_UNIT, 3,                 // non-terminal
-        new_srt(SRT_DECL_LIST, 1,         // non-terminal
-                new_srt(SRT_INIT_DECL, 1, // non-terminal
-                        new_identifier_srt(SRT_DECL, incr_dtype, new_string("incriment")))),
-        new_srt(SRT_FUNC_DEF, 2, // non-terminal
-                new_identifier_srt(SRT_DECL, decr_dtype, new_string("decriment")),
-                new_srt(SRT_CMPD_STMT, 1,        // non-terminal
-                        new_srt(SRT_RET_STMT, 1, // non-terminal
-                                new_dtyped_srt(
-                                    SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                                    new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                       new_string("x")),
-                                    new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                     new_signed_iliteral(INTEGER_INT, 1)))))),
-        new_srt(SRT_FUNC_DEF, 2, // non-terminal
-                new_identifier_srt(SRT_DECL, cast_dtype, new_string("cast")),
-                new_srt(SRT_CMPD_STMT, 1,        // non-terminal
-                        new_srt(SRT_RET_STMT, 1, // non-terminal
-                                new_dtyped_srt(
-                                    SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
-                                    new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                       new_string("x")))))));
+    Srt* expected =
+        new_srt(SRT_TRAS_UNIT, 3,                 // non-terminal
+                new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                        new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                new_identifier_srt(SRT_DECL, incr_dtype, new_string("incriment")))),
+                new_srt(SRT_FUNC_DEF, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, decr_dtype, new_string("decriment")),
+                        new_srt(SRT_CMPD_STMT, 1,                                                     // non-terminal
+                                new_srt(SRT_RET_STMT, 1,                                              // non-terminal
+                                        new_dtyped_srt(SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                          new_string("x")),
+                                                       new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                        new_signed_iliteral(INTEGER_INT, 1)))))),
+                new_srt(SRT_FUNC_DEF, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, cast_dtype, new_string("cast")),
+                        new_srt(SRT_CMPD_STMT, 1,                                                       // non-terminal
+                                new_srt(SRT_RET_STMT, 1,                                                // non-terminal
+                                        new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+                                                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                          new_string("x")))))));
 
     run_resolver_test(input, expected);
 

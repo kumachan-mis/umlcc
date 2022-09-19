@@ -109,12 +109,10 @@ void test_sliteral_zero_padding_copy_empty() {
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
-    StringLiteral* copied_sliteral =
-        sliteral_zero_padding_copy(sliteral, zero_padding_sliteral_size);
+    StringLiteral* copied_sliteral = sliteral_zero_padding_copy(sliteral, zero_padding_sliteral_size);
     delete_sliteral(sliteral);
 
-    CU_ASSERT_EQUAL(
-        memcmp(copied_sliteral->value, zero_padding_sliteral_const, zero_padding_sliteral_size), 0);
+    CU_ASSERT_EQUAL(memcmp(copied_sliteral->value, zero_padding_sliteral_const, zero_padding_sliteral_size), 0);
     CU_ASSERT_EQUAL(copied_sliteral->size, zero_padding_sliteral_size);
 
     delete_sliteral(copied_sliteral);
@@ -130,12 +128,10 @@ void test_sliteral_zero_padding_copy_without_null() {
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
-    StringLiteral* copied_sliteral =
-        sliteral_zero_padding_copy(sliteral, zero_padding_sliteral_size);
+    StringLiteral* copied_sliteral = sliteral_zero_padding_copy(sliteral, zero_padding_sliteral_size);
     delete_sliteral(sliteral);
 
-    CU_ASSERT_EQUAL(
-        memcmp(copied_sliteral->value, zero_padding_sliteral_const, zero_padding_sliteral_size), 0);
+    CU_ASSERT_EQUAL(memcmp(copied_sliteral->value, zero_padding_sliteral_const, zero_padding_sliteral_size), 0);
     CU_ASSERT_EQUAL(copied_sliteral->size, zero_padding_sliteral_size);
 
     delete_sliteral(copied_sliteral);
@@ -151,12 +147,10 @@ void test_sliteral_zero_padding_copy_with_null() {
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
-    StringLiteral* copied_sliteral =
-        sliteral_zero_padding_copy(sliteral, zero_padding_sliteral_size);
+    StringLiteral* copied_sliteral = sliteral_zero_padding_copy(sliteral, zero_padding_sliteral_size);
     delete_sliteral(sliteral);
 
-    CU_ASSERT_EQUAL(
-        memcmp(copied_sliteral->value, zero_padding_sliteral_const, zero_padding_sliteral_size), 0);
+    CU_ASSERT_EQUAL(memcmp(copied_sliteral->value, zero_padding_sliteral_const, zero_padding_sliteral_size), 0);
     CU_ASSERT_EQUAL(copied_sliteral->size, zero_padding_sliteral_size);
 
     delete_sliteral(copied_sliteral);
@@ -271,8 +265,7 @@ void test_sliteral_display_string_zero_padding() {
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
-    StringLiteral* zero_padding_sliteral =
-        sliteral_zero_padding_copy(sliteral, zero_padding_sliteral_size);
+    StringLiteral* zero_padding_sliteral = sliteral_zero_padding_copy(sliteral, zero_padding_sliteral_size);
     char* display_string = sliteral_display_string(zero_padding_sliteral);
 
     CU_ASSERT_STRING_EQUAL(display_string, expected_display_string);

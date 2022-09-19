@@ -224,8 +224,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
     switch (ast->type) {
         case AST_EQUAL_EXPR:
             if (errs != NULL) {
-                if (lhs_srt->dtype->type == DTYPE_POINTER &&
-                    rhs_srt->dtype->type == DTYPE_POINTER) {
+                if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
                     err = new_error("Error: operands of pointer == pointer are not compatible\n");
                 } else {
                     err = new_error("Error: binary == expression should be "
@@ -238,8 +237,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
             break;
         case AST_NEQUAL_EXPR:
             if (errs != NULL) {
-                if (lhs_srt->dtype->type == DTYPE_POINTER &&
-                    rhs_srt->dtype->type == DTYPE_POINTER) {
+                if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
                     err = new_error("Error: operands of pointer != pointer are not compatible\n");
                 } else {
                     err = new_error("Error: binary != expression should be "
@@ -702,8 +700,7 @@ ResolverReturn* resolve_call_expr(Resolver* resolver) {
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
     lhs_srt = convert_to_ptr_if_function(lhs_srt);
 
-    if (lhs_srt->dtype->type != DTYPE_POINTER ||
-        lhs_srt->dtype->pointer->to_dtype->type != DTYPE_FUNCTION) {
+    if (lhs_srt->dtype->type != DTYPE_POINTER || lhs_srt->dtype->pointer->to_dtype->type != DTYPE_FUNCTION) {
         errs = new_vector(&t_error);
         Error* err = new_error("Error: called object is not a function or a function pointer\n");
         vector_push(errs, err);
@@ -742,8 +739,7 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
 
     if (num_params != num_args) {
         errs = new_vector(&t_error);
-        err = new_error("Error: function takes %d params, but passed %d arguments\n", num_params,
-                        num_args);
+        err = new_error("Error: function takes %d params, but passed %d arguments\n", num_params, num_args);
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);
@@ -804,13 +800,10 @@ ResolverReturn* resolve_primary_expr(Resolver* resolver) {
             if (symbol == NULL && resolver->local_table != NULL) {
                 symbol = symboltable_search(resolver->local_table, ast->ident_name);
             }
-            if (symbol == NULL) {
-                symbol = symboltable_search(resolver->global_table, ast->ident_name);
-            }
+            if (symbol == NULL) symbol = symboltable_search(resolver->global_table, ast->ident_name);
             if (symbol == NULL) {
                 errs = new_vector(&t_error);
-                err =
-                    new_error("Error: identifier '%s' is used before declared\n", ast->ident_name);
+                err = new_error("Error: identifier '%s' is used before declared\n", ast->ident_name);
                 vector_push(errs, err);
                 break;
             }
@@ -842,8 +835,7 @@ ResolverReturn* resolve_primary_expr(Resolver* resolver) {
             Srt* literal_srt = new_sliteral_srt(SRT_STRING_EXPR, init_dtype, sliteral);
             Srt* init_srt = new_srt(SRT_INIT, 1, literal_srt);
 
-            Srt* decl_list_srt =
-                new_srt(SRT_DECL_LIST, 1, new_srt(SRT_INIT_DECL, 2, decl_srt, init_srt));
+            Srt* decl_list_srt = new_srt(SRT_DECL_LIST, 1, new_srt(SRT_INIT_DECL, 2, decl_srt, init_srt));
             vector_push(resolver->trans_unit_srt->children, decl_list_srt);
 
             Dtype* ident_dtype = dtype_copy(decl_dtype);

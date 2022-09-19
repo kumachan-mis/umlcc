@@ -19,8 +19,7 @@ int testlib_ctokens_equals(Vector* actual, Vector* expected) {
 int testlib_ctoken_equals(CToken* actual, CToken* expected) {
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
-    return (actual->type == expected->type &&
-            testlib_string_equals(actual->ident_name, expected->ident_name) &&
+    return (actual->type == expected->type && testlib_string_equals(actual->ident_name, expected->ident_name) &&
             testlib_iliteral_equals(actual->iliteral, expected->iliteral) &&
             testlib_sliteral_equals(actual->sliteral, expected->sliteral));
 }
@@ -28,8 +27,7 @@ int testlib_ctoken_equals(CToken* actual, CToken* expected) {
 int testlib_ast_equals(Ast* actual, Ast* expected) {
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
-    if (actual->type != expected->type ||
-        !testlib_string_equals(actual->ident_name, expected->ident_name) ||
+    if (actual->type != expected->type || !testlib_string_equals(actual->ident_name, expected->ident_name) ||
         !testlib_iliteral_equals(actual->iliteral, expected->iliteral) ||
         !testlib_sliteral_equals(actual->sliteral, expected->sliteral) ||
         vector_size(actual->children) != vector_size(expected->children)) {
@@ -85,8 +83,7 @@ int testlib_immc_equals(Immc* actual, Immc* expected) {
 
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
-    return (actual->type == expected->type &&
-            testlib_immcinst_equals(actual->inst, expected->inst) &&
+    return (actual->type == expected->type && testlib_immcinst_equals(actual->inst, expected->inst) &&
             testlib_immcdata_equals(actual->data, expected->data) &&
             testlib_immclabel_equals(actual->label, expected->label));
 }
@@ -94,8 +91,7 @@ int testlib_immc_equals(Immc* actual, Immc* expected) {
 int testlib_immcinst_equals(ImmcInst* actual, ImmcInst* expected) {
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
-    return (actual->type == expected->type &&
-            testlib_immcope_equals(actual->fst_src, expected->fst_src) &&
+    return (actual->type == expected->type && testlib_immcope_equals(actual->fst_src, expected->fst_src) &&
             testlib_immcope_equals(actual->snd_src, expected->snd_src) &&
             testlib_immcope_equals(actual->dst, expected->dst));
 }
@@ -103,8 +99,7 @@ int testlib_immcinst_equals(ImmcInst* actual, ImmcInst* expected) {
 int testlib_immcdata_equals(ImmcData* actual, ImmcData* expected) {
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
-    return (actual->type == expected->type &&
-            testlib_iliteral_equals(actual->iliteral, expected->iliteral) &&
+    return (actual->type == expected->type && testlib_iliteral_equals(actual->iliteral, expected->iliteral) &&
             testlib_sliteral_equals(actual->sliteral, expected->sliteral));
 }
 
@@ -145,8 +140,7 @@ int testlib_x64code_equals(X64* actual, X64* expected) {
 
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
-    return (actual->type == expected->type &&
-            testlib_x64inst_equals(actual->inst, expected->inst) &&
+    return (actual->type == expected->type && testlib_x64inst_equals(actual->inst, expected->inst) &&
             testlib_x64data_equals(actual->data, expected->data) &&
             testlib_x64label_equals(actual->label, expected->label));
 }
@@ -161,8 +155,7 @@ int testlib_x64inst_equals(X64Inst* actual, X64Inst* expected) {
 int testlib_x64data_equals(X64Data* actual, X64Data* expected) {
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
-    return (actual->type == expected->type &&
-            testlib_iliteral_equals(actual->iliteral, expected->iliteral) &&
+    return (actual->type == expected->type && testlib_iliteral_equals(actual->iliteral, expected->iliteral) &&
             testlib_sliteral_equals(actual->sliteral, expected->sliteral));
 }
 
@@ -190,8 +183,7 @@ int testlib_dtype_equals(Dtype* actual, Dtype* expected) {
 
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
-    return (actual->type == expected->type &&
-            testlib_dpointer_equals(actual->pointer, expected->pointer) &&
+    return (actual->type == expected->type && testlib_dpointer_equals(actual->pointer, expected->pointer) &&
             testlib_darray_equals(actual->array, expected->array) &&
             testlib_dfunction_equals(actual->function, expected->function) &&
             testlib_ddecoration_equals(actual->decoration, expected->decoration));
@@ -206,8 +198,7 @@ int testlib_dpointer_equals(DPointer* actual, DPointer* expected) {
 int testlib_darray_equals(DArray* actual, DArray* expected) {
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
-    return (testlib_dtype_equals(actual->of_dtype, expected->of_dtype) &&
-            actual->size == expected->size);
+    return (testlib_dtype_equals(actual->of_dtype, expected->of_dtype) && actual->size == expected->size);
 }
 
 int testlib_dfunction_equals(DFunction* actual, DFunction* expected) {
@@ -274,16 +265,14 @@ int testlib_liveseq_equals(Liveseq* actual, Liveseq* expected) {
 int testlib_liveness_equals(Liveness* actual, Liveness* expected) {
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
-    return (actual->first_def_index == expected->first_def_index &&
-            actual->last_use_index == expected->last_use_index);
+    return (actual->first_def_index == expected->first_def_index && actual->last_use_index == expected->last_use_index);
 }
 
 int testlib_iliteral_equals(IntegerLiteral* actual, IntegerLiteral* expected) {
     if (actual == NULL || expected == NULL) return actual == NULL && expected == NULL;
 
     return (actual->type == expected->type && actual->is_unsigned == expected->is_unsigned &&
-            actual->signed_value == expected->signed_value &&
-            actual->unsigned_value == expected->unsigned_value);
+            actual->signed_value == expected->signed_value && actual->unsigned_value == expected->unsigned_value);
 }
 
 int testlib_sliteral_equals(StringLiteral* actual, StringLiteral* expected) {

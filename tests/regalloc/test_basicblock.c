@@ -26,8 +26,8 @@ void test_new_basicblock() {
     CU_ASSERT_EQUAL(count, 0);
 
     count = 0;
-    for (SetIter* iter = set_iter_begin(basicblock->output);
-         !set_iter_end(iter, basicblock->output); iter = set_iter_next(iter, basicblock->output)) {
+    for (SetIter* iter = set_iter_begin(basicblock->output); !set_iter_end(iter, basicblock->output);
+         iter = set_iter_next(iter, basicblock->output)) {
         count++;
     }
     CU_ASSERT_EQUAL(count, 0);
@@ -55,8 +55,7 @@ void test_basicblock_copy() {
     CU_ASSERT_EQUAL(vector_size(copied_basicblock->immcs), 0);
 
     int count = 0;
-    for (SetIter* iter = set_iter_begin(copied_basicblock->input);
-         !set_iter_end(iter, copied_basicblock->input);
+    for (SetIter* iter = set_iter_begin(copied_basicblock->input); !set_iter_end(iter, copied_basicblock->input);
          iter = set_iter_next(iter, copied_basicblock->input)) {
         int* item = set_iter_item(iter, copied_basicblock->input);
         CU_ASSERT(*item == 2);
@@ -65,8 +64,7 @@ void test_basicblock_copy() {
     CU_ASSERT_EQUAL(count, 1);
 
     count = 0;
-    for (SetIter* iter = set_iter_begin(copied_basicblock->output);
-         !set_iter_end(iter, copied_basicblock->output);
+    for (SetIter* iter = set_iter_begin(copied_basicblock->output); !set_iter_end(iter, copied_basicblock->output);
          iter = set_iter_next(iter, copied_basicblock->output)) {
         int* item = set_iter_item(iter, copied_basicblock->output);
         CU_ASSERT(*item == 4);
@@ -75,8 +73,7 @@ void test_basicblock_copy() {
     CU_ASSERT_EQUAL(count, 1);
 
     count = 0;
-    for (SetIter* iter = set_iter_begin(copied_basicblock->succ);
-         !set_iter_end(iter, copied_basicblock->succ);
+    for (SetIter* iter = set_iter_begin(copied_basicblock->succ); !set_iter_end(iter, copied_basicblock->succ);
          iter = set_iter_next(iter, copied_basicblock->succ)) {
         count++;
         int* item = set_iter_item(iter, copied_basicblock->succ);

@@ -39,12 +39,11 @@ CU_Suite* add_test_suite_decl_immcgen() {
 }
 
 void test_immcgen_local_scalar_decl() {
-    Srt* input = new_srt(
-        SRT_DECL_LIST, 2,         // non-terminal
-        new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c"))),
-        new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("i"))));
+    Srt* input = new_srt(SRT_DECL_LIST, 2,         // non-terminal
+                         new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                 new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c"))),
+                         new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                 new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("i"))));
 
     Vector* expected = new_vector(&t_immc);
 
@@ -54,12 +53,11 @@ void test_immcgen_local_scalar_decl() {
 }
 
 void test_immcgen_global_scalar_decl() {
-    Srt* input = new_srt(
-        SRT_DECL_LIST, 2,         // non-terminal
-        new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c"))),
-        new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("i"))));
+    Srt* input = new_srt(SRT_DECL_LIST, 2,         // non-terminal
+                         new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                 new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c"))),
+                         new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                 new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("i"))));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("c")));
@@ -76,12 +74,10 @@ void test_immcgen_local_array_decl() {
     Srt* input = new_srt(
         SRT_DECL_LIST, 2,         // non-terminal
         new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 5),
-                                   new_string("a"))),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 5), new_string("a"))),
         new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(
-                    SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 3), 2),
-                    new_string("b"))));
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 3), 2),
+                                   new_string("b"))));
 
     Vector* expected = new_vector(&t_immc);
 
@@ -94,12 +90,10 @@ void test_immcgen_global_array_decl() {
     Srt* input = new_srt(
         SRT_DECL_LIST, 2,         // non-terminal
         new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 5),
-                                   new_string("a"))),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 5), new_string("a"))),
         new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(
-                    SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 3), 2),
-                    new_string("b"))));
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 3), 2),
+                                   new_string("b"))));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("a")));
@@ -156,33 +150,29 @@ void test_immcgen_global_function_decl() {
 
 void test_immcgen_local_scalar_init() {
     Srt* input = new_srt(
-        SRT_DECL_LIST, 3, // non-terminal
-        new_srt(
-            SRT_INIT_DECL, 2, // non-terminal
-            new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c")),
-            new_srt(SRT_INIT, 1,                                                    // non-terminal
-                    new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
-                                   new_iliteral_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT),
-                                                    new_signed_iliteral(INTEGER_INT, 89))))),
+        SRT_DECL_LIST, 3,         // non-terminal
+        new_srt(SRT_INIT_DECL, 2, // non-terminal
+                new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c")),
+                new_srt(SRT_INIT, 1,                                                    // non-terminal
+                        new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+                                       new_iliteral_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT),
+                                                        new_signed_iliteral(INTEGER_INT, 89))))),
         new_srt(SRT_INIT_DECL, 2, // non-terminal
                 new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("i")),
+                new_srt(SRT_INIT, 1,                                                     // non-terminal
+                        new_dtyped_srt(SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                                                      1, // non-terminal
+                                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                         new_string("x"))),
+                                       new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                        new_signed_iliteral(INTEGER_INT, 2))))),
+        new_srt(SRT_INIT_DECL, 2, // non-terminal
+                new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("j")),
                 new_srt(SRT_INIT, 1, // non-terminal
                         new_dtyped_srt(
-                            SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                            new_dtyped_srt(
-                                SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
-                                1, // non-terminal
-                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                   new_string("x"))),
-                            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                             new_signed_iliteral(INTEGER_INT, 2))))),
-        new_srt(
-            SRT_INIT_DECL, 2, // non-terminal
-            new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("j")),
-            new_srt(SRT_INIT, 1,                                                   // non-terminal
-                    new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
-                                   new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR),
-                                                      new_string("y"))))));
+                            SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("y"))))));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
@@ -231,20 +221,18 @@ void test_immcgen_local_scalar_init() {
 }
 
 void test_immcgen_global_scalar_init() {
-    Srt* input = new_srt(
-        SRT_DECL_LIST, 2, // non-terminal
-        new_srt(
-            SRT_INIT_DECL, 2, // non-terminal
-            new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c")),
-            new_srt(SRT_INIT, 1,                                                    // non-terminal
-                    new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
-                                   new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                    new_signed_iliteral(INTEGER_INT, 89))))),
-        new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("i")),
-                new_srt(SRT_INIT, 1, // non-terminal
-                        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                         new_signed_iliteral(INTEGER_INT, 2)))));
+    Srt* input = new_srt(SRT_DECL_LIST, 2,         // non-terminal
+                         new_srt(SRT_INIT_DECL, 2, // non-terminal
+                                 new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c")),
+                                 new_srt(SRT_INIT, 1,                                                    // non-terminal
+                                         new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+                                                        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                         new_signed_iliteral(INTEGER_INT, 89))))),
+                         new_srt(SRT_INIT_DECL, 2, // non-terminal
+                                 new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("i")),
+                                 new_srt(SRT_INIT, 1, // non-terminal
+                                         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                          new_signed_iliteral(INTEGER_INT, 2)))));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("c")));
@@ -266,16 +254,13 @@ void test_immcgen_local_sliteral_init() {
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
 
     Srt* input = new_srt(
-        SRT_DECL_LIST, 1, // non-terminal
-        new_srt(
-            SRT_INIT_DECL, 2, // non-terminal
-            new_identifier_srt(SRT_DECL,
-                               new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
-                               new_string("s")),
-            new_srt(SRT_INIT, 1, // non-terminal
-                    new_sliteral_srt(SRT_STRING_EXPR,
-                                     new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
-                                     sliteral_copy(sliteral)))));
+        SRT_DECL_LIST, 1,         // non-terminal
+        new_srt(SRT_INIT_DECL, 2, // non-terminal
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
+                                   new_string("s")),
+                new_srt(SRT_INIT, 1, // non-terminal
+                        new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
+                                         sliteral_copy(sliteral)))));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -298,16 +283,13 @@ void test_immcgen_global_sliteral_init() {
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
 
     Srt* input = new_srt(
-        SRT_DECL_LIST, 1, // non-terminal
-        new_srt(
-            SRT_INIT_DECL, 2, // non-terminal
-            new_identifier_srt(SRT_DECL,
-                               new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
-                               new_string("s")),
-            new_srt(SRT_INIT, 1, // non-terminal
-                    new_sliteral_srt(SRT_STRING_EXPR,
-                                     new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
-                                     sliteral_copy(sliteral)))));
+        SRT_DECL_LIST, 1,         // non-terminal
+        new_srt(SRT_INIT_DECL, 2, // non-terminal
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
+                                   new_string("s")),
+                new_srt(SRT_INIT, 1, // non-terminal
+                        new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
+                                         sliteral_copy(sliteral)))));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("s")));
@@ -322,8 +304,7 @@ void test_immcgen_local_array_init() {
     Srt* input = new_srt(
         SRT_DECL_LIST, 2,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 2),
-                                   new_string("a")),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 2), new_string("a")),
                 new_srt(SRT_INIT, 2,         // non-terminal
                         new_srt(SRT_INIT, 1, // non-terminal
                                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
@@ -332,9 +313,8 @@ void test_immcgen_local_array_init() {
                                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                  new_signed_iliteral(INTEGER_INT, 2))))),
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(
-                    SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 2), 3),
-                    new_string("b")),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 2), 3),
+                                   new_string("b")),
                 new_srt(SRT_INIT, 3,                 // non-terminal
                         new_srt(SRT_INIT, 2,         // non-terminal
                                 new_srt(SRT_INIT, 1, // non-terminal
@@ -409,8 +389,7 @@ void test_immcgen_global_array_init() {
     Srt* input = new_srt(
         SRT_DECL_LIST, 2,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 2),
-                                   new_string("a")),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 2), new_string("a")),
                 new_srt(SRT_INIT, 2,         // non-terminal
                         new_srt(SRT_INIT, 1, // non-terminal
                                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
@@ -419,9 +398,8 @@ void test_immcgen_global_array_init() {
                                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                  new_signed_iliteral(INTEGER_INT, 2))))),
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(
-                    SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 2), 3),
-                    new_string("b")),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 2), 3),
+                                   new_string("b")),
                 new_srt(SRT_INIT, 3,                 // non-terminal
                         new_srt(SRT_INIT, 2,         // non-terminal
                                 new_srt(SRT_INIT, 1, // non-terminal

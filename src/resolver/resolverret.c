@@ -36,8 +36,7 @@ ResolverReturnDtype* new_resolverret_dtype_errors(Vector* errs) {
     return resolverret_dtype;
 }
 
-void resolverret_dtype_assign(Dtype** dtype_ptr, Vector** errs_ptr,
-                              ResolverReturnDtype* resolverret_dtype) {
+void resolverret_dtype_assign(Dtype** dtype_ptr, Vector** errs_ptr, ResolverReturnDtype* resolverret_dtype) {
     *dtype_ptr = resolverret_dtype->dtype;
     *errs_ptr = resolverret_dtype->errs;
     free(resolverret_dtype);
@@ -57,8 +56,7 @@ ResolverReturnDParams* new_resolverret_dparams_errors(Vector* errs) {
     return resolverret_dparams;
 }
 
-void resolverret_dparams_assign(Vector** dparams_ptr, Vector** errs_ptr,
-                                ResolverReturnDParams* resolverret_dparams) {
+void resolverret_dparams_assign(Vector** dparams_ptr, Vector** errs_ptr, ResolverReturnDParams* resolverret_dparams) {
     *dparams_ptr = resolverret_dparams->dparams;
     *errs_ptr = resolverret_dparams->errs;
     free(resolverret_dparams);
@@ -78,8 +76,7 @@ ResolverReturnDParam* new_resolverret_dparam_errors(Vector* errs) {
     return resolverret_dparam;
 }
 
-void resolverret_dparam_assign(DParam** dparam_ptr, Vector** errs_ptr,
-                               ResolverReturnDParam* resolverret_dparam) {
+void resolverret_dparam_assign(DParam** dparam_ptr, Vector** errs_ptr, ResolverReturnDParam* resolverret_dparam) {
     *dparam_ptr = resolverret_dparam->dparam;
     *errs_ptr = resolverret_dparam->errs;
     free(resolverret_dparam);

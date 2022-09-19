@@ -171,8 +171,7 @@ void test_set_iter() {
     set_add(set, item);
 
     int count = 0;
-    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set);
-         iter = set_iter_next(iter, set)) {
+    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set); iter = set_iter_next(iter, set)) {
         int* item = set_iter_item(iter, set);
         CU_ASSERT(*item == -1 || *item == 0 || *item == 1);
         count++;
@@ -184,8 +183,7 @@ void test_set_iter() {
     free(item);
 
     count = 0;
-    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set);
-         iter = set_iter_next(iter, set)) {
+    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set); iter = set_iter_next(iter, set)) {
         int* item = set_iter_item(iter, set);
         CU_ASSERT(*item == -1 || *item == 1);
         count++;
@@ -557,8 +555,7 @@ void test_set_union_foreign() {
     for (SetIter* iter = set_iter_begin(union_set); !set_iter_end(iter, union_set);
          iter = set_iter_next(iter, union_set)) {
         int* item = set_iter_item(iter, union_set);
-        CU_ASSERT(*item == -1 || *item == 0 || *item == 1 || *item == 2 || *item == 3 ||
-                  *item == 4);
+        CU_ASSERT(*item == -1 || *item == 0 || *item == 1 || *item == 2 || *item == 3 || *item == 4);
         count++;
     }
     CU_ASSERT_EQUAL(count, 6);

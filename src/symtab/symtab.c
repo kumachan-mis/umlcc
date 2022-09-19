@@ -17,9 +17,7 @@ SymbolTable* symboltable_copy(SymbolTable* table) {
     copied_table->symbol_map = map_copy(table->symbol_map);
     copied_table->memory_size = table->memory_size;
     copied_table->outer_scope = NULL;
-    if (table->outer_scope != NULL) {
-        copied_table->outer_scope = symboltable_copy(table->outer_scope);
-    }
+    if (table->outer_scope != NULL) copied_table->outer_scope = symboltable_copy(table->outer_scope);
     return copied_table;
 }
 

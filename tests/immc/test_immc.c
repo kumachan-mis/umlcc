@@ -385,8 +385,7 @@ void test_immc_tostring_label() {
     delete_immc(immc);
     free(immc_str);
 
-    immc =
-        new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("global_function_label"));
+    immc = new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("global_function_label"));
     immc_str = immc_tostring(immc);
     CU_ASSERT_STRING_EQUAL(immc_str, "\tglobal\n"
                                      "function global_function_label:\n");

@@ -5,10 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* x64_inst_formats[] = {"mov%c",  "movs%c%c", "movabs%c", "lea%c", "c%ct%c", "c%ctd",
-                            "push%c", "pop%c",    "add%c",    "sub%c", "imul%c", "idiv%c",
-                            "sal%c",  "sar%c",    "cmp%c",    "sete",  "setne",  "jmp",
-                            "je",     "jne",      "call",     "ret"};
+char* x64_inst_formats[] = {"mov%c", "movs%c%c", "movabs%c", "lea%c",  "c%ct%c", "c%ctd", "push%c", "pop%c",
+                            "add%c", "sub%c",    "imul%c",   "idiv%c", "sal%c",  "sar%c", "cmp%c",  "sete",
+                            "setne", "jmp",      "je",       "jne",    "call",   "ret"};
 
 X64Inst* new_x64inst(X64InstType type, X64Ope* src, X64Ope* dst) {
     X64Inst* x64inst = malloc(sizeof(X64Inst));
@@ -96,13 +95,13 @@ char* x64instcode_tostring(X64Inst* x64inst) {
             char* instcode_str = malloc(50 * sizeof(char));
             char suffix = '\0';
             if (x64inst->src != NULL &&
-                (x64inst->src->type == X64_OPERAND_SUFFIX ||
-                 x64inst->src->type == X64_OPERAND_REG || x64inst->src->type == X64_OPERAND_INT)) {
+                (x64inst->src->type == X64_OPERAND_SUFFIX || x64inst->src->type == X64_OPERAND_REG ||
+                 x64inst->src->type == X64_OPERAND_INT)) {
                 suffix = x64suffix_tochar(x64inst->src->suffix);
             }
             if (x64inst->dst != NULL &&
-                (x64inst->dst->type == X64_OPERAND_SUFFIX ||
-                 x64inst->dst->type == X64_OPERAND_REG || x64inst->dst->type == X64_OPERAND_INT)) {
+                (x64inst->dst->type == X64_OPERAND_SUFFIX || x64inst->dst->type == X64_OPERAND_REG ||
+                 x64inst->dst->type == X64_OPERAND_INT)) {
                 suffix = x64suffix_tochar(x64inst->dst->suffix);
             }
             sprintf(instcode_str, inst_format, suffix);

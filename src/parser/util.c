@@ -48,6 +48,5 @@ Error* consume_ctoken(Parser* parser, CTokenType ctoken_type) {
         parser->index++;
         return NULL;
     }
-    return new_error("Error: token %s expected, but got %s\n", ctoken_types[ctoken_type],
-                     ctoken_types[ctoken->type]);
+    return new_error("Error: token %s expected, but got %s\n", ctoken_types[ctoken_type], ctoken_types[ctoken->type]);
 }

@@ -64,8 +64,7 @@ void test_new_dtyped_srt() {
     Dtype* rhs_dtype = new_integer_dtype(DTYPE_INT);
     IntegerLiteral* lhs_iliteral = new_signed_iliteral(INTEGER_INT, 6);
     IntegerLiteral* rhs_iliteral = new_signed_iliteral(INTEGER_INT, 3);
-    Srt* srt = new_dtyped_srt(SRT_ADD_EXPR, dtype, 2,
-                              new_iliteral_srt(SRT_INT_EXPR, lhs_dtype, lhs_iliteral),
+    Srt* srt = new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, new_iliteral_srt(SRT_INT_EXPR, lhs_dtype, lhs_iliteral),
                               new_iliteral_srt(SRT_INT_EXPR, rhs_dtype, rhs_iliteral));
     Srt* child = NULL;
 

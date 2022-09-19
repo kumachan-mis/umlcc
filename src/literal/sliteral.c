@@ -9,8 +9,7 @@ BaseType t_sliteral = {
     .delete_object = (void (*)(void*))delete_sliteral,
 };
 
-char ascii[92] =
-    " !#$%&()*+,-./0123456789:;<=>@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+char ascii[92] = " !#$%&()*+,-./0123456789:;<=>@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
 StringLiteral* new_sliteral(char* value, int size) {
     StringLiteral* sliteral = malloc(sizeof(StringLiteral));

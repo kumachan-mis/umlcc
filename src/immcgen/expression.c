@@ -288,9 +288,7 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             if (symbol == NULL && immcgen->local_table != NULL) {
                 symbol = symboltable_search(immcgen->local_table, child->ident_name);
             }
-            if (symbol == NULL) {
-                symbol = symboltable_search(immcgen->global_table, child->ident_name);
-            }
+            if (symbol == NULL) symbol = symboltable_search(immcgen->global_table, child->ident_name);
             if (symbol->type == SYMBOL_LABEL) {
                 src = new_label_immcope(new_string(symbol->name));
             } else {
@@ -397,9 +395,7 @@ Vector* gen_primary_expr_immcode(Immcgen* immcgen) {
             if (symbol == NULL && immcgen->local_table != NULL) {
                 symbol = symboltable_search(immcgen->local_table, srt->ident_name);
             }
-            if (symbol == NULL) {
-                symbol = symboltable_search(immcgen->global_table, srt->ident_name);
-            }
+            if (symbol == NULL) symbol = symboltable_search(immcgen->global_table, srt->ident_name);
             if (symbol->type == SYMBOL_LABEL) {
                 src = new_label_immcope(new_string(symbol->name));
             } else {
