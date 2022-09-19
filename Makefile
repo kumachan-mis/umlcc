@@ -8,8 +8,6 @@ BIN_DIR := bin
 UMLCC    := umlcc
 SRC_MAIN := main
 SRC_DIR  := src
-OBJ_DIR  := $(BLD_DIR)/src/object
-COBJ_DIR := $(BLD_DIR)/src/cobject
 DEP_DIR  := $(BLD_DIR)/src/depend
 
 TEST_LIBS    := -lcunit
@@ -40,9 +38,21 @@ DEP_EXT  := .d
 MKDIR := mkdir -p
 RM    := rm -rf
 
+ifeq ($(COVERAGE),true)
+CFLAGS    += -O0 -fprofile-arcs -ftest-coverage
+TEST_LIBS += -lgcov
+OBJ_DIR   := $(BLD_DIR)/src/cobject
+else
+ifeq ($(DEBUG),true)
+CFLAGS    += -O0 -g -fsanitize=address -fno-omit-frame-pointer
+else
+CFLAGS    += -O3
+endif
+OBJ_DIR   := $(BLD_DIR)/src/object
+endif
+
 SRCS  := $(wildcard $(SRC_DIR)/*$(SRC_EXT)) $(wildcard $(SRC_DIR)/**/*$(SRC_EXT))
 OBJS  := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$(SRCS))
-COBJS := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(COBJ_DIR)/%$(OBJ_EXT),$(SRCS))
 DEPS  := $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(DEP_DIR)/%$(DEP_EXT),$(SRCS))
 
 TESTS     := $(wildcard $(TEST_DIR)/*$(TEST_EXT)) $(wildcard $(TEST_DIR)/**/*$(TEST_EXT))
@@ -85,17 +95,10 @@ $(BIN_DIR)/$(UMLCC): $(OBJS)
 	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) $^ -o $@
 
+$(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
 ifeq ($(COVERAGE),true)
-$(COBJ_DIR)/%$(OBJ_EXT): CFLAGS += -O0 -fprofile-arcs -ftest-coverage
-$(COBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
-	@$(RM) $(patsubst $(COBJ_DIR)/%$(OBJ_EXT),$(COBJ_DIR)/%$(GCDA_EXT),$@) \
-		   $(patsubst $(COBJ_DIR)/%$(OBJ_EXT),$(COBJ_DIR)/%$(GCNO_EXT),$@)
-else ifeq ($(DEBUG),true)
-$(OBJ_DIR)/%$(OBJ_EXT): CFLAGS += -O0 -g
-$(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
-else
-$(OBJ_DIR)/%$(OBJ_EXT): CFLAGS += -O3
-$(OBJ_DIR)/%$(OBJ_EXT): $(SRC_DIR)/%$(SRC_EXT) $(DEP_DIR)/%$(DEP_EXT)
+	@$(RM) $(patsubst $(OBJ_DIR)/%$(OBJ_EXT),$(OBJ_DIR)/%$(GCDA_EXT),$@) \
+		   $(patsubst $(OBJ_DIR)/%$(OBJ_EXT),$(OBJ_DIR)/%$(GCNO_EXT),$@)
 endif
 	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -104,22 +107,11 @@ $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
 	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -MP -MM $< -MF $@ -MT $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$<)
 
-ifeq ($(COVERAGE),true)
-$(BIN_DIR)/$(TEST): TEST_LIBS += -lgcov
-$(BIN_DIR)/$(TEST): $(filter-out $(COBJ_DIR)/$(SRC_MAIN)$(OBJ_EXT),$(COBJS)) $(TEST_OBJS)
-else
+
 $(BIN_DIR)/$(TEST): $(filter-out $(OBJ_DIR)/$(SRC_MAIN)$(OBJ_EXT),$(OBJS)) $(TEST_OBJS)
-endif
 	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) $^ $(TEST_LIBS) -o $@
 
-ifeq ($(COVERAGE),true)
-$(TEST_OBJ_DIR)/%$(OBJ_EXT): CFLAGS += -O0
-else ifeq ($(DEBUG),true)
-$(TEST_OBJ_DIR)/%$(OBJ_EXT): CFLAGS += -O0 -g
-else
-$(TEST_OBJ_DIR)/%$(OBJ_EXT): CFLAGS += -O3
-endif
 $(TEST_OBJ_DIR)/%$(OBJ_EXT): $(TEST_DIR)/%$(TEST_EXT) $(TEST_DEP_DIR)/%$(DEP_EXT)
 	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
