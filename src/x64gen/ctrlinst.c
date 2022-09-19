@@ -85,8 +85,7 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     Set* alive_reg_induces_set = create_alive_reg_induces_set(x64gen->liveseqs);
     int evacuation_count = 0;
     // TODO: consider case that evacuation_count is greater than NUM_CALLEE_SAVED_REG
-    for (SetIter* iter = set_iter_begin(alive_reg_induces_set);
-         !set_iter_end(iter, alive_reg_induces_set);
+    for (SetIter* iter = set_iter_begin(alive_reg_induces_set); !set_iter_end(iter, alive_reg_induces_set);
          iter = set_iter_next(iter, alive_reg_induces_set)) {
         int* caller_ref = set_iter_item(iter, alive_reg_induces_set);
         if (*caller_ref == immc->inst->dst->reg_id) continue;
@@ -135,8 +134,7 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     }
 
     evacuation_count = 0;
-    for (SetIter* iter = set_iter_begin(alive_reg_induces_set);
-         !set_iter_end(iter, alive_reg_induces_set);
+    for (SetIter* iter = set_iter_begin(alive_reg_induces_set); !set_iter_end(iter, alive_reg_induces_set);
          iter = set_iter_next(iter, alive_reg_induces_set)) {
         int* caller_ref = set_iter_item(iter, alive_reg_induces_set);
         if (*caller_ref == immc->inst->dst->reg_id) continue;

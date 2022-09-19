@@ -3,7 +3,7 @@ AllowShortCaseLabelsOnASingleLine: false
 AllowShortBlocksOnASingleLine: Empty
 AllowShortFunctionsOnASingleLine: Empty
 AllowShortIfStatementsOnASingleLine: WithoutElse
-ColumnLimit: 100
+ColumnLimit: 120
 IndentCaseLabels: true
 IndentWidth: 4
 PointerAlignment: Left

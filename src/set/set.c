@@ -74,8 +74,7 @@ void* set_iter_item(SetIter* iter, Set* set) {
 
 Set* set_intersection(Set* set, Set* other) {
     Set* intersection_set = new_set(set->t_item);
-    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set);
-         iter = set_iter_next(iter, set)) {
+    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set); iter = set_iter_next(iter, set)) {
         void* item = set_iter_item(iter, set);
         if (!set_contains(other, item)) continue;
         set_add(intersection_set, set->t_item->copy_object(item));
@@ -85,13 +84,11 @@ Set* set_intersection(Set* set, Set* other) {
 
 Set* set_union(Set* set, Set* other) {
     Set* union_set = new_set(set->t_item);
-    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set);
-         iter = set_iter_next(iter, set)) {
+    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set); iter = set_iter_next(iter, set)) {
         void* item = set_iter_item(iter, set);
         set_add(union_set, set->t_item->copy_object(item));
     }
-    for (SetIter* iter = set_iter_begin(other); !set_iter_end(iter, other);
-         iter = set_iter_next(iter, other)) {
+    for (SetIter* iter = set_iter_begin(other); !set_iter_end(iter, other); iter = set_iter_next(iter, other)) {
         void* item = set_iter_item(iter, other);
         set_add(union_set, other->t_item->copy_object(item));
     }
@@ -100,8 +97,7 @@ Set* set_union(Set* set, Set* other) {
 
 Set* set_difference(Set* set, Set* other) {
     Set* difference_set = new_set(set->t_item);
-    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set);
-         iter = set_iter_next(iter, set)) {
+    for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set); iter = set_iter_next(iter, set)) {
         void* item = set_iter_item(iter, set);
         if (set_contains(other, item)) continue;
         set_add(difference_set, set->t_item->copy_object(item));
@@ -110,8 +106,7 @@ Set* set_difference(Set* set, Set* other) {
 }
 
 int set_issubset(Set* set, Set* other) {
-    for (SetIter* iter = set_iter_begin(other); !set_iter_end(iter, other);
-         iter = set_iter_next(iter, other)) {
+    for (SetIter* iter = set_iter_begin(other); !set_iter_end(iter, other); iter = set_iter_next(iter, other)) {
         void* item = set_iter_item(iter, other);
         if (!set_contains(set, item)) return 0;
     }

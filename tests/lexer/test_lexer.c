@@ -52,8 +52,7 @@ void test_read_function_definition() {
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(expected,
-                new_identifier_ctoken(CTOKEN_IDENT, new_string("test_read_function_definition")));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("test_read_function_definition")));
     vector_push(expected, new_ctoken(CTOKEN_LPALEN));
     vector_push(expected, new_ctoken(CTOKEN_RPALEN));
     vector_push(expected, new_ctoken(CTOKEN_LBRACE));
@@ -272,8 +271,7 @@ void test_read_decimal_integer_constant() {
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 456)));
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 789)));
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 10)));
-    vector_push(expected,
-                new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2147483647)));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2147483647)));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
     run_lexer_test(input, expected);
@@ -290,8 +288,7 @@ void test_read_octal_integer_constant() {
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0123)));
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 05)));
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
-    vector_push(expected,
-                new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 017777777777)));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 017777777777)));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
     run_lexer_test(input, expected);
@@ -310,8 +307,7 @@ void test_read_hexadecimal_integer_constant() {
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0x7e)));
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0x598)));
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0X0)));
-    vector_push(expected,
-                new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0x7FFFFFFF)));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0x7FFFFFFF)));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
     run_lexer_test(input, expected);
@@ -385,10 +381,8 @@ void test_read_string_literal() {
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(new_string(""), 1)));
-    vector_push(expected,
-                new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(new_string("str literal"), 12)));
-    vector_push(expected,
-                new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(new_string("str\tliteral"), 12)));
+    vector_push(expected, new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(new_string("str literal"), 12)));
+    vector_push(expected, new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(new_string("str\tliteral"), 12)));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
     run_lexer_test(input, expected);

@@ -358,11 +358,10 @@ void test_x64gen_str_long() {
                 new_inst_x64(X64_INST_MOVX,                               // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID), // src
                              new_mem_x64ope(12)));                        // dst
-    vector_push(
-        expected,
-        new_inst_x64(X64_INST_MOVX,                                                     // inst
-                     new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_LONGLONG, 0x4B4A49U), // src
-                     new_mem_x64ope(4)));                                               // dst
+    vector_push(expected,
+                new_inst_x64(X64_INST_MOVX,                                                     // inst
+                             new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_LONGLONG, 0x4B4A49U), // src
+                             new_mem_x64ope(4)));                                               // dst
 
     run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
 

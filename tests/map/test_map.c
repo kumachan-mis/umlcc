@@ -209,8 +209,7 @@ void test_map_iter() {
     map_add(map, key, value);
 
     int count = 0;
-    for (MapIter* iter = map_iter_begin(map); !map_iter_end(iter, map);
-         iter = map_iter_next(iter, map)) {
+    for (MapIter* iter = map_iter_begin(map); !map_iter_end(iter, map); iter = map_iter_next(iter, map)) {
         value = map_iter_value(iter, map);
         CU_ASSERT(*value == 2 || *value == 5 || *value == 7 || *value == -1);
         count++;
@@ -220,8 +219,7 @@ void test_map_iter() {
     map_remove(map, "five");
 
     count = 0;
-    for (MapIter* iter = map_iter_begin(map); !map_iter_end(iter, map);
-         iter = map_iter_next(iter, map)) {
+    for (MapIter* iter = map_iter_begin(map); !map_iter_end(iter, map); iter = map_iter_next(iter, map)) {
         value = map_iter_value(iter, map);
         CU_ASSERT(*value == 2 || *value == 7 || *value == -1);
         count++;

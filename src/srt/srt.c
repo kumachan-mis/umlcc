@@ -97,14 +97,11 @@ Srt* srt_copy(Srt* srt) {
 
 int srt_islvalue(Srt* srt) {
     if (srt->dtype == NULL || !dtype_isobject(srt->dtype)) return 0;
-    return (srt->type == SRT_INDIR_EXPR || srt->type == SRT_IDENT_EXPR ||
-            srt->type == SRT_STRING_EXPR);
+    return (srt->type == SRT_INDIR_EXPR || srt->type == SRT_IDENT_EXPR || srt->type == SRT_STRING_EXPR);
 }
 
 int srt_ismodifiable(Srt* srt) {
-    if (srt->dtype == NULL || !dtype_isobject(srt->dtype) || srt->dtype->type == DTYPE_ARRAY) {
-        return 0;
-    }
+    if (srt->dtype == NULL || !dtype_isobject(srt->dtype) || srt->dtype->type == DTYPE_ARRAY) return 0;
     return srt->type == SRT_INDIR_EXPR || srt->type == SRT_IDENT_EXPR;
 }
 

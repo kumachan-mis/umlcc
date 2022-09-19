@@ -74,9 +74,7 @@ ResolverReturnDtype* resolve_decl_specifiers(Resolver* resolver) {
             if (symbol == NULL && resolver->local_table != NULL) {
                 symbol = symboltable_search(resolver->local_table, child->ident_name);
             }
-            if (symbol == NULL) {
-                symbol = symboltable_search(resolver->global_table, child->ident_name);
-            }
+            if (symbol == NULL) symbol = symboltable_search(resolver->global_table, child->ident_name);
             dtype = dtype_connect(dtype, dtype_copy(symbol->dtype->decoration->deco_dtype));
             break;
         }
@@ -275,8 +273,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                 break;
             default:
                 errs = new_vector(&t_error);
-                err = new_error("Error: unreachable statement (ast_type=%s)\n",
-                                ast_types[ast_ptr->type]);
+                err = new_error("Error: unreachable statement (ast_type=%s)\n", ast_types[ast_ptr->type]);
                 vector_push(errs, err);
                 break;
         }
@@ -438,8 +435,7 @@ ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
             break;
         default:
             errs = new_vector(&t_error);
-            err = new_error("Error: unreachable statement (dtype_type=%s)\n",
-                            dtype_types[dtype->type]);
+            err = new_error("Error: unreachable statement (dtype_type=%s)\n", dtype_types[dtype->type]);
             vector_push(errs, err);
             break;
     }
@@ -656,9 +652,7 @@ ResolverReturn* resolve_scalar_initializer(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    if (!dtype_equals(dtype, srt->dtype)) {
-        srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(dtype), 1, srt);
-    }
+    if (!dtype_equals(dtype, srt->dtype)) srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(dtype), 1, srt);
     srt = new_srt(SRT_INIT, 1, srt);
 
     return new_resolverret(srt);
@@ -670,9 +664,7 @@ ResolverReturn* resolve_zero_scalar_initializer(Resolver* resolver) {
 
     IntegerLiteral* zero_iliteral = new_signed_iliteral(INTEGER_INT, 0);
     srt = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), zero_iliteral);
-    if (!dtype_equals(dtype, srt->dtype)) {
-        srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(dtype), 1, srt);
-    }
+    if (!dtype_equals(dtype, srt->dtype)) srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(dtype), 1, srt);
 
     srt = new_srt(SRT_INIT, 1, srt);
     return new_resolverret(srt);

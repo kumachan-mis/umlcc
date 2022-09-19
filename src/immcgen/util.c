@@ -59,9 +59,7 @@ ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
     append_child_immcode(immcgen, codes, index);
     immcgen->srt = srt;
 
-    if (suffix == IMMC_SUFFIX_NONE) {
-        return new_reg_immcope(immcgen->expr_reg_suffix, immcgen->expr_reg_id);
-    }
+    if (suffix == IMMC_SUFFIX_NONE) return new_reg_immcope(immcgen->expr_reg_suffix, immcgen->expr_reg_id);
 
     ImmcOpe* src = new_reg_immcope(immcgen->expr_reg_suffix, immcgen->expr_reg_id);
     immcgen->next_reg_id++;
@@ -94,9 +92,7 @@ ImmcOpe* gen_child_ptr_immcope(Immcgen* immcgen, Vector* codes, int index) {
         if (symbol == NULL && immcgen->local_table != NULL) {
             symbol = symboltable_search(immcgen->local_table, child->ident_name);
         }
-        if (symbol == NULL) {
-            symbol = symboltable_search(immcgen->global_table, child->ident_name);
-        }
+        if (symbol == NULL) symbol = symboltable_search(immcgen->global_table, child->ident_name);
         if (symbol->type == SYMBOL_LABEL) return new_label_immcope(new_string(symbol->name));
         return new_mem_immcope(symbol->memory_offset);
     }

@@ -7,8 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void append_mov_code(Vector* codes, int src_reg_id, X64Suffix src_suffix, int dst_reg_id,
-                     X64Suffix dst_suffix) {
+void append_mov_code(Vector* codes, int src_reg_id, X64Suffix src_suffix, int dst_reg_id, X64Suffix dst_suffix) {
     if (src_suffix >= dst_suffix) {
         if (src_reg_id == dst_reg_id) return;
         X64Ope* src = new_reg_x64ope(dst_suffix, src_reg_id);

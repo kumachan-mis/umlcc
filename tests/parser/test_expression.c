@@ -101,28 +101,26 @@ void test_parse_logical_or_expr() {
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected = new_ast(
-        AST_LOR_EXPR, 2, // non-terminal
-        new_ast(
-            AST_LOR_EXPR, 2,                   // non-terminal
-            new_ast(AST_LOR_EXPR, 2,           // non-terminal
-                    new_ast(AST_EQUAL_EXPR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
-                    new_ast(AST_EQUAL_EXPR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
-                            new_ast(AST_SUB_EXPR, 2, // non-terminal
-                                    new_identifier_ast(AST_IDENT_EXPR, new_string("m")),
-                                    new_iliteral_ast(AST_INT_EXPR,
-                                                     new_signed_iliteral(INTEGER_INT, 1))))),
-            new_ast(AST_EQUAL_EXPR, 2, // non-terminal
-                    new_identifier_ast(AST_IDENT_EXPR, new_string("j")),
-                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)))),
-        new_ast(AST_EQUAL_EXPR, 2, // non-terminal
-                new_identifier_ast(AST_IDENT_EXPR, new_string("j")),
-                new_ast(AST_SUB_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("n")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)))));
+    Ast* expected =
+        new_ast(AST_LOR_EXPR, 2,                           // non-terminal
+                new_ast(AST_LOR_EXPR, 2,                   // non-terminal
+                        new_ast(AST_LOR_EXPR, 2,           // non-terminal
+                                new_ast(AST_EQUAL_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
+                                new_ast(AST_EQUAL_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                        new_ast(AST_SUB_EXPR, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_EXPR, new_string("m")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))),
+                        new_ast(AST_EQUAL_EXPR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("j")),
+                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)))),
+                new_ast(AST_EQUAL_EXPR, 2, // non-terminal
+                        new_identifier_ast(AST_IDENT_EXPR, new_string("j")),
+                        new_ast(AST_SUB_EXPR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("n")),
+                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)))));
 
     run_expr_parser_test(input, expected);
 
@@ -141,15 +139,14 @@ void test_parse_logical_and_expr() {
     vector_push(input, new_ctoken(CTOKEN_RPALEN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected =
-        new_ast(AST_LAND_EXPR, 2,           // non-terminal
-                new_ast(AST_NEQUAL_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("check")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
-                new_ast(AST_CALL_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("validate")),
-                        new_ast(AST_ARG_LIST, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_EXPR, new_string("object")))));
+    Ast* expected = new_ast(AST_LAND_EXPR, 2,           // non-terminal
+                            new_ast(AST_NEQUAL_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("check")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
+                            new_ast(AST_CALL_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("validate")),
+                                    new_ast(AST_ARG_LIST, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_EXPR, new_string("object")))));
 
     run_expr_parser_test(input, expected);
 
@@ -167,14 +164,13 @@ void test_parse_equal_expr() {
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 8)));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected =
-        new_ast(AST_EQUAL_EXPR, 2,       // non-terminal
-                new_ast(AST_SUB_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))),
-                new_ast(AST_DIV_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 8))));
+    Ast* expected = new_ast(AST_EQUAL_EXPR, 2,       // non-terminal
+                            new_ast(AST_SUB_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))),
+                            new_ast(AST_DIV_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 8))));
 
     run_expr_parser_test(input, expected);
 
@@ -190,12 +186,11 @@ void test_parse_not_equal_expr() {
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected =
-        new_ast(AST_NEQUAL_EXPR, 2,        // non-terminal
-                new_ast(AST_EQUAL_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("zero_flag")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
-                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
+    Ast* expected = new_ast(AST_NEQUAL_EXPR, 2,        // non-terminal
+                            new_ast(AST_EQUAL_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("zero_flag")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
 
     run_expr_parser_test(input, expected);
 
@@ -211,12 +206,11 @@ void test_parse_add_expr() {
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected =
-        new_ast(AST_ADD_EXPR, 2, // non-terminal
-                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3)),
-                new_ast(AST_MUL_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("n")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))));
+    Ast* expected = new_ast(AST_ADD_EXPR, 2, // non-terminal
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3)),
+                            new_ast(AST_MUL_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("n")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))));
 
     run_expr_parser_test(input, expected);
 
@@ -232,12 +226,11 @@ void test_parse_subtract_expr() {
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 6)));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected =
-        new_ast(AST_SUB_EXPR, 2,         // non-terminal
-                new_ast(AST_ADD_EXPR, 2, // non-terminal
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3)),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4))),
-                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6)));
+    Ast* expected = new_ast(AST_SUB_EXPR, 2,         // non-terminal
+                            new_ast(AST_ADD_EXPR, 2, // non-terminal
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3)),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4))),
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6)));
 
     run_expr_parser_test(input, expected);
 
@@ -287,12 +280,11 @@ void test_parse_modulo_expr() {
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 5)));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected =
-        new_ast(AST_MOD_EXPR, 2,         // non-terminal
-                new_ast(AST_MUL_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("value")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 9))),
-                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)));
+    Ast* expected = new_ast(AST_MOD_EXPR, 2,         // non-terminal
+                            new_ast(AST_MUL_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("value")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 9))),
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)));
 
     run_expr_parser_test(input, expected);
 
@@ -308,11 +300,10 @@ void test_parse_address_expr() {
     vector_push(input, new_ctoken(CTOKEN_RBRACKET));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected =
-        new_ast(AST_ADDR_EXPR, 1,          // non-terminal
-                new_ast(AST_SUBSC_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))));
+    Ast* expected = new_ast(AST_ADDR_EXPR, 1,          // non-terminal
+                            new_ast(AST_SUBSC_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))));
 
     run_expr_parser_test(input, expected);
 
@@ -361,14 +352,13 @@ void test_parse_call_expr() {
     vector_push(input, new_ctoken(CTOKEN_RPALEN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected = new_ast(
-        AST_CALL_EXPR, 2, // non-terminal
-        new_identifier_ast(AST_IDENT_EXPR, new_string("function")),
-        new_ast(AST_ARG_LIST, 2,            // non-terminal
-                new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 7))),
-                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))));
+    Ast* expected = new_ast(AST_CALL_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("function")),
+                            new_ast(AST_ARG_LIST, 2,            // non-terminal
+                                    new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 7))),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))));
 
     run_expr_parser_test(input, expected);
 
@@ -386,12 +376,11 @@ void test_parse_subscription_expr() {
     vector_push(input, new_ctoken(CTOKEN_RBRACKET));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected =
-        new_ast(AST_SUBSC_EXPR, 2,         // non-terminal
-                new_ast(AST_SUBSC_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("array")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
-                new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
+    Ast* expected = new_ast(AST_SUBSC_EXPR, 2,         // non-terminal
+                            new_ast(AST_SUBSC_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("array")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
 
     run_expr_parser_test(input, expected);
 
@@ -456,11 +445,10 @@ void test_parse_parenthesized_expr() {
     vector_push(input, new_ctoken(CTOKEN_RPALEN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected =
-        new_ast(AST_LNOT_EXPR, 1,           // non-terminal
-                new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
-                        new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 88))));
+    Ast* expected = new_ast(AST_LNOT_EXPR, 1,           // non-terminal
+                            new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
+                                    new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 88))));
 
     run_expr_parser_test(input, expected);
 

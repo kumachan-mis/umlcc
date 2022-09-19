@@ -5,8 +5,8 @@
 void test_x64gen_sal_reg_int();
 void test_x64gen_sar_reg_int();
 
-void run_shrotinst_x64gen_test(Vector* __restrict__ input_immcs,
-                               Vector* __restrict__ input_liveseqs, Vector* __restrict__ expected);
+void run_shrotinst_x64gen_test(Vector* __restrict__ input_immcs, Vector* __restrict__ input_liveseqs,
+                               Vector* __restrict__ expected);
 
 CU_Suite* add_test_suite_shrotinst_x64gen() {
     CU_Suite* suite = CU_add_suite("test_suite_shrotinst_x64gen", NULL, NULL);
@@ -103,8 +103,8 @@ void test_x64gen_sar_reg_int() {
     delete_vector(expected);
 }
 
-void run_shrotinst_x64gen_test(Vector* __restrict__ input_immcs,
-                               Vector* __restrict__ input_liveseqs, Vector* __restrict__ expected) {
+void run_shrotinst_x64gen_test(Vector* __restrict__ input_immcs, Vector* __restrict__ input_liveseqs,
+                               Vector* __restrict__ expected) {
     X64gen* x64gen = new_x64gen(input_immcs, input_liveseqs);
 
     Vector* actual = new_vector(&t_x64);

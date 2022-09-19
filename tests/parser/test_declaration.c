@@ -15,8 +15,7 @@ void test_parse_list_init_empty();
 void test_parse_list_init_without_trailing_comma();
 void test_parse_list_init_with_trailing_comma();
 
-void run_decl_parser_test(Vector* __restrict__ input, Set* __restrict__ typedef_names_set,
-                          Ast* __restrict__ expected);
+void run_decl_parser_test(Vector* __restrict__ input, Set* __restrict__ typedef_names_set, Ast* __restrict__ expected);
 
 CU_Suite* add_test_suite_decl_parser() {
     CU_Suite* suite = CU_add_suite("test_suite_decl_parser", NULL, NULL);
@@ -41,13 +40,12 @@ void test_parse_char_decl() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                        new_ast(AST_TYPE_CHAR, 0)),
-                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
-                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("c")))));
+    Ast* expected = new_ast(AST_DECL, 2,                    // non-terminal
+                            new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                    new_ast(AST_TYPE_CHAR, 0)),
+                            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                    new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("c")))));
 
     run_decl_parser_test(input, NULL, expected);
 
@@ -61,13 +59,12 @@ void test_parse_int_decl() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                        new_ast(AST_TYPE_INT, 0)),
-                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
-                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("i")))));
+    Ast* expected = new_ast(AST_DECL, 2,                    // non-terminal
+                            new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                    new_ast(AST_TYPE_INT, 0)),
+                            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                    new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("i")))));
 
     run_decl_parser_test(input, NULL, expected);
 
@@ -86,18 +83,17 @@ void test_parse_pointer_decl() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(AST_INIT_DECLOR_LIST, 2,           // non-terminal
-                new_ast(AST_INIT_DECLOR, 1,        // non-terminal
-                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("p")))),
-                new_ast(AST_INIT_DECLOR, 1,                // non-terminal
-                        new_ast(AST_PTR_DECLOR, 1,         // non-terminal
-                                new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("q")))))));
+    Ast* expected = new_ast(AST_DECL, 2,                    // non-terminal
+                            new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                    new_ast(AST_TYPE_INT, 0)),
+                            new_ast(AST_INIT_DECLOR_LIST, 2,           // non-terminal
+                                    new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                                            new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("p")))),
+                                    new_ast(AST_INIT_DECLOR, 1,                // non-terminal
+                                            new_ast(AST_PTR_DECLOR, 1,         // non-terminal
+                                                    new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("q")))))));
 
     run_decl_parser_test(input, NULL, expected);
 
@@ -156,16 +152,13 @@ void test_parse_array_decl() {
                     new_ast(AST_ARRAY_DECLOR, 2,         // non-terminal
                             new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
                                     new_identifier_ast(AST_IDENT_DECLOR, new_string("c")),
-                                    new_iliteral_ast(AST_INT_EXPR,
-                                                     new_signed_iliteral(INTEGER_INT, 3))),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6)))),
             new_ast(AST_INIT_DECLOR, 1,                  // non-terminal
                     new_ast(AST_ARRAY_DECLOR, 2,         // non-terminal
                             new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                                    new_ast(AST_PTR_DECLOR, 1,
-                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("d"))),
-                                    new_iliteral_ast(AST_INT_EXPR,
-                                                     new_signed_iliteral(INTEGER_INT, 4))),
+                                    new_ast(AST_PTR_DECLOR, 1, new_identifier_ast(AST_IDENT_DECLOR, new_string("d"))),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4))),
                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
 
     run_decl_parser_test(input, NULL, expected);
@@ -198,39 +191,36 @@ void test_parse_function_decl() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_CHAR, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 3,                   // non-terminal
-            new_ast(AST_INIT_DECLOR, 1,                // non-terminal
-                    new_ast(AST_FUNC_DECLOR, 2,        // non-terminal
-                            new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("f"))),
-                            new_ast(AST_PARAM_LIST, 0))),
-            new_ast(
-                AST_INIT_DECLOR, 1,         // non-terminal
-                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_DECLOR, new_string("g")),
-                        new_ast(AST_PARAM_LIST, 1,                      // non-terminal
-                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                                new_ast(AST_TYPE_INT, 0)),
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("a")))))),
-            new_ast(
-                AST_INIT_DECLOR, 1,         // non-terminal
-                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_DECLOR, new_string("h")),
-                        new_ast(AST_PARAM_LIST, 2,                      // non-terminal
-                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                                new_ast(AST_TYPE_INT, 0)),
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("b"))),
-                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                                new_ast(AST_TYPE_INT, 0)),
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("c"))))))));
+    Ast* expected =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_CHAR, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 3,                   // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,                // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2,        // non-terminal
+                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("f"))),
+                                        new_ast(AST_PARAM_LIST, 0))),
+                        new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("g")),
+                                        new_ast(AST_PARAM_LIST, 1,                      // non-terminal
+                                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_INT, 0)),
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("a")))))),
+                        new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("h")),
+                                        new_ast(AST_PARAM_LIST, 2,                      // non-terminal
+                                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_INT, 0)),
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("b"))),
+                                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_INT, 0)),
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("c"))))))));
 
     run_decl_parser_test(input, NULL, expected);
 
@@ -263,35 +253,30 @@ void test_parse_parameter_decl() {
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                 new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1, // non-terminal
-            new_ast(
-                AST_INIT_DECLOR, 1, // non-terminal
-                new_ast(
-                    AST_FUNC_DECLOR, 2, // non-terminal
-                    new_identifier_ast(AST_IDENT_DECLOR, new_string("func")),
-                    new_ast(
-                        AST_PARAM_LIST, 2,                      // non-terminal
-                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                        new_ast(AST_TYPE_INT, 0)),
-                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("a")),
-                                        new_iliteral_ast(AST_INT_EXPR,
-                                                         new_signed_iliteral(INTEGER_INT, 5)))),
-                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                        new_ast(AST_TYPE_CHAR, 0)),
-                                new_ast(
-                                    AST_FUNC_DECLOR, 2,        // non-terminal
-                                    new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("f"))),
-                                    new_ast(AST_PARAM_LIST, 1,                      // non-terminal
-                                            new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                                    new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                                            new_ast(AST_TYPE_INT, 0)),
-                                                    new_identifier_ast(AST_IDENT_DECLOR,
-                                                                       new_string("p")))))))))));
+        new_ast(AST_INIT_DECLOR_LIST, 1,            // non-terminal
+                new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                        new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("func")),
+                                new_ast(AST_PARAM_LIST, 2,                      // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                        new_ast(AST_TYPE_INT, 0)),
+                                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("a")),
+                                                        new_iliteral_ast(AST_INT_EXPR,
+                                                                         new_signed_iliteral(INTEGER_INT, 5)))),
+                                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                        new_ast(AST_TYPE_CHAR, 0)),
+                                                new_ast(AST_FUNC_DECLOR, 2,        // non-terminal
+                                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("f"))),
+                                                        new_ast(AST_PARAM_LIST, 1,                      // non-terminal
+                                                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                                                new_ast(AST_TYPE_INT, 0)),
+                                                                        new_identifier_ast(AST_IDENT_DECLOR,
+                                                                                           new_string("p")))))))))));
 
     run_decl_parser_test(input, NULL, expected);
 
@@ -308,13 +293,12 @@ void test_parse_typedef_decl() {
     Set* typedef_names_set = new_set(&t_hashable_string);
     set_add(typedef_names_set, new_string("test_type"));
 
-    Ast* expected =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                        new_identifier_ast(AST_TYPEDEF_NAME, new_string("test_type"))),
-                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
-                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("x")))));
+    Ast* expected = new_ast(AST_DECL, 2,                    // non-terminal
+                            new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                    new_identifier_ast(AST_TYPEDEF_NAME, new_string("test_type"))),
+                            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                    new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("x")))));
 
     run_decl_parser_test(input, typedef_names_set, expected);
 
@@ -332,17 +316,16 @@ void test_parse_expr_init() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1,    // non-terminal
-            new_ast(AST_INIT_DECLOR, 2, // non-terminal
-                    new_identifier_ast(AST_IDENT_DECLOR, new_string("scalar")),
-                    new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
+    Ast* expected =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("scalar")),
+                                new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
 
     run_decl_parser_test(input, NULL, expected);
 
@@ -362,17 +345,16 @@ void test_parse_list_init_empty() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1,             // non-terminal
-            new_ast(AST_INIT_DECLOR, 2,          // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
-                    new_ast(AST_INIT_LIST, 0))));
+    Ast* expected =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
+                                new_ast(AST_INIT_LIST, 0))));
 
     run_decl_parser_test(input, NULL, expected);
 
@@ -395,19 +377,18 @@ void test_parse_list_init_without_trailing_comma() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1,             // non-terminal
-            new_ast(AST_INIT_DECLOR, 2,          // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))),
-                    new_ast(AST_INIT_LIST, 2, // non-terminal
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
+    Ast* expected =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))),
+                                new_ast(AST_INIT_LIST, 2, // non-terminal
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
 
     run_decl_parser_test(input, NULL, expected);
 
@@ -429,26 +410,24 @@ void test_parse_list_init_with_trailing_comma() {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1,             // non-terminal
-            new_ast(AST_INIT_DECLOR, 2,          // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))),
-                    new_ast(AST_INIT_LIST, 1, // non-terminal
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
+    Ast* expected =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))),
+                                new_ast(AST_INIT_LIST, 1, // non-terminal
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
 
     run_decl_parser_test(input, NULL, expected);
 
     delete_ast(expected);
 }
 
-void run_decl_parser_test(Vector* __restrict__ input, Set* __restrict__ typedef_names_set,
-                          Ast* __restrict__ expected) {
+void run_decl_parser_test(Vector* __restrict__ input, Set* __restrict__ typedef_names_set, Ast* __restrict__ expected) {
     Parser* parser = new_parser(input);
     if (typedef_names_set != NULL) {
         delete_set(parser->typedef_names_set);

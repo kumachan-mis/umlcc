@@ -80,8 +80,7 @@ ImmcOpe* new_int_immcope(ImmcSuffix suffix, IntegerLiteral* iliteral) {
 ImmcOpe* new_signed_immcope(ImmcSuffix suffix, IntegerLiteralType type, long long value) {
     return new_int_immcope(suffix, new_signed_iliteral(type, value));
 }
-ImmcOpe* new_unsigned_immcope(ImmcSuffix suffix, IntegerLiteralType type,
-                              unsigned long long value) {
+ImmcOpe* new_unsigned_immcope(ImmcSuffix suffix, IntegerLiteralType type, unsigned long long value) {
     return new_int_immcope(suffix, new_unsigned_iliteral(type, value));
 }
 

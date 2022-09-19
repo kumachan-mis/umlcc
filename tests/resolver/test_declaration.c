@@ -58,19 +58,17 @@ CU_Suite* add_test_suite_decl_resolver() {
 }
 
 void test_resolve_char_decl() {
-    Ast* local_input =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                        new_ast(AST_TYPE_CHAR, 0)),
-                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
-                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("c")))));
+    Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
+                               new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                       new_ast(AST_TYPE_CHAR, 0)),
+                               new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                       new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                               new_identifier_ast(AST_IDENT_DECLOR, new_string("c")))));
     Ast* global_input = ast_copy(local_input);
 
-    Srt* expected = new_srt(
-        SRT_DECL_LIST, 1,         // non-terminal
-        new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c"))));
+    Srt* expected = new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                    new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c"))));
 
     run_local_decl_resolver_test(local_input, NULL, expected);
     run_global_decl_resolver_test(global_input, NULL, expected);
@@ -79,19 +77,17 @@ void test_resolve_char_decl() {
 }
 
 void test_resolve_int_decl() {
-    Ast* local_input =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                        new_ast(AST_TYPE_INT, 0)),
-                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
-                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("i")))));
+    Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
+                               new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                       new_ast(AST_TYPE_INT, 0)),
+                               new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                       new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                               new_identifier_ast(AST_IDENT_DECLOR, new_string("i")))));
     Ast* global_input = ast_copy(local_input);
 
-    Srt* expected = new_srt(
-        SRT_DECL_LIST, 1,         // non-terminal
-        new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("i"))));
+    Srt* expected = new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                    new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("i"))));
 
     run_local_decl_resolver_test(local_input, NULL, expected);
     run_global_decl_resolver_test(global_input, NULL, expected);
@@ -100,29 +96,27 @@ void test_resolve_int_decl() {
 }
 
 void test_resolve_pointer_decl() {
-    Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(AST_INIT_DECLOR_LIST, 2,           // non-terminal
-                new_ast(AST_INIT_DECLOR, 1,        // non-terminal
-                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("p")))),
-                new_ast(AST_INIT_DECLOR, 1,                // non-terminal
-                        new_ast(AST_PTR_DECLOR, 1,         // non-terminal
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 2,           // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,        // non-terminal
                                 new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("q")))))));
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("p")))),
+                        new_ast(AST_INIT_DECLOR, 1,                // non-terminal
+                                new_ast(AST_PTR_DECLOR, 1,         // non-terminal
+                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("q")))))));
     Ast* global_input = ast_copy(local_input);
 
-    Srt* expected = new_srt(
-        SRT_DECL_LIST, 2,         // non-terminal
-        new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
-                                   new_string("p"))),
-        new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(
-                    SRT_DECL, new_pointer_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT))),
-                    new_string("q"))));
+    Srt* expected =
+        new_srt(SRT_DECL_LIST, 2,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("p"))),
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_pointer_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT))),
+                                           new_string("q"))));
 
     run_local_decl_resolver_test(local_input, NULL, expected);
     run_global_decl_resolver_test(global_input, NULL, expected);
@@ -131,43 +125,38 @@ void test_resolve_pointer_decl() {
 }
 
 void test_resolve_array_decl() {
-    Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 3,             // non-terminal
-            new_ast(AST_INIT_DECLOR, 1,          // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_DECLOR, new_string("a")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)))),
-            new_ast(AST_INIT_DECLOR, 1,                // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2,       // non-terminal
-                            new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("b"))),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 8)))),
-            new_ast(AST_INIT_DECLOR, 1,                  // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2,         // non-terminal
-                            new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("c")),
-                                    new_iliteral_ast(AST_INT_EXPR,
-                                                     new_signed_iliteral(INTEGER_INT, 6))),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))))));
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 3,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("a")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)))),
+                        new_ast(AST_INIT_DECLOR, 1,                // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2,       // non-terminal
+                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("b"))),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 8)))),
+                        new_ast(AST_INIT_DECLOR, 1,                  // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2,         // non-terminal
+                                        new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("c")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6))),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 3,         // non-terminal
         new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 5),
-                                   new_string("a"))),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 5), new_string("a"))),
         new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(
-                    SRT_DECL, new_array_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 8),
-                    new_string("b"))),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 8),
+                                   new_string("b"))),
         new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(
-                    SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 6), 3),
-                    new_string("c"))));
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 6), 3),
+                                   new_string("c"))));
 
     run_local_decl_resolver_test(local_input, NULL, expected);
     run_global_decl_resolver_test(global_input, NULL, expected);
@@ -176,39 +165,36 @@ void test_resolve_array_decl() {
 }
 
 void test_resolve_function_decl() {
-    Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_CHAR, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 3,                   // non-terminal
-            new_ast(AST_INIT_DECLOR, 1,                // non-terminal
-                    new_ast(AST_FUNC_DECLOR, 2,        // non-terminal
-                            new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("f"))),
-                            new_ast(AST_PARAM_LIST, 0))),
-            new_ast(
-                AST_INIT_DECLOR, 1,         // non-terminal
-                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_DECLOR, new_string("g")),
-                        new_ast(AST_PARAM_LIST, 1,                      // non-terminal
-                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                                new_ast(AST_TYPE_INT, 0)),
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("a")))))),
-            new_ast(
-                AST_INIT_DECLOR, 1,         // non-terminal
-                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_DECLOR, new_string("h")),
-                        new_ast(AST_PARAM_LIST, 2,                      // non-terminal
-                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                                new_ast(AST_TYPE_INT, 0)),
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("b"))),
-                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                                new_ast(AST_TYPE_INT, 0)),
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("c"))))))));
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_CHAR, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 3,                   // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,                // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2,        // non-terminal
+                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("f"))),
+                                        new_ast(AST_PARAM_LIST, 0))),
+                        new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("g")),
+                                        new_ast(AST_PARAM_LIST, 1,                      // non-terminal
+                                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_INT, 0)),
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("a")))))),
+                        new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("h")),
+                                        new_ast(AST_PARAM_LIST, 2,                      // non-terminal
+                                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_INT, 0)),
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("b"))),
+                                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_INT, 0)),
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("c"))))))));
     Ast* global_input = ast_copy(local_input);
 
     Vector* fparams = new_vector(&t_dparam);
@@ -242,35 +228,30 @@ void test_resolve_parameter_decl() {
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                 new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1, // non-terminal
-            new_ast(
-                AST_INIT_DECLOR, 1, // non-terminal
-                new_ast(
-                    AST_FUNC_DECLOR, 2, // non-terminal
-                    new_identifier_ast(AST_IDENT_DECLOR, new_string("func")),
-                    new_ast(
-                        AST_PARAM_LIST, 2,                      // non-terminal
-                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                        new_ast(AST_TYPE_INT, 0)),
-                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("a")),
-                                        new_iliteral_ast(AST_INT_EXPR,
-                                                         new_signed_iliteral(INTEGER_INT, 5)))),
-                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                        new_ast(AST_TYPE_CHAR, 0)),
-                                new_ast(
-                                    AST_FUNC_DECLOR, 2,        // non-terminal
-                                    new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("f"))),
-                                    new_ast(AST_PARAM_LIST, 1,                      // non-terminal
-                                            new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                                    new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                                                            new_ast(AST_TYPE_INT, 0)),
-                                                    new_identifier_ast(AST_IDENT_DECLOR,
-                                                                       new_string("p")))))))))));
+        new_ast(AST_INIT_DECLOR_LIST, 1,            // non-terminal
+                new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                        new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("func")),
+                                new_ast(AST_PARAM_LIST, 2,                      // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                        new_ast(AST_TYPE_INT, 0)),
+                                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("a")),
+                                                        new_iliteral_ast(AST_INT_EXPR,
+                                                                         new_signed_iliteral(INTEGER_INT, 5)))),
+                                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                        new_ast(AST_TYPE_CHAR, 0)),
+                                                new_ast(AST_FUNC_DECLOR, 2,        // non-terminal
+                                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("f"))),
+                                                        new_ast(AST_PARAM_LIST, 1,                      // non-terminal
+                                                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
+                                                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                                                                new_ast(AST_TYPE_INT, 0)),
+                                                                        new_identifier_ast(AST_IDENT_DECLOR,
+                                                                                           new_string("p")))))))))));
     Ast* global_input = ast_copy(local_input);
 
     Dtype* adtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
@@ -278,8 +259,7 @@ void test_resolve_parameter_decl() {
 
     Vector* fparams = new_vector(&t_dparam);
     vector_push(fparams, new_dparam(new_string("p"), new_integer_dtype(DTYPE_INT)));
-    Dtype* fdtype = new_pointer_dtype(
-        new_function_dtype(fparams, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
+    Dtype* fdtype = new_pointer_dtype(new_function_dtype(fparams, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
     // function parameter is converted to pointer to function
 
     Vector* func_params = new_vector(&t_dparam);
@@ -298,13 +278,12 @@ void test_resolve_parameter_decl() {
 }
 
 void test_resolve_typedef_decl() {
-    Ast* local_input =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                        new_identifier_ast(AST_TYPEDEF_NAME, new_string("test_type"))),
-                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
-                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("x")))));
+    Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
+                               new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                       new_identifier_ast(AST_TYPEDEF_NAME, new_string("test_type"))),
+                               new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                       new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                               new_identifier_ast(AST_IDENT_DECLOR, new_string("x")))));
     Ast* global_input = ast_copy(local_input);
 
     Dtype* test_dtype = NULL;
@@ -317,8 +296,7 @@ void test_resolve_typedef_decl() {
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)),
-                                   new_string("x"))));
+                new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("x"))));
 
     run_local_decl_resolver_test(local_input, local_table, expected);
     run_global_decl_resolver_test(global_input, global_table, expected);
@@ -327,17 +305,16 @@ void test_resolve_typedef_decl() {
 }
 
 void test_resolve_scalar_init() {
-    Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1,    // non-terminal
-            new_ast(AST_INIT_DECLOR, 2, // non-terminal
-                    new_identifier_ast(AST_IDENT_DECLOR, new_string("scalar")),
-                    new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("scalar")),
+                                new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
     Ast* global_input = ast_copy(local_input);
 
     SymbolTable* local_table = new_symboltable();
@@ -349,16 +326,14 @@ void test_resolve_scalar_init() {
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
                 new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("scalar")),
-                new_srt(SRT_INIT, 1, // non-terminal
-                        new_dtyped_srt(
-                            SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                            new_dtyped_srt(
-                                SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
-                                1, // non-terminal
-                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                   new_string("x"))),
-                            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                             new_signed_iliteral(INTEGER_INT, 2))))));
+                new_srt(SRT_INIT, 1,                                                     // non-terminal
+                        new_dtyped_srt(SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                                                      1, // non-terminal
+                                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                         new_string("x"))),
+                                       new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                        new_signed_iliteral(INTEGER_INT, 2))))));
 
     run_local_decl_resolver_test(local_input, local_table, expected);
     run_global_decl_resolver_test(global_input, global_table, expected);
@@ -367,25 +342,23 @@ void test_resolve_scalar_init() {
 }
 
 void test_resolve_scalar_init_enclosed() {
-    Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1,    // non-terminal
-            new_ast(AST_INIT_DECLOR, 2, // non-terminal
-                    new_identifier_ast(AST_IDENT_DECLOR, new_string("scalar")),
-                    new_ast(AST_INIT_LIST, 1, // non-terminal
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 9))))));
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("scalar")),
+                                new_ast(AST_INIT_LIST, 1, // non-terminal
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 9))))));
     Ast* global_input = ast_copy(local_input);
 
-    Srt* expected = new_srt(
-        SRT_DECL_LIST, 1,         // non-terminal
-        new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("scalar")),
-                new_srt(SRT_INIT, 1, // non-terminal
-                        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                         new_signed_iliteral(INTEGER_INT, 9)))));
+    Srt* expected = new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                            new_srt(SRT_INIT_DECL, 2, // non-terminal
+                                    new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("scalar")),
+                                    new_srt(SRT_INIT, 1, // non-terminal
+                                            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                             new_signed_iliteral(INTEGER_INT, 9)))));
 
     run_local_decl_resolver_test(local_input, NULL, expected);
     run_global_decl_resolver_test(global_input, NULL, expected);
@@ -409,22 +382,18 @@ void test_resolve_sliteral_init() {
                 new_ast(AST_INIT_DECLOR, 2,          // non-terminal
                         new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                                new_iliteral_ast(AST_INT_EXPR,
-                                                 new_signed_iliteral(INTEGER_INT, sliteral_size))),
+                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, sliteral_size))),
                         new_sliteral_ast(AST_STRING_EXPR, sliteral))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
-        SRT_DECL_LIST, 1, // non-terminal
-        new_srt(
-            SRT_INIT_DECL, 2, // non-terminal
-            new_identifier_srt(SRT_DECL,
-                               new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
-                               new_string("array")),
-            new_srt(SRT_INIT, 1, // non-terminal
-                    new_sliteral_srt(SRT_STRING_EXPR,
-                                     new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
-                                     sliteral_copy(sliteral)))));
+        SRT_DECL_LIST, 1,         // non-terminal
+        new_srt(SRT_INIT_DECL, 2, // non-terminal
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
+                                   new_string("array")),
+                new_srt(SRT_INIT, 1, // non-terminal
+                        new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
+                                         sliteral_copy(sliteral)))));
 
     run_local_decl_resolver_test(local_input, NULL, expected);
     run_global_decl_resolver_test(global_input, NULL, expected);
@@ -441,28 +410,25 @@ void test_resolve_sliteral_init_lacked() {
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
     StringLiteral* zero_padding_sliteral = sliteral_zero_padding_copy(sliteral, array_size);
 
-    Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_CHAR, 0)),
-        new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
-                new_ast(AST_INIT_DECLOR, 2,          // non-terminal
-                        new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                                new_iliteral_ast(AST_INT_EXPR,
-                                                 new_signed_iliteral(INTEGER_INT, array_size))),
-                        new_sliteral_ast(AST_STRING_EXPR, sliteral))));
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_CHAR, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, array_size))),
+                                new_sliteral_ast(AST_STRING_EXPR, sliteral))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(SRT_DECL,
-                                   new_array_dtype(new_integer_dtype(DTYPE_CHAR), array_size),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), array_size),
                                    new_string("array")),
                 new_srt(SRT_INIT, 1, // non-terminal
-                        new_sliteral_srt(SRT_STRING_EXPR,
-                                         new_array_dtype(new_integer_dtype(DTYPE_CHAR), array_size),
+                        new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), array_size),
                                          zero_padding_sliteral))));
 
     run_local_decl_resolver_test(local_input, NULL, expected);
@@ -487,23 +453,19 @@ void test_resolve_sliteral_init_enclosed() {
                 new_ast(AST_INIT_DECLOR, 2,          // non-terminal
                         new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                                new_iliteral_ast(AST_INT_EXPR,
-                                                 new_signed_iliteral(INTEGER_INT, sliteral_size))),
+                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, sliteral_size))),
                         new_ast(AST_INIT_LIST, 1, // non-terminal
                                 new_sliteral_ast(AST_STRING_EXPR, sliteral)))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
-        SRT_DECL_LIST, 1, // non-terminal
-        new_srt(
-            SRT_INIT_DECL, 2, // non-terminal
-            new_identifier_srt(SRT_DECL,
-                               new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
-                               new_string("array")),
-            new_srt(SRT_INIT, 1, // non-terminal
-                    new_sliteral_srt(SRT_STRING_EXPR,
-                                     new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
-                                     sliteral_copy(sliteral)))));
+        SRT_DECL_LIST, 1,         // non-terminal
+        new_srt(SRT_INIT_DECL, 2, // non-terminal
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
+                                   new_string("array")),
+                new_srt(SRT_INIT, 1, // non-terminal
+                        new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
+                                         sliteral_copy(sliteral)))));
 
     run_local_decl_resolver_test(local_input, NULL, expected);
     run_global_decl_resolver_test(global_input, NULL, expected);
@@ -512,25 +474,23 @@ void test_resolve_sliteral_init_enclosed() {
 }
 
 void test_resolve_list_init_zero() {
-    Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1,             // non-terminal
-            new_ast(AST_INIT_DECLOR, 2,          // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
-                    new_ast(AST_INIT_LIST, 1,
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))))));
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
+                                new_ast(AST_INIT_LIST, 1,
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 2),
-                                   new_string("array")),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 2), new_string("array")),
                 new_srt(SRT_INIT, 2,         // non-terminal
                         new_srt(SRT_INIT, 1, // non-terminal
                                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
@@ -546,29 +506,26 @@ void test_resolve_list_init_zero() {
 }
 
 void test_resolve_list_init_zero_nested() {
-    Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1,                     // non-terminal
-            new_ast(AST_INIT_DECLOR, 2,                  // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2,         // non-terminal
-                            new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                                    new_iliteral_ast(AST_INT_EXPR,
-                                                     new_signed_iliteral(INTEGER_INT, 3))),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
-                    new_ast(AST_INIT_LIST, 1,
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))))));
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,                     // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,                  // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2,         // non-terminal
+                                        new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
+                                new_ast(AST_INIT_LIST, 1,
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(
-                    SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 3), 2),
-                    new_string("array")),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 3), 2),
+                                   new_string("array")),
                 new_srt(SRT_INIT, 2,                 // non-terminal
                         new_srt(SRT_INIT, 3,         // non-terminal
                                 new_srt(SRT_INIT, 1, // non-terminal
@@ -598,27 +555,25 @@ void test_resolve_list_init_zero_nested() {
 }
 
 void test_resolve_list_init() {
-    Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1,             // non-terminal
-            new_ast(AST_INIT_DECLOR, 2,          // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
-                    new_ast(AST_INIT_LIST, 3, // non-terminal
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4))))));
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
+                                new_ast(AST_INIT_LIST, 3, // non-terminal
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4))))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 3),
-                                   new_string("array")),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 3), new_string("array")),
                 new_srt(SRT_INIT, 3,         // non-terminal
                         new_srt(SRT_INIT, 1, // non-terminal
                                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
@@ -637,25 +592,23 @@ void test_resolve_list_init() {
 }
 
 void test_resolve_list_init_lacked() {
-    Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1,             // non-terminal
-            new_ast(AST_INIT_DECLOR, 2,          // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
-                    new_ast(AST_INIT_LIST, 1,
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
+                                new_ast(AST_INIT_LIST, 1,
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 3),
-                                   new_string("array")),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_INT), 3), new_string("array")),
                 new_srt(SRT_INIT, 3,         // non-terminal
                         new_srt(SRT_INIT, 1, // non-terminal
                                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
@@ -678,35 +631,29 @@ void test_resolve_list_init_nested() {
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                 new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1, // non-terminal
-            new_ast(
-                AST_INIT_DECLOR, 2, // non-terminal
-                new_ast(
-                    AST_ARRAY_DECLOR, 2,         // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
-                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
-                new_ast(
-                    AST_INIT_LIST, 2,         // non-terminal
-                    new_ast(AST_INIT_LIST, 3, // non-terminal
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
-                    new_ast(
-                        AST_INIT_LIST, 3, // non-terminal
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4)),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6)))))));
+        new_ast(AST_INIT_DECLOR_LIST, 1,                     // non-terminal
+                new_ast(AST_INIT_DECLOR, 2,                  // non-terminal
+                        new_ast(AST_ARRAY_DECLOR, 2,         // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
+                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
+                        new_ast(AST_INIT_LIST, 2,         // non-terminal
+                                new_ast(AST_INIT_LIST, 3, // non-terminal
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
+                                new_ast(AST_INIT_LIST, 3, // non-terminal
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4)),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6)))))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(
-                    SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 3), 2),
-                    new_string("array")),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 3), 2),
+                                   new_string("array")),
                 new_srt(SRT_INIT, 2,                 // non-terminal
                         new_srt(SRT_INIT, 3,         // non-terminal
                                 new_srt(SRT_INIT, 1, // non-terminal
@@ -740,30 +687,25 @@ void test_resolve_list_init_nested_lacked() {
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                 new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1, // non-terminal
-            new_ast(
-                AST_INIT_DECLOR, 2, // non-terminal
-                new_ast(
-                    AST_ARRAY_DECLOR, 2,         // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
-                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
-                new_ast(AST_INIT_LIST, 1,         // non-terminal
-                        new_ast(AST_INIT_LIST, 3, // non-terminal
-                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 9)),
-                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)),
-                                new_iliteral_ast(AST_INT_EXPR,
-                                                 new_signed_iliteral(INTEGER_INT, 1)))))));
+        new_ast(AST_INIT_DECLOR_LIST, 1,                     // non-terminal
+                new_ast(AST_INIT_DECLOR, 2,                  // non-terminal
+                        new_ast(AST_ARRAY_DECLOR, 2,         // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
+                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
+                        new_ast(AST_INIT_LIST, 1,         // non-terminal
+                                new_ast(AST_INIT_LIST, 3, // non-terminal
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 9)),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)))))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(
-                    SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 3), 2),
-                    new_string("array")),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 3), 2),
+                                   new_string("array")),
                 new_srt(SRT_INIT, 2,                 // non-terminal
                         new_srt(SRT_INIT, 3,         // non-terminal
                                 new_srt(SRT_INIT, 1, // non-terminal
@@ -793,30 +735,27 @@ void test_resolve_list_init_nested_lacked() {
 }
 
 void test_resolve_list_init_flatten() {
-    Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_INT, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1,                     // non-terminal
-            new_ast(AST_INIT_DECLOR, 2,                  // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2,         // non-terminal
-                            new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                                    new_iliteral_ast(AST_INT_EXPR,
-                                                     new_signed_iliteral(INTEGER_INT, 3))),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
-                    new_ast(AST_INIT_LIST, 2, // non-terminal
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6)),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,                     // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,                  // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2,         // non-terminal
+                                        new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
+                                new_ast(AST_INIT_LIST, 2, // non-terminal
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6)),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(
-                    SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 3), 2),
-                    new_string("array")),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 3), 2),
+                                   new_string("array")),
                 new_srt(SRT_INIT, 2,                 // non-terminal
                         new_srt(SRT_INIT, 3,         // non-terminal
                                 new_srt(SRT_INIT, 1, // non-terminal
@@ -851,30 +790,26 @@ void test_resolve_list_init_mix() {
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
                 new_ast(AST_TYPE_INT, 0)),
         new_ast(
-            AST_INIT_DECLOR_LIST, 1, // non-terminal
-            new_ast(
-                AST_INIT_DECLOR, 2, // non-terminal
-                new_ast(
-                    AST_ARRAY_DECLOR, 2,         // non-terminal
-                    new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
-                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
-                new_ast(AST_INIT_LIST, 3, // non-terminal
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3)),
-                        new_ast(AST_INIT_LIST, 1,         // non-terminal
-                                new_ast(AST_INIT_LIST, 1, // non-terminal
-                                        new_iliteral_ast(AST_INT_EXPR,
-                                                         new_signed_iliteral(INTEGER_INT, 5))))))));
+            AST_INIT_DECLOR_LIST, 1,                     // non-terminal
+            new_ast(AST_INIT_DECLOR, 2,                  // non-terminal
+                    new_ast(AST_ARRAY_DECLOR, 2,         // non-terminal
+                            new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))),
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
+                    new_ast(AST_INIT_LIST, 3, // non-terminal
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3)),
+                            new_ast(AST_INIT_LIST, 1,         // non-terminal
+                                    new_ast(AST_INIT_LIST, 1, // non-terminal
+                                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))))))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(
-                    SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 2), 3),
-                    new_string("array")),
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 2), 3),
+                                   new_string("array")),
                 new_srt(SRT_INIT, 3,                 // non-terminal
                         new_srt(SRT_INIT, 2,         // non-terminal
                                 new_srt(SRT_INIT, 1, // non-terminal
@@ -905,42 +840,36 @@ void test_resolve_list_init_mix() {
 }
 
 void test_resolve_list_init_chararray() {
-    Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                new_ast(AST_TYPE_CHAR, 0)),
-        new_ast(
-            AST_INIT_DECLOR_LIST, 1, // non-terminal
-            new_ast(
-                AST_INIT_DECLOR, 2,          // non-terminal
-                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
-                new_ast(AST_INIT_LIST, 1,
-                        new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 72))))));
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_CHAR, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
+                                new_ast(AST_INIT_LIST, 1,
+                                        new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 72))))));
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 3),
-                                   new_string("array")),
-                new_srt(SRT_INIT, 3,         // non-terminal
-                        new_srt(SRT_INIT, 1, // non-terminal
-                                new_dtyped_srt(
-                                    SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
-                                    new_iliteral_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT),
-                                                     new_signed_iliteral(INTEGER_INT, 72)))),
-                        new_srt(SRT_INIT, 1, // non-terminal
-                                new_dtyped_srt(
-                                    SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
-                                    new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                     new_signed_iliteral(INTEGER_INT, 0)))),
-                        new_srt(SRT_INIT, 1, // non-terminal
-                                new_dtyped_srt(
-                                    SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
-                                    new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                     new_signed_iliteral(INTEGER_INT, 0)))))));
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 3), new_string("array")),
+                new_srt(SRT_INIT, 3,                                                            // non-terminal
+                        new_srt(SRT_INIT, 1,                                                    // non-terminal
+                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+                                               new_iliteral_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                new_signed_iliteral(INTEGER_INT, 72)))),
+                        new_srt(SRT_INIT, 1,                                                    // non-terminal
+                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                new_signed_iliteral(INTEGER_INT, 0)))),
+                        new_srt(SRT_INIT, 1,                                                    // non-terminal
+                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                new_signed_iliteral(INTEGER_INT, 0)))))));
 
     run_local_decl_resolver_test(local_input, NULL, expected);
     run_global_decl_resolver_test(global_input, NULL, expected);

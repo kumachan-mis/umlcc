@@ -20,32 +20,29 @@ CU_Suite* add_test_suite_stmt_resolver_error() {
 }
 
 void test_resolve_compound_stmt_error_child() {
-    Ast* input = new_ast(
-        AST_CMPD_STMT, 4, // non-terminal
-        new_ast(
-            AST_DECL, 2,                    // non-terminal
-            new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
-                    new_ast(AST_TYPE_INT, 0)),
-            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
-                    new_ast(AST_INIT_DECLOR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_DECLOR, new_string("x")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))))),
-        new_ast(
-            AST_EXPR_STMT, 1,           // non-terminal
-            new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
-                    new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
-                    new_ast(AST_SUB_EXPR, 2, // non-terminal
-                            new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
-                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))),
-        new_ast(AST_EXPR_STMT, 1,                  // non-terminal
-                new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
-                        new_ast(AST_INDIR_EXPR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_EXPR, new_string("x"))),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)))),
-        new_ast(AST_EXPR_STMT, 1,           // non-terminal
-                new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)))));
+    Ast* input = new_ast(AST_CMPD_STMT, 4,                       // non-terminal
+                         new_ast(AST_DECL, 2,                    // non-terminal
+                                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                         new_ast(AST_TYPE_INT, 0)),
+                                 new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                         new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("x")),
+                                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))))),
+                         new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                 new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                         new_ast(AST_SUB_EXPR, 2, // non-terminal
+                                                 new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))),
+                         new_ast(AST_EXPR_STMT, 1,                  // non-terminal
+                                 new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
+                                         new_ast(AST_INDIR_EXPR, 1, // non-terminal
+                                                 new_identifier_ast(AST_IDENT_EXPR, new_string("x"))),
+                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)))),
+                         new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                 new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)))));
 
     Vector* messages = new_vector(&t_string);
     vector_push(messages, new_string("Error: identifier 'y' is used before declared\n"));
@@ -74,11 +71,10 @@ void test_resolve_return_stmt_error_child() {
 }
 
 void test_resolve_return_stmt_error_unassignable() {
-    Ast* input =
-        new_ast(AST_RET_STMT, 1,         // non-terminal
-                new_ast(AST_ADD_EXPR, 2, // non-terminal
-                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
-                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))));
+    Ast* input = new_ast(AST_RET_STMT, 1,         // non-terminal
+                         new_ast(AST_ADD_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));

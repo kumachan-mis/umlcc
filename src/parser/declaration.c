@@ -77,8 +77,8 @@ ParserReturn* parse_decl_specifiers(Parser* parser) {
 
     if (vector_size(ast->children) == 0) {
         delete_ast(ast);
-        Error* err = new_error("Error: one of declaration-specifiers expected, but got %s\n",
-                               ctoken_types[ctoken->type]);
+        Error* err =
+            new_error("Error: one of declaration-specifiers expected, but got %s\n", ctoken_types[ctoken->type]);
         return new_parserret_error(err);
     }
     return new_parserret(ast);

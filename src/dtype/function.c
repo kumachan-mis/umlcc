@@ -27,9 +27,7 @@ DFunction* dfunction_copy(DFunction* dfunction) {
     DFunction* copied_dfunction = malloc(sizeof(DFunction));
     copied_dfunction->params = vector_copy(dfunction->params);
     copied_dfunction->return_dtype = NULL;
-    if (dfunction->return_dtype != NULL) {
-        copied_dfunction->return_dtype = dtype_copy(dfunction->return_dtype);
-    }
+    if (dfunction->return_dtype != NULL) copied_dfunction->return_dtype = dtype_copy(dfunction->return_dtype);
     return copied_dfunction;
 }
 

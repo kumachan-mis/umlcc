@@ -17,12 +17,9 @@ CU_Suite* add_test_suite_x64gen() {
 
 void test_x64gen_without_evacuation() {
     Vector* input_immcs = new_vector(&t_immc);
-    vector_push(input_immcs,
-                new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("count")));
-    vector_push(input_immcs,
-                new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 1)));
-    vector_push(input_immcs,
-                new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("countup")));
+    vector_push(input_immcs, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("count")));
+    vector_push(input_immcs, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input_immcs, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("countup")));
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_ENTER,                                      // inst
                               NULL,                                                 // dst
@@ -111,16 +108,11 @@ void test_x64gen_without_evacuation() {
 
 void test_x64gen_with_evacuation() {
     Vector* input_immcs = new_vector(&t_immc);
-    vector_push(input_immcs,
-                new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("count")));
-    vector_push(input_immcs,
-                new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 1)));
-    vector_push(input_immcs,
-                new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("dummy")));
-    vector_push(input_immcs,
-                new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 5)));
-    vector_push(input_immcs,
-                new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("countup")));
+    vector_push(input_immcs, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("count")));
+    vector_push(input_immcs, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input_immcs, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("dummy")));
+    vector_push(input_immcs, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 5)));
+    vector_push(input_immcs, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("countup")));
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_ENTER,                                      // inst
                               NULL,                                                 // dst

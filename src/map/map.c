@@ -45,9 +45,7 @@ Map* map_copy(Map* map) {
     for (int i = 0; i < map->capacity; i++) {
         MapCell* cell = map->container[i];
         MapCell* copied_cell = NULL;
-        if (cell != NULL) {
-            copied_cell = mapcell_copy(cell, map->t_key->copy_object, map->t_value->copy_object);
-        }
+        if (cell != NULL) copied_cell = mapcell_copy(cell, map->t_key->copy_object, map->t_value->copy_object);
         copied_map->container[i] = copied_cell;
     }
 
@@ -88,9 +86,7 @@ void map_add(Map* map, void* key, void* value) {
         cell = map->container[hash];
     }
 
-    if (cell != NULL) {
-        delete_mapcell(cell, map->t_key->delete_object, map->t_value->delete_object);
-    }
+    if (cell != NULL) delete_mapcell(cell, map->t_key->delete_object, map->t_value->delete_object);
     map->container[hash] = new_mapcell(key, value);
     map->size++;
 

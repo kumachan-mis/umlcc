@@ -154,8 +154,7 @@ Vector* connect_basic_blocks(Vector* basic_blocks) {
             int* block_id_ref = map_get(label_block_map, tail_immc->inst->dst->label_name);
             set_add(basic_block->succ, new_integer(*block_id_ref));
         }
-        if (block_id < blocks_len - 1 &&
-            (tail_immc->type != IMMC_INST || tail_immc->inst->type != IMMC_INST_JMP)) {
+        if (block_id < blocks_len - 1 && (tail_immc->type != IMMC_INST || tail_immc->inst->type != IMMC_INST_JMP)) {
             set_add(basic_block->succ, new_integer(block_id + 1));
         }
     }
@@ -207,14 +206,12 @@ int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
         }
 
         ImmcOpe* fst_src = immc->inst->fst_src;
-        if (fst_src != NULL &&
-            (fst_src->type == IMMC_OPERAND_REG || fst_src->type == IMMC_OPERAND_PTR)) {
+        if (fst_src != NULL && (fst_src->type == IMMC_OPERAND_REG || fst_src->type == IMMC_OPERAND_PTR)) {
             set_add(input, new_integer(fst_src->reg_id));
         }
 
         ImmcOpe* snd_src = immc->inst->snd_src;
-        if (snd_src != NULL &&
-            (snd_src->type == IMMC_OPERAND_REG || snd_src->type == IMMC_OPERAND_PTR)) {
+        if (snd_src != NULL && (snd_src->type == IMMC_OPERAND_REG || snd_src->type == IMMC_OPERAND_PTR)) {
             set_add(input, new_integer(snd_src->reg_id));
         }
     }
@@ -232,8 +229,7 @@ int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
 }
 
 Vector* analyze_register_liveness(RegAlloc* regalloc, Vector* control_flow_graph) {
-    void update_register_liveness(RegAlloc * regalloc, Vector * livenesses,
-                                  BasicBlock * basic_block);
+    void update_register_liveness(RegAlloc * regalloc, Vector * livenesses, BasicBlock * basic_block);
 
     Vector* livenesses = new_vector(&t_liveness);
     int immc_offset = regalloc->immc_offset;
@@ -256,15 +252,13 @@ void update_register_liveness(RegAlloc* regalloc, Vector* livenesses, BasicBlock
         if (immc->type != IMMC_INST) continue;
 
         ImmcOpe* fst_src = immc->inst->fst_src;
-        if (fst_src != NULL &&
-            (fst_src->type == IMMC_OPERAND_REG || fst_src->type == IMMC_OPERAND_PTR)) {
+        if (fst_src != NULL && (fst_src->type == IMMC_OPERAND_REG || fst_src->type == IMMC_OPERAND_PTR)) {
             Liveness* liveness = vector_at(livenesses, fst_src->reg_id);
             liveness->last_use_index = regalloc->immc_offset + index;
         }
 
         ImmcOpe* snd_src = immc->inst->snd_src;
-        if (snd_src != NULL &&
-            (snd_src->type == IMMC_OPERAND_REG || snd_src->type == IMMC_OPERAND_PTR)) {
+        if (snd_src != NULL && (snd_src->type == IMMC_OPERAND_REG || snd_src->type == IMMC_OPERAND_PTR)) {
             Liveness* liveness = vector_at(livenesses, snd_src->reg_id);
             liveness->last_use_index = regalloc->immc_offset + index;
         }
@@ -280,8 +274,7 @@ void update_register_liveness(RegAlloc* regalloc, Vector* livenesses, BasicBlock
     }
 
     Set* output = basic_block->output;
-    for (SetIter* iter = set_iter_begin(output); !set_iter_end(iter, output);
-         iter = set_iter_next(iter, output)) {
+    for (SetIter* iter = set_iter_begin(output); !set_iter_end(iter, output); iter = set_iter_next(iter, output)) {
         int* reg_id_ref = set_iter_item(iter, output);
         Liveness* liveness = vector_at(livenesses, *reg_id_ref);
         liveness->last_use_index = regalloc->immc_offset + immcs_len;
@@ -291,8 +284,7 @@ void update_register_liveness(RegAlloc* regalloc, Vector* livenesses, BasicBlock
 Vector* determine_allocation(Vector* livenesses, int num_real_regs) {
     void free_unused_register(Vector * statuses, Vector * livenesses, int virtual_reg_id);
     int allocate_real_register(Vector * allocations, Vector * statuses, int virtual_reg_id);
-    void spil_register(Vector * allocations, Vector * statuses, Vector * livenesses,
-                       int virtual_reg_id);
+    void spil_register(Vector * allocations, Vector * statuses, Vector * livenesses, int virtual_reg_id);
 
     int num_virtual_regs = vector_size(livenesses);
 
@@ -388,15 +380,13 @@ Vector* gen_allocated_immcs(Vector* external_immcs, Vector* allocations) {
         }
 
         ImmcOpe* fst_src = immc->inst->fst_src;
-        if (fst_src != NULL &&
-            (fst_src->type == IMMC_OPERAND_REG || fst_src->type == IMMC_OPERAND_PTR)) {
+        if (fst_src != NULL && (fst_src->type == IMMC_OPERAND_REG || fst_src->type == IMMC_OPERAND_PTR)) {
             int* allocation = vector_at(allocations, fst_src->reg_id);
             fst_src->reg_id = *allocation;
         }
 
         ImmcOpe* snd_src = immc->inst->snd_src;
-        if (snd_src != NULL &&
-            (snd_src->type == IMMC_OPERAND_REG || snd_src->type == IMMC_OPERAND_PTR)) {
+        if (snd_src != NULL && (snd_src->type == IMMC_OPERAND_REG || snd_src->type == IMMC_OPERAND_PTR)) {
             int* allocation = vector_at(allocations, snd_src->reg_id);
             snd_src->reg_id = *allocation;
         }

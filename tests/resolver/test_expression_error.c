@@ -55,8 +55,7 @@ void test_resolve_subscription_expr_error_rhs();
 void test_resolve_ident_expr_error();
 
 void run_expr_resolver_error_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                                  SymbolTable* __restrict__ global_table,
-                                  Vector* __restrict__ messages);
+                                  SymbolTable* __restrict__ global_table, Vector* __restrict__ messages);
 
 CU_Suite* add_test_suite_expr_resolver_error() {
     CU_Suite* suite = CU_add_suite("test_suite_expr_resolver_error", NULL, NULL);
@@ -124,8 +123,7 @@ void test_resolve_assign_expr_error_unassignable() {
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
-    symboltable_define_memory(local_table, new_string("y"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("y"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     run_expr_resolver_error_test(input, local_table, NULL, messages);
 
@@ -138,14 +136,11 @@ void test_resolve_assign_expr_error_unmodifiable() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages,
-                new_string("Error: left operand of assignment should be modifiable lvalue\n"));
+    vector_push(messages, new_string("Error: left operand of assignment should be modifiable lvalue\n"));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("x"),
-                              new_array_dtype(new_integer_dtype(DTYPE_INT), 3));
-    symboltable_define_memory(local_table, new_string("y"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("x"), new_array_dtype(new_integer_dtype(DTYPE_INT), 3));
+    symboltable_define_memory(local_table, new_string("y"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     run_expr_resolver_error_test(input, local_table, NULL, messages);
 
@@ -257,8 +252,7 @@ void test_resolve_equal_expr_error_operand_dtype() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("x"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
+    symboltable_define_memory(local_table, new_string("x"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
     symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_CHAR));
 
     Vector* messages = new_vector(&t_string);
@@ -276,10 +270,8 @@ void test_resolve_equal_expr_error_incompatible_pointer() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("p"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
-    symboltable_define_memory(local_table, new_string("q"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
+    symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     Vector* messages = new_vector(&t_string);
     vector_push(messages, new_string("Error: operands of pointer == pointer are not compatible\n"));
@@ -325,8 +317,7 @@ void test_resolve_not_equal_expr_error_operand_dtype() {
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
-    symboltable_define_memory(local_table, new_string("y"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("y"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     Vector* messages = new_vector(&t_string);
     vector_push(messages, new_string("Error: binary != expression should be "
@@ -343,10 +334,8 @@ void test_resolve_not_equal_expr_error_incompatible_pointer() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("p"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
-    symboltable_define_memory(local_table, new_string("q"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
+    symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
 
     Vector* messages = new_vector(&t_string);
     vector_push(messages, new_string("Error: operands of pointer != pointer are not compatible\n"));
@@ -391,15 +380,12 @@ void test_resolve_add_expr_error_operand_dtype() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("p"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
-    symboltable_define_memory(local_table, new_string("q"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
+    symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages,
-                new_string("Error: binary + expression should be either arithmetic + arithmetic, "
-                           "pointer + integer, or integer + pointer\n"));
+    vector_push(messages, new_string("Error: binary + expression should be either arithmetic + arithmetic, "
+                                     "pointer + integer, or integer + pointer\n"));
 
     run_expr_resolver_error_test(input, local_table, NULL, messages);
 
@@ -441,13 +427,11 @@ void test_resolve_subtract_expr_error_operand_dtype() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("ptr")));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("ptr"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("ptr"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages,
-                new_string("Error: binary - expression should be either arithmetic - arithmetic, "
-                           "pointer - integer, or pointer - pointer\n"));
+    vector_push(messages, new_string("Error: binary - expression should be either arithmetic - arithmetic, "
+                                     "pointer - integer, or pointer - pointer\n"));
 
     run_expr_resolver_error_test(input, local_table, NULL, messages);
 
@@ -460,10 +444,8 @@ void test_resolve_subtract_expr_error_incompatible_pointer() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("p"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
-    symboltable_define_memory(local_table, new_string("q"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
+    symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     Vector* messages = new_vector(&t_string);
     vector_push(messages, new_string("Error: operands of pointer - pointer are not compatible\n"));
@@ -508,12 +490,10 @@ void test_resolve_multiply_expr_error_non_arithmetic() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("value")));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("value"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("value"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages,
-                new_string("Error: binary * expression should be arithmetic * arithmetic\n"));
+    vector_push(messages, new_string("Error: binary * expression should be arithmetic * arithmetic\n"));
 
     run_expr_resolver_error_test(input, local_table, NULL, messages);
 
@@ -555,12 +535,10 @@ void test_resolve_division_expr_error_non_arithmetic() {
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3)));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("value"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("value"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages,
-                new_string("Error: binary / expression should be arithmetic / arithmetic\n"));
+    vector_push(messages, new_string("Error: binary / expression should be arithmetic / arithmetic\n"));
 
     run_expr_resolver_error_test(input, local_table, NULL, messages);
 
@@ -602,8 +580,7 @@ void test_resolve_modulo_expr_error_non_integer() {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("value")));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("value"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("value"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     Vector* messages = new_vector(&t_string);
     vector_push(messages, new_string("Error: binary % expression should be integer % integer\n"));
@@ -725,8 +702,7 @@ void test_resolve_call_expr_error_non_func() {
     symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages,
-                new_string("Error: called object is not a function or a function pointer\n"));
+    vector_push(messages, new_string("Error: called object is not a function or a function pointer\n"));
 
     run_expr_resolver_error_test(input, local_table, NULL, messages);
 
@@ -771,10 +747,8 @@ void test_resolve_call_expr_error_param_dtype() {
     vector_push(params, new_dparam(new_string("z"), new_integer_dtype(DTYPE_INT)));
     Dtype* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
     symboltable_define_label(local_table, new_string("function"), func_dtype);
-    symboltable_define_memory(local_table, new_string("x"),
-                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
-    symboltable_define_memory(local_table, new_string("y"),
-                              new_array_dtype(new_integer_dtype(DTYPE_INT), 2));
+    symboltable_define_memory(local_table, new_string("x"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("y"), new_array_dtype(new_integer_dtype(DTYPE_INT), 2));
     symboltable_define_memory(local_table, new_string("z"), new_integer_dtype(DTYPE_CHAR));
 
     Vector* messages = new_vector(&t_string);
@@ -822,8 +796,7 @@ void test_resolve_subscription_expr_error_non_pointer_to_object() {
     symboltable_define_memory(local_table, new_string("a"), func_dtype);
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages,
-                new_string("Error: subscribed object should have pointer to object type\n"));
+    vector_push(messages, new_string("Error: subscribed object should have pointer to object type\n"));
 
     run_expr_resolver_error_test(input, local_table, NULL, messages);
 
@@ -839,8 +812,7 @@ void test_resolve_subscription_expr_error_non_pointer() {
     symboltable_define_memory(local_table, new_string("a"), new_integer_dtype(DTYPE_INT));
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages,
-                new_string("Error: subscription should be pointer[integer] or integer[pointer]\n"));
+    vector_push(messages, new_string("Error: subscription should be pointer[integer] or integer[pointer]\n"));
 
     run_expr_resolver_error_test(input, local_table, NULL, messages);
 
@@ -859,8 +831,7 @@ void test_resolve_subscription_expr_error_non_integer() {
     symboltable_define_memory(local_table, new_string("i"), pointer_dtype);
 
     Vector* messages = new_vector(&t_string);
-    vector_push(messages,
-                new_string("Error: subscription should be pointer[integer] or integer[pointer]\n"));
+    vector_push(messages, new_string("Error: subscription should be pointer[integer] or integer[pointer]\n"));
 
     run_expr_resolver_error_test(input, local_table, NULL, messages);
 
@@ -909,8 +880,7 @@ void test_resolve_ident_expr_error() {
 }
 
 void run_expr_resolver_error_test(Ast* __restrict__ input, SymbolTable* __restrict__ local_table,
-                                  SymbolTable* __restrict__ global_table,
-                                  Vector* __restrict__ messages) {
+                                  SymbolTable* __restrict__ global_table, Vector* __restrict__ messages) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
     if (global_table != NULL) {

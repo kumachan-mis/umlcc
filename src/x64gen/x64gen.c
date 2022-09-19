@@ -131,9 +131,7 @@ Vector* gen_variable_x64code(X64gen* x64gen) {
 
     while (1) {
         Immc* immc = vector_at(x64gen->immcs, x64gen->index);
-        if (immc == NULL || (immc->type == IMMC_LABEL && immc->label->type != IMMC_LABEL_NORMAL)) {
-            break;
-        }
+        if (immc == NULL || (immc->type == IMMC_LABEL && immc->label->type != IMMC_LABEL_NORMAL)) break;
 
         switch (immc->type) {
             case IMMC_DATA:
