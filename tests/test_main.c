@@ -1,6 +1,7 @@
 #include "./ast/test_ast.h"
 #include "./ctoken/test_ctoken.h"
 #include "./dtype/test_dtype.h"
+#include "./error/test_error.h"
 #include "./immc/test_immc.h"
 #include "./immc/test_ope.h"
 #include "./immc/test_suffix.h"
@@ -68,6 +69,7 @@ int main(void) {
     add_test_suite_symboltable();
     add_test_suite_liveness();
     add_test_suite_liveseq();
+    add_test_suite_error();
 
     // internal data structure tests
     add_test_suite_basicblock();
