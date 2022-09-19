@@ -316,8 +316,7 @@ void test_read_hexadecimal_integer_constant() {
 }
 
 void test_read_character_constant() {
-    char* input = "'0' 'a' 'xy' '#' "
-                  "'\\a' '\\b' '\\f' '\\r' '\\t' '\\v' '\\\"' '\\'' '\\?' '\\\\' '\\r\\n'\n";
+    char* input = "'0' 'a' 'xy' '#' '\\a' '\\b' '\\f' '\\r' '\\t' '\\v' '\\\"' '\\'' '\\?' '\\\\' '\\r\\n'\n";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, '0')));
