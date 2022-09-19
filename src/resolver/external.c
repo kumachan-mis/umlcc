@@ -65,7 +65,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
 
     if (specifiers_dtype->type == DTYPE_DECORATION && specifiers_dtype->decoration->typedef_flag) {
         errs = new_vector(&t_error);
-        err = new_error("Error: storage specifiers are invalid for a function definition\n");
+        err = new_error("storage specifiers are invalid for a function definition\n");
         vector_push(errs, err);
         delete_dtype(specifiers_dtype);
         return new_resolverret_errors(errs);
@@ -82,7 +82,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
 
     if (child_srt->dtype->type != DTYPE_FUNCTION) {
         errs = new_vector(&t_error);
-        err = new_error("Error: non-function declaration should not have body\n");
+        err = new_error("non-function declaration should not have body\n");
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);
@@ -90,7 +90,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
 
     if (!symboltable_can_define(resolver->global_table, child_srt->ident_name)) {
         errs = new_vector(&t_error);
-        err = new_error("Error: identifier '%s' is already declared\n", child_srt->ident_name);
+        err = new_error("identifier '%s' is already declared\n", child_srt->ident_name);
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);

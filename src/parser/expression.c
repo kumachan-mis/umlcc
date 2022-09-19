@@ -340,7 +340,7 @@ ParserReturn* parse_primary_expr(Parser* parser) {
             err = consume_ctoken(parser, CTOKEN_RPALEN);
             break;
         default:
-            err = new_error("Error: unexpected token %s\n", ctoken_types[ctoken->type]);
+            err = new_error("unexpected token %s\n", ctoken_types[ctoken->type]);
             break;
     }
 

@@ -77,8 +77,7 @@ ParserReturn* parse_decl_specifiers(Parser* parser) {
 
     if (vector_size(ast->children) == 0) {
         delete_ast(ast);
-        Error* err =
-            new_error("Error: one of declaration-specifiers expected, but got %s\n", ctoken_types[ctoken->type]);
+        Error* err = new_error("one of declaration-specifiers expected, but got %s\n", ctoken_types[ctoken->type]);
         return new_parserret_error(err);
     }
     return new_parserret(ast);
@@ -204,7 +203,7 @@ ParserReturn* parse_direct_declarator(Parser* parser) {
             set_add(parser->typedef_names_set, new_string(ident_ast->ident_name));
             break;
         default:
-            err = new_error("Error: unexpected token %s\n", ctoken_types[ctoken->type]);
+            err = new_error("unexpected token %s\n", ctoken_types[ctoken->type]);
             return new_parserret_error(err);
     }
 

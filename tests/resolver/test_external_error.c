@@ -70,8 +70,8 @@ void test_resolve_translation_unit_error_child(void) {
                                 new_identifier_ast(AST_IDENT_EXPR, new_string("x"))))));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("Error: storage specifiers are invalid for a function parameter\n"));
-    vector_push(expected, new_error("Error: expression is not assignable to function return\n"));
+    vector_push(expected, new_error("storage specifiers are invalid for a function parameter\n"));
+    vector_push(expected, new_error("expression is not assignable to function return\n"));
 
     run_resolver_error_test(input, expected);
 
@@ -91,7 +91,7 @@ void test_resolve_function_definition_error_decl_specifier(void) {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("Error: declaration specifiers are invalid\n"));
+    vector_push(expected, new_error("declaration specifiers are invalid\n"));
 
     run_resolver_error_test(input, expected);
 
@@ -111,7 +111,7 @@ void test_resolve_function_definition_error_storage_specifier(void) {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("Error: storage specifiers are invalid for a function definition\n"));
+    vector_push(expected, new_error("storage specifiers are invalid for a function definition\n"));
     run_resolver_error_test(input, expected);
 
     delete_vector(expected);
@@ -131,7 +131,7 @@ void test_resolve_function_definition_error_non_func(void) {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("Error: non-function declaration should not have body\n"));
+    vector_push(expected, new_error("non-function declaration should not have body\n"));
     run_resolver_error_test(input, expected);
 
     delete_vector(expected);
@@ -160,7 +160,7 @@ void test_resolve_function_definition_error_declarator(void) {
                                                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")))))));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("Error: parameter 'x' is already declared\n"));
+    vector_push(expected, new_error("parameter 'x' is already declared\n"));
     run_resolver_error_test(input, expected);
 
     delete_vector(expected);
@@ -195,7 +195,7 @@ void test_resolve_function_definition_error_duplicated(void) {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("Error: identifier 'error' is already declared\n"));
+    vector_push(expected, new_error("identifier 'error' is already declared\n"));
     run_resolver_error_test(input, expected);
 
     delete_vector(expected);
@@ -229,8 +229,8 @@ void test_resolve_function_definition_error_body(void) {
                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("Error: identifier 'x' is already declared\n"));
-    vector_push(expected, new_error("Error: left operand of assignment should be modifiable lvalue\n"));
+    vector_push(expected, new_error("identifier 'x' is already declared\n"));
+    vector_push(expected, new_error("left operand of assignment should be modifiable lvalue\n"));
     run_resolver_error_test(input, expected);
 
     delete_vector(expected);

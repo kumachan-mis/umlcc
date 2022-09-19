@@ -24,7 +24,7 @@ CU_Suite* add_test_suite_lexer_error(void) {
 
 void test_read_error_character(void) {
     char* input = "@variable = 1;\n";
-    Error* expected = new_error("Error: unexpected character '@'\n");
+    Error* expected = new_error("unexpected character '@'\n");
 
     run_lexer_error_test(input, expected);
 
@@ -33,7 +33,7 @@ void test_read_error_character(void) {
 
 void test_read_character_constant_error_empty(void) {
     char* input = "ch = '';\n";
-    Error* expected = new_error("Error: character constant is empty\n");
+    Error* expected = new_error("character constant is empty\n");
 
     run_lexer_error_test(input, expected);
 
@@ -42,7 +42,7 @@ void test_read_character_constant_error_empty(void) {
 
 void test_read_character_constant_error_newline(void) {
     char* input = NULL;
-    Error* expected = new_error("Error: newline appeared in character constant\n");
+    Error* expected = new_error("newline appeared in character constant\n");
 
     input = "ch = '\n';\n";
     run_lexer_error_test(input, expected);
@@ -55,7 +55,7 @@ void test_read_character_constant_error_newline(void) {
 
 void test_read_character_constant_error_escape_sequence(void) {
     char* input = NULL;
-    Error* expected = new_error("Error: invalid escape sequence \\!\n");
+    Error* expected = new_error("invalid escape sequence \\!\n");
 
     input = "ch = '\\!';\n";
     run_lexer_error_test(input, expected);
@@ -68,7 +68,7 @@ void test_read_character_constant_error_escape_sequence(void) {
 
 void test_read_string_literal_error_newline(void) {
     char* input = "str = \"\n\";\n";
-    Error* expected = new_error("Error: newline appeared in string literal\n");
+    Error* expected = new_error("newline appeared in string literal\n");
 
     run_lexer_error_test(input, expected);
 
@@ -77,7 +77,7 @@ void test_read_string_literal_error_newline(void) {
 
 void test_read_string_literal_error_escape_sequence(void) {
     char* input = "str = \"\\~\";\n";
-    Error* expected = new_error("Error: invalid escape sequence \\~\n");
+    Error* expected = new_error("invalid escape sequence \\~\n");
 
     run_lexer_error_test(input, expected);
 
