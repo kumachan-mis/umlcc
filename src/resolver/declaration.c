@@ -361,10 +361,12 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
     declarator_srt->dtype = dtype_connect(declarator_srt->dtype, specifiers_dtype);
     if (declarator_srt->dtype->type == DTYPE_ARRAY) {
         Dtype* array_of_dtype = dtype_copy(declarator_srt->dtype->array->of_dtype);
+        delete_dtype(declarator_srt->dtype);
         declarator_srt->dtype = new_pointer_dtype(array_of_dtype);
     }
     if (declarator_srt->dtype->type == DTYPE_FUNCTION) {
         Dtype* function_dtype = dtype_copy(declarator_srt->dtype);
+        delete_dtype(declarator_srt->dtype);
         declarator_srt->dtype = new_pointer_dtype(function_dtype);
     }
 
@@ -629,6 +631,7 @@ ResolverReturn* resolve_scalar_initializer(Resolver* resolver) {
         errs = new_vector(&t_error);
         err = new_error("expression is not assignable to declared object\n");
         vector_push(errs, err);
+        delete_srt(srt);
         return new_resolverret_errors(errs);
     }
 

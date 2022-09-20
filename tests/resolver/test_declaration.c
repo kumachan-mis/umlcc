@@ -883,7 +883,6 @@ void run_local_decl_resolver_test(Ast* input, SymbolTable* local_table, Srt* exp
         resolver->local_table = new_symboltable();
     }
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
-    input = ast_copy(resolver->ast);
 
     Srt* actual = NULL;
     Vector* errs = NULL;

@@ -103,6 +103,8 @@ void test_x64gen_without_evacuation() {
                              NULL));       // dst
 
     run_x64gen_test(input_immcs, input_liveseqs, expected);
+
+    delete_vector(expected);
 }
 
 void test_x64gen_with_evacuation() {
@@ -181,6 +183,7 @@ void test_x64gen_with_evacuation() {
     liveseq = vector_at(input_liveseqs, 1);
     liveness = new_liveness(7);
     liveness->last_use_index = 9;
+    vector_push(liveseq->livenesses, liveness);
     liveness = new_liveness(10);
     liveness->last_use_index = 12;
     vector_push(liveseq->livenesses, liveness);
@@ -274,6 +277,8 @@ void test_x64gen_with_evacuation() {
                              NULL));       // dst
 
     run_x64gen_test(input_immcs, input_liveseqs, expected);
+
+    delete_vector(expected);
 }
 
 void run_x64gen_test(Vector* input_immcs, Vector* input_liveseqs, Vector* expected) {

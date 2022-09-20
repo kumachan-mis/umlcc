@@ -17,7 +17,7 @@ Vector* gen_sub_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_additive_common_x64code(X64gen* x64gen, X64InstType type) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
@@ -62,7 +62,7 @@ Vector* gen_additive_common_x64code(X64gen* x64gen, X64InstType type) {
 }
 
 Vector* gen_mul_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
@@ -115,7 +115,7 @@ Vector* gen_mod_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 

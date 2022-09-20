@@ -1,5 +1,4 @@
 CC     := gcc
-DB     := lldb
 CFLAGS := -std=c99 -pedantic -W -Wall -Werror
 
 BLD_DIR := build
@@ -80,7 +79,7 @@ unittest:
 
 unittest-debug:
 	$(MAKE) $(BIN_DIR)/$(TEST) MAKE_ENV=debug
-	$(DB) $(BIN_DIR)/$(TEST)
+	$(BIN_DIR)/$(TEST)
 
 unittest-cov:
 	$(MAKE) $(BIN_DIR)/$(TEST) MAKE_ENV=coverage

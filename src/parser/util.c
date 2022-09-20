@@ -11,11 +11,17 @@ ErrorableInt* external_may_function_definition(Parser* parser) {
     Set* typedef_names_set = set_copy(parser->typedef_names_set);
 
     parserret_assign(&ast, &err, parse_decl_specifiers(parser));
-    if (err != NULL) return new_errint_error(err);
+    if (err != NULL) {
+        delete_set(typedef_names_set);
+        return new_errint_error(err);
+    }
     delete_ast(ast);
 
     parserret_assign(&ast, &err, parse_declarator(parser));
-    if (err != NULL) return new_errint_error(err);
+    if (err != NULL) {
+        delete_set(typedef_names_set);
+        return new_errint_error(err);
+    }
     delete_ast(ast);
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);

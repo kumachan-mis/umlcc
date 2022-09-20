@@ -156,13 +156,13 @@ void test_symboltable_scoped(void) {
     char* outer_name = new_string("outer_scope");
     Dtype* outer_dtype = new_integer_dtype(DTYPE_INT);
 
-    CU_ASSERT_TRUE(symboltable_can_define(table, outer_name));
+    CU_ASSERT_TRUE(symboltable_can_define(table, "outer_scope"));
     symboltable_define_label(table, outer_name, outer_dtype);
 
     char* outer_both_name = new_string("both_scope");
     Dtype* outer_both_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
 
-    CU_ASSERT_TRUE(symboltable_can_define(table, outer_both_name));
+    CU_ASSERT_TRUE(symboltable_can_define(table, "both_scope"));
     symboltable_define_label(table, outer_both_name, outer_both_dtype);
 
     table = symboltable_enter_scope(table);
@@ -171,48 +171,48 @@ void test_symboltable_scoped(void) {
     Dtype* inner_dtype = new_integer_dtype(DTYPE_CHAR);
     int inner_dtype_size = dtype_size(inner_dtype);
 
-    CU_ASSERT_TRUE(symboltable_can_define(table, inner_name));
+    CU_ASSERT_TRUE(symboltable_can_define(table, "outer_scope"));
     symboltable_define_memory(table, inner_name, inner_dtype);
 
     char* inner_both_name = new_string("both_scope");
     Dtype* inner_both_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     int inner_both_dtype_size = dtype_size(inner_both_dtype);
 
-    CU_ASSERT_TRUE(symboltable_can_define(table, inner_both_name));
+    CU_ASSERT_TRUE(symboltable_can_define(table, "both_scope"));
     symboltable_define_memory(table, inner_both_name, inner_both_dtype);
 
-    symbol = symboltable_search(table, outer_name);
+    symbol = symboltable_search(table, "outer_scope");
     CU_ASSERT_EQUAL(symbol->type, SYMBOL_LABEL);
-    CU_ASSERT_STRING_EQUAL(symbol->name, outer_name);
+    CU_ASSERT_STRING_EQUAL(symbol->name, "outer_scope");
     CU_ASSERT_EQUAL(symbol->memory_offset, -1);
     CU_ASSERT_TRUE(dtype_equals(symbol->dtype, outer_dtype));
 
-    symbol = symboltable_search(table, inner_name);
+    symbol = symboltable_search(table, "inner_scope");
     CU_ASSERT_EQUAL(symbol->type, SYMBOL_MEM);
-    CU_ASSERT_STRING_EQUAL(symbol->name, inner_name);
+    CU_ASSERT_STRING_EQUAL(symbol->name, "inner_scope");
     CU_ASSERT_EQUAL(symbol->memory_offset, inner_dtype_size);
     CU_ASSERT_TRUE(dtype_equals(symbol->dtype, inner_dtype));
 
-    symbol = symboltable_search(table, inner_both_name);
+    symbol = symboltable_search(table, "both_scope");
     CU_ASSERT_EQUAL(symbol->type, SYMBOL_MEM);
-    CU_ASSERT_STRING_EQUAL(symbol->name, inner_both_name);
+    CU_ASSERT_STRING_EQUAL(symbol->name, "both_scope");
     CU_ASSERT_EQUAL(symbol->memory_offset, inner_dtype_size + inner_both_dtype_size);
     CU_ASSERT_TRUE(dtype_equals(symbol->dtype, inner_both_dtype));
 
     table = symboltable_exit_scope(table);
 
-    symbol = symboltable_search(table, outer_name);
+    symbol = symboltable_search(table, "outer_scope");
     CU_ASSERT_EQUAL(symbol->type, SYMBOL_LABEL);
-    CU_ASSERT_STRING_EQUAL(symbol->name, outer_name);
+    CU_ASSERT_STRING_EQUAL(symbol->name, "outer_scope");
     CU_ASSERT_EQUAL(symbol->memory_offset, -1);
     CU_ASSERT_TRUE(dtype_equals(symbol->dtype, outer_dtype));
 
-    symbol = symboltable_search(table, inner_name);
+    symbol = symboltable_search(table, "inner_scope");
     CU_ASSERT_PTR_NULL(symbol);
 
-    symbol = symboltable_search(table, outer_both_name);
+    symbol = symboltable_search(table, "both_scope");
     CU_ASSERT_EQUAL(symbol->type, SYMBOL_LABEL);
-    CU_ASSERT_STRING_EQUAL(symbol->name, outer_both_name);
+    CU_ASSERT_STRING_EQUAL(symbol->name, "both_scope");
     CU_ASSERT_EQUAL(symbol->memory_offset, -1);
     CU_ASSERT_TRUE(dtype_equals(symbol->dtype, outer_both_dtype));
 
@@ -259,7 +259,7 @@ void test_symboltable_copy_without_outer(void) {
     CU_ASSERT_TRUE(dtype_equals(copied_symbol->dtype, symbol_dtype));
 
     delete_dtype(symbol_dtype);
-    free(ident_name);
+    free(symbol_name);
 
     CU_ASSERT_EQUAL(copied_table->memory_size, ident_dtype_size);
     CU_ASSERT_PTR_NULL(copied_table->outer_scope);
