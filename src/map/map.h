@@ -16,6 +16,7 @@ int map_contains(Map* map, void* key);
 MapIter* map_iter_begin(Map* map);
 MapIter* map_iter_next(MapIter* iter, Map* map);
 int map_iter_end(MapIter* iter, Map* map);
+void map_iter_exit(MapIter* iter);
 void* map_iter_key(MapIter* iter, Map* map);
 void* map_iter_value(MapIter* iter, Map* map);
 void delete_map(Map* map);

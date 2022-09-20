@@ -153,6 +153,10 @@ int map_iter_end(MapIter* iter, Map* map) {
     return end;
 }
 
+void map_iter_exit(MapIter* iter) {
+    free(iter);
+}
+
 void* map_iter_key(MapIter* iter, Map* map) {
     if (iter->index >= map->capacity) return NULL;
     MapCell* cell = map->container[iter->index];
