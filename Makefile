@@ -13,7 +13,6 @@ TEST_LIBS    := -lcunit
 TEST         := test_umlcc
 TEST_MAIN    := test_main
 TEST_DIR     := tests
-TEST_OBJ_DIR := $(BLD_DIR)/tests/object
 TEST_DEP_DIR := $(BLD_DIR)/tests/depend
 
 TEST_COV       := scripts/run-coverage.sh
@@ -39,16 +38,19 @@ RM    := rm -rf
 
 
 ifeq ($(MAKE_ENV),coverage)
-CFLAGS    += -O0 -fprofile-arcs -ftest-coverage
-TEST_LIBS += -lgcov
-OBJ_DIR   := $(BLD_DIR)/src/cobject
+CFLAGS       += -O0 -fprofile-arcs -ftest-coverage
+TEST_LIBS    += -lgcov
+OBJ_DIR      := $(BLD_DIR)/src/cobject
+TEST_OBJ_DIR := $(BLD_DIR)/tests/cobject
 else
 ifeq ($(MAKE_ENV),debug)
-CFLAGS    += -O0 -g -fsanitize=address -fno-omit-frame-pointer
-OBJ_DIR   := $(BLD_DIR)/src/gobject
+CFLAGS       += -O0 -g -fsanitize=address -fno-omit-frame-pointer
+OBJ_DIR      := $(BLD_DIR)/src/gobject
+TEST_OBJ_DIR := $(BLD_DIR)/tests/gobject
 else
-CFLAGS    += -O3
-OBJ_DIR   := $(BLD_DIR)/src/object
+CFLAGS       += -O3
+OBJ_DIR      := $(BLD_DIR)/src/object
+TEST_OBJ_DIR := $(BLD_DIR)/tests/object
 endif
 endif
 

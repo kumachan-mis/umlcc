@@ -57,7 +57,7 @@ do
     else
         echo -e "${RED}FAIL${END}"
         echo "${test_diff}"
-        exit_code=1
+        exit_code=$(expr ${exit_code} + 1)
     fi
     echo
 done
