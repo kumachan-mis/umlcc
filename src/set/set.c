@@ -71,6 +71,11 @@ int set_iter_end(SetIter* iter, Set* set) {
     return end;
 }
 
+void set_iter_exit(SetIter* iter) {
+    map_iter_exit(iter->inner);
+    free(iter);
+}
+
 void* set_iter_item(SetIter* iter, Set* set) {
     return map_iter_key(iter->inner, set->inner);
 }
@@ -109,12 +114,14 @@ Set* set_difference(Set* set, Set* other) {
 }
 
 int set_issubset(Set* set, Set* other) {
-    int ret = 1;
     for (SetIter* iter = set_iter_begin(other); !set_iter_end(iter, other); iter = set_iter_next(iter, other)) {
         void* item = set_iter_item(iter, other);
-        if (!set_contains(set, item)) ret = 0;
+        if (!set_contains(set, item)) {
+            set_iter_exit(iter);
+            return 0;
+        }
     }
-    return ret;
+    return 1;
 }
 
 int set_equals(Set* set, Set* other) {
