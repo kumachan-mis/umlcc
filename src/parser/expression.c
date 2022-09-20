@@ -31,9 +31,9 @@ ParserReturn* parse_assignment_expr(Parser* parser) {
                 delete_ast(ast);
                 parser->index = index;
                 parserret_assign(&ast, &err, parse_logical_or_expr(parser));
+                terminated = 1;
                 if (err != NULL) break;
                 vector_push(stack, ast);
-                terminated = 1;
                 break;
         }
     }

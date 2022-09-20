@@ -128,7 +128,7 @@ void test_parse_add_expr_error(void) {
     vector_push(input, new_ctoken(CTOKEN_RBRACKET));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token ]\n");
+    Error* expected = new_error("token ) expected, but got ]\n");
 
     run_expr_parser_error_test(input, expected);
 
@@ -144,7 +144,7 @@ void test_parse_subtract_expr_error(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token ;\n");
+    Error* expected = new_error("token ) expected, but got ;\n");
 
     run_expr_parser_error_test(input, expected);
 
@@ -186,7 +186,7 @@ void test_parse_modulo_expr_error(void) {
     vector_push(input, new_ctoken(CTOKEN_PERCENT));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token %\n");
+    Error* expected = new_error("unexpected token %%\n");
 
     run_expr_parser_error_test(input, expected);
 
@@ -239,7 +239,10 @@ void test_parse_call_expr_error_arg_expr(void) {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("unexpected token ,\n");
+
     run_expr_parser_error_test(input, expected);
+
+    delete_error(expected);
 }
 
 void test_parse_call_expr_error_arg_list(void) {

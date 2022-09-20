@@ -8,7 +8,7 @@
 Vector* gen_jcmp_common_x64code(X64gen* x64gen, X64InstType type);
 
 Vector* gen_jmp_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
@@ -30,7 +30,7 @@ Vector* gen_jneq_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_jcmp_common_x64code(X64gen* x64gen, X64InstType type) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
@@ -75,7 +75,7 @@ Vector* gen_jcmp_common_x64code(X64gen* x64gen, X64InstType type) {
 }
 
 Vector* gen_call_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
@@ -157,7 +157,7 @@ Vector* gen_call_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_enter_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
@@ -184,7 +184,7 @@ Vector* gen_enter_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_leave_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
@@ -205,7 +205,7 @@ Vector* gen_leave_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_prep_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 
@@ -223,7 +223,7 @@ Vector* gen_prep_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_clean_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
 

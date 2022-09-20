@@ -486,14 +486,13 @@ void test_resolve_subscription_expr(void) {
 
     SymbolTable* local_table = new_symboltable();
     Dtype* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
-    Dtype* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("array"), array_dtype);
 
     Srt* expected = new_dtyped_srt(
         SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
         new_dtyped_srt(
-            SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2,                // non-terminal
-            new_dtyped_srt(SRT_ADDR_EXPR, dtype_copy(pointer_dtype), 1, // non-terminal
+            SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2,                // non-terminal
+            new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
                            new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("array"))),
             new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))));
 

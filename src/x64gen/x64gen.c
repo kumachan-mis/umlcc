@@ -22,7 +22,7 @@ X64gen* new_x64gen(Vector* immcs, Vector* liveseqs) {
 }
 
 Vector* x64gen_generate_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
     Vector* sub_codes = NULL;
 
     int immcs_len = vector_size(x64gen->immcs);
@@ -50,7 +50,7 @@ Vector* x64gen_generate_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_function_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
 
     Vector* head_codes = new_vector(&t_string);
     Vector* tail_codes = new_vector(&t_string);
@@ -124,7 +124,7 @@ Vector* gen_function_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_variable_x64code(X64gen* x64gen) {
-    Vector* codes = new_vector(&t_string);
+    Vector* codes = new_vector(&t_x64);
     Vector* sub_codes = NULL;
 
     sub_codes = gen_label_x64code(x64gen);

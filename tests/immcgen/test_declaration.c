@@ -258,7 +258,7 @@ void test_immcgen_local_sliteral_init(void) {
                                    new_string("s")),
                 new_srt(SRT_INIT, 1, // non-terminal
                         new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
-                                         sliteral_copy(sliteral)))));
+                                         sliteral))));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -287,7 +287,7 @@ void test_immcgen_global_sliteral_init(void) {
                                    new_string("s")),
                 new_srt(SRT_INIT, 1, // non-terminal
                         new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
-                                         sliteral_copy(sliteral)))));
+                                         sliteral))));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("s")));

@@ -18,6 +18,8 @@ YELLOW="\x1b[1;33m"
 BLUE="\x1b[1;34m"
 END="\x1b[0m"
 
+exit_code=0
+
 print_gcov () {
     gcov_summary=$1
 
@@ -33,8 +35,10 @@ print_gcov () {
 
         if [ ${integer_part} -lt ${RED_THRESHOLD} ]; then
             color=${RED}
+            exit_code=$(expr ${exit_code} + 1)
         elif [ ${integer_part} -lt ${YELLOW_THRESHOLD} ]; then
             color=${YELLOW}
+            exit_code=$(expr ${exit_code} + 1)
         elif [ ${integer_part} -lt ${GREEN_THRESHOLD} ]; then
             color=${GREEN}
         else
@@ -57,3 +61,5 @@ do
     print_gcov "$(gcov ${GCOV_ARGS} ${cobj_file})"
     mv ${cov_file} ${cov_dir}
 done
+
+exit ${exit_code}
