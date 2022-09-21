@@ -16,6 +16,7 @@ void test_sliteral_display_string_octal(void);
 void test_sliteral_display_string_mixed(void);
 void test_sliteral_display_string_elonged(void);
 void test_sliteral_display_string_zero_padding(void);
+void test_sliteral_display_string_border(void);
 
 CU_Suite* add_test_suite_sliteral(void) {
     CU_Suite* suite = CU_add_suite("test_suite_sliteral", NULL, NULL);
@@ -32,6 +33,7 @@ CU_Suite* add_test_suite_sliteral(void) {
     CU_ADD_TEST(suite, test_sliteral_display_string_mixed);
     CU_ADD_TEST(suite, test_sliteral_display_string_elonged);
     CU_ADD_TEST(suite, test_sliteral_display_string_zero_padding);
+    CU_ADD_TEST(suite, test_sliteral_display_string_border);
     return suite;
 }
 
@@ -281,6 +283,26 @@ void test_sliteral_display_string_zero_padding(void) {
     int sliteral_size = 15;
     int zero_padding_sliteral_size = 18;
     char* expected_display_string = "\"string literal\\000\\000\\000\\000\"";
+
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
+    StringLiteral* zero_padding_sliteral = sliteral_zero_padding_copy(sliteral, zero_padding_sliteral_size);
+    char* display_string = sliteral_display_string(zero_padding_sliteral);
+
+    CU_ASSERT_STRING_EQUAL(display_string, expected_display_string);
+
+    free(display_string);
+    delete_sliteral(sliteral);
+    delete_sliteral(zero_padding_sliteral);
+}
+
+void test_sliteral_display_string_border(void) {
+    char sliteral_const[15] = "string literal";
+    int sliteral_size = 15;
+    int zero_padding_sliteral_size = 14;
+    char* expected_display_string = "\"string literal\"";
 
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
