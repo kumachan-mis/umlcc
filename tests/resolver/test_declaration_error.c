@@ -2,9 +2,12 @@
 #include "../../src/resolver/declaration.h"
 #include "../testlib/testlib.h"
 
+#include <stdlib.h>
+
 void test_resolve_decl_specifiers_error(void);
 void test_resolve_declarator_list_error_duplicated(void);
 void test_resolve_declarator_error(void);
+void test_resolve_array_error_size_non_positive(void);
 void test_resolve_array_error_size_limit(void);
 void test_resolve_param_list_error_duplicated(void);
 void test_resolve_param_error_storage_specifier(void);
@@ -18,7 +21,8 @@ void test_resolve_init_error_too_long_scalar(void);
 void test_resolve_init_error_scalar_array(void);
 void test_resolve_init_error_empty_array(void);
 void test_resolve_init_error_too_long_array(void);
-void test_resolve_init_error_child_array(void);
+void test_resolve_init_error_too_long_sliteral(void);
+void test_resolve_init_error_array_child(void);
 void test_resolve_init_error_too_long_nested_array(void);
 
 void run_local_decl_resolver_error_test(Ast* input, SymbolTable* local_table, Vector* expected);
@@ -29,6 +33,7 @@ CU_Suite* add_test_suite_decl_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_decl_specifiers_error);
     CU_ADD_TEST(suite, test_resolve_declarator_list_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_declarator_error);
+    CU_ADD_TEST(suite, test_resolve_array_error_size_non_positive);
     CU_ADD_TEST(suite, test_resolve_array_error_size_limit);
     CU_ADD_TEST(suite, test_resolve_param_list_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_param_error_storage_specifier);
@@ -42,7 +47,8 @@ CU_Suite* add_test_suite_decl_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_init_error_scalar_array);
     CU_ADD_TEST(suite, test_resolve_init_error_empty_array);
     CU_ADD_TEST(suite, test_resolve_init_error_too_long_array);
-    CU_ADD_TEST(suite, test_resolve_init_error_child_array);
+    CU_ADD_TEST(suite, test_resolve_init_error_too_long_sliteral);
+    CU_ADD_TEST(suite, test_resolve_init_error_array_child);
     CU_ADD_TEST(suite, test_resolve_init_error_too_long_nested_array);
     return suite;
 }
@@ -120,6 +126,27 @@ void test_resolve_declarator_error(void) {
     vector_push(expected, new_error("array of functions is invalid\n"));
     vector_push(expected, new_error("function returning function is invalid\n"));
     vector_push(expected, new_error("function returning array is invalid\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_array_error_size_non_positive(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("a")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("array size should be a positive integer\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, expected);
     run_global_decl_resolver_error_test(global_input, NULL, expected);
@@ -441,7 +468,36 @@ void test_resolve_init_error_too_long_array(void) {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_child_array(void) {
+void test_resolve_init_error_too_long_sliteral(void) {
+    char sliteral_const[5] = "test";
+    int sliteral_size = 5, array_size = 3;
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
+
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_CHAR, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, array_size))),
+                                new_sliteral_ast(AST_STRING_EXPR, sliteral))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("initializer string literal is too long\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_init_error_array_child(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,                    // non-terminal
         new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal

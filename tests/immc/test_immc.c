@@ -158,7 +158,7 @@ void test_new_int_data_immc(void) {
 }
 
 void test_new_str_data_immc(void) {
-    char* sliteral_const = "string\0literal";
+    char sliteral_const[15] = "string\0literal";
     int sliteral_size = 15;
 
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
@@ -333,7 +333,7 @@ void test_immc_tostring_int_data(void) {
 }
 
 void test_immc_tostring_str_data(void) {
-    char* sliteral_const = "string\0literal";
+    char sliteral_const[15] = "string\0literal";
     int sliteral_size = 15;
 
     char* sliteral_value = malloc(sliteral_size * sizeof(char));

@@ -385,7 +385,7 @@ void testlib_assert_sliteral_equal(StringLiteral* actual, StringLiteral* expecte
     CU_ASSERT_EQUAL(actual->size, expected->size);
     if (actual->size != expected->size) return;
 
-    CU_ASSERT_TRUE(memcmp(actual->value, expected->value, expected->size) == 0);
+    CU_ASSERT_EQUAL(memcmp(actual->value, expected->value, expected->size), 0);
 }
 
 void testlib_assert_errors_equal(Vector* actual, Vector* expected) {

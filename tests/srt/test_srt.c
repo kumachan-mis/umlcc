@@ -192,7 +192,7 @@ void test_new_iliteral_srt_char(void) {
 }
 
 void test_new_sliteral_srt(void) {
-    char* sliteral_const = "string literal";
+    char sliteral_const[15] = "string literal";
     int sliteral_size = 15;
 
     char* sliteral_value = malloc(sliteral_size * sizeof(char));

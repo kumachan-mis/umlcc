@@ -244,7 +244,7 @@ void test_immcgen_global_scalar_init(void) {
 }
 
 void test_immcgen_local_sliteral_init(void) {
-    char* sliteral_const = "local";
+    char sliteral_const[6] = "local";
     int sliteral_size = 6;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
@@ -273,7 +273,7 @@ void test_immcgen_local_sliteral_init(void) {
 }
 
 void test_immcgen_global_sliteral_init(void) {
-    char* sliteral_const = "global";
+    char sliteral_const[7] = "global";
     int sliteral_size = 7;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));

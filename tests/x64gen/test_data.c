@@ -58,7 +58,7 @@ void test_x64gen_data_int() {
 }
 
 void test_x64gen_data_str() {
-    char* sliteral_const = "string\0literal";
+    char sliteral_const[15] = "string\0literal";
     int sliteral_size = 15;
 
     char* immc_sliteral_value = malloc(sliteral_size * sizeof(char));

@@ -29,8 +29,12 @@ StringLiteral* sliteral_copy(StringLiteral* sliteral) {
 StringLiteral* sliteral_zero_padding_copy(StringLiteral* sliteral, int size) {
     StringLiteral* copied_sliteral = malloc(sizeof(StringLiteral));
     copied_sliteral->value = malloc(size * sizeof(char));
-    memset(copied_sliteral->value, 0, size);
-    memcpy(copied_sliteral->value, sliteral->value, sliteral->size);
+    if (size > sliteral->size) {
+        memset(copied_sliteral->value, 0, size);
+        memcpy(copied_sliteral->value, sliteral->value, sliteral->size);
+    } else {
+        memcpy(copied_sliteral->value, sliteral->value, size);
+    }
     copied_sliteral->size = size;
     return copied_sliteral;
 }
