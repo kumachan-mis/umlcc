@@ -14,6 +14,7 @@ void test_resolve_typedef_decl(void);
 void test_resolve_scalar_init(void);
 void test_resolve_scalar_init_enclosed(void);
 void test_resolve_sliteral_init(void);
+void test_resolve_sliteral_init_border(void);
 void test_resolve_sliteral_init_lacked(void);
 void test_resolve_sliteral_init_enclosed(void);
 void test_resolve_list_init_zero(void);
@@ -41,6 +42,7 @@ CU_Suite* add_test_suite_decl_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_scalar_init);
     CU_ADD_TEST(suite, test_resolve_scalar_init_enclosed);
     CU_ADD_TEST(suite, test_resolve_sliteral_init);
+    CU_ADD_TEST(suite, test_resolve_sliteral_init_border);
     CU_ADD_TEST(suite, test_resolve_sliteral_init_lacked);
     CU_ADD_TEST(suite, test_resolve_sliteral_init_enclosed);
     CU_ADD_TEST(suite, test_resolve_list_init_zero);
@@ -365,7 +367,7 @@ void test_resolve_scalar_init_enclosed(void) {
 }
 
 void test_resolve_sliteral_init(void) {
-    char* sliteral_const = "test";
+    char sliteral_const[5] = "test";
     int sliteral_size = 5;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
@@ -399,8 +401,44 @@ void test_resolve_sliteral_init(void) {
     delete_srt(expected);
 }
 
+void test_resolve_sliteral_init_border(void) {
+    char sliteral_const[5] = "test";
+    int sliteral_size = 5, array_size = 4;
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
+    StringLiteral* zero_padding_sliteral = sliteral_zero_padding_copy(sliteral, array_size);
+
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                    // non-terminal
+                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_TYPE_CHAR, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, array_size))),
+                                new_sliteral_ast(AST_STRING_EXPR, sliteral))));
+    Ast* global_input = ast_copy(local_input);
+
+    Srt* expected = new_srt(
+        SRT_DECL_LIST, 1,         // non-terminal
+        new_srt(SRT_INIT_DECL, 2, // non-terminal
+                new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), array_size),
+                                   new_string("array")),
+                new_srt(SRT_INIT, 1, // non-terminal
+                        new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), array_size),
+                                         zero_padding_sliteral))));
+
+    run_local_decl_resolver_test(local_input, NULL, expected);
+    run_global_decl_resolver_test(global_input, NULL, expected);
+
+    delete_srt(expected);
+}
+
 void test_resolve_sliteral_init_lacked(void) {
-    char* sliteral_const = "test";
+    char sliteral_const[5] = "test";
     int sliteral_size = 5, array_size = 10;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
@@ -436,7 +474,7 @@ void test_resolve_sliteral_init_lacked(void) {
 }
 
 void test_resolve_sliteral_init_enclosed(void) {
-    char* sliteral_const = "test";
+    char sliteral_const[5] = "test";
     int sliteral_size = 5;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));

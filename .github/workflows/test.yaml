@@ -40,7 +40,7 @@ jobs:
       - name: Show gcc version
         run: gcc --version
 
-      - name: Run unit test with detection of memory leak
+      - name: Run unit test with detection of memory-related bugs
         run: make unittest-debug
 
   unittest-cov:
@@ -85,5 +85,5 @@ jobs:
       - name: Show gcc version
         run: gcc --version
 
-      - name: Run end-to-end test with detection of memory leak
+      - name: Run end-to-end test with detection of memory-related bugs
         run: make e2etest-debug

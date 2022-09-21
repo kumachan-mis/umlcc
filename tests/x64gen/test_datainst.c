@@ -263,7 +263,7 @@ void test_x64gen_addr_label() {
 }
 
 void test_x64gen_str_byte() {
-    char* sliteral_const = "";
+    char sliteral_const[1] = "";
     int sliteral_size = 1;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
@@ -292,7 +292,7 @@ void test_x64gen_str_byte() {
 }
 
 void test_x64gen_str_word() {
-    char* sliteral_const = "123456789";
+    char sliteral_const[10] = "123456789";
     int sliteral_size = 10;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
@@ -330,7 +330,7 @@ void test_x64gen_str_word() {
 }
 
 void test_x64gen_str_long() {
-    char* sliteral_const = "ABCDEFGHIJK";
+    char sliteral_const[12] = "ABCDEFGHIJK";
     int sliteral_size = 12;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
@@ -368,7 +368,7 @@ void test_x64gen_str_long() {
 }
 
 void test_x64gen_str_quad() {
-    char* sliteral_const = "ABCDEFGHIJKLMNO";
+    char sliteral_const[16] = "ABCDEFGHIJKLMNO";
     int sliteral_size = 16;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
@@ -411,7 +411,7 @@ void test_x64gen_str_quad() {
 }
 
 void test_x64gen_str_other() {
-    char* sliteral_const = "ABCDEFGHIJ";
+    char sliteral_const[11] = "ABCDEFGHIJ";
     int sliteral_size = 11;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));

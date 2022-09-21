@@ -236,6 +236,14 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                     break;
                 }
 
+                if (array_size_srt->iliteral->signed_value <= 0) {
+                    errs = new_vector(&t_error);
+                    err = new_error("array size should be a positive integer\n");
+                    vector_push(errs, err);
+                    delete_srt(array_size_srt);
+                    break;
+                }
+
                 plug_dtype = new_socket_array_dtype(array_size_srt->iliteral->signed_value);
                 delete_srt(array_size_srt);
                 dtype = dtype_connect(socket_dtype, plug_dtype);
@@ -548,21 +556,28 @@ ResolverReturn* resolve_array_initializer(Resolver* resolver) {
 
 ResolverReturn* resolve_string_initializer(Resolver* resolver) {
     Srt* srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
     Ast* literal_ast = resolver->ast;
     Dtype* dtype = resolver->initialized_dtype;
 
     if (literal_ast->type == AST_INIT_LIST && vector_size(literal_ast->children) == 1) {
         literal_ast = vector_at(literal_ast->children, 0);
     }
-    if (literal_ast->type == AST_STRING_EXPR) {
-        int size = dtype->array->size;
-        StringLiteral* sliteral = sliteral_zero_padding_copy(literal_ast->sliteral, size);
-        srt = new_sliteral_srt(SRT_STRING_EXPR, dtype_copy(dtype), sliteral);
-        srt = new_srt(SRT_INIT, 1, srt);
-        return new_resolverret(srt);
+
+    if (literal_ast->type != AST_STRING_EXPR) return resolve_array_initializer(resolver);
+
+    if (literal_ast->sliteral->size - 1 > dtype->array->size) {
+        errs = new_vector(&t_error);
+        err = new_error("initializer string literal is too long\n");
+        vector_push(errs, err);
+        return new_resolverret_errors(errs);
     }
 
-    return resolve_array_initializer(resolver);
+    StringLiteral* sliteral = sliteral_zero_padding_copy(literal_ast->sliteral, dtype->array->size);
+    srt = new_sliteral_srt(SRT_STRING_EXPR, dtype_copy(dtype), sliteral);
+    srt = new_srt(SRT_INIT, 1, srt);
+    return new_resolverret(srt);
 }
 
 ResolverReturn* resolve_zero_array_initializer(Resolver* resolver) {
