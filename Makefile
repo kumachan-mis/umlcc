@@ -146,34 +146,10 @@ format:
 install-pre-commit:
 	cp .pre-commit .git/hooks/pre-commit
 
-ifeq ($(MAKECMDGOALS),)
+ifeq ($(MAKECMDGOALS),$(BIN_DIR)/$(UMLCC))
 -include $(DEPS)
 endif
 
-ifeq ($(MAKECMDGOALS),build)
--include $(DEPS)
-endif
-
-ifeq ($(MAKECMDGOALS),build-debug)
--include $(DEPS)
-endif
-
-ifeq ($(MAKECMDGOALS),e2etest)
--include $(DEPS)
-endif
-
-ifeq ($(MAKECMDGOALS),e2etest-debug)
--include $(DEPS)
-endif
-
-ifeq ($(MAKECMDGOALS),unittest)
--include $(DEPS) $(TEST_DEPS)
-endif
-
-ifeq ($(MAKECMDGOALS),unittest-debug)
--include $(DEPS) $(TEST_DEPS)
-endif
-
-ifeq ($(MAKECMDGOALS),unittest-cov)
+ifeq ($(MAKECMDGOALS),$(BIN_DIR)/$(TEST))
 -include $(DEPS) $(TEST_DEPS)
 endif
