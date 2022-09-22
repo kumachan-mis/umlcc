@@ -11,6 +11,7 @@ Map* new_keyword_map(void) {
     ctoken_map_add(keyword_map, "char", CTOKEN_KEYWORD_CHAR);
     ctoken_map_add(keyword_map, "int", CTOKEN_KEYWORD_INT);
     ctoken_map_add(keyword_map, "return", CTOKEN_KEYWORD_RETURN);
+    ctoken_map_add(keyword_map, "struct", CTOKEN_KEYWORD_STRUCT);
     ctoken_map_add(keyword_map, "typedef", CTOKEN_KEYWORD_TYPEDEF);
 
     return keyword_map;
@@ -82,10 +83,12 @@ Map* new_punctuator_map(void) {
 
     ctoken_map_add(punctuator_map, "[", CTOKEN_LBRACKET);
     ctoken_map_add(punctuator_map, "]", CTOKEN_RBRACKET);
-    ctoken_map_add(punctuator_map, "{", CTOKEN_LBRACE);
-    ctoken_map_add(punctuator_map, "}", CTOKEN_RBRACE);
     ctoken_map_add(punctuator_map, "(", CTOKEN_LPALEN);
     ctoken_map_add(punctuator_map, ")", CTOKEN_RPALEN);
+    ctoken_map_add(punctuator_map, "{", CTOKEN_LBRACE);
+    ctoken_map_add(punctuator_map, "}", CTOKEN_RBRACE);
+    ctoken_map_add(punctuator_map, ".", CTOKEN_DOT);
+    ctoken_map_add(punctuator_map, "->", CTOKEN_ARROW);
     ctoken_map_add(punctuator_map, "&", CTOKEN_AND);
     ctoken_map_add(punctuator_map, "*", CTOKEN_ASTERISK);
     ctoken_map_add(punctuator_map, "+", CTOKEN_PLUS);

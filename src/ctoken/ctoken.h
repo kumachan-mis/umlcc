@@ -10,6 +10,7 @@ typedef enum CTokenType {
     CTOKEN_KEYWORD_CHAR,
     CTOKEN_KEYWORD_INT,
     CTOKEN_KEYWORD_RETURN,
+    CTOKEN_KEYWORD_STRUCT,
     CTOKEN_KEYWORD_TYPEDEF,
 
     // identifier
@@ -27,6 +28,8 @@ typedef enum CTokenType {
     CTOKEN_RPALEN,
     CTOKEN_LBRACE,
     CTOKEN_RBRACE,
+    CTOKEN_DOT,
+    CTOKEN_ARROW,
     CTOKEN_AND,
     CTOKEN_ASTERISK,
     CTOKEN_PLUS,
