@@ -96,8 +96,22 @@ e2etest-debug:
 	$(MAKE) $(BIN_DIR)/$(UMLCC) MAKE_ENV=debug
 	$(E2E_TEST)
 
+clean:
+	$(RM) $(BIN_DIR) $(BLD_DIR)
+	$(TEST_COV_CLEAN)
+	$(E2E_CLEAN)
+
 sample:
 	$(MAKE) $(SAMPLE_ASMS)
+
+clean-sample:
+	$(RM) $(SAMPLE_OUT)
+
+format:
+	@clang-format -i $(shell find . -name *.h -o -name *.c)
+
+install-pre-commit:
+	cp .pre-commit .git/hooks/pre-commit
 
 $(BIN_DIR)/$(UMLCC): $(OBJS)
 	@$(MKDIR) $(dir $@)
@@ -115,7 +129,6 @@ $(DEP_DIR)/%$(DEP_EXT): $(SRC_DIR)/%$(SRC_EXT)
 	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -MP -MM $< -MF $@ -MT $(patsubst $(SRC_DIR)/%$(SRC_EXT),$(OBJ_DIR)/%$(OBJ_EXT),$<)
 
-
 $(BIN_DIR)/$(TEST): $(filter-out $(OBJ_DIR)/$(SRC_MAIN)$(OBJ_EXT),$(OBJS)) $(TEST_OBJS)
 	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) $^ $(TEST_LIBS) -o $@
@@ -131,20 +144,6 @@ $(TEST_DEP_DIR)/%$(DEP_EXT): $(TEST_DIR)/%$(TEST_EXT)
 $(SAMPLE_OUT)/%$(ASM_EXT): $(SAMPLE_DIR)/%$(SRC_EXT)
 	@$(MKDIR) $(dir $@)
 	$(CC) $(SAMPLE_CFLAGS) -S $< -o $@
-
-clean:
-	$(RM) $(BIN_DIR) $(BLD_DIR)
-	$(TEST_COV_CLEAN)
-	$(E2E_CLEAN)
-
-clean-sample:
-	$(RM) $(SAMPLE_OUT)
-
-format:
-	@clang-format -i $(shell find . -name *.h -o -name *.c)
-
-install-pre-commit:
-	cp .pre-commit .git/hooks/pre-commit
 
 ifeq ($(MAKECMDGOALS),$(BIN_DIR)/$(UMLCC))
 -include $(DEPS)
