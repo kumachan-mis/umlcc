@@ -19,9 +19,9 @@ CU_Suite* add_test_suite_stmt_resolver_error(void) {
 }
 
 void test_resolve_compound_stmt_error_child(void) {
-    Ast* input = new_ast(AST_CMPD_STMT, 4,                       // non-terminal
-                         new_ast(AST_DECL, 2,                    // non-terminal
-                                 new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+    Ast* input = new_ast(AST_CMPD_STMT, 4,                  // non-terminal
+                         new_ast(AST_DECL, 2,               // non-terminal
+                                 new_ast(AST_DECL_SPECS, 1, // non-terminal
                                          new_ast(AST_TYPE_INT, 0)),
                                  new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
                                          new_ast(AST_INIT_DECLOR, 2, // non-terminal

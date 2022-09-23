@@ -54,8 +54,8 @@ CU_Suite* add_test_suite_decl_resolver_error(void) {
 }
 
 void test_resolve_decl_specifiers_error(void) {
-    Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
-                               new_ast(AST_DECL_SPECIFIERS, 2, // non-terminal
+    Ast* local_input = new_ast(AST_DECL, 2,               // non-terminal
+                               new_ast(AST_DECL_SPECS, 2, // non-terminal
                                        new_ast(AST_TYPE_CHAR, 0), new_ast(AST_TYPE_INT, 0)),
                                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
                                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
@@ -72,8 +72,8 @@ void test_resolve_decl_specifiers_error(void) {
 }
 
 void test_resolve_declarator_list_error_duplicated(void) {
-    Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
-                               new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+    Ast* local_input = new_ast(AST_DECL, 2,               // non-terminal
+                               new_ast(AST_DECL_SPECS, 1, // non-terminal
                                        new_ast(AST_TYPE_INT, 0)),
                                new_ast(AST_INIT_DECLOR_LIST, 5,    // non-terminal
                                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
@@ -100,8 +100,8 @@ void test_resolve_declarator_list_error_duplicated(void) {
 
 void test_resolve_declarator_error(void) {
     Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        AST_DECL, 2,               // non-terminal
+        new_ast(AST_DECL_SPECS, 1, // non-terminal
                 new_ast(AST_TYPE_INT, 0)),
         new_ast(AST_INIT_DECLOR_LIST, 3,             // non-terminal
                 new_ast(AST_INIT_DECLOR, 1,          // non-terminal
@@ -135,8 +135,8 @@ void test_resolve_declarator_error(void) {
 
 void test_resolve_array_error_size_non_positive(void) {
     Ast* local_input =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
                         new_ast(AST_TYPE_INT, 0)),
                 new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
                         new_ast(AST_INIT_DECLOR, 1,          // non-terminal
@@ -156,8 +156,8 @@ void test_resolve_array_error_size_non_positive(void) {
 
 void test_resolve_array_error_size_limit(void) {
     Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        AST_DECL, 2,               // non-terminal
+        new_ast(AST_DECL_SPECS, 1, // non-terminal
                 new_ast(AST_TYPE_INT, 0)),
         new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
                 new_ast(AST_INIT_DECLOR, 1,          // non-terminal
@@ -179,32 +179,32 @@ void test_resolve_array_error_size_limit(void) {
 
 void test_resolve_param_list_error_duplicated(void) {
     Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        AST_DECL, 2,               // non-terminal
+        new_ast(AST_DECL_SPECS, 1, // non-terminal
                 new_ast(AST_TYPE_CHAR, 0)),
         new_ast(AST_INIT_DECLOR_LIST, 1,            // non-terminal
                 new_ast(AST_INIT_DECLOR, 1,         // non-terminal
                         new_ast(AST_FUNC_DECLOR, 2, // non-terminal
                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("f")),
-                                new_ast(AST_PARAM_LIST, 5,                      // non-terminal
-                                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                new_ast(AST_PARAM_LIST, 5,                 // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
                                                         new_ast(AST_TYPE_INT, 0)),
                                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))),
-                                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
                                                         new_ast(AST_TYPE_CHAR, 0)),
                                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("y"))),
-                                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
                                                         new_ast(AST_TYPE_CHAR, 0)),
                                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))),
-                                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
                                                         new_ast(AST_TYPE_INT, 0)),
                                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("y"))),
-                                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
                                                         new_ast(AST_TYPE_INT, 0)),
                                                 new_ast(AST_PTR_DECLOR, 1,
                                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("z")))))))));
@@ -222,16 +222,16 @@ void test_resolve_param_list_error_duplicated(void) {
 
 void test_resolve_param_error_storage_specifier(void) {
     Ast* local_input =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
                         new_ast(AST_TYPE_CHAR, 0)),
                 new_ast(AST_INIT_DECLOR_LIST, 1,            // non-terminal
                         new_ast(AST_INIT_DECLOR, 1,         // non-terminal
                                 new_ast(AST_FUNC_DECLOR, 2, // non-terminal
                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("f")),
-                                        new_ast(AST_PARAM_LIST, 1,                      // non-terminal
-                                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                                        new_ast(AST_DECL_SPECIFIERS, 2, // non-terminal
+                                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                        new_ast(AST_DECL_SPECS, 2, // non-terminal
                                                                 new_ast(AST_TYPE_INT, 0), new_ast(AST_STG_TYPEDEF, 0)),
                                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))))))));
     Ast* global_input = ast_copy(local_input);
@@ -247,16 +247,16 @@ void test_resolve_param_error_storage_specifier(void) {
 
 void test_resolve_param_error_declarator(void) {
     Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        AST_DECL, 2,               // non-terminal
+        new_ast(AST_DECL_SPECS, 1, // non-terminal
                 new_ast(AST_TYPE_CHAR, 0)),
         new_ast(AST_INIT_DECLOR_LIST, 1,            // non-terminal
                 new_ast(AST_INIT_DECLOR, 1,         // non-terminal
                         new_ast(AST_FUNC_DECLOR, 2, // non-terminal
                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("f")),
-                                new_ast(AST_PARAM_LIST, 1,                      // non-terminal
-                                        new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
                                                         new_ast(AST_TYPE_INT, 0)),
                                                 new_ast(AST_ARRAY_DECLOR, 2,        // non-terminal
                                                         new_ast(AST_FUNC_DECLOR, 2, // non-terminal
@@ -276,8 +276,8 @@ void test_resolve_param_error_declarator(void) {
 }
 
 void test_resolve_init_error_unassignable(void) {
-    Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
-                               new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+    Ast* local_input = new_ast(AST_DECL, 2,               // non-terminal
+                               new_ast(AST_DECL_SPECS, 1, // non-terminal
                                        new_ast(AST_TYPE_INT, 0)),
                                new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
                                        new_ast(AST_INIT_DECLOR, 2,        // non-terminal
@@ -296,8 +296,8 @@ void test_resolve_init_error_unassignable(void) {
 }
 
 void test_resolve_init_error_function(void) {
-    Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
-                               new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+    Ast* local_input = new_ast(AST_DECL, 2,               // non-terminal
+                               new_ast(AST_DECL_SPECS, 1, // non-terminal
                                        new_ast(AST_TYPE_CHAR, 0)),
                                new_ast(AST_INIT_DECLOR_LIST, 1,                   // non-terminal
                                        new_ast(AST_INIT_DECLOR, 2,                // non-terminal
@@ -318,8 +318,8 @@ void test_resolve_init_error_function(void) {
 }
 
 void test_resolve_init_error_typedef_name() {
-    Ast* local_input = new_ast(AST_DECL, 2,                    // non-terminal
-                               new_ast(AST_DECL_SPECIFIERS, 2, // non-terminal
+    Ast* local_input = new_ast(AST_DECL, 2,               // non-terminal
+                               new_ast(AST_DECL_SPECS, 2, // non-terminal
                                        new_ast(AST_STG_TYPEDEF, 0), new_ast(AST_TYPE_INT, 0)),
                                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
                                        new_ast(AST_INIT_DECLOR, 2, // non-terminal
@@ -338,8 +338,8 @@ void test_resolve_init_error_typedef_name() {
 
 void test_resolve_init_error_nested_list_scalar(void) {
     Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        AST_DECL, 2,               // non-terminal
+        new_ast(AST_DECL_SPECS, 1, // non-terminal
                 new_ast(AST_TYPE_INT, 0)),
         new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
                 new_ast(AST_INIT_DECLOR, 2, // non-terminal
@@ -360,8 +360,8 @@ void test_resolve_init_error_nested_list_scalar(void) {
 
 void test_resolve_init_error_empty_scalar(void) {
     Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        AST_DECL, 2,               // non-terminal
+        new_ast(AST_DECL_SPECS, 1, // non-terminal
                 new_ast(AST_TYPE_INT, 0)),
         new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
                 new_ast(AST_INIT_DECLOR, 2, // non-terminal
@@ -379,8 +379,8 @@ void test_resolve_init_error_empty_scalar(void) {
 
 void test_resolve_init_error_too_long_scalar(void) {
     Ast* local_input =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
                         new_ast(AST_TYPE_INT, 0)),
                 new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
                         new_ast(AST_INIT_DECLOR, 2, // non-terminal
@@ -401,8 +401,8 @@ void test_resolve_init_error_too_long_scalar(void) {
 
 void test_resolve_init_error_scalar_array(void) {
     Ast* local_input =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
                         new_ast(AST_TYPE_CHAR, 0)),
                 new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
                         new_ast(AST_INIT_DECLOR, 2,          // non-terminal
@@ -423,8 +423,8 @@ void test_resolve_init_error_scalar_array(void) {
 
 void test_resolve_init_error_empty_array(void) {
     Ast* local_input =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
                         new_ast(AST_TYPE_CHAR, 0)),
                 new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
                         new_ast(AST_INIT_DECLOR, 2,          // non-terminal
@@ -445,8 +445,8 @@ void test_resolve_init_error_empty_array(void) {
 
 void test_resolve_init_error_too_long_array(void) {
     Ast* local_input =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
                         new_ast(AST_TYPE_CHAR, 0)),
                 new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
                         new_ast(AST_INIT_DECLOR, 2,          // non-terminal
@@ -477,8 +477,8 @@ void test_resolve_init_error_too_long_sliteral(void) {
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
 
     Ast* local_input =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
                         new_ast(AST_TYPE_CHAR, 0)),
                 new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
                         new_ast(AST_INIT_DECLOR, 2,          // non-terminal
@@ -499,8 +499,8 @@ void test_resolve_init_error_too_long_sliteral(void) {
 
 void test_resolve_init_error_array_child(void) {
     Ast* local_input = new_ast(
-        AST_DECL, 2,                    // non-terminal
-        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        AST_DECL, 2,               // non-terminal
+        new_ast(AST_DECL_SPECS, 1, // non-terminal
                 new_ast(AST_TYPE_CHAR, 0)),
         new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
                 new_ast(AST_INIT_DECLOR, 2,          // non-terminal
@@ -529,8 +529,8 @@ void test_resolve_init_error_array_child(void) {
 
 void test_resolve_init_error_too_long_nested_array(void) {
     Ast* local_input =
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
                         new_ast(AST_TYPE_INT, 0)),
                 new_ast(AST_INIT_DECLOR_LIST, 1,                     // non-terminal
                         new_ast(AST_INIT_DECLOR, 2,                  // non-terminal

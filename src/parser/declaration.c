@@ -39,7 +39,7 @@ ParserReturn* parse_decl(Parser* parser) {
 }
 
 ParserReturn* parse_decl_specifiers(Parser* parser) {
-    Ast* ast = new_ast(AST_DECL_SPECIFIERS, 0);
+    Ast* ast = new_ast(AST_DECL_SPECS, 0);
     CToken* ctoken = NULL;
     char* typedef_name = NULL;
 

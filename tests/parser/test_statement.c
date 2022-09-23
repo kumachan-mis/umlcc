@@ -53,9 +53,9 @@ void test_parse_compound_stmt_integer_vardef(void) {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Ast* expected =
-        new_ast(AST_CMPD_STMT, 3,                       // non-terminal
-                new_ast(AST_DECL, 2,                    // non-terminal
-                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        new_ast(AST_CMPD_STMT, 3,                  // non-terminal
+                new_ast(AST_DECL, 2,               // non-terminal
+                        new_ast(AST_DECL_SPECS, 1, // non-terminal
                                 new_ast(AST_TYPE_INT, 0)),
                         new_ast(AST_INIT_DECLOR_LIST, 3,    // non-terminal
                                 new_ast(AST_INIT_DECLOR, 2, // non-terminal
@@ -111,16 +111,16 @@ void test_parse_compound_stmt_pointer_typedef(void) {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Ast* expected =
-        new_ast(AST_CMPD_STMT, 3,                       // non-terminal
-                new_ast(AST_DECL, 2,                    // non-terminal
-                        new_ast(AST_DECL_SPECIFIERS, 2, // non-terminal
+        new_ast(AST_CMPD_STMT, 3,                  // non-terminal
+                new_ast(AST_DECL, 2,               // non-terminal
+                        new_ast(AST_DECL_SPECS, 2, // non-terminal
                                 new_ast(AST_STG_TYPEDEF, 0), new_ast(AST_TYPE_INT, 0)),
                         new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
                                 new_ast(AST_INIT_DECLOR, 1,        // non-terminal
                                         new_ast(AST_PTR_DECLOR, 1, // non-terminal
                                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("pint")))))),
-                new_ast(AST_DECL, 2,                    // non-terminal
-                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                new_ast(AST_DECL, 2,               // non-terminal
+                        new_ast(AST_DECL_SPECS, 1, // non-terminal
                                 new_identifier_ast(AST_TYPEDEF_NAME, new_string("pint"))),
                         new_ast(AST_INIT_DECLOR_LIST, 2,    // non-terminal
                                 new_ast(AST_INIT_DECLOR, 1, // non-terminal

@@ -15,7 +15,7 @@ typedef enum AstType {
 
     // declaration
     AST_DECL,
-    AST_DECL_SPECIFIERS,
+    AST_DECL_SPECS,
     AST_INIT_DECLOR_LIST,
     AST_INIT_DECLOR,
     //   storage-class-specifiers

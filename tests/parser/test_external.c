@@ -39,26 +39,26 @@ void test_parse_transration_unit(void) {
 
     Ast* expected = new_ast(
         AST_TRAS_UNIT, 2,
-        new_ast(AST_DECL, 2,                    // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
                         new_ast(AST_TYPE_INT, 0)),
                 new_ast(AST_INIT_DECLOR_LIST, 1,            // non-terminal
                         new_ast(AST_INIT_DECLOR, 1,         // non-terminal
                                 new_ast(AST_FUNC_DECLOR, 2, // non-terminal
                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("incriment")),
-                                        new_ast(AST_PARAM_LIST, 1,                      // non-terminal
-                                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
                                                                 new_ast(AST_TYPE_INT, 0)),
                                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("x")))))))),
-        new_ast(AST_FUNC_DEF, 3,                // non-terminal
-                new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+        new_ast(AST_FUNC_DEF, 3,           // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
                         new_ast(AST_TYPE_INT, 0)),
                 new_ast(AST_FUNC_DECLOR, 2, // non-terminal
                         new_identifier_ast(AST_IDENT_DECLOR, new_string("decriment")),
-                        new_ast(AST_PARAM_LIST, 1,                      // non-terminal
-                                new_ast(AST_PARAM_DECL, 2,              // non-terminal
-                                        new_ast(AST_DECL_SPECIFIERS, 1, // non-terminal
+                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
                                                 new_ast(AST_TYPE_INT, 0)),
                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))))),
                 new_ast(AST_CMPD_STMT, 1,                // non-terminal
