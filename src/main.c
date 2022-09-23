@@ -15,7 +15,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    int src_filename_len = strlen(argv[1]);
     FILE* src = fopen(argv[1], "r");
+
     if (src == NULL) {
         fprintf(stderr, "\x1b[1;31merror\x1b[0m: %s: no such file or directory\n", argv[1]);
         return 1;
@@ -27,20 +29,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    int src_filename_len = strlen(argv[1]);
-
-    char* imm_filename = new_string(argv[1]);
-    imm_filename[src_filename_len - 1] = 'i';
-
-    char* dst_filename = new_string(argv[1]);
-    dst_filename[src_filename_len - 1] = 's';
-
-    FILE* imm = fopen(imm_filename, "w");
-    FILE* dst = fopen(dst_filename, "w");
-
-    free(dst_filename);
-    free(imm_filename);
-
     Vector* errs = NULL;
     Error* err = NULL;
 
@@ -48,12 +36,12 @@ int main(int argc, char* argv[]) {
     Vector* ctokens = NULL;
     lexerret_assign(&ctokens, &err, lexer_read_ctokens(lexer));
     delete_lexer(lexer);
+    fclose(src);
 
     if (err != NULL) {
         fprintf(stderr, "\x1b[0;36m@@@@@ Error occured in lexer @@@@@\x1b[0m\n");
         fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s", err->message);
         delete_error(err);
-        // files are implicitly closed
         return 1;
     }
 
@@ -66,7 +54,6 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "\x1b[0;36m@@@@@ Error occured in parser @@@@@\x1b[0m\n");
         fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s", err->message);
         delete_error(err);
-        // files are implicitly closed
         return 1;
     }
 
@@ -83,7 +70,6 @@ int main(int argc, char* argv[]) {
             fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s", err->message);
         }
         delete_vector(errs);
-        // files are implicitly closed
         return 1;
     }
 
@@ -97,16 +83,27 @@ int main(int argc, char* argv[]) {
     regallocret_assign(&allocated_immcs, &liveseqs, regalloc_allocate_regs(regalloc));
     delete_regalloc(regalloc);
 
+    char* imm_filename = new_string(argv[1]);
+    imm_filename[src_filename_len - 1] = 'i';
+    FILE* imm = fopen(imm_filename, "w");
+    free(imm_filename);
+
     int immcs_len = vector_size(allocated_immcs);
     for (int i = 0; i < immcs_len; i++) {
         char* immc_str = immc_tostring(vector_at(allocated_immcs, i));
         fprintf(imm, "%s", immc_str);
         free(immc_str);
     }
+    fclose(imm);
 
     X64gen* x64gen = new_x64gen(allocated_immcs, liveseqs);
     Vector* x64codes = x64gen_generate_x64code(x64gen);
     delete_x64gen(x64gen);
+
+    char* dst_filename = new_string(argv[1]);
+    dst_filename[src_filename_len - 1] = 's';
+    FILE* dst = fopen(dst_filename, "w");
+    free(dst_filename);
 
     int x64codes_len = vector_size(x64codes);
     for (int i = 0; i < x64codes_len; i++) {
@@ -114,8 +111,9 @@ int main(int argc, char* argv[]) {
         fprintf(dst, "%s", x64_str);
         free(x64_str);
     }
+    fclose(dst);
+
     delete_vector(x64codes);
 
-    // files are implicitly closed
     return 0;
 }

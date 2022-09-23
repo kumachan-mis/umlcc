@@ -52,8 +52,7 @@ print_gcov () {
 }
 
 cd ${BASE_DIR}
-for cobj_file in ${COBJ_DIR}/**/*.o
-do
+for cobj_file in ${COBJ_DIR}/**/*.o; do
     cov_dir=$(dirname ${cobj_file} | sed "s|^${COBJ_DIR}|${COV_DIR}|")
     cov_file=$(basename ${cobj_file} | sed "s|.o$|.c.gcov|")
 
