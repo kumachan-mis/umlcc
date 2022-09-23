@@ -75,7 +75,7 @@ build-debug:
 	$(MAKE) $(BIN_DIR)/$(SRC_TARGET) MAKE_ENV=debug
 
 build-clean:
-	$(RM) $(BIN_DIR)/$(SRC_TARGET) $(SRC_OBJ_DIR) $(SRC_DEP_DIR)
+	$(RM) $(BIN_DIR)/$(SRC_TARGET) $(BLD_DIR)/$(SRC_DIR)
 
 .PHONY: unittest unittest-debug unittest-cov unittest-clean
 unittest:
@@ -92,7 +92,7 @@ unittest-cov:
 	$(COV_RUN)
 
 unittest-clean:
-	$(RM) $(BIN_DIR)/$(TEST_TARGET) $(SRC_OBJ_DIR) $(SRC_DEP_DIR) $(TEST_OBJ_DIR) $(TEST_DEP_DIR)
+	$(RM) $(BIN_DIR)/$(TEST_TARGET) $(BLD_DIR)/$(SRC_DIR) $(BLD_DIR)/$(TEST_DIR)
 	$(TEST_COV_CLEAN)
 
 .PHONY: e2etest e2etest-debug e2etest-clean
@@ -105,7 +105,7 @@ e2etest-debug:
 	$(E2ETEST_RUN)
 
 e2etest-clean:
-	$(RM) $(BIN_DIR)/$(SRC_TARGET) $(SRC_OBJ_DIR) $(SRC_DEP_DIR)
+	$(RM) $(BIN_DIR)/$(SRC_TARGET) $(BLD_DIR)/$(SRC_DIR)
 	$(E2ETEST_CLEAN)
 
 .PHONY: sample sample-clean
