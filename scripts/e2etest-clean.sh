@@ -9,8 +9,11 @@ OUTPUT=main.s
 BINARY=main.out
 ACTUAL=actual.txt
 
-for fixture_dir in ${FIXTURES_DIR}/*
-do
+for fixture_dir in ${FIXTURES_DIR}/*; do
+    if [ ${fixture_dir} = ${FIXTURES_DIR}/_ ]; then
+        continue
+    fi
+
     immediate=${fixture_dir}/${IMMEDIATE}
     output=${fixture_dir}/${OUTPUT}
     binary=${fixture_dir}/${BINARY}
