@@ -276,6 +276,28 @@ ParserReturn* parse_postfix_expr(Parser* parser) {
                 ast = new_ast(AST_CALL_EXPR, 2, ast, child);
                 err = consume_ctoken(parser, CTOKEN_RPALEN);
                 break;
+            case CTOKEN_DOT:
+                parser->index++;
+                ctoken = vector_at(parser->ctokens, parser->index);
+                if (ctoken->type != CTOKEN_IDENT) {
+                    err = new_error("token identifier expected, but got %s\n", ctoken_types[ctoken->type]);
+                    break;
+                }
+                parser->index++;
+                child = new_identifier_ast(AST_IDENT_EXPR, new_string(ctoken->ident_name));
+                ast = new_ast(AST_MEMBER_EXPR, 2, ast, child);
+                break;
+            case CTOKEN_ARROW:
+                parser->index++;
+                ctoken = vector_at(parser->ctokens, parser->index);
+                if (ctoken->type != CTOKEN_IDENT) {
+                    err = new_error("token identifier expected, but got %s\n", ctoken_types[ctoken->type]);
+                    break;
+                }
+                parser->index++;
+                child = new_identifier_ast(AST_IDENT_EXPR, new_string(ctoken->ident_name));
+                ast = new_ast(AST_TOMEMBER_EXPR, 2, ast, child);
+                break;
             default:
                 return new_parserret(ast);
         }

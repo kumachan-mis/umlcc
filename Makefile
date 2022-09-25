@@ -93,7 +93,7 @@ unittest-cov:
 
 unittest-clean:
 	$(RM) $(BIN_DIR)/$(TEST_TARGET) $(BLD_DIR)/$(SRC_DIR) $(BLD_DIR)/$(TEST_DIR)
-	$(TEST_COV_CLEAN)
+	$(COV_CLEAN)
 
 .PHONY: e2etest e2etest-debug e2etest-clean
 e2etest:

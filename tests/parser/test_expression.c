@@ -18,6 +18,8 @@ void test_parse_indirection_expr(void);
 void test_parse_logical_not_expr(void);
 void test_parse_call_expr(void);
 void test_parse_subscription_expr(void);
+void test_parse_member_expr(void);
+void test_parse_tomember_expr(void);
 void test_parse_ident_expr(void);
 void test_parse_iliteral_expr_int(void);
 void test_parse_iliteral_expr_char(void);
@@ -43,6 +45,8 @@ CU_Suite* add_test_suite_expr_parser(void) {
     CU_ADD_TEST(suite, test_parse_logical_not_expr);
     CU_ADD_TEST(suite, test_parse_call_expr);
     CU_ADD_TEST(suite, test_parse_subscription_expr);
+    CU_ADD_TEST(suite, test_parse_member_expr);
+    CU_ADD_TEST(suite, test_parse_tomember_expr);
     CU_ADD_TEST(suite, test_parse_ident_expr);
     CU_ADD_TEST(suite, test_parse_iliteral_expr_int);
     CU_ADD_TEST(suite, test_parse_iliteral_expr_char);
@@ -381,6 +385,46 @@ void test_parse_subscription_expr(void) {
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("array")),
                                     new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
                             new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_member_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("structure")));
+    vector_push(input, new_ctoken(CTOKEN_DOT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("child")));
+    vector_push(input, new_ctoken(CTOKEN_DOT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("grandchild")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_MEMBER_EXPR, 2,         // non-terminal
+                            new_ast(AST_MEMBER_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("child"))),
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("grandchild")));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_tomember_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("node")));
+    vector_push(input, new_ctoken(CTOKEN_ARROW));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("next")));
+    vector_push(input, new_ctoken(CTOKEN_ARROW));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("next")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_TOMEMBER_EXPR, 2,         // non-terminal
+                            new_ast(AST_TOMEMBER_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("node")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("next"))),
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("next")));
 
     run_expr_parser_test(input, expected);
 

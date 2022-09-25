@@ -70,6 +70,8 @@ typedef enum AstType {
     //   postfix-expression
     AST_SUBSC_EXPR,
     AST_CALL_EXPR,
+    AST_MEMBER_EXPR,
+    AST_TOMEMBER_EXPR,
     AST_ARG_LIST,
     //   primary-expression
     AST_IDENT_EXPR,
