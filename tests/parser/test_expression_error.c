@@ -253,7 +253,7 @@ void test_parse_call_expr_error_arg_list(void) {
     vector_push(input, new_ctoken(CTOKEN_EXCLAM));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token , expected, but got !\n");
+    Error* expected = new_error("token ) expected, but got !\n");
 
     run_expr_parser_error_test(input, expected);
 

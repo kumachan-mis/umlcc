@@ -5,6 +5,13 @@
 
 ParserReturn* parse_decl(Parser* parser);
 ParserReturn* parse_decl_specifiers(Parser* parser);
+ParserReturn* parse_specifier_qualifier_list(Parser* parser);
+ParserReturn* parse_storage_class_specifier(Parser* parser);
+ParserReturn* parse_type_specifier(Parser* parser);
+ParserReturn* parse_struct_specifier(Parser* parser);
+ParserReturn* parse_struct_decl_list(Parser* parser);
+ParserReturn* parse_struct_decl(Parser* parser);
+ParserReturn* parse_struct_declarator_list(Parser* parser);
 ParserReturn* parse_init_declarator_list(Parser* parser);
 ParserReturn* parse_init_declarator(Parser* parser);
 ParserReturn* parse_declarator(Parser* parser);

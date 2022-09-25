@@ -3,6 +3,7 @@
 #include "../testlib/testlib.h"
 #include "./test_external.h"
 
+void test_parse_translation_unit_error_empty(void);
 void test_parse_external_decl_error(void);
 void test_parse_function_definition_error_decl_specifier(void);
 void test_parse_function_definition_error_empty_param_specifier(void);
@@ -15,6 +16,7 @@ void run_function_definition_parser_error_test(Vector* input, Error* expected);
 
 CU_Suite* add_test_suite_external_parser_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_external_parser_error", NULL, NULL);
+    CU_ADD_TEST(suite, test_parse_translation_unit_error_empty);
     CU_ADD_TEST(suite, test_parse_external_decl_error);
     CU_ADD_TEST(suite, test_parse_function_definition_error_decl_specifier);
     CU_ADD_TEST(suite, test_parse_function_definition_error_empty_param_specifier);
@@ -22,6 +24,17 @@ CU_Suite* add_test_suite_external_parser_error(void) {
     CU_ADD_TEST(suite, test_parse_function_definition_error_param_list);
     CU_ADD_TEST(suite, test_parse_function_definition_error_body);
     return suite;
+}
+
+void test_parse_translation_unit_error_empty(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("one of declaration specifiers expected, but got EOF\n");
+
+    run_parser_error_test(input, expected);
+
+    delete_error(expected);
 }
 
 void test_parse_external_decl_error(void) {
@@ -50,7 +63,7 @@ void test_parse_function_definition_error_decl_specifier(void) {
 
     Vector* func_def_inpput = vector_copy(input);
 
-    Error* expected = new_error("one of declaration-specifiers expected, but got identifier\n");
+    Error* expected = new_error("one of declaration specifiers expected, but got identifier\n");
 
     run_parser_error_test(input, expected);
     run_function_definition_parser_error_test(func_def_inpput, expected);
@@ -71,7 +84,7 @@ void test_parse_function_definition_error_empty_param_specifier(void) {
 
     Vector* func_def_inpput = vector_copy(input);
 
-    Error* expected = new_error("one of declaration-specifiers expected, but got identifier\n");
+    Error* expected = new_error("one of declaration specifiers expected, but got identifier\n");
 
     run_parser_error_test(input, expected);
     run_function_definition_parser_error_test(func_def_inpput, expected);
@@ -109,7 +122,7 @@ void test_parse_function_definition_error_param_list(void) {
 
     Vector* func_def_inpput = vector_copy(input);
 
-    Error* expected = new_error("token , expected, but got EOF\n");
+    Error* expected = new_error("token ) expected, but got EOF\n");
 
     run_parser_error_test(input, expected);
     run_function_definition_parser_error_test(func_def_inpput, expected);

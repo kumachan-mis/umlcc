@@ -293,15 +293,15 @@ ParserReturn* parse_argument_expr_list(Parser* parser) {
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     if (ctoken->type == CTOKEN_RPALEN) return new_parserret(ast);
 
-    while (err == NULL) {
+    while (1) {
         parserret_assign(&child, &err, parse_assignment_expr(parser));
         if (err != NULL) break;
 
         vector_push(ast->children, child);
         ctoken = vector_at(parser->ctokens, parser->index);
-        if (ctoken->type == CTOKEN_RPALEN) break;
+        if (ctoken->type != CTOKEN_COMMA) break;
 
-        err = consume_ctoken(parser, CTOKEN_COMMA);
+        parser->index++;
     }
 
     if (err != NULL) {

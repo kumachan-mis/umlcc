@@ -9,9 +9,10 @@ void test_parse_pointer_decl(void);
 void test_parse_array_decl(void);
 void test_parse_function_decl(void);
 void test_parse_parameter_decl(void);
+void test_parse_struct_decl(void);
+void test_parse_struct_name_decl(void);
 void test_parse_typedef_decl(void);
 void test_parse_expr_init(void);
-void test_parse_list_init_empty(void);
 void test_parse_list_init_without_trailing_comma(void);
 void test_parse_list_init_with_trailing_comma(void);
 
@@ -25,9 +26,10 @@ CU_Suite* add_test_suite_decl_parser(void) {
     CU_ADD_TEST(suite, test_parse_array_decl);
     CU_ADD_TEST(suite, test_parse_function_decl);
     CU_ADD_TEST(suite, test_parse_parameter_decl);
+    CU_ADD_TEST(suite, test_parse_struct_decl);
+    CU_ADD_TEST(suite, test_parse_struct_name_decl);
     CU_ADD_TEST(suite, test_parse_typedef_decl);
     CU_ADD_TEST(suite, test_parse_expr_init);
-    CU_ADD_TEST(suite, test_parse_list_init_empty);
     CU_ADD_TEST(suite, test_parse_list_init_without_trailing_comma);
     CU_ADD_TEST(suite, test_parse_list_init_with_trailing_comma);
     return suite;
@@ -283,6 +285,99 @@ void test_parse_parameter_decl(void) {
     delete_ast(expected);
 }
 
+void test_parse_struct_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_STRUCT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Test")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("s")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACKET));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 10)));
+    vector_push(input, new_ctoken(CTOKEN_RBRACKET));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_STRUCT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Test")));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("next")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("test")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(
+        AST_DECL, 2,                        // non-terminal
+        new_ast(AST_DECL_SPECS, 1,          // non-terminal
+                new_ast(AST_TYPE_STRUCT, 2, // non-terminal
+                        new_identifier_ast(AST_STRUCT_NAME, new_string("Test")),
+                        new_ast(AST_STRUCT_DECL_LIST, 3,               // non-terminal
+                                new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                        new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                new_ast(AST_TYPE_INT, 0)),
+                                        new_ast(AST_STRUCT_DECLOR_LIST, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("x")),
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("y")))),
+                                new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                        new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                new_ast(AST_TYPE_CHAR, 0)),
+                                        new_ast(AST_STRUCT_DECLOR_LIST, 1,   // non-terminal
+                                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("s")),
+                                                        new_iliteral_ast(AST_INT_EXPR,
+                                                                         new_signed_iliteral(INTEGER_INT, 10))))),
+                                new_ast(AST_STRUCT_DECL, 2,                 // non-terminal
+                                        new_ast(AST_SPEC_QUAL_LIST, 1,      // non-terminal
+                                                new_ast(AST_TYPE_STRUCT, 1, // non-terminal
+                                                        new_identifier_ast(AST_STRUCT_NAME, new_string("Test")))),
+                                        new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
+                                                new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("next")))))))),
+        new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("test"))))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_struct_name_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_STRUCT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Test")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected =
+        new_ast(AST_DECL, 1,                        // non-terminal
+                new_ast(AST_DECL_SPECS, 1,          // non-terminal
+                        new_ast(AST_TYPE_STRUCT, 2, // non-terminal
+                                new_identifier_ast(AST_STRUCT_NAME, new_string("Test")),
+                                new_ast(AST_STRUCT_DECL_LIST, 1,               // non-terminal
+                                        new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                                new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                        new_ast(AST_TYPE_INT, 0)),
+                                                new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))))))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
 void test_parse_typedef_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("test_type")));
@@ -326,35 +421,6 @@ void test_parse_expr_init(void) {
                                 new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
-
-    run_decl_parser_test(input, NULL, expected);
-
-    delete_ast(expected);
-}
-
-void test_parse_list_init_empty(void) {
-    Vector* input = new_vector(&t_ctoken);
-    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("array")));
-    vector_push(input, new_ctoken(CTOKEN_LBRACKET));
-    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
-    vector_push(input, new_ctoken(CTOKEN_RBRACKET));
-    vector_push(input, new_ctoken(CTOKEN_EQUAL));
-    vector_push(input, new_ctoken(CTOKEN_LBRACE));
-    vector_push(input, new_ctoken(CTOKEN_RBRACE));
-    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
-    vector_push(input, new_ctoken(CTOKEN_EOF));
-
-    Ast* expected =
-        new_ast(AST_DECL, 2,               // non-terminal
-                new_ast(AST_DECL_SPECS, 1, // non-terminal
-                        new_ast(AST_TYPE_INT, 0)),
-                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
-                        new_ast(AST_INIT_DECLOR, 2,          // non-terminal
-                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
-                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))),
-                                new_ast(AST_INIT_LIST, 0))));
 
     run_decl_parser_test(input, NULL, expected);
 

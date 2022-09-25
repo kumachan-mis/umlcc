@@ -12,9 +12,6 @@ ParserReturn* parse_translation_unit(Parser* parser) {
     Error* err = NULL;
 
     while (1) {
-        CToken* ctoken = vector_at(parser->ctokens, parser->index);
-        if (ctoken->type == CTOKEN_EOF) break;
-
         int may_func_def = -1;
         errint_assign(&may_func_def, &err, external_may_function_definition(parser));
         if (err != NULL) break;
@@ -27,6 +24,9 @@ ParserReturn* parse_translation_unit(Parser* parser) {
 
         if (err != NULL) break;
         vector_push(ast->children, child);
+
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type == CTOKEN_EOF) break;
     }
 
     if (err != NULL) {

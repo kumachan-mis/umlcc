@@ -4,6 +4,7 @@
 #include "./expression.h"
 #include "./util.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 ParserReturn* parse_decl(Parser* parser) {
@@ -19,9 +20,17 @@ ParserReturn* parse_decl(Parser* parser) {
     }
     vector_push(ast->children, child);
 
-    parserret_assign(&child, &err, parse_init_declarator_list(parser));
-    if (err != NULL) {
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type == CTOKEN_SEMICOLON) {
+        parser->index++;
         parser->typedef_flag = 0;
+        return new_parserret(ast);
+    }
+
+    parserret_assign(&child, &err, parse_init_declarator_list(parser));
+    parser->typedef_flag = 0;
+
+    if (err != NULL) {
         delete_ast(ast);
         return new_parserret_error(err);
     }
@@ -29,55 +38,241 @@ ParserReturn* parse_decl(Parser* parser) {
 
     err = consume_ctoken(parser, CTOKEN_SEMICOLON);
     if (err != NULL) {
-        parser->typedef_flag = 0;
         delete_ast(ast);
         return new_parserret_error(err);
     }
 
-    parser->typedef_flag = 0;
     return new_parserret(ast);
 }
 
 ParserReturn* parse_decl_specifiers(Parser* parser) {
     Ast* ast = new_ast(AST_DECL_SPECS, 0);
-    CToken* ctoken = NULL;
-    char* typedef_name = NULL;
+    Ast* child = NULL;
+    Error* err = NULL;
 
-    int terminated = 0;
-    while (!terminated) {
-        ctoken = vector_at(parser->ctokens, parser->index);
-        switch (ctoken->type) {
-            case CTOKEN_KEYWORD_TYPEDEF:
-                parser->index++;
-                vector_push(ast->children, new_ast(AST_STG_TYPEDEF, 0));
-                parser->typedef_flag = 1;
-                break;
-            case CTOKEN_KEYWORD_CHAR:
-                parser->index++;
-                vector_push(ast->children, new_ast(AST_TYPE_CHAR, 0));
-                break;
-            case CTOKEN_KEYWORD_INT:
-                parser->index++;
-                vector_push(ast->children, new_ast(AST_TYPE_INT, 0));
-                break;
-            case CTOKEN_IDENT:
-                if (!set_contains(parser->typedef_names_set, ctoken->ident_name)) {
-                    terminated = 1;
-                    break;
-                }
-                typedef_name = new_string(ctoken->ident_name);
-                parser->index++;
-                vector_push(ast->children, new_identifier_ast(AST_TYPEDEF_NAME, typedef_name));
-                break;
-            default:
-                terminated = 1;
-                break;
+    while (1) {
+        if (ctoken_is_storage_class_specifier(parser)) {
+            parserret_assign(&child, &err, parse_storage_class_specifier(parser));
+        } else if (ctoken_is_type_specifier(parser)) {
+            parserret_assign(&child, &err, parse_type_specifier(parser));
+        } else {
+            break;
         }
+
+        if (err != NULL) break;
+        vector_push(ast->children, child);
+    }
+
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
     }
 
     if (vector_size(ast->children) == 0) {
         delete_ast(ast);
-        Error* err = new_error("one of declaration-specifiers expected, but got %s\n", ctoken_types[ctoken->type]);
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        err = new_error("one of declaration specifiers expected, but got %s\n", ctoken_types[ctoken->type]);
+        return new_parserret_error(err);
+    }
+
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_specifier_qualifier_list(Parser* parser) {
+    Ast* ast = new_ast(AST_SPEC_QUAL_LIST, 0);
+    Ast* child = NULL;
+    Error* err = NULL;
+
+    // TODO: consider type qualifiers
+
+    while (1) {
+        if (ctoken_is_type_specifier(parser)) {
+            parserret_assign(&child, &err, parse_type_specifier(parser));
+        } else {
+            break;
+        }
+
+        if (err != NULL) break;
+        vector_push(ast->children, child);
+    }
+
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    if (vector_size(ast->children) == 0) {
+        delete_ast(ast);
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        err = new_error("one of type specifiers or type qualifiers expected, but got %s\n", ctoken_types[ctoken->type]);
+        return new_parserret_error(err);
+    }
+
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_storage_class_specifier(Parser* parser) {
+    Ast* ast = NULL;
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+
+    switch (ctoken->type) {
+        case CTOKEN_KEYWORD_TYPEDEF:
+            parser->index++;
+            ast = new_ast(AST_STG_TYPEDEF, 0);
+            parser->typedef_flag = 1;
+            break;
+        default:
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in parse_storage_class_specifier)\n");
+            exit(1);
+    }
+
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_type_specifier(Parser* parser) {
+    Ast* ast = NULL;
+    Error* err = NULL;
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+
+    switch (ctoken->type) {
+        case CTOKEN_KEYWORD_CHAR:
+            parser->index++;
+            ast = new_ast(AST_TYPE_CHAR, 0);
+            break;
+        case CTOKEN_KEYWORD_INT:
+            parser->index++;
+            ast = new_ast(AST_TYPE_INT, 0);
+            break;
+        case CTOKEN_KEYWORD_STRUCT:
+            parserret_assign(&ast, &err, parse_struct_specifier(parser));
+            break;
+        case CTOKEN_IDENT:
+            if (set_contains(parser->typedef_names_set, ctoken->ident_name)) {
+                parser->index++;
+                ast = new_identifier_ast(AST_TYPEDEF_NAME, new_string(ctoken->ident_name));
+                break;
+            }
+            // fall through
+        default:
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in parse_type_specifier)\n");
+            exit(1);
+    }
+
+    if (err != NULL) return new_parserret_error(err);
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_struct_specifier(Parser* parser) {
+    Ast* ast = new_ast(AST_TYPE_STRUCT, 0);
+    Ast* child = NULL;
+    Error* err = NULL;
+
+    err = consume_ctoken(parser, CTOKEN_KEYWORD_STRUCT);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type != CTOKEN_IDENT) {
+        err = new_error("token identifier expected, but got %s\n", ctoken_types[ctoken->type]);
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    parser->index++;
+    child = new_identifier_ast(AST_STRUCT_NAME, new_string(ctoken->ident_name));
+    vector_push(ast->children, child);
+
+    ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type != CTOKEN_LBRACE) return new_parserret(ast);
+
+    parser->index++;
+    parserret_assign(&child, &err, parse_struct_decl_list(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    vector_push(ast->children, child);
+
+    err = consume_ctoken(parser, CTOKEN_RBRACE);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_struct_decl_list(Parser* parser) {
+    Ast* ast = new_ast(AST_STRUCT_DECL_LIST, 0);
+    Ast* child = NULL;
+    Error* err = NULL;
+
+    while (1) {
+        parserret_assign(&child, &err, parse_struct_decl(parser));
+        if (err != NULL) break;
+
+        vector_push(ast->children, child);
+        if (!ctoken_is_type_specifier(parser)) break;
+    }
+
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_struct_decl(Parser* parser) {
+    Ast* ast = new_ast(AST_STRUCT_DECL, 0);
+    Ast* child = NULL;
+    Error* err = NULL;
+
+    parserret_assign(&child, &err, parse_specifier_qualifier_list(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    vector_push(ast->children, child);
+
+    parserret_assign(&child, &err, parse_struct_declarator_list(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    vector_push(ast->children, child);
+
+    err = consume_ctoken(parser, CTOKEN_SEMICOLON);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_struct_declarator_list(Parser* parser) {
+    Ast* ast = new_ast(AST_STRUCT_DECLOR_LIST, 0);
+    Ast* child = NULL;
+    Error* err = NULL;
+
+    while (1) {
+        parserret_assign(&child, &err, parse_declarator(parser));
+        if (err != NULL) break;
+        vector_push(ast->children, child);
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type != CTOKEN_COMMA) break;
+        parser->index++;
+    }
+
+    if (err != NULL) {
+        delete_ast(ast);
         return new_parserret_error(err);
     }
     return new_parserret(ast);
@@ -88,16 +283,15 @@ ParserReturn* parse_init_declarator_list(Parser* parser) {
     Ast* child = NULL;
     Error* err = NULL;
 
-    CToken* ctoken = vector_at(parser->ctokens, parser->index);
-    if (ctoken->type == CTOKEN_SEMICOLON) return new_parserret(ast);
-
-    while (err == NULL) {
+    while (1) {
         parserret_assign(&child, &err, parse_init_declarator(parser));
         if (err != NULL) break;
+
         vector_push(ast->children, child);
-        ctoken = vector_at(parser->ctokens, parser->index);
-        if (ctoken->type == CTOKEN_SEMICOLON) break;
-        err = consume_ctoken(parser, CTOKEN_COMMA);
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type != CTOKEN_COMMA) break;
+
+        parser->index++;
     }
 
     if (err != NULL) {
@@ -254,15 +448,15 @@ ParserReturn* parse_parameter_list(Parser* parser) {
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     if (ctoken->type == CTOKEN_RPALEN) return new_parserret(ast);
 
-    while (err == NULL) {
+    while (1) {
         parserret_assign(&child, &err, parse_parameter_decl(parser));
         if (err != NULL) break;
         vector_push(ast->children, child);
 
         ctoken = vector_at(parser->ctokens, parser->index);
-        if (ctoken->type == CTOKEN_RPALEN) break;
+        if (ctoken->type != CTOKEN_COMMA) break;
 
-        err = consume_ctoken(parser, CTOKEN_COMMA);
+        parser->index++;
     }
 
     if (err != NULL) {
@@ -322,15 +516,12 @@ ParserReturn* parse_initializer_list(Parser* parser) {
     Ast* child = NULL;
     Error* err = NULL;
 
-    CToken* ctoken = vector_at(parser->ctokens, parser->index);
-    if (ctoken->type == CTOKEN_RBRACE) return new_parserret(ast);
-
     while (1) {
         parserret_assign(&child, &err, parse_initializer(parser));
         if (err != NULL) break;
         vector_push(ast->children, child);
 
-        ctoken = vector_at(parser->ctokens, parser->index);
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
         if (ctoken->type == CTOKEN_RBRACE) break;
 
         err = consume_ctoken(parser, CTOKEN_COMMA);
