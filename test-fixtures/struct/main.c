@@ -1,0 +1,40 @@
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+Node* new_node(int value);
+int delete_node(Node* node);
+
+int put_int(int x);
+int put_blank_line();
+
+int main() {
+    struct Test {
+        int x;
+        int a[3];
+    } test = {1};
+    put_int(test.x);
+    put_int(test.a[0]);
+    put_int(test.a[1]);
+    put_int(test.a[2]);
+    put_blank_line();
+
+    test.a[2] = 3;
+    test.a[1] = 2;
+
+    put_int(test.x);
+    put_int(test.a[0]);
+    put_int(test.a[1]);
+    put_int(test.a[2]);
+    put_blank_line();
+
+    Node* node = new_node(10);
+    node->next = new_node(20);
+    put_int(node->value);
+    put_int(node->next->value);
+
+    delete_node(node);
+
+    return 0;
+}

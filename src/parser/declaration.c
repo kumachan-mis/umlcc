@@ -134,6 +134,7 @@ ParserReturn* parse_type_specifier(Parser* parser) {
     Ast* ast = NULL;
     Error* err = NULL;
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    int original_typedef_flag = parser->typedef_flag;
 
     switch (ctoken->type) {
         case CTOKEN_KEYWORD_CHAR:
@@ -145,7 +146,9 @@ ParserReturn* parse_type_specifier(Parser* parser) {
             ast = new_ast(AST_TYPE_INT, 0);
             break;
         case CTOKEN_KEYWORD_STRUCT:
+            parser->typedef_flag = 0;
             parserret_assign(&ast, &err, parse_struct_specifier(parser));
+            parser->typedef_flag = original_typedef_flag;
             break;
         case CTOKEN_IDENT:
             if (set_contains(parser->typedef_names_set, ctoken->ident_name)) {
