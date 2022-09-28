@@ -12,6 +12,7 @@ void test_parse_parameter_decl(void);
 void test_parse_struct_decl(void);
 void test_parse_struct_name_decl(void);
 void test_parse_typedef_decl(void);
+void test_parse_typedef_name_decl(void);
 void test_parse_expr_init(void);
 void test_parse_list_init_without_trailing_comma(void);
 void test_parse_list_init_with_trailing_comma(void);
@@ -29,6 +30,7 @@ CU_Suite* add_test_suite_decl_parser(void) {
     CU_ADD_TEST(suite, test_parse_struct_decl);
     CU_ADD_TEST(suite, test_parse_struct_name_decl);
     CU_ADD_TEST(suite, test_parse_typedef_decl);
+    CU_ADD_TEST(suite, test_parse_typedef_name_decl);
     CU_ADD_TEST(suite, test_parse_expr_init);
     CU_ADD_TEST(suite, test_parse_list_init_without_trailing_comma);
     CU_ADD_TEST(suite, test_parse_list_init_with_trailing_comma);
@@ -379,6 +381,28 @@ void test_parse_struct_name_decl(void) {
 }
 
 void test_parse_typedef_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_TYPEDEF));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("test_type")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_DECL, 2,               // non-terminal
+                            new_ast(AST_DECL_SPECS, 2, // non-terminal
+                                    new_ast(AST_STG_TYPEDEF, 0), new_ast(AST_TYPE_CHAR, 0)),
+                            new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                                    new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                                            new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("test_type"))))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_typedef_name_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("test_type")));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));

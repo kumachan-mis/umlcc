@@ -5,6 +5,7 @@
 
 void test_parse_compound_stmt_integer_vardef(void);
 void test_parse_compound_stmt_pointer_typedef(void);
+void test_parse_compound_stmt_struct_typedef(void);
 void test_parse_compound_stmt_empty(void);
 void test_parse_return_stmt(void);
 void test_parse_expression_stmt(void);
@@ -15,6 +16,7 @@ CU_Suite* add_test_suite_stmt_parser(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_parser", NULL, NULL);
     CU_ADD_TEST(suite, test_parse_compound_stmt_integer_vardef);
     CU_ADD_TEST(suite, test_parse_compound_stmt_pointer_typedef);
+    CU_ADD_TEST(suite, test_parse_compound_stmt_struct_typedef);
     CU_ADD_TEST(suite, test_parse_compound_stmt_empty);
     CU_ADD_TEST(suite, test_parse_return_stmt);
     CU_ADD_TEST(suite, test_parse_expression_stmt);
@@ -135,6 +137,71 @@ void test_parse_compound_stmt_pointer_typedef(void) {
                                         new_ast(AST_INDIR_EXPR, 1, // non-terminal
                                                 new_identifier_ast(AST_IDENT_EXPR, new_string("q"))),
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 7))))));
+
+    run_stmt_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_compound_stmt_struct_typedef(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_TYPEDEF));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_STRUCT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("StrChain")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("s")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_STRUCT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("StrChain")));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("next")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("StrChain")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("StrChain")));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("head")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(
+        AST_CMPD_STMT, 2, // non-terminal
+        new_ast(
+            AST_DECL, 2, // non-terminal
+            new_ast(
+                AST_DECL_SPECS, 2, // non-terminal
+                new_ast(AST_STG_TYPEDEF, 0),
+                new_ast(AST_TYPE_STRUCT, 2, // non-terminal
+                        new_identifier_ast(AST_STRUCT_NAME, new_string("StrChain")),
+                        new_ast(AST_STRUCT_DECL_LIST, 2,               // non-terminal
+                                new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                        new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                new_ast(AST_TYPE_CHAR, 0)),
+                                        new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
+                                                new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("s"))))),
+                                new_ast(AST_STRUCT_DECL, 2,                 // non-terminal
+                                        new_ast(AST_SPEC_QUAL_LIST, 1,      // non-terminal
+                                                new_ast(AST_TYPE_STRUCT, 1, // non-terminal
+                                                        new_identifier_ast(AST_STRUCT_NAME, new_string("StrChain")))),
+                                        new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
+                                                new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("next")))))))),
+            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                    new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                            new_identifier_ast(AST_IDENT_DECLOR, new_string("StrChain"))))),
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                        new_identifier_ast(AST_TYPEDEF_NAME, new_string("StrChain"))),
+                new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                                new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("head")))))));
 
     run_stmt_parser_test(input, expected);
 
