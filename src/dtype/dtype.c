@@ -1,4 +1,6 @@
+#ifndef UMLCC_DTYPE_H_PRIVATE
 #define UMLCC_DTYPE_H_PRIVATE
+#endif
 
 #include "./dtype.h"
 
