@@ -1,3 +1,5 @@
+#define UMLCC_DTYPE_H_PRIVATE
+
 #include "./dtype.h"
 
 #include <stdlib.h>

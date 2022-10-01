@@ -1,3 +1,7 @@
+#ifndef UMLCC_DTYPE_H_PRIVATE
+#define UMLCC_DTYPE_H_PRIVATE
+#endif
+
 #include "./decoration.h"
 
 #include <stdlib.h>
