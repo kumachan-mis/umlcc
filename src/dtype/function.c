@@ -12,10 +12,6 @@ BaseType t_dparam = {
     .delete_object = (void (*)(void*))delete_dparam,
 };
 
-DType* dtype_copy(DType* dtype);
-void delete_dtype(DType* dtype);
-int dtype_equals(DType* dtype, DType* other);
-
 DFunction* new_dfunction(Vector* params, DType* return_dtype) {
     DFunction* dfunction = malloc(sizeof(DFunction));
     dfunction->params = params;

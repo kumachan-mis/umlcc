@@ -3,6 +3,10 @@
 
 #ifndef UMLCC_DTYPE_H
 typedef struct DType DType;
+
+DType* dtype_copy(DType* dtype);
+int dtype_equals(DType* dtype, DType* other);
+void delete_dtype(DType* dtype);
 #endif
 
 typedef struct DDecoration DDecoration;

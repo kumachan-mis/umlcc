@@ -6,10 +6,6 @@
 
 #include <stdlib.h>
 
-DType* dtype_copy(DType* dtype);
-void delete_dtype(DType* dtype);
-int dtype_equals(DType* dtype, DType* other);
-
 DPointer* new_dpointer(DType* to_dtype) {
     DPointer* dpointer = malloc(sizeof(DPointer));
     dpointer->to_dtype = to_dtype;

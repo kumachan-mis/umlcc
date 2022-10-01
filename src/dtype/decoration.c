@@ -6,10 +6,6 @@
 
 #include <stdlib.h>
 
-DType* dtype_copy(DType* dtype);
-void delete_dtype(DType* dtype);
-int dtype_equals(DType* dtype, DType* other);
-
 DDecoration* new_ddecoration(DType* deco_dtype) {
     DDecoration* ddecoration = malloc(sizeof(DDecoration));
     ddecoration->typedef_flag = 0;

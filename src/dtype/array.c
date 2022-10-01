@@ -6,10 +6,6 @@
 
 #include <stdlib.h>
 
-DType* dtype_copy(DType* dtype);
-void delete_dtype(DType* dtype);
-int dtype_equals(DType* dtype, DType* other);
-
 DArray* new_darray(DType* of_dtype, int size) {
     DArray* darray = malloc(sizeof(DArray));
     darray->of_dtype = of_dtype;

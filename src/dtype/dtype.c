@@ -61,21 +61,6 @@ DType* new_decoration_dtype(DType* deco_dtype) {
     return dtype;
 }
 
-DType* dtype_copy(DType* dtype) {
-    DType* copied_dtype = malloc(sizeof(DType));
-    copied_dtype->type = dtype->type;
-
-    copied_dtype->pointer = NULL;
-    if (dtype->pointer != NULL) copied_dtype->pointer = dpointer_copy(dtype->pointer);
-    copied_dtype->array = NULL;
-    if (dtype->array != NULL) copied_dtype->array = darray_copy(dtype->array);
-    copied_dtype->function = NULL;
-    if (dtype->function != NULL) copied_dtype->function = dfunction_copy(dtype->function);
-    copied_dtype->decoration = NULL;
-    if (dtype->decoration != NULL) copied_dtype->decoration = ddecoration_copy(dtype->decoration);
-    return copied_dtype;
-}
-
 DType* new_socket_pointer_dtype(void) {
     DType* dtype = malloc(sizeof(DType));
     dtype->type = DTYPE_POINTER;
@@ -114,6 +99,21 @@ DType* new_socket_decoration_dtype(void) {
     dtype->function = NULL;
     dtype->decoration = new_socket_ddecoration();
     return dtype;
+}
+
+DType* dtype_copy(DType* dtype) {
+    DType* copied_dtype = malloc(sizeof(DType));
+    copied_dtype->type = dtype->type;
+
+    copied_dtype->pointer = NULL;
+    if (dtype->pointer != NULL) copied_dtype->pointer = dpointer_copy(dtype->pointer);
+    copied_dtype->array = NULL;
+    if (dtype->array != NULL) copied_dtype->array = darray_copy(dtype->array);
+    copied_dtype->function = NULL;
+    if (dtype->function != NULL) copied_dtype->function = dfunction_copy(dtype->function);
+    copied_dtype->decoration = NULL;
+    if (dtype->decoration != NULL) copied_dtype->decoration = ddecoration_copy(dtype->decoration);
+    return copied_dtype;
 }
 
 DType* dtype_connect(DType* socket_dtype, DType* plug_dtype) {
