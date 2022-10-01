@@ -122,7 +122,7 @@ void test_immcgen_compound_stmt_integer_vardef(void) {
 }
 
 void test_immcgen_compound_stmt_pointer_typedef(void) {
-    Dtype* pint_def_dtype = new_decoration_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    DType* pint_def_dtype = new_decoration_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
     pint_def_dtype->decoration->typedef_flag = 1;
 
     Srt* input = new_srt(

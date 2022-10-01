@@ -69,7 +69,7 @@ Vector* gen_decl_immcode(Immcgen* immcgen) {
     Srt* srt = immcgen->srt;
 
     char* symbol_name = new_string(srt->ident_name);
-    Dtype* symbol_dtype = dtype_copy(srt->dtype);
+    DType* symbol_dtype = dtype_copy(srt->dtype);
 
     if (immcgen->local_table == NULL) {
         SymbolTable* table = immcgen->global_table;
@@ -89,7 +89,7 @@ Vector* gen_initializer_immcode(Immcgen* immcgen) {
     Vector* gen_array_initializer_immcode(Immcgen * immcgen);
     Vector* gen_scalar_initializer_immcode(Immcgen * immcgen);
 
-    Dtype* dtype = immcgen->initialized_dtype;
+    DType* dtype = immcgen->initialized_dtype;
 
     switch (dtype->type) {
         case DTYPE_ARRAY:
@@ -110,7 +110,7 @@ Vector* gen_array_initializer_immcode(Immcgen* immcgen) {
     }
 
     Vector* codes = new_vector(&t_immc);
-    Dtype* dtype = immcgen->initialized_dtype;
+    DType* dtype = immcgen->initialized_dtype;
 
     for (int i = 0; i < dtype->array->size; i++) {
         immcgen->initialized_dtype = dtype->array->of_dtype;

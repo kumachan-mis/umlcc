@@ -48,7 +48,7 @@ ResolverReturn* resolve_transration_unit(Resolver* resolver) {
 
 ResolverReturn* resolve_function_definition(Resolver* resolver) {
     Srt* srt = NULL;
-    Dtype* specifiers_dtype = NULL;
+    DType* specifiers_dtype = NULL;
     Srt* declarator_srt = NULL;
     Srt* body_srt = NULL;
     Vector* errs = NULL;
@@ -96,7 +96,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     }
 
     char* symbol_name = new_string(declarator_srt->ident_name);
-    Dtype* symbol_dtype = dtype_copy(declarator_srt->dtype);
+    DType* symbol_dtype = dtype_copy(declarator_srt->dtype);
     symboltable_define_label(resolver->global_table, symbol_name, symbol_dtype);
 
     resolver->local_table = new_symboltable();
@@ -106,8 +106,8 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
         DParam* dparam = vector_at(params, i);
-        char* symbol_name = new_string(dparam->ident_name);
-        Dtype* symbol_dtype = dtype_copy(dparam->dtype);
+        char* symbol_name = new_string(dparam->name);
+        DType* symbol_dtype = dtype_copy(dparam->dtype);
         symboltable_define_memory(resolver->local_table, symbol_name, symbol_dtype);
     }
 

@@ -695,7 +695,7 @@ void test_resolve_call_expr_error_non_func(void) {
                                  new_identifier_ast(AST_IDENT_EXPR, new_string("y"))));
 
     SymbolTable* local_table = new_symboltable();
-    Dtype* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 2);
+    DType* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 2);
     symboltable_define_memory(local_table, new_string("function"), array_dtype);
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_CHAR));
     symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
@@ -718,7 +718,7 @@ void test_resolve_call_expr_error_num_params(void) {
     SymbolTable* local_table = new_symboltable();
     Vector* params = new_vector(&t_dparam);
     vector_push(params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
-    Dtype* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
+    DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
     symboltable_define_label(local_table, new_string("function"), func_dtype);
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_CHAR));
     symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
@@ -744,7 +744,7 @@ void test_resolve_call_expr_error_param_dtype(void) {
     vector_push(params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
     vector_push(params, new_dparam(new_string("y"), new_integer_dtype(DTYPE_CHAR)));
     vector_push(params, new_dparam(new_string("z"), new_integer_dtype(DTYPE_INT)));
-    Dtype* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
+    DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
     symboltable_define_label(local_table, new_string("function"), func_dtype);
     symboltable_define_memory(local_table, new_string("x"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
     symboltable_define_memory(local_table, new_string("y"), new_array_dtype(new_integer_dtype(DTYPE_INT), 2));
@@ -772,7 +772,7 @@ void test_resolve_call_expr_error_child(void) {
     vector_push(params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
     vector_push(params, new_dparam(new_string("y"), new_integer_dtype(DTYPE_CHAR)));
     vector_push(params, new_dparam(new_string("z"), new_integer_dtype(DTYPE_INT)));
-    Dtype* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
+    DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
     symboltable_define_label(local_table, new_string("function"), func_dtype);
     symboltable_define_memory(local_table, new_string("z"), new_integer_dtype(DTYPE_CHAR));
 
@@ -791,7 +791,7 @@ void test_resolve_subscription_expr_error_non_obj_pointer(void) {
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
 
     SymbolTable* local_table = new_symboltable();
-    Dtype* func_dtype = new_function_dtype(new_vector(&t_dparam), new_integer_dtype(DTYPE_INT));
+    DType* func_dtype = new_function_dtype(new_vector(&t_dparam), new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("a"), func_dtype);
 
     Vector* expected = new_vector(&t_error);
@@ -824,9 +824,9 @@ void test_resolve_subscription_expr_error_non_integer(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
 
     SymbolTable* local_table = new_symboltable();
-    Dtype* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
+    DType* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
     symboltable_define_memory(local_table, new_string("a"), array_dtype);
-    Dtype* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("i"), pointer_dtype);
 
     Vector* expected = new_vector(&t_error);
@@ -856,7 +856,7 @@ void test_resolve_subscription_expr_error_rhs(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
 
     SymbolTable* local_table = new_symboltable();
-    Dtype* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
+    DType* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
     symboltable_define_memory(local_table, new_string("a"), array_dtype);
 
     Vector* expected = new_vector(&t_error);

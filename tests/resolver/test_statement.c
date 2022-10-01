@@ -9,7 +9,7 @@ void test_resolve_return_stmt_without_cast(void);
 void test_resolve_return_stmt_with_cast(void);
 void test_resolve_expression_stmt(void);
 
-void run_stmt_resolver_test(Ast* input, SymbolTable* local_table, Dtype* return_dtype, Srt* expected);
+void run_stmt_resolver_test(Ast* input, SymbolTable* local_table, DType* return_dtype, Srt* expected);
 
 CU_Suite* add_test_suite_stmt_resolver(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver", NULL, NULL);
@@ -121,7 +121,7 @@ void test_resolve_compound_stmt_pointer_typedef(void) {
                                                 new_identifier_ast(AST_IDENT_EXPR, new_string("q"))),
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 7))))));
 
-    Dtype* pint_def_dtype = new_decoration_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    DType* pint_def_dtype = new_decoration_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
     pint_def_dtype->decoration->typedef_flag = 1;
 
     Srt* expected = new_srt(
@@ -173,7 +173,7 @@ void test_resolve_return_stmt_without_cast(void) {
     Ast* input = new_ast(AST_RET_STMT, 1, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
 
-    Dtype* return_dtype = new_integer_dtype(DTYPE_INT);
+    DType* return_dtype = new_integer_dtype(DTYPE_INT);
 
     Srt* expected =
         new_srt(SRT_RET_STMT, 1, // non-terminal
@@ -188,7 +188,7 @@ void test_resolve_return_stmt_with_cast(void) {
     Ast* input = new_ast(AST_RET_STMT, 1, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
 
-    Dtype* return_dtype = new_integer_dtype(DTYPE_CHAR);
+    DType* return_dtype = new_integer_dtype(DTYPE_CHAR);
 
     Srt* expected = new_srt(SRT_RET_STMT, 1,                                                // non-terminal
                             new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
@@ -222,7 +222,7 @@ void test_resolve_expression_stmt(void) {
     delete_srt(expected);
 }
 
-void run_stmt_resolver_test(Ast* input, SymbolTable* local_table, Dtype* return_dtype, Srt* expected) {
+void run_stmt_resolver_test(Ast* input, SymbolTable* local_table, DType* return_dtype, Srt* expected) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
     if (local_table != NULL) resolver->local_table = local_table;

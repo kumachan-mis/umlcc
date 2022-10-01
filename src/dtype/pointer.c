@@ -2,11 +2,11 @@
 
 #include <stdlib.h>
 
-struct Dtype* dtype_copy(struct Dtype* dtype);
-void delete_dtype(struct Dtype* dtype);
-int dtype_equals(struct Dtype* dtype, struct Dtype* other);
+struct DType* dtype_copy(struct DType* dtype);
+void delete_dtype(struct DType* dtype);
+int dtype_equals(struct DType* dtype, struct DType* other);
 
-DPointer* new_dpointer(struct Dtype* to_dtype) {
+DPointer* new_dpointer(struct DType* to_dtype) {
     DPointer* dpointer = malloc(sizeof(DPointer));
     dpointer->to_dtype = to_dtype;
     return dpointer;
@@ -23,11 +23,11 @@ DPointer* dpointer_copy(DPointer* dpointer) {
     return copied_dpointer;
 }
 
-struct Dtype* dpointer_next(DPointer* dpointer) {
+struct DType* dpointer_next(DPointer* dpointer) {
     return dpointer->to_dtype;
 }
 
-DPointer* dpointer_connect(DPointer* socket, struct Dtype* plug) {
+DPointer* dpointer_connect(DPointer* socket, struct DType* plug) {
     socket->to_dtype = plug;
     return socket;
 }

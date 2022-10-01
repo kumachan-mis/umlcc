@@ -18,7 +18,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
 
     Srt* declarator_srt = vector_at(srt->children, 0);
     char* symbol_name = new_string(declarator_srt->ident_name);
-    Dtype* symbol_dtype = dtype_copy(declarator_srt->dtype);
+    DType* symbol_dtype = dtype_copy(declarator_srt->dtype);
     symboltable_define_label(immcgen->global_table, symbol_name, symbol_dtype);
 
     immcgen->next_reg_id = -1;
@@ -32,8 +32,8 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
     for (int i = 0; i < num_params; i++) {
         DParam* dparam = vector_at(params, i);
 
-        char* symbol_name = new_string(dparam->ident_name);
-        Dtype* symbol_dtype = dtype_copy(dparam->dtype);
+        char* symbol_name = new_string(dparam->name);
+        DType* symbol_dtype = dtype_copy(dparam->dtype);
         Symbol* symbol = symboltable_define_memory(immcgen->local_table, symbol_name, symbol_dtype);
 
         ImmcSuffix suffix = immcsuffix_get(dtype_size(dparam->dtype));

@@ -57,8 +57,8 @@ CU_Suite* add_test_suite_expr_immcgen(void) {
 }
 
 void test_immcgen_assignment_expr(void) {
-    Dtype* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
-    Dtype* int_dtype = new_integer_dtype(DTYPE_INT);
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
+    DType* int_dtype = new_integer_dtype(DTYPE_INT);
 
     Srt* input = new_dtyped_srt(
         SRT_ASSIGN_EXPR, dtype_copy(pointer_dtype->pointer->to_dtype), 2,                              // non-terminal
@@ -191,12 +191,12 @@ void test_immcgen_logical_or_expr(void) {
 }
 
 void test_immcgen_logical_and_expr(void) {
-    Dtype* arg_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6);
+    DType* arg_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6);
 
     Vector* params = new_vector(&t_dparam);
-    Dtype* param_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
+    DType* param_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     vector_push(params, new_dparam(new_string("target"), param_dtype));
-    Dtype* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
+    DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
 
     Srt* input = new_dtyped_srt(
         SRT_LAND_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
@@ -678,7 +678,7 @@ void test_immcgen_address_expr_global(void) {
 }
 
 void test_immcgen_address_expr_indir(void) {
-    Dtype* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
+    DType* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
 
     Srt* input = new_dtyped_srt(
         SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
@@ -780,7 +780,7 @@ void test_immcgen_call_expr(void) {
     Vector* params = new_vector(&t_dparam);
     vector_push(params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
     vector_push(params, new_dparam(new_string("y"), new_integer_dtype(DTYPE_INT)));
-    Dtype* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
+    DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
 
     Srt* input = new_dtyped_srt(
         SRT_CALL_EXPR, new_integer_dtype(DTYPE_INT), 2,                             // non-terminal

@@ -4,7 +4,7 @@
 #include "./resolver.h"
 
 ResolverReturn* resolve_decl(Resolver* resolver);
-ResolverReturnDtype* resolve_decl_specifiers(Resolver* resolver);
+ResolverReturnDType* resolve_decl_specifiers(Resolver* resolver);
 ResolverReturn* resolve_init_declarator_list(Resolver* resolver);
 ResolverReturn* resolve_init_declarator(Resolver* resolver);
 ResolverReturn* resolve_declarator(Resolver* resolver);

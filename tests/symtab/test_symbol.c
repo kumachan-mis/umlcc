@@ -13,7 +13,7 @@ CU_Suite* add_test_suite_symbol(void) {
 
 void test_new_memory_symbol(void) {
     char* symbol_name = new_string("abc");
-    Dtype* symbol_dtype = new_integer_dtype(DTYPE_CHAR);
+    DType* symbol_dtype = new_integer_dtype(DTYPE_CHAR);
     Symbol* symbol = new_memory_symbol(symbol_name, symbol_dtype, 1);
 
     for (int i = 0; i < 2; i++) {
@@ -35,7 +35,7 @@ void test_new_memory_symbol(void) {
 
 void test_new_label_symbol(void) {
     char* symbol_name = new_string("xyz");
-    Dtype* symbol_dtype = new_integer_dtype(DTYPE_INT);
+    DType* symbol_dtype = new_integer_dtype(DTYPE_INT);
     Symbol* symbol = new_label_symbol(symbol_name, symbol_dtype);
 
     for (int i = 0; i < 2; i++) {

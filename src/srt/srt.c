@@ -28,7 +28,7 @@ Srt* new_srt(SrtType type, int num_children, ...) {
     return srt;
 }
 
-Srt* new_dtyped_srt(SrtType type, Dtype* dtype, int num_children, ...) {
+Srt* new_dtyped_srt(SrtType type, DType* dtype, int num_children, ...) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
     srt->dtype = dtype;
@@ -47,7 +47,7 @@ Srt* new_dtyped_srt(SrtType type, Dtype* dtype, int num_children, ...) {
     return srt;
 }
 
-Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name) {
+Srt* new_identifier_srt(SrtType type, DType* dtype, char* ident_name) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
     srt->dtype = dtype;
@@ -58,7 +58,7 @@ Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name) {
     return srt;
 }
 
-Srt* new_iliteral_srt(SrtType type, Dtype* dtype, IntegerLiteral* iliteral) {
+Srt* new_iliteral_srt(SrtType type, DType* dtype, IntegerLiteral* iliteral) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
     srt->dtype = dtype;
@@ -69,7 +69,7 @@ Srt* new_iliteral_srt(SrtType type, Dtype* dtype, IntegerLiteral* iliteral) {
     return srt;
 }
 
-Srt* new_sliteral_srt(SrtType type, Dtype* dtype, StringLiteral* sliteral) {
+Srt* new_sliteral_srt(SrtType type, DType* dtype, StringLiteral* sliteral) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
     srt->dtype = dtype;

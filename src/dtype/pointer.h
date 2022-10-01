@@ -2,14 +2,14 @@
 #define UMLCC_TYPE_POINTER_H
 
 typedef struct DPointer {
-    struct Dtype* to_dtype;
+    struct DType* to_dtype;
 } DPointer;
 
-DPointer* new_dpointer(struct Dtype* to_dtype);
+DPointer* new_dpointer(struct DType* to_dtype);
 DPointer* new_socket_dpointer(void);
 DPointer* dpointer_copy(DPointer* dpointer);
-struct Dtype* dpointer_next(DPointer* dpointer);
-DPointer* dpointer_connect(DPointer* socket, struct Dtype* plug);
+struct DType* dpointer_next(DPointer* dpointer);
+DPointer* dpointer_connect(DPointer* socket, struct DType* plug);
 int dpointer_equals(DPointer* dpointer, DPointer* other);
 void delete_dpointer(DPointer* dpointer);
 
