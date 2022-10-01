@@ -1,3 +1,7 @@
+#ifndef UMLCC_X64_H_PRIVATE
+#define UMLCC_X64_H_PRIVATE
+#endif
+
 #include "./label.h"
 #include "../common/type.h"
 

@@ -19,10 +19,12 @@ typedef struct ImmcData {
     StringLiteral* sliteral;
 } ImmcData;
 
+#ifdef UMLCC_IMMC_H_PRIVATE
 ImmcData* new_int_immcdata(ImmcDataType type, IntegerLiteral* iliteral);
 ImmcData* new_str_immcdata(ImmcDataType type, StringLiteral* sliteral);
 ImmcData* immcdata_copy(ImmcData* immcdata);
 char* immcdata_tostring(ImmcData* immcdata);
 void delete_immcdata(ImmcData* immcdata);
+#endif
 
 #endif
