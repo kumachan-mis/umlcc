@@ -22,21 +22,21 @@ void resolverret_assign(Srt** srt_ptr, Vector** errs_ptr, ResolverReturn* resolv
     free(resolverret);
 }
 
-ResolverReturnDtype* new_resolverret_dtype(Dtype* dtype) {
-    ResolverReturnDtype* resolverret_dtype = malloc(sizeof(ResolverReturnDtype));
+ResolverReturnDType* new_resolverret_dtype(DType* dtype) {
+    ResolverReturnDType* resolverret_dtype = malloc(sizeof(ResolverReturnDType));
     resolverret_dtype->dtype = dtype;
     resolverret_dtype->errs = NULL;
     return resolverret_dtype;
 }
 
-ResolverReturnDtype* new_resolverret_dtype_errors(Vector* errs) {
-    ResolverReturnDtype* resolverret_dtype = malloc(sizeof(ResolverReturnDtype));
+ResolverReturnDType* new_resolverret_dtype_errors(Vector* errs) {
+    ResolverReturnDType* resolverret_dtype = malloc(sizeof(ResolverReturnDType));
     resolverret_dtype->dtype = NULL;
     resolverret_dtype->errs = errs;
     return resolverret_dtype;
 }
 
-void resolverret_dtype_assign(Dtype** dtype_ptr, Vector** errs_ptr, ResolverReturnDtype* resolverret_dtype) {
+void resolverret_dtype_assign(DType** dtype_ptr, Vector** errs_ptr, ResolverReturnDType* resolverret_dtype) {
     *dtype_ptr = resolverret_dtype->dtype;
     *errs_ptr = resolverret_dtype->errs;
     free(resolverret_dtype);

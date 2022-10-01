@@ -1,12 +1,12 @@
+#ifndef UMLCC_DTYPE_H_PRIVATE
+#define UMLCC_DTYPE_H_PRIVATE
+#endif
+
 #include "./array.h"
 
 #include <stdlib.h>
 
-struct Dtype* dtype_copy(struct Dtype* dtype);
-void delete_dtype(struct Dtype* dtype);
-int dtype_equals(struct Dtype* dtype, struct Dtype* other);
-
-DArray* new_darray(struct Dtype* of_dtype, int size) {
+DArray* new_darray(DType* of_dtype, int size) {
     DArray* darray = malloc(sizeof(DArray));
     darray->of_dtype = of_dtype;
     darray->size = size;
@@ -25,11 +25,11 @@ DArray* darray_copy(DArray* darray) {
     return copied_darray;
 }
 
-struct Dtype* darray_next(DArray* darray) {
+DType* darray_next(DArray* darray) {
     return darray->of_dtype;
 }
 
-DArray* darray_connect(DArray* socket, struct Dtype* plug) {
+DArray* darray_connect(DArray* socket, DType* plug) {
     socket->of_dtype = plug;
     return socket;
 }

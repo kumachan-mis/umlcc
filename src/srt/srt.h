@@ -63,7 +63,7 @@ typedef enum SrtType {
 
 typedef struct Srt {
     SrtType type;
-    Dtype* dtype;
+    DType* dtype;
     char* ident_name;
     IntegerLiteral* iliteral;
     StringLiteral* sliteral;
@@ -73,10 +73,10 @@ typedef struct Srt {
 extern BaseType t_srt;
 
 Srt* new_srt(SrtType type, int num_children, ...);
-Srt* new_dtyped_srt(SrtType type, Dtype* dtype, int num_children, ...);
-Srt* new_identifier_srt(SrtType type, Dtype* dtype, char* ident_name);
-Srt* new_iliteral_srt(SrtType type, Dtype* dtype, IntegerLiteral* iliteral);
-Srt* new_sliteral_srt(SrtType type, Dtype* dtype, StringLiteral* sliteral);
+Srt* new_dtyped_srt(SrtType type, DType* dtype, int num_children, ...);
+Srt* new_identifier_srt(SrtType type, DType* dtype, char* ident_name);
+Srt* new_iliteral_srt(SrtType type, DType* dtype, IntegerLiteral* iliteral);
+Srt* new_sliteral_srt(SrtType type, DType* dtype, StringLiteral* sliteral);
 Srt* srt_copy(Srt* srt);
 int srt_islvalue(Srt* srt);
 int srt_ismodifiable(Srt* srt);

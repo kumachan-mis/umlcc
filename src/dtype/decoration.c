@@ -1,12 +1,12 @@
+#ifndef UMLCC_DTYPE_H_PRIVATE
+#define UMLCC_DTYPE_H_PRIVATE
+#endif
+
 #include "./decoration.h"
 
 #include <stdlib.h>
 
-struct Dtype* dtype_copy(struct Dtype* dtype);
-void delete_dtype(struct Dtype* dtype);
-int dtype_equals(struct Dtype* dtype, struct Dtype* other);
-
-DDecoration* new_ddecoration(struct Dtype* deco_dtype) {
+DDecoration* new_ddecoration(DType* deco_dtype) {
     DDecoration* ddecoration = malloc(sizeof(DDecoration));
     ddecoration->typedef_flag = 0;
     ddecoration->deco_dtype = deco_dtype;
@@ -24,11 +24,11 @@ DDecoration* ddecoration_copy(DDecoration* ddecoration) {
     return copied_ddecoration;
 }
 
-struct Dtype* ddecoration_next(DDecoration* ddecoration) {
+DType* ddecoration_next(DDecoration* ddecoration) {
     return ddecoration->deco_dtype;
 }
 
-DDecoration* ddecoration_connect(DDecoration* socket, struct Dtype* plug) {
+DDecoration* ddecoration_connect(DDecoration* socket, DType* plug) {
     socket->deco_dtype = plug;
     return socket;
 }

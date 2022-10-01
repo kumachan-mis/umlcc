@@ -106,11 +106,11 @@ void test_immcgen_global_array_decl(void) {
 
 void test_immcgen_local_function_decl(void) {
     Vector* fparams = new_vector(&t_dparam);
-    Dtype* fdtype = new_function_dtype(fparams, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
+    DType* fdtype = new_function_dtype(fparams, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
 
     Vector* gparams = new_vector(&t_dparam);
     vector_push(gparams, new_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
-    Dtype* gdtype = new_function_dtype(gparams, new_integer_dtype(DTYPE_CHAR));
+    DType* gdtype = new_function_dtype(gparams, new_integer_dtype(DTYPE_CHAR));
 
     Srt* input = new_srt(SRT_DECL_LIST, 2,         // non-terminal
                          new_srt(SRT_INIT_DECL, 1, // non-terminal
@@ -127,11 +127,11 @@ void test_immcgen_local_function_decl(void) {
 
 void test_immcgen_global_function_decl(void) {
     Vector* fparams = new_vector(&t_dparam);
-    Dtype* fdtype = new_function_dtype(fparams, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
+    DType* fdtype = new_function_dtype(fparams, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
 
     Vector* gparams = new_vector(&t_dparam);
     vector_push(gparams, new_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
-    Dtype* gdtype = new_function_dtype(gparams, new_integer_dtype(DTYPE_CHAR));
+    DType* gdtype = new_function_dtype(gparams, new_integer_dtype(DTYPE_CHAR));
 
     Srt* input = new_srt(SRT_DECL_LIST, 2,         // non-terminal
                          new_srt(SRT_INIT_DECL, 1, // non-terminal

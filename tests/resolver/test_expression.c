@@ -66,7 +66,7 @@ void test_resolve_assignment_expr(void) {
                                  new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))));
 
     SymbolTable* local_table = new_symboltable();
-    Dtype* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     symboltable_define_memory(local_table, new_string("x"), pointer_dtype);
     symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
 
@@ -156,13 +156,13 @@ void test_resolve_logical_and_expr(void) {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("check"), new_integer_dtype(DTYPE_INT));
 
-    Dtype* arg_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6);
+    DType* arg_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6);
     symboltable_define_memory(local_table, new_string("object"), arg_dtype);
 
     Vector* params = new_vector(&t_dparam);
-    Dtype* param_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
+    DType* param_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     vector_push(params, new_dparam(new_string("target"), param_dtype));
-    Dtype* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
+    DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
     symboltable_define_label(local_table, new_string("validate"), func_dtype);
 
     Srt* expected = new_dtyped_srt(
@@ -397,8 +397,8 @@ void test_resolve_address_expr(void) {
                                  new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))));
 
     SymbolTable* local_table = new_symboltable();
-    Dtype* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
-    Dtype* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
+    DType* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("a"), array_dtype);
 
     Srt* expected = new_dtyped_srt(
@@ -461,7 +461,7 @@ void test_resolve_call_expr(void) {
     Vector* params = new_vector(&t_dparam);
     vector_push(params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
     vector_push(params, new_dparam(new_string("y"), new_integer_dtype(DTYPE_INT)));
-    Dtype* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
+    DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
     symboltable_define_label(local_table, new_string("function"), func_dtype);
     symboltable_define_memory(local_table, new_string("a"), new_integer_dtype(DTYPE_CHAR));
 
@@ -485,7 +485,7 @@ void test_resolve_subscription_expr(void) {
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
 
     SymbolTable* local_table = new_symboltable();
-    Dtype* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
+    DType* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
     symboltable_define_memory(local_table, new_string("array"), array_dtype);
 
     Srt* expected = new_dtyped_srt(

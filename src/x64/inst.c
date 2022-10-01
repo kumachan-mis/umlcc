@@ -1,3 +1,7 @@
+#ifndef UMLCC_X64_H_PRIVATE
+#define UMLCC_X64_H_PRIVATE
+#endif
+
 #include "./inst.h"
 #include "../common/type.h"
 

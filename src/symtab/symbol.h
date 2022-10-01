@@ -12,14 +12,14 @@ typedef enum SymbolType {
 typedef struct Symbol {
     SymbolType type;
     char* name;
-    Dtype* dtype;
+    DType* dtype;
     int memory_offset;
 } Symbol;
 
 extern BaseType t_symbol;
 
-Symbol* new_memory_symbol(char* name, Dtype* dtype, int memory_offset);
-Symbol* new_label_symbol(char* name, Dtype* dtype);
+Symbol* new_memory_symbol(char* name, DType* dtype, int memory_offset);
+Symbol* new_label_symbol(char* name, DType* dtype);
 Symbol* symbol_copy(Symbol* symbol);
 void delete_symbol(Symbol* symbol);
 

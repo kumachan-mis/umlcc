@@ -19,9 +19,11 @@ typedef struct X64Label {
     char* name;
 } X64Label;
 
+#ifdef UMLCC_X64_H_PRIVATE
 X64Label* new_x64label(X64LabelType type, X64Visibility visibility, char* name);
 X64Label* x64label_copy(X64Label* x64label);
 char* x64label_tostring(X64Label* x64label);
 void delete_x64label(X64Label* x64label);
+#endif
 
 #endif
