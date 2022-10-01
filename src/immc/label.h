@@ -19,9 +19,11 @@ typedef struct ImmcLabel {
     char* name;
 } ImmcLabel;
 
+#ifdef UMLCC_IMMC_H_PRIVATE
 ImmcLabel* new_immclabel(ImmcLabelType type, ImmcVisibility visibility, char* name);
 ImmcLabel* immclabel_copy(ImmcLabel* immclabel);
 char* immclabel_tostring(ImmcLabel* immclabel);
 void delete_immclabel(ImmcLabel* immclabel);
+#endif
 
 #endif

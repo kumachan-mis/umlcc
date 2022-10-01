@@ -7,7 +7,7 @@ void test_resolve_return_stmt_error_child(void);
 void test_resolve_return_stmt_error_unassignable(void);
 void test_resolve_expression_stmt_error_child(void);
 
-void run_stmt_resolver_error_test(Ast* input, SymbolTable* local_table, Dtype* return_dtype, Vector* expected);
+void run_stmt_resolver_error_test(Ast* input, SymbolTable* local_table, DType* return_dtype, Vector* expected);
 
 CU_Suite* add_test_suite_stmt_resolver_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver_error", NULL, NULL);
@@ -78,7 +78,7 @@ void test_resolve_return_stmt_error_unassignable(void) {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
-    Dtype* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
+    DType* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("expression is not assignable to function return\n"));
@@ -107,7 +107,7 @@ void test_resolve_expression_stmt_error_child(void) {
     delete_vector(expected);
 }
 
-void run_stmt_resolver_error_test(Ast* input, SymbolTable* local_table, Dtype* return_dtype, Vector* expected) {
+void run_stmt_resolver_error_test(Ast* input, SymbolTable* local_table, DType* return_dtype, Vector* expected) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
     if (local_table != NULL) resolver->local_table = local_table;

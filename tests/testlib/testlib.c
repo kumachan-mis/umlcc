@@ -240,7 +240,7 @@ void testlib_assert_x64ope_equal(X64Ope* actual, X64Ope* expected) {
     testlib_assert_iliteral_equal(actual->iliteral, expected->iliteral);
 }
 
-void testlib_assert_dtype_equal(Dtype* actual, Dtype* expected) {
+void testlib_assert_dtype_equal(DType* actual, DType* expected) {
     void testlib_assert_dpointer_equal(DPointer * actual, DPointer * expected);
     void testlib_assert_darray_equal(DArray * actual, DArray * expected);
     void testlib_assert_dfunction_equal(DFunction * actual, DFunction * expected);
@@ -303,7 +303,7 @@ void testlib_assert_dparam_equal(DParam* actual, DParam* expected) {
         return;
     }
 
-    testlib_assert_string_equal(actual->ident_name, expected->ident_name);
+    testlib_assert_string_equal(actual->name, expected->name);
     testlib_assert_dtype_equal(actual->dtype, expected->dtype);
 }
 

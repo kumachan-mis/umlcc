@@ -23,7 +23,7 @@ void testlib_assert_immcope_equal(ImmcOpe* actual, ImmcOpe* expected);
 void testlib_assert_x64codes_equal(Vector* actual, Vector* expected);
 void testlib_assert_x64code_equal(X64* actual, X64* expected);
 void testlib_assert_x64ope_equal(X64Ope* actual, X64Ope* expected);
-void testlib_assert_dtype_equal(Dtype* actual, Dtype* expected);
+void testlib_assert_dtype_equal(DType* actual, DType* expected);
 void testlib_assert_liveseqs_equal(Vector* actual, Vector* expected);
 void testlib_assert_liveseq_equal(Liveseq* actual, Liveseq* expected);
 void testlib_assert_liveness_equal(Liveness* actual, Liveness* expected);

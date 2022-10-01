@@ -1,3 +1,7 @@
+#ifndef UMLCC_IMMC_H_PRIVATE
+#define UMLCC_IMMC_H_PRIVATE
+#endif
+
 #include "./inst.h"
 
 #include <stdlib.h>

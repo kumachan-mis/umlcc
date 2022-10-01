@@ -31,8 +31,8 @@ ResolverReturn* resolve_decl(Resolver* resolver) {
     return new_resolverret(srt);
 }
 
-ResolverReturnDtype* resolve_decl_specifiers(Resolver* resolver) {
-    Dtype* dtype = NULL;
+ResolverReturnDType* resolve_decl_specifiers(Resolver* resolver) {
+    DType* dtype = NULL;
     Vector* errs = NULL;
     Error* err = NULL;
 
@@ -143,13 +143,13 @@ ResolverReturn* resolve_init_declarator(Resolver* resolver) {
     vector_push(srt->children, child_srt);
 
     if (resolver->specifier_dtype->type == DTYPE_DECORATION) {
-        Dtype* decoration_dtype = dtype_copy(resolver->specifier_dtype);
-        Dtype* specifier_dtype = decoration_dtype->decoration->deco_dtype;
+        DType* decoration_dtype = dtype_copy(resolver->specifier_dtype);
+        DType* specifier_dtype = decoration_dtype->decoration->deco_dtype;
         decoration_dtype->decoration->deco_dtype = NULL;
         child_srt->dtype = dtype_connect(child_srt->dtype, specifier_dtype);
         child_srt->dtype = dtype_connect(decoration_dtype, child_srt->dtype);
     } else {
-        Dtype* specifier_dtype = dtype_copy(resolver->specifier_dtype);
+        DType* specifier_dtype = dtype_copy(resolver->specifier_dtype);
         child_srt->dtype = dtype_connect(child_srt->dtype, specifier_dtype);
     }
 
@@ -165,7 +165,7 @@ ResolverReturn* resolve_init_declarator(Resolver* resolver) {
     }
 
     char* symbol_name = new_string(child_srt->ident_name);
-    Dtype* symbol_dtype = dtype_copy(child_srt->dtype);
+    DType* symbol_dtype = dtype_copy(child_srt->dtype);
     if (resolver->local_table == NULL || !dtype_isobject(symbol_dtype)) {
         symboltable_define_label(table, symbol_name, symbol_dtype);
     } else {
@@ -197,12 +197,12 @@ ResolverReturn* resolve_init_declarator(Resolver* resolver) {
 
 ResolverReturn* resolve_declarator(Resolver* resolver) {
     Srt* srt = NULL;
-    Dtype* dtype = NULL;
+    DType* dtype = NULL;
     Vector* errs = NULL;
     Error* err = NULL;
 
-    Dtype* socket_dtype = NULL;
-    Dtype* plug_dtype = NULL;
+    DType* socket_dtype = NULL;
+    DType* plug_dtype = NULL;
     Ast* ast = resolver->ast;
     Ast* ast_ptr = ast;
 
@@ -315,9 +315,9 @@ ResolverReturnDParams* resolve_parameter_list(Resolver* resolver) {
             continue;
         }
 
-        if (set_contains(param_names_set, dparam->ident_name)) {
+        if (set_contains(param_names_set, dparam->name)) {
             if (errs == NULL) errs = new_vector(&t_error);
-            err = new_error("parameter '%s' is already declared\n", dparam->ident_name);
+            err = new_error("parameter '%s' is already declared\n", dparam->name);
             vector_push(errs, err);
         }
         if (errs != NULL) {
@@ -326,7 +326,7 @@ ResolverReturnDParams* resolve_parameter_list(Resolver* resolver) {
         }
 
         vector_push(dparams, dparam);
-        set_add(param_names_set, new_string(dparam->ident_name));
+        set_add(param_names_set, new_string(dparam->name));
     }
 
     resolver->ast = ast;
@@ -339,7 +339,7 @@ ResolverReturnDParams* resolve_parameter_list(Resolver* resolver) {
 }
 
 ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
-    Dtype* specifiers_dtype = NULL;
+    DType* specifiers_dtype = NULL;
     Srt* declarator_srt = NULL;
     Vector* errs = NULL;
     Error* err = NULL;
@@ -368,18 +368,18 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
 
     declarator_srt->dtype = dtype_connect(declarator_srt->dtype, specifiers_dtype);
     if (declarator_srt->dtype->type == DTYPE_ARRAY) {
-        Dtype* array_of_dtype = dtype_copy(declarator_srt->dtype->array->of_dtype);
+        DType* array_of_dtype = dtype_copy(declarator_srt->dtype->array->of_dtype);
         delete_dtype(declarator_srt->dtype);
         declarator_srt->dtype = new_pointer_dtype(array_of_dtype);
     }
     if (declarator_srt->dtype->type == DTYPE_FUNCTION) {
-        Dtype* function_dtype = dtype_copy(declarator_srt->dtype);
+        DType* function_dtype = dtype_copy(declarator_srt->dtype);
         delete_dtype(declarator_srt->dtype);
         declarator_srt->dtype = new_pointer_dtype(function_dtype);
     }
 
     char* dparam_ident_name = new_string(declarator_srt->ident_name);
-    Dtype* dparam_dtype = dtype_copy(declarator_srt->dtype);
+    DType* dparam_dtype = dtype_copy(declarator_srt->dtype);
     DParam* dparam = new_dparam(dparam_ident_name, dparam_dtype);
     delete_srt(declarator_srt);
 
@@ -396,7 +396,7 @@ ResolverReturn* resolve_initializer(Resolver* resolver) {
     Vector* errs = NULL;
     Error* err = NULL;
 
-    Dtype* dtype = resolver->initialized_dtype;
+    DType* dtype = resolver->initialized_dtype;
 
     switch (dtype->type) {
         case DTYPE_CHAR:
@@ -438,7 +438,7 @@ ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
     Srt* srt = NULL;
     Vector* errs = NULL;
 
-    Dtype* dtype = resolver->initialized_dtype;
+    DType* dtype = resolver->initialized_dtype;
 
     switch (dtype->type) {
         case DTYPE_CHAR:
@@ -466,7 +466,7 @@ ResolverReturn* resolve_array_initializer(Resolver* resolver) {
     Error* err = NULL;
 
     Ast* ast = resolver->ast;
-    Dtype* dtype = resolver->initialized_dtype;
+    DType* dtype = resolver->initialized_dtype;
     int initializer_len = vector_size(ast->children);
 
     if (ast->type != AST_INIT_LIST) {
@@ -559,7 +559,7 @@ ResolverReturn* resolve_string_initializer(Resolver* resolver) {
     Vector* errs = NULL;
     Error* err = NULL;
     Ast* literal_ast = resolver->ast;
-    Dtype* dtype = resolver->initialized_dtype;
+    DType* dtype = resolver->initialized_dtype;
 
     if (literal_ast->type == AST_INIT_LIST && vector_size(literal_ast->children) == 1) {
         literal_ast = vector_at(literal_ast->children, 0);
@@ -583,7 +583,7 @@ ResolverReturn* resolve_string_initializer(Resolver* resolver) {
 ResolverReturn* resolve_zero_array_initializer(Resolver* resolver) {
     Srt* srt = new_srt(SRT_INIT, 0);
 
-    Dtype* dtype = resolver->initialized_dtype;
+    DType* dtype = resolver->initialized_dtype;
 
     for (int i = 0; i < dtype->array->size; i++) {
         Srt* child_srt = NULL;
@@ -605,7 +605,7 @@ ResolverReturn* resolve_scalar_initializer(Resolver* resolver) {
     Error* err = NULL;
 
     Ast* ast = resolver->ast;
-    Dtype* dtype = resolver->initialized_dtype;
+    DType* dtype = resolver->initialized_dtype;
 
     resolver->initialized_offset++;
 
@@ -658,7 +658,7 @@ ResolverReturn* resolve_scalar_initializer(Resolver* resolver) {
 
 ResolverReturn* resolve_zero_scalar_initializer(Resolver* resolver) {
     Srt* srt = NULL;
-    Dtype* dtype = resolver->initialized_dtype;
+    DType* dtype = resolver->initialized_dtype;
 
     IntegerLiteral* zero_iliteral = new_signed_iliteral(INTEGER_INT, 0);
     srt = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), zero_iliteral);

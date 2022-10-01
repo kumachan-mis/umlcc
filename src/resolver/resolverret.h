@@ -9,10 +9,10 @@ typedef struct ResolverReturn {
     Vector* errs;
 } ResolverReturn;
 
-typedef struct ResolverReturnDtype {
-    Dtype* dtype;
+typedef struct ResolverReturnDType {
+    DType* dtype;
     Vector* errs;
-} ResolverReturnDtype;
+} ResolverReturnDType;
 
 typedef struct ResolverReturnDParams {
     Vector* dparams;
@@ -27,9 +27,9 @@ typedef struct ResolverReturnDParam {
 ResolverReturn* new_resolverret(Srt* srt);
 ResolverReturn* new_resolverret_errors(Vector* errs);
 void resolverret_assign(Srt** srt_ptr, Vector** errs_ptr, ResolverReturn* resolverret);
-ResolverReturnDtype* new_resolverret_dtype(Dtype* dtype);
-ResolverReturnDtype* new_resolverret_dtype_errors(Vector* errs);
-void resolverret_dtype_assign(Dtype** dtype_ptr, Vector** errs_ptr, ResolverReturnDtype* resolverret_dtype);
+ResolverReturnDType* new_resolverret_dtype(DType* dtype);
+ResolverReturnDType* new_resolverret_dtype_errors(Vector* errs);
+void resolverret_dtype_assign(DType** dtype_ptr, Vector** errs_ptr, ResolverReturnDType* resolverret_dtype);
 ResolverReturnDParams* new_resolverret_dparams(Vector* dparams);
 ResolverReturnDParams* new_resolverret_dparams_errors(Vector* errs);
 void resolverret_dparams_assign(Vector** dparams_ptr, Vector** errs_ptr, ResolverReturnDParams* resolverret_dparams);

@@ -59,9 +59,9 @@ void test_new_srt(void) {
 }
 
 void test_new_dtyped_srt(void) {
-    Dtype* dtype = new_integer_dtype(DTYPE_INT);
-    Dtype* lhs_dtype = new_integer_dtype(DTYPE_INT);
-    Dtype* rhs_dtype = new_integer_dtype(DTYPE_INT);
+    DType* dtype = new_integer_dtype(DTYPE_INT);
+    DType* lhs_dtype = new_integer_dtype(DTYPE_INT);
+    DType* rhs_dtype = new_integer_dtype(DTYPE_INT);
     IntegerLiteral* lhs_iliteral = new_signed_iliteral(INTEGER_INT, 6);
     IntegerLiteral* rhs_iliteral = new_signed_iliteral(INTEGER_INT, 3);
     Srt* srt = new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, new_iliteral_srt(SRT_INT_EXPR, lhs_dtype, lhs_iliteral),
@@ -117,7 +117,7 @@ void test_new_dtyped_srt(void) {
 }
 
 void test_new_identifier_srt(void) {
-    Dtype* dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
+    DType* dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     Srt* srt = new_identifier_srt(SRT_IDENT_EXPR, dtype, new_string("ident"));
 
     for (int i = 0; i < 2; i++) {
@@ -139,7 +139,7 @@ void test_new_identifier_srt(void) {
 }
 
 void test_new_iliteral_srt_int(void) {
-    Dtype* dtype = new_integer_dtype(DTYPE_INT);
+    DType* dtype = new_integer_dtype(DTYPE_INT);
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 6);
     Srt* srt = new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
 
@@ -165,7 +165,7 @@ void test_new_iliteral_srt_int(void) {
 }
 
 void test_new_iliteral_srt_char(void) {
-    Dtype* dtype = new_integer_dtype(DTYPE_INT);
+    DType* dtype = new_integer_dtype(DTYPE_INT);
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 89);
     Srt* srt = new_iliteral_srt(SRT_CHAR_EXPR, dtype, iliteral);
 
@@ -198,7 +198,7 @@ void test_new_sliteral_srt(void) {
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
-    Dtype* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size);
+    DType* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size);
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
     Srt* srt = new_sliteral_srt(SRT_STRING_EXPR, dtype, sliteral);
 

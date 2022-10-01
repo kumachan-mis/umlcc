@@ -19,10 +19,12 @@ typedef struct X64Data {
     StringLiteral* sliteral;
 } X64Data;
 
+#ifdef UMLCC_X64_H_PRIVATE
 X64Data* new_int_x64data(X64DataType type, IntegerLiteral* iliteral);
 X64Data* new_str_x64data(X64DataType type, StringLiteral* sliteral);
 X64Data* x64data_copy(X64Data* x64data);
 char* x64data_tostring(X64Data* x64data);
 void delete_x64data(X64Data* x64data);
+#endif
 
 #endif

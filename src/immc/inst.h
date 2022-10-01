@@ -135,9 +135,11 @@ typedef struct ImmcInst {
     ImmcOpe* snd_src;
 } ImmcInst;
 
+#ifdef UMLCC_IMMC_H_PRIVATE
 ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* snd_src);
 ImmcInst* immcinst_copy(ImmcInst* immcinst);
 char* immcinst_tostring(ImmcInst* immcinst);
 void delete_immcinst(ImmcInst* immcinst);
+#endif
 
 #endif
