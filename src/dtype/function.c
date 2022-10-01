@@ -8,11 +8,11 @@ BaseType t_dparam = {
     .delete_object = (void (*)(void*))delete_dparam,
 };
 
-struct DType* dtype_copy(struct DType* dtype);
-void delete_dtype(struct DType* dtype);
-int dtype_equals(struct DType* dtype, struct DType* other);
+DType* dtype_copy(DType* dtype);
+void delete_dtype(DType* dtype);
+int dtype_equals(DType* dtype, DType* other);
 
-DFunction* new_dfunction(Vector* params, struct DType* return_dtype) {
+DFunction* new_dfunction(Vector* params, DType* return_dtype) {
     DFunction* dfunction = malloc(sizeof(DFunction));
     dfunction->params = params;
     dfunction->return_dtype = return_dtype;
@@ -31,11 +31,11 @@ DFunction* dfunction_copy(DFunction* dfunction) {
     return copied_dfunction;
 }
 
-struct DType* dfunction_next(DFunction* dfunction) {
+DType* dfunction_next(DFunction* dfunction) {
     return dfunction->return_dtype;
 }
 
-DFunction* dfunction_connect(DFunction* socket, struct DType* plug) {
+DFunction* dfunction_connect(DFunction* socket, DType* plug) {
     socket->return_dtype = plug;
     return socket;
 }
@@ -59,7 +59,7 @@ void delete_dfunction(DFunction* dfunction) {
     free(dfunction);
 }
 
-DParam* new_dparam(char* name, struct DType* dtype) {
+DParam* new_dparam(char* name, DType* dtype) {
     DParam* dparam = malloc(sizeof(DParam));
     dparam->name = name;
     dparam->dtype = dtype;

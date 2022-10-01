@@ -3,6 +3,9 @@
 
 #include "../common/type.h"
 #include "../vector/vector.h"
+
+typedef struct DType DType;
+
 #include "./array.h"
 #include "./decoration.h"
 #include "./function.h"
@@ -17,13 +20,13 @@ typedef enum DTypeType {
     DTYPE_DECORATION,
 } DTypeType;
 
-typedef struct DType {
+struct DType {
     DTypeType type;
     DPointer* pointer;
     DArray* array;
     DFunction* function;
     DDecoration* decoration;
-} DType;
+};
 
 extern BaseType t_dtype;
 

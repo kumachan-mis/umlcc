@@ -2,11 +2,11 @@
 
 #include <stdlib.h>
 
-struct DType* dtype_copy(struct DType* dtype);
-void delete_dtype(struct DType* dtype);
-int dtype_equals(struct DType* dtype, struct DType* other);
+DType* dtype_copy(DType* dtype);
+void delete_dtype(DType* dtype);
+int dtype_equals(DType* dtype, DType* other);
 
-DDecoration* new_ddecoration(struct DType* deco_dtype) {
+DDecoration* new_ddecoration(DType* deco_dtype) {
     DDecoration* ddecoration = malloc(sizeof(DDecoration));
     ddecoration->typedef_flag = 0;
     ddecoration->deco_dtype = deco_dtype;
@@ -24,11 +24,11 @@ DDecoration* ddecoration_copy(DDecoration* ddecoration) {
     return copied_ddecoration;
 }
 
-struct DType* ddecoration_next(DDecoration* ddecoration) {
+DType* ddecoration_next(DDecoration* ddecoration) {
     return ddecoration->deco_dtype;
 }
 
-DDecoration* ddecoration_connect(DDecoration* socket, struct DType* plug) {
+DDecoration* ddecoration_connect(DDecoration* socket, DType* plug) {
     socket->deco_dtype = plug;
     return socket;
 }

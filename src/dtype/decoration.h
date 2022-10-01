@@ -1,16 +1,22 @@
 #ifndef UMLCC_TYPE_DECORATION_H
 #define UMLCC_TYPE_DECORATION_H
 
-typedef struct DDecoration {
-    int typedef_flag;
-    struct DType* deco_dtype;
-} DDecoration;
+#ifndef UMLCC_DTYPE_H
+typedef struct DType DType;
+#endif
 
-DDecoration* new_ddecoration(struct DType* deco_dtype);
+typedef struct DDecoration DDecoration;
+
+struct DDecoration {
+    int typedef_flag;
+    DType* deco_dtype;
+};
+
+DDecoration* new_ddecoration(DType* deco_dtype);
 DDecoration* new_socket_ddecoration(void);
 DDecoration* ddecoration_copy(DDecoration* ddecoration);
-struct DType* ddecoration_next(DDecoration* ddecoration);
-DDecoration* ddecoration_connect(DDecoration* socket, struct DType* plug);
+DType* ddecoration_next(DDecoration* ddecoration);
+DDecoration* ddecoration_connect(DDecoration* socket, DType* plug);
 int ddecoration_equals(DDecoration* ddecoration, DDecoration* other);
 void delete_ddecoration(DDecoration* ddecoration);
 
