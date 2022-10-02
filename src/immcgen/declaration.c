@@ -17,8 +17,11 @@ Vector* gen_init_decl_immcode(Immcgen* immcgen) {
     Vector* gen_global_init_decl_immcode(Immcgen * immcgen);
     Vector* gen_local_init_decl_immcode(Immcgen * immcgen);
 
-    if (immcgen->local_table == NULL) return gen_global_init_decl_immcode(immcgen);
-    return gen_local_init_decl_immcode(immcgen);
+    if (immcgen->symbol_table->outer_scope == NULL) {
+        return gen_global_init_decl_immcode(immcgen);
+    } else {
+        return gen_local_init_decl_immcode(immcgen);
+    }
 }
 
 Vector* gen_global_init_decl_immcode(Immcgen* immcgen) {
@@ -27,7 +30,7 @@ Vector* gen_global_init_decl_immcode(Immcgen* immcgen) {
     append_child_immcode(immcgen, codes, 0);
 
     Srt* decl_srt = vector_at(immcgen->srt->children, 0);
-    Symbol* decl_symbol = symboltable_search(immcgen->global_table, decl_srt->ident_name);
+    Symbol* decl_symbol = symboltable_search(immcgen->symbol_table, decl_srt->ident_name);
     if (!dtype_isobject(decl_symbol->dtype)) return codes;
 
     char* label_name = new_string(decl_srt->ident_name);
@@ -54,7 +57,7 @@ Vector* gen_local_init_decl_immcode(Immcgen* immcgen) {
     if (vector_size(immcgen->srt->children) == 1) return codes;
 
     Srt* decl_srt = vector_at(immcgen->srt->children, 0);
-    Symbol* decl_symbol = symboltable_search(immcgen->local_table, decl_srt->ident_name);
+    Symbol* decl_symbol = symboltable_search(immcgen->symbol_table, decl_srt->ident_name);
 
     immcgen->initialized_dtype = decl_symbol->dtype;
     immcgen->initialized_offset = decl_symbol->memory_offset;
@@ -71,15 +74,12 @@ Vector* gen_decl_immcode(Immcgen* immcgen) {
     char* symbol_name = new_string(srt->ident_name);
     DType* symbol_dtype = dtype_copy(srt->dtype);
 
-    if (immcgen->local_table == NULL) {
-        SymbolTable* table = immcgen->global_table;
-        symboltable_define_label(table, symbol_name, symbol_dtype);
+    if (immcgen->symbol_table->outer_scope == NULL) {
+        symboltable_define_label(immcgen->symbol_table, symbol_name, symbol_dtype);
     } else if (!dtype_isobject(symbol_dtype)) {
-        SymbolTable* table = immcgen->local_table;
-        symboltable_define_label(table, symbol_name, symbol_dtype);
+        symboltable_define_label(immcgen->symbol_table, symbol_name, symbol_dtype);
     } else {
-        SymbolTable* table = immcgen->local_table;
-        symboltable_define_memory(table, symbol_name, symbol_dtype);
+        symboltable_define_memory(immcgen->symbol_table, symbol_name, symbol_dtype);
     }
 
     return new_vector(&t_immc);
@@ -105,8 +105,11 @@ Vector* gen_array_initializer_immcode(Immcgen* immcgen) {
 
     Srt* srt = vector_at(immcgen->srt->children, 0);
     if (srt->type == SRT_STRING_EXPR) {
-        if (immcgen->local_table == NULL) return gen_global_string_initializer_immcode(immcgen);
-        return gen_local_string_initializer_immcode(immcgen);
+        if (immcgen->symbol_table->outer_scope == NULL) {
+            return gen_global_string_initializer_immcode(immcgen);
+        } else {
+            return gen_local_string_initializer_immcode(immcgen);
+        }
     }
 
     Vector* codes = new_vector(&t_immc);
@@ -147,8 +150,11 @@ Vector* gen_scalar_initializer_immcode(Immcgen* immcgen) {
     Vector* gen_global_scalar_initializer_immcode(Immcgen * immcgen);
     Vector* gen_local_scalar_initializer_immcode(Immcgen * immcgen);
 
-    if (immcgen->local_table == NULL) return gen_global_scalar_initializer_immcode(immcgen);
-    return gen_local_scalar_initializer_immcode(immcgen);
+    if (immcgen->symbol_table->outer_scope == NULL) {
+        return gen_global_scalar_initializer_immcode(immcgen);
+    } else {
+        return gen_local_scalar_initializer_immcode(immcgen);
+    }
 }
 
 Vector* gen_global_scalar_initializer_immcode(Immcgen* immcgen) {

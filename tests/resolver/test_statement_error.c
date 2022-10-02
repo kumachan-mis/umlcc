@@ -110,7 +110,10 @@ void test_resolve_expression_stmt_error_child(void) {
 void run_stmt_resolver_error_test(Ast* input, SymbolTable* local_table, DType* return_dtype, Vector* expected) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
-    if (local_table != NULL) resolver->local_table = local_table;
+    if (local_table != NULL) {
+        local_table->outer_scope = resolver->symbol_table;
+        resolver->symbol_table = local_table;
+    }
     resolver->return_dtype = return_dtype;
 
     Srt* ret = NULL;

@@ -916,9 +916,10 @@ void test_resolve_list_init_chararray(void) {
 void run_local_decl_resolver_test(Ast* input, SymbolTable* local_table, Srt* expected) {
     Resolver* resolver = new_resolver(input);
     if (local_table != NULL) {
-        resolver->local_table = local_table;
+        local_table->outer_scope = resolver->symbol_table;
+        resolver->symbol_table = local_table;
     } else {
-        resolver->local_table = new_symboltable();
+        resolver->symbol_table = symboltable_enter_scope(resolver->symbol_table);
     }
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
 
@@ -936,8 +937,8 @@ void run_local_decl_resolver_test(Ast* input, SymbolTable* local_table, Srt* exp
 void run_global_decl_resolver_test(Ast* input, SymbolTable* global_table, Srt* expected) {
     Resolver* resolver = new_resolver(input);
     if (global_table != NULL) {
-        delete_symboltable(resolver->global_table);
-        resolver->global_table = global_table;
+        delete_symboltable(resolver->symbol_table);
+        resolver->symbol_table = global_table;
     }
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
 
