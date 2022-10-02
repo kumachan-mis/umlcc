@@ -175,35 +175,38 @@ ParserReturn* parse_struct_specifier(Parser* parser) {
         return new_parserret_error(err);
     }
 
-    CToken* ctoken = vector_at(parser->ctokens, parser->index);
-    if (ctoken->type != CTOKEN_IDENT) {
-        err = new_error("token identifier expected, but got %s\n", ctoken_types[ctoken->type]);
-        delete_ast(ast);
-        return new_parserret_error(err);
-    }
-
-    parser->index++;
-    child = new_identifier_ast(AST_STRUCT_NAME, new_string(ctoken->ident_name));
-    vector_push(ast->children, child);
+    CToken* ctoken = NULL;
 
     ctoken = vector_at(parser->ctokens, parser->index);
-    if (ctoken->type != CTOKEN_LBRACE) return new_parserret(ast);
+    if (ctoken->type == CTOKEN_IDENT) {
+        parser->index++;
+        child = new_identifier_ast(AST_STRUCT_NAME, new_string(ctoken->ident_name));
+        vector_push(ast->children, child);
+    }
 
-    parser->index++;
-    parserret_assign(&child, &err, parse_struct_decl_list(parser));
-    if (err != NULL) {
+    ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type == CTOKEN_LBRACE) {
+        parser->index++;
+        parserret_assign(&child, &err, parse_struct_decl_list(parser));
+        if (err != NULL) {
+            delete_ast(ast);
+            return new_parserret_error(err);
+        }
+
+        vector_push(ast->children, child);
+
+        err = consume_ctoken(parser, CTOKEN_RBRACE);
+        if (err != NULL) {
+            delete_ast(ast);
+            return new_parserret_error(err);
+        }
+    }
+
+    if (vector_size(ast->children) == 0) {
+        err = new_error("identifier or { expected, but got %s\n", ctoken_types[ctoken->type]);
         delete_ast(ast);
         return new_parserret_error(err);
     }
-
-    vector_push(ast->children, child);
-
-    err = consume_ctoken(parser, CTOKEN_RBRACE);
-    if (err != NULL) {
-        delete_ast(ast);
-        return new_parserret_error(err);
-    }
-
     return new_parserret(ast);
 }
 

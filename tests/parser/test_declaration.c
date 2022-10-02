@@ -11,6 +11,7 @@ void test_parse_function_decl(void);
 void test_parse_parameter_decl(void);
 void test_parse_struct_decl(void);
 void test_parse_struct_name_decl(void);
+void test_parse_struct_unnamed_decl(void);
 void test_parse_typedef_decl(void);
 void test_parse_typedef_name_decl(void);
 void test_parse_expr_init(void);
@@ -29,6 +30,7 @@ CU_Suite* add_test_suite_decl_parser(void) {
     CU_ADD_TEST(suite, test_parse_parameter_decl);
     CU_ADD_TEST(suite, test_parse_struct_decl);
     CU_ADD_TEST(suite, test_parse_struct_name_decl);
+    CU_ADD_TEST(suite, test_parse_struct_unnamed_decl);
     CU_ADD_TEST(suite, test_parse_typedef_decl);
     CU_ADD_TEST(suite, test_parse_typedef_name_decl);
     CU_ADD_TEST(suite, test_parse_expr_init);
@@ -345,6 +347,39 @@ void test_parse_struct_decl(void) {
                 new_ast(AST_INIT_DECLOR, 1,        // non-terminal
                         new_ast(AST_PTR_DECLOR, 1, // non-terminal
                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("test"))))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_struct_unnamed_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_STRUCT));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("member")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("test")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected =
+        new_ast(AST_DECL, 2,                                                   // non-terminal
+                new_ast(AST_DECL_SPECS, 1,                                     // non-terminal
+                        new_ast(AST_TYPE_STRUCT, 1,                            // non-terminal
+                                new_ast(AST_STRUCT_DECL_LIST, 1,               // non-terminal
+                                        new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                                new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                        new_ast(AST_TYPE_INT, 0)),
+                                                new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("member"))))))),
+                new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                                new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("test"))))));
 
     run_decl_parser_test(input, NULL, expected);
 

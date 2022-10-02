@@ -94,7 +94,7 @@ void test_parse_struct_specifier_error_name(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token identifier expected, but got string-literal\n");
+    Error* expected = new_error("identifier or { expected, but got string-literal\n");
 
     run_decl_parser_error_test(input, expected);
 

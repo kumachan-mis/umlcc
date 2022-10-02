@@ -10,7 +10,7 @@ int put_int(int x);
 int put_blank_line();
 
 int main() {
-    struct Test {
+    struct {
         int x;
         int a[3];
     } test = {1};
