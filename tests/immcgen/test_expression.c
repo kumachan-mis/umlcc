@@ -906,10 +906,13 @@ void test_immcgen_iliteral_expr_char(void) {
 void run_expr_immcgen_test(Srt* input, SymbolTable* local_table, SymbolTable* global_table, Vector* expected) {
     Immcgen* immcgen = new_immcgen(input);
     if (global_table != NULL) {
-        delete_symboltable(immcgen->global_table);
-        immcgen->global_table = global_table;
+        delete_symboltable(immcgen->symbol_table);
+        immcgen->symbol_table = global_table;
     }
-    if (local_table != NULL) immcgen->local_table = local_table;
+    if (local_table != NULL) {
+        local_table->outer_scope = immcgen->symbol_table;
+        immcgen->symbol_table = local_table;
+    }
 
     Vector* actual = immcgen_generate_immcode(immcgen);
 

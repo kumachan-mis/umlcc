@@ -574,10 +574,13 @@ void run_expr_resolver_test(Ast* input, SymbolTable* local_table, SymbolTable* g
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
     if (global_table != NULL) {
-        delete_symboltable(resolver->global_table);
-        resolver->global_table = global_table;
+        delete_symboltable(resolver->symbol_table);
+        resolver->symbol_table = global_table;
     }
-    if (local_table != NULL) resolver->local_table = local_table;
+    if (local_table != NULL) {
+        local_table->outer_scope = resolver->symbol_table;
+        resolver->symbol_table = local_table;
+    }
 
     Srt* actual = NULL;
     Vector* errs = NULL;

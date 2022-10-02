@@ -8,8 +8,7 @@
 
 typedef struct Immcgen {
     Srt* srt;
-    SymbolTable* global_table;
-    SymbolTable* local_table;
+    SymbolTable* symbol_table;
     ImmcSuffix expr_reg_suffix;
     int expr_reg_id;
     int next_reg_id;
