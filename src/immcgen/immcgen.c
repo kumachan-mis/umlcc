@@ -10,8 +10,7 @@
 Immcgen* new_immcgen(Srt* srt) {
     Immcgen* immcgen = malloc(sizeof(Immcgen));
     immcgen->srt = srt;
-    immcgen->global_table = new_symboltable();
-    immcgen->local_table = NULL;
+    immcgen->symbol_table = new_symboltable();
     immcgen->expr_reg_suffix = IMMC_SUFFIX_NONE;
     immcgen->expr_reg_id = -1;
     immcgen->next_reg_id = -1;
@@ -46,9 +45,9 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
             codes = gen_initializer_immcode(immcgen);
             break;
         case SRT_CMPD_STMT:
-            immcgen->local_table = symboltable_enter_scope(immcgen->local_table);
+            immcgen->symbol_table = symboltable_enter_scope(immcgen->symbol_table);
             codes = gen_compound_stmt_immcode(immcgen);
-            immcgen->local_table = symboltable_exit_scope(immcgen->local_table);
+            immcgen->symbol_table = symboltable_exit_scope(immcgen->symbol_table);
             break;
         case SRT_RET_STMT:
             codes = gen_return_stmt_immcode(immcgen);
@@ -107,8 +106,7 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
 
 void delete_immcgen(Immcgen* immcgen) {
     delete_srt(immcgen->srt);
-    delete_symboltable(immcgen->global_table);
-    if (immcgen->local_table != NULL) delete_symboltable(immcgen->local_table);
+    delete_symboltable(immcgen->symbol_table);
     if (immcgen->initialized_dtype != NULL) delete_dtype(immcgen->initialized_dtype);
     free(immcgen);
 }

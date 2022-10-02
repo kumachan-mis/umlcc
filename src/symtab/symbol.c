@@ -7,21 +7,21 @@ BaseType t_symbol = {
     .delete_object = (void (*)(void*))delete_symbol,
 };
 
-Symbol* new_memory_symbol(char* name, DType* dtype, int memory_offset) {
-    Symbol* symbol = malloc(sizeof(Symbol));
-    symbol->type = SYMBOL_MEM;
-    symbol->name = name;
-    symbol->dtype = dtype;
-    symbol->memory_offset = memory_offset;
-    return symbol;
-}
-
 Symbol* new_label_symbol(char* name, DType* dtype) {
     Symbol* symbol = malloc(sizeof(Symbol));
     symbol->type = SYMBOL_LABEL;
     symbol->name = name;
     symbol->dtype = dtype;
     symbol->memory_offset = -1;
+    return symbol;
+}
+
+Symbol* new_memory_symbol(char* name, DType* dtype, int memory_offset) {
+    Symbol* symbol = malloc(sizeof(Symbol));
+    symbol->type = SYMBOL_MEM;
+    symbol->name = name;
+    symbol->dtype = dtype;
+    symbol->memory_offset = memory_offset;
     return symbol;
 }
 

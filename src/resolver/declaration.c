@@ -70,11 +70,7 @@ ResolverReturnDType* resolve_decl_specifiers(Resolver* resolver) {
             dtype = dtype_connect(dtype, new_integer_dtype(DTYPE_CHAR));
             break;
         case AST_TYPEDEF_NAME: {
-            Symbol* symbol = NULL;
-            if (symbol == NULL && resolver->local_table != NULL) {
-                symbol = symboltable_search(resolver->local_table, child->ident_name);
-            }
-            if (symbol == NULL) symbol = symboltable_search(resolver->global_table, child->ident_name);
+            Symbol* symbol = symboltable_search(resolver->symbol_table, child->ident_name);
             dtype = dtype_connect(dtype, dtype_copy(symbol->dtype->ddecoration->deco_dtype));
             break;
         }
@@ -153,10 +149,7 @@ ResolverReturn* resolve_init_declarator(Resolver* resolver) {
         child_srt->dtype = dtype_connect(child_srt->dtype, specifier_dtype);
     }
 
-    SymbolTable* table = resolver->local_table;
-    if (table == NULL) table = resolver->global_table;
-
-    if (!symboltable_can_define(table, child_srt->ident_name)) {
+    if (!symboltable_can_define(resolver->symbol_table, child_srt->ident_name)) {
         errs = new_vector(&t_error);
         err = new_error("identifier '%s' is already declared\n", child_srt->ident_name);
         vector_push(errs, err);
@@ -166,10 +159,10 @@ ResolverReturn* resolve_init_declarator(Resolver* resolver) {
 
     char* symbol_name = new_string(child_srt->ident_name);
     DType* symbol_dtype = dtype_copy(child_srt->dtype);
-    if (resolver->local_table == NULL || !dtype_isobject(symbol_dtype)) {
-        symboltable_define_label(table, symbol_name, symbol_dtype);
+    if (resolver->symbol_table->outer_scope == NULL || !dtype_isobject(symbol_dtype)) {
+        symboltable_define_label(resolver->symbol_table, symbol_name, symbol_dtype);
     } else {
-        symboltable_define_memory(table, symbol_name, symbol_dtype);
+        symboltable_define_memory(resolver->symbol_table, symbol_name, symbol_dtype);
     }
 
     if (vector_size(ast->children) == 1) return new_resolverret(srt);

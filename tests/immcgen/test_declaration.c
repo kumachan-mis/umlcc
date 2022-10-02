@@ -441,9 +441,10 @@ void test_immcgen_global_array_init(void) {
 void run_local_decl_immcgen_test(Srt* input, SymbolTable* local_table, Vector* expected) {
     Immcgen* immcgen = new_immcgen(input);
     if (local_table != NULL) {
-        immcgen->local_table = local_table;
+        local_table->outer_scope = immcgen->symbol_table;
+        immcgen->symbol_table = local_table;
     } else {
-        immcgen->local_table = new_symboltable();
+        immcgen->symbol_table = symboltable_enter_scope(immcgen->symbol_table);
     }
 
     Vector* actual = immcgen_generate_immcode(immcgen);
@@ -457,8 +458,8 @@ void run_local_decl_immcgen_test(Srt* input, SymbolTable* local_table, Vector* e
 void run_global_decl_immcgen_test(Srt* input, SymbolTable* global_table, Vector* expected) {
     Immcgen* immcgen = new_immcgen(input);
     if (global_table != NULL) {
-        delete_symboltable(immcgen->global_table);
-        immcgen->global_table = global_table;
+        delete_symboltable(immcgen->symbol_table);
+        immcgen->symbol_table = global_table;
     }
 
     Vector* actual = immcgen_generate_immcode(immcgen);

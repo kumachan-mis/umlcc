@@ -88,11 +88,7 @@ ImmcOpe* gen_child_ptr_immcope(Immcgen* immcgen, Vector* codes, int index) {
     }
 
     if (memory_or_label) {
-        Symbol* symbol = NULL;
-        if (symbol == NULL && immcgen->local_table != NULL) {
-            symbol = symboltable_search(immcgen->local_table, child->ident_name);
-        }
-        if (symbol == NULL) symbol = symboltable_search(immcgen->global_table, child->ident_name);
+        Symbol* symbol = symboltable_search(immcgen->symbol_table, child->ident_name);
         if (symbol->type == SYMBOL_LABEL) return new_label_immcope(new_string(symbol->name));
         return new_mem_immcope(symbol->memory_offset);
     }

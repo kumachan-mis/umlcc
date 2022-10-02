@@ -87,7 +87,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    if (!symboltable_can_define(resolver->global_table, declarator_srt->ident_name)) {
+    if (!symboltable_can_define(resolver->symbol_table, declarator_srt->ident_name)) {
         errs = new_vector(&t_error);
         err = new_error("identifier '%s' is already declared\n", declarator_srt->ident_name);
         vector_push(errs, err);
@@ -97,9 +97,10 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
 
     char* symbol_name = new_string(declarator_srt->ident_name);
     DType* symbol_dtype = dtype_copy(declarator_srt->dtype);
-    symboltable_define_label(resolver->global_table, symbol_name, symbol_dtype);
+    symboltable_define_label(resolver->symbol_table, symbol_name, symbol_dtype);
 
-    resolver->local_table = new_symboltable();
+    resolver->symbol_table = symboltable_enter_scope(resolver->symbol_table);
+    resolver->symbol_table->memory_size = 0;
     resolver->return_dtype = symbol_dtype->dfunction->return_dtype;
 
     Vector* params = declarator_srt->dtype->dfunction->params;
@@ -108,15 +109,15 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
         DParam* dparam = vector_at(params, i);
         char* symbol_name = new_string(dparam->name);
         DType* symbol_dtype = dtype_copy(dparam->dtype);
-        symboltable_define_memory(resolver->local_table, symbol_name, symbol_dtype);
+        symboltable_define_memory(resolver->symbol_table, symbol_name, symbol_dtype);
     }
 
     resolver->ast = vector_at(ast->children, 2);
     resolverret_assign(&body_srt, &errs, resolve_compound_stmt(resolver));
     resolver->ast = ast;
 
-    delete_symboltable(resolver->local_table);
-    resolver->local_table = NULL;
+    resolver->symbol_table->memory_size = 0;
+    resolver->symbol_table = symboltable_exit_scope(resolver->symbol_table);
     resolver->return_dtype = NULL;
 
     if (errs != NULL) {

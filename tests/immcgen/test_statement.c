@@ -250,7 +250,10 @@ void test_immcgen_expression_stmt(void) {
 
 void run_stmt_immcgen_test(Srt* input, SymbolTable* local_table, int return_label_id, Vector* expected) {
     Immcgen* immcgen = new_immcgen(input);
-    if (local_table != NULL) immcgen->local_table = local_table;
+    if (local_table != NULL) {
+        local_table->outer_scope = immcgen->symbol_table;
+        immcgen->symbol_table = local_table;
+    }
     immcgen->return_label_id = return_label_id;
 
     Vector* actual = immcgen_generate_immcode(immcgen);

@@ -8,8 +8,7 @@
 typedef struct Resolver {
     Ast* ast;
     Srt* trans_unit_srt;
-    SymbolTable* global_table;
-    SymbolTable* local_table;
+    SymbolTable* symbol_table;
     DType* return_dtype;
     DType* specifier_dtype;
     DType* initialized_dtype;
