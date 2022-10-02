@@ -574,7 +574,7 @@ ResolverReturn* resolve_indirection_expr(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    dtype = dtype_copy(child_srt->dtype->pointer->to_dtype);
+    dtype = dtype_copy(child_srt->dtype->dpointer->to_dtype);
     srt = new_dtyped_srt(SRT_INDIR_EXPR, dtype, 1, child_srt);
     return new_resolverret(srt);
 }
@@ -674,7 +674,7 @@ ResolverReturn* resolve_subscription_expr(Resolver* resolver) {
 
     if (rhs_srt->dtype->type == DTYPE_POINTER) swap_ptr((void**)&lhs_srt, (void**)&rhs_srt);
 
-    if (!dtype_isobject(lhs_srt->dtype->pointer->to_dtype)) {
+    if (!dtype_isobject(lhs_srt->dtype->dpointer->to_dtype)) {
         errs = new_vector(&t_error);
         err = new_error("subscribed object should have pointer to object type\n");
         vector_push(errs, err);
@@ -685,7 +685,7 @@ ResolverReturn* resolve_subscription_expr(Resolver* resolver) {
 
     dtype = dtype_copy(lhs_srt->dtype);
     srt = new_dtyped_srt(SRT_PADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
-    srt = new_dtyped_srt(SRT_INDIR_EXPR, dtype_copy(lhs_srt->dtype->pointer->to_dtype), 1, srt);
+    srt = new_dtyped_srt(SRT_INDIR_EXPR, dtype_copy(lhs_srt->dtype->dpointer->to_dtype), 1, srt);
     return new_resolverret(srt);
 }
 
@@ -706,7 +706,7 @@ ResolverReturn* resolve_call_expr(Resolver* resolver) {
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
     lhs_srt = convert_to_ptr_if_function(lhs_srt);
 
-    if (lhs_srt->dtype->type != DTYPE_POINTER || lhs_srt->dtype->pointer->to_dtype->type != DTYPE_FUNCTION) {
+    if (lhs_srt->dtype->type != DTYPE_POINTER || lhs_srt->dtype->dpointer->to_dtype->type != DTYPE_FUNCTION) {
         errs = new_vector(&t_error);
         Error* err = new_error("called object is not a function or a function pointer\n");
         vector_push(errs, err);
@@ -715,7 +715,7 @@ ResolverReturn* resolve_call_expr(Resolver* resolver) {
     }
 
     DType* original_call_dtype = resolver->call_dtype;
-    resolver->call_dtype = lhs_srt->dtype->pointer->to_dtype;
+    resolver->call_dtype = lhs_srt->dtype->dpointer->to_dtype;
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&rhs_srt, &errs, resolve_argument_expr_list(resolver));
     resolver->ast = ast;
@@ -726,7 +726,7 @@ ResolverReturn* resolve_call_expr(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    dtype = dtype_copy(resolver->call_dtype->function->return_dtype);
+    dtype = dtype_copy(resolver->call_dtype->dfunction->return_dtype);
     srt = new_dtyped_srt(SRT_CALL_EXPR, dtype, 2, lhs_srt, rhs_srt);
 
     resolver->call_dtype = original_call_dtype;
@@ -740,7 +740,7 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
     Ast* ast = resolver->ast;
     DType* call_dtype = resolver->call_dtype;
 
-    int num_params = vector_size(call_dtype->function->params);
+    int num_params = vector_size(call_dtype->dfunction->params);
     int num_args = vector_size(ast->children);
 
     if (num_params != num_args) {
@@ -754,7 +754,7 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
     for (int i = 0; i < num_args; i++) {
         Srt* child_srt = NULL;
         Vector* child_errs = NULL;
-        DParam* dparam = vector_at(call_dtype->function->params, i);
+        DParam* dparam = vector_at(call_dtype->dfunction->params, i);
 
         resolver->ast = vector_at(ast->children, i);
         resolverret_assign(&child_srt, &child_errs, resolve_expr(resolver));

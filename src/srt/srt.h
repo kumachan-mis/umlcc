@@ -53,6 +53,7 @@ typedef enum SrtType {
     SRT_LNOT_EXPR,
     //   postfix-expression
     SRT_CALL_EXPR,
+    SRT_MEMBER_EXPR,
     SRT_ARG_LIST,
     //   primary-expression
     SRT_IDENT_EXPR,

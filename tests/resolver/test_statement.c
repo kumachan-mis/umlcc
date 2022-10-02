@@ -122,7 +122,7 @@ void test_resolve_compound_stmt_pointer_typedef(void) {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 7))))));
 
     DType* pint_def_dtype = new_decoration_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
-    pint_def_dtype->decoration->typedef_flag = 1;
+    pint_def_dtype->ddecoration->typedef_flag = 1;
 
     Srt* expected = new_srt(
         SRT_CMPD_STMT, 3,                 // non-terminal

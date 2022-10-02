@@ -61,7 +61,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     resolver->ast = ast;
     if (errs != NULL) return new_resolverret_errors(errs);
 
-    if (specifiers_dtype->type == DTYPE_DECORATION && specifiers_dtype->decoration->typedef_flag) {
+    if (specifiers_dtype->type == DTYPE_DECORATION && specifiers_dtype->ddecoration->typedef_flag) {
         errs = new_vector(&t_error);
         err = new_error("storage specifiers are invalid for a function definition\n");
         vector_push(errs, err);
@@ -100,9 +100,9 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     symboltable_define_label(resolver->global_table, symbol_name, symbol_dtype);
 
     resolver->local_table = new_symboltable();
-    resolver->return_dtype = symbol_dtype->function->return_dtype;
+    resolver->return_dtype = symbol_dtype->dfunction->return_dtype;
 
-    Vector* params = declarator_srt->dtype->function->params;
+    Vector* params = declarator_srt->dtype->dfunction->params;
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
         DParam* dparam = vector_at(params, i);

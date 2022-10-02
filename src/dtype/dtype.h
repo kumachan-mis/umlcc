@@ -10,22 +10,25 @@ typedef struct DType DType;
 #include "./decoration.h"
 #include "./function.h"
 #include "./pointer.h"
+#include "./struct.h"
 
 typedef enum DTypeType {
     DTYPE_CHAR,
     DTYPE_INT,
     DTYPE_POINTER,
     DTYPE_ARRAY,
+    DTYPE_STRUCT,
     DTYPE_FUNCTION,
     DTYPE_DECORATION,
 } DTypeType;
 
 struct DType {
     DTypeType type;
-    DPointer* pointer;
-    DArray* array;
-    DFunction* function;
-    DDecoration* decoration;
+    DPointer* dpointer;
+    DArray* darray;
+    DStruct* dstruct;
+    DFunction* dfunction;
+    DDecoration* ddecoration;
 };
 
 extern BaseType t_dtype;
@@ -33,6 +36,8 @@ extern BaseType t_dtype;
 DType* new_integer_dtype(DTypeType type);
 DType* new_pointer_dtype(DType* to_dtype);
 DType* new_array_dtype(DType* of_dtype, int size);
+DType* new_named_struct_dtype(char* name);
+DType* new_unnamed_struct_dtype(Vector* members);
 DType* new_function_dtype(Vector* params, DType* return_dtype);
 DType* new_decoration_dtype(DType* deco_dtype);
 DType* new_socket_pointer_dtype(void);
