@@ -5,28 +5,28 @@
 
 #include <stdlib.h>
 
-void test_new_suffix_x64ope();
-void test_new_reg_x64ope();
-void test_new_ptr_x64ope();
-void test_new_jptr_x64ope();
-void test_new_mem_x64ope();
-void test_new_label_x64ope();
-void test_new_jlabel_x64ope();
-void test_new_int_x64ope();
-void test_new_signed_x64ope();
-void test_new_unsigned_x64ope();
-void test_x64ope_tostring_suffix();
-void test_x64ope_tostring_reg();
-void test_x64ope_tostring_ptr();
-void test_x64ope_tostring_jptr();
-void test_x64ope_tostring_mem();
-void test_x64ope_tostring_label();
-void test_x64ope_tostring_jlabel();
-void test_x64ope_tostring_int();
-void test_x64ope_tostring_signed();
-void test_x64ope_tostring_unsigned();
+void test_new_suffix_x64ope(void);
+void test_new_reg_x64ope(void);
+void test_new_ptr_x64ope(void);
+void test_new_jptr_x64ope(void);
+void test_new_mem_x64ope(void);
+void test_new_label_x64ope(void);
+void test_new_jlabel_x64ope(void);
+void test_new_int_x64ope(void);
+void test_new_signed_x64ope(void);
+void test_new_unsigned_x64ope(void);
+void test_x64ope_tostring_suffix(void);
+void test_x64ope_tostring_reg(void);
+void test_x64ope_tostring_ptr(void);
+void test_x64ope_tostring_jptr(void);
+void test_x64ope_tostring_mem(void);
+void test_x64ope_tostring_label(void);
+void test_x64ope_tostring_jlabel(void);
+void test_x64ope_tostring_int(void);
+void test_x64ope_tostring_signed(void);
+void test_x64ope_tostring_unsigned(void);
 
-CU_Suite* add_test_suite_x64ope() {
+CU_Suite* add_test_suite_x64ope(void) {
     CU_Suite* suite = CU_add_suite("test_suite_x64ope", NULL, NULL);
     CU_ADD_TEST(suite, test_new_suffix_x64ope);
     CU_ADD_TEST(suite, test_new_reg_x64ope);
@@ -51,7 +51,7 @@ CU_Suite* add_test_suite_x64ope() {
     return suite;
 }
 
-void test_new_suffix_x64ope() {
+void test_new_suffix_x64ope(void) {
     X64Ope* ope = new_suffix_x64ope(X64_SUFFIX_QUAD);
 
     for (int i = 0; i < 2; i++) {
@@ -71,7 +71,7 @@ void test_new_suffix_x64ope() {
     delete_x64ope(ope);
 }
 
-void test_new_reg_x64ope() {
+void test_new_reg_x64ope(void) {
     X64Ope* ope = new_reg_x64ope(X64_SUFFIX_WORD, AX_REG_ID);
 
     for (int i = 0; i < 2; i++) {
@@ -91,7 +91,7 @@ void test_new_reg_x64ope() {
     delete_x64ope(ope);
 }
 
-void test_new_ptr_x64ope() {
+void test_new_ptr_x64ope(void) {
     X64Ope* ope = new_ptr_x64ope(SP_REG_ID);
 
     for (int i = 0; i < 2; i++) {
@@ -111,7 +111,7 @@ void test_new_ptr_x64ope() {
     delete_x64ope(ope);
 }
 
-void test_new_jptr_x64ope() {
+void test_new_jptr_x64ope(void) {
     X64Ope* ope = new_jptr_x64ope(DX_REG_ID);
 
     for (int i = 0; i < 2; i++) {
@@ -131,7 +131,7 @@ void test_new_jptr_x64ope() {
     delete_x64ope(ope);
 }
 
-void test_new_mem_x64ope() {
+void test_new_mem_x64ope(void) {
     X64Ope* ope = new_mem_x64ope(8);
 
     for (int i = 0; i < 2; i++) {
@@ -151,7 +151,7 @@ void test_new_mem_x64ope() {
     delete_x64ope(ope);
 }
 
-void test_new_label_x64ope() {
+void test_new_label_x64ope(void) {
     X64Ope* ope = new_label_x64ope(new_string("global_variable"));
 
     for (int i = 0; i < 2; i++) {
@@ -171,7 +171,7 @@ void test_new_label_x64ope() {
     delete_x64ope(ope);
 }
 
-void test_new_jlabel_x64ope() {
+void test_new_jlabel_x64ope(void) {
     X64Ope* ope = new_jlabel_x64ope(new_string("function"));
 
     for (int i = 0; i < 2; i++) {
@@ -191,7 +191,7 @@ void test_new_jlabel_x64ope() {
     delete_x64ope(ope);
 }
 
-void test_new_int_x64ope() {
+void test_new_int_x64ope(void) {
     X64Ope* ope = new_int_x64ope(X64_SUFFIX_WORD, new_signed_iliteral(INTEGER_INT, 56));
 
     for (int i = 0; i < 2; i++) {
@@ -214,7 +214,7 @@ void test_new_int_x64ope() {
     delete_x64ope(ope);
 }
 
-void test_new_signed_x64ope() {
+void test_new_signed_x64ope(void) {
     X64Ope* ope = new_signed_x64ope(X64_SUFFIX_BYTE, INTEGER_INT, 14);
 
     for (int i = 0; i < 2; i++) {
@@ -237,7 +237,7 @@ void test_new_signed_x64ope() {
     delete_x64ope(ope);
 }
 
-void test_new_unsigned_x64ope() {
+void test_new_unsigned_x64ope(void) {
     X64Ope* ope = new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 2147483648U);
 
     for (int i = 0; i < 2; i++) {
@@ -260,7 +260,7 @@ void test_new_unsigned_x64ope() {
     delete_x64ope(ope);
 }
 
-void test_x64ope_tostring_suffix() {
+void test_x64ope_tostring_suffix(void) {
     X64Ope* ope = new_suffix_x64ope(X64_SUFFIX_QUAD);
     char* ope_str = x64ope_tostring(ope);
 
@@ -270,7 +270,7 @@ void test_x64ope_tostring_suffix() {
     delete_x64ope(ope);
 }
 
-void test_x64ope_tostring_reg() {
+void test_x64ope_tostring_reg(void) {
     X64Ope* ope = new_reg_x64ope(X64_SUFFIX_WORD, AX_REG_ID);
     char* ope_str = x64ope_tostring(ope);
 
@@ -280,7 +280,7 @@ void test_x64ope_tostring_reg() {
     delete_x64ope(ope);
 }
 
-void test_x64ope_tostring_ptr() {
+void test_x64ope_tostring_ptr(void) {
     X64Ope* ope = new_ptr_x64ope(SP_REG_ID);
     char* ope_str = x64ope_tostring(ope);
 
@@ -290,7 +290,7 @@ void test_x64ope_tostring_ptr() {
     delete_x64ope(ope);
 }
 
-void test_x64ope_tostring_jptr() {
+void test_x64ope_tostring_jptr(void) {
     X64Ope* ope = new_jptr_x64ope(DX_REG_ID);
     char* ope_str = x64ope_tostring(ope);
 
@@ -300,7 +300,7 @@ void test_x64ope_tostring_jptr() {
     delete_x64ope(ope);
 }
 
-void test_x64ope_tostring_mem() {
+void test_x64ope_tostring_mem(void) {
     X64Ope* ope = new_mem_x64ope(8);
     char* ope_str = x64ope_tostring(ope);
 
@@ -310,7 +310,7 @@ void test_x64ope_tostring_mem() {
     delete_x64ope(ope);
 }
 
-void test_x64ope_tostring_label() {
+void test_x64ope_tostring_label(void) {
     X64Ope* ope = new_label_x64ope(new_string("global_variable"));
     char* ope_str = x64ope_tostring(ope);
 
@@ -320,7 +320,7 @@ void test_x64ope_tostring_label() {
     delete_x64ope(ope);
 }
 
-void test_x64ope_tostring_jlabel() {
+void test_x64ope_tostring_jlabel(void) {
     X64Ope* ope = new_jlabel_x64ope(new_string("function"));
     char* ope_str = x64ope_tostring(ope);
 
@@ -330,7 +330,7 @@ void test_x64ope_tostring_jlabel() {
     delete_x64ope(ope);
 }
 
-void test_x64ope_tostring_int() {
+void test_x64ope_tostring_int(void) {
     X64Ope* ope = new_int_x64ope(X64_SUFFIX_WORD, new_signed_iliteral(INTEGER_INT, 56));
     char* ope_str = x64ope_tostring(ope);
 
@@ -340,7 +340,7 @@ void test_x64ope_tostring_int() {
     delete_x64ope(ope);
 }
 
-void test_x64ope_tostring_signed() {
+void test_x64ope_tostring_signed(void) {
     X64Ope* ope = new_signed_x64ope(X64_SUFFIX_BYTE, INTEGER_INT, 14);
     char* ope_str = x64ope_tostring(ope);
 
@@ -350,7 +350,7 @@ void test_x64ope_tostring_signed() {
     delete_x64ope(ope);
 }
 
-void test_x64ope_tostring_unsigned() {
+void test_x64ope_tostring_unsigned(void) {
     X64Ope* ope = new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 2147483648U);
     char* ope_str = x64ope_tostring(ope);
 

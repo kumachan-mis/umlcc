@@ -26,8 +26,8 @@ Vector* gen_setcmp_common_x64code(X64gen* x64gen, X64InstType type) {
 
     int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
 
-    X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
-    X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_snd_src->suffix));
+    X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_fst_src->suffix));
+    X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_snd_src->suffix));
     X64Suffix suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
 
     switch (immc_snd_src->type) {
@@ -57,7 +57,7 @@ Vector* gen_setcmp_common_x64code(X64gen* x64gen, X64InstType type) {
     X64Ope* dst = new_reg_x64ope(X64_SUFFIX_BYTE, dst_id);
     vector_push(codes, new_inst_x64(type, NULL, dst));
 
-    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(immc_dst->suffix));
+    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immc_dst->suffix));
     append_mov_code(codes, dst_id, X64_SUFFIX_BYTE, dst_id, dst_suffix);
     liveseqs_next(x64gen->liveseqs);
     return codes;

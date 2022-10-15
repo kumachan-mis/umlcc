@@ -28,8 +28,8 @@ Vector* gen_additive_common_x64code(X64gen* x64gen, X64InstType type) {
     int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
     int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
 
-    X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
-    X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_snd_src->suffix));
+    X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_fst_src->suffix));
+    X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_snd_src->suffix));
     X64Suffix suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
 
     switch (immc_snd_src->type) {
@@ -55,7 +55,7 @@ Vector* gen_additive_common_x64code(X64gen* x64gen, X64InstType type) {
             exit(1);
     }
 
-    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(immc_dst->suffix));
+    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immc_dst->suffix));
     append_mov_code(codes, fst_src_id, suffix, dst_id, dst_suffix);
     liveseqs_next(x64gen->liveseqs);
     return codes;
@@ -73,8 +73,8 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
     int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
     int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
 
-    X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
-    X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_snd_src->suffix));
+    X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_fst_src->suffix));
+    X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_snd_src->suffix));
     X64Suffix suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
 
     switch (immc_snd_src->type) {
@@ -100,7 +100,7 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
             exit(1);
     }
 
-    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(immc_dst->suffix));
+    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immc_dst->suffix));
     append_mov_code(codes, AX_REG_ID, suffix, dst_id, dst_suffix);
     liveseqs_next(x64gen->liveseqs);
     return codes;
@@ -127,8 +127,8 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
     int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
     int snd_src_id = -1;
 
-    X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tosize(immc_fst_src->suffix));
-    X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tosize(immc_snd_src->suffix));
+    X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_fst_src->suffix));
+    X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_snd_src->suffix));
     X64Suffix suffix = x64suffix_greater(fst_src_suffix, snd_src_suffix);
 
     switch (immc_snd_src->type) {
@@ -174,7 +174,7 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
     X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
     vector_push(codes, new_inst_x64(X64_INST_IDIVX, snd_src, NULL));
 
-    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(immc_dst->suffix));
+    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immc_dst->suffix));
     append_mov_code(codes, result_reg_id, suffix, dst_id, dst_suffix);
 
     if (dx_needs_evacuation) {

@@ -3,16 +3,16 @@
 
 #include <stdlib.h>
 
-void test_new_inst_immc_1arg();
-void test_new_inst_immc_2arg();
-void test_new_inst_immc_3arg();
+void test_new_inst_immc_1arg(void);
+void test_new_inst_immc_2arg(void);
+void test_new_inst_immc_3arg(void);
 void test_new_int_data_immc(void);
 void test_new_str_data_immc(void);
 void test_new_label_immc(void);
 void test_immc_isjumpinst(void);
-void test_immc_tostring_1arg_inst();
-void test_immc_tostring_2arg_inst();
-void test_immc_tostring_3arg_inst();
+void test_immc_tostring_1arg_inst(void);
+void test_immc_tostring_2arg_inst(void);
+void test_immc_tostring_3arg_inst(void);
 void test_immc_tostring_int_data(void);
 void test_immc_tostring_str_data(void);
 void test_immc_tostring_label(void);
@@ -35,7 +35,7 @@ CU_Suite* add_test_suite_immc(void) {
     return suite;
 }
 
-void test_new_inst_immc_1arg() {
+void test_new_inst_immc_1arg(void) {
     ImmcOpe* arg = NULL;
     Immc* immc = NULL;
 
@@ -82,7 +82,7 @@ void test_new_inst_immc_1arg() {
     delete_immc(immc);
 }
 
-void test_new_inst_immc_2arg() {
+void test_new_inst_immc_2arg(void) {
     ImmcOpe* dst = new_reg_immcope(IMMC_SUFFIX_LONG, 1);
     ImmcOpe* src = new_reg_immcope(IMMC_SUFFIX_BYTE, 0);
     Immc* immc = new_inst_immc(IMMC_INST_LOAD, dst, src, NULL);
@@ -107,7 +107,7 @@ void test_new_inst_immc_2arg() {
     delete_immc(immc);
 }
 
-void test_new_inst_immc_3arg() {
+void test_new_inst_immc_3arg(void) {
     ImmcOpe* dst = new_reg_immcope(IMMC_SUFFIX_QUAD, 1);
     ImmcOpe* fst_src = new_reg_immcope(IMMC_SUFFIX_QUAD, 0);
     ImmcOpe* snd_src = new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 8);
@@ -252,7 +252,7 @@ void test_immc_isjumpinst(void) {
     delete_immc(immc);
 }
 
-void test_immc_tostring_1arg_inst() {
+void test_immc_tostring_1arg_inst(void) {
     ImmcOpe* arg = NULL;
     Immc* immc = NULL;
     char* immc_str = NULL;
@@ -272,7 +272,7 @@ void test_immc_tostring_1arg_inst() {
     free(immc_str);
 }
 
-void test_immc_tostring_2arg_inst() {
+void test_immc_tostring_2arg_inst(void) {
     ImmcOpe* dst = new_reg_immcope(IMMC_SUFFIX_LONG, 1);
     ImmcOpe* src = new_reg_immcope(IMMC_SUFFIX_BYTE, 0);
     Immc* immc = new_inst_immc(IMMC_INST_LOAD, dst, src, NULL);
@@ -284,7 +284,7 @@ void test_immc_tostring_2arg_inst() {
     free(immc_str);
 }
 
-void test_immc_tostring_3arg_inst() {
+void test_immc_tostring_3arg_inst(void) {
     ImmcOpe* dst = new_reg_immcope(IMMC_SUFFIX_QUAD, 1);
     ImmcOpe* fst_src = new_reg_immcope(IMMC_SUFFIX_QUAD, 0);
     ImmcOpe* snd_src = new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 8);

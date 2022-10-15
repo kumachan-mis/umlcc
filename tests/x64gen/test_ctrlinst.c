@@ -2,27 +2,27 @@
 #include "../../src/x64gen/inst.h"
 #include "../testlib/testlib.h"
 
-void test_x64gen_jmp();
-void test_x64gen_jeq_reg_int();
-void test_x64gen_jeq_reg_reg();
-void test_x64gen_jneq_reg_int();
-void test_x64gen_jneq_reg_reg();
-void test_x64gen_call_label_six_or_less();
-void test_x64gen_call_label_seven_or_more_odd();
-void test_x64gen_call_label_seven_or_more_even();
-void test_x64gen_call_ptr_without_evacuation();
-void test_x64gen_call_ptr_with_evacuation();
-void test_x64gen_call_caller_saved_evacuation();
-void test_x64gen_enter_zero();
-void test_x64gen_enter_non_16bytes_boundary();
-void test_x64gen_enter_16bytes_boundary();
-void test_x64gen_leave_zero();
-void test_x64gen_leave_non_16bytes_boundary();
-void test_x64gen_leave_16bytes_boundary();
+void test_x64gen_jmp(void);
+void test_x64gen_jeq_reg_int(void);
+void test_x64gen_jeq_reg_reg(void);
+void test_x64gen_jneq_reg_int(void);
+void test_x64gen_jneq_reg_reg(void);
+void test_x64gen_call_label_six_or_less(void);
+void test_x64gen_call_label_seven_or_more_odd(void);
+void test_x64gen_call_label_seven_or_more_even(void);
+void test_x64gen_call_ptr_without_evacuation(void);
+void test_x64gen_call_ptr_with_evacuation(void);
+void test_x64gen_call_caller_saved_evacuation(void);
+void test_x64gen_enter_zero(void);
+void test_x64gen_enter_non_16bytes_boundary(void);
+void test_x64gen_enter_16bytes_boundary(void);
+void test_x64gen_leave_zero(void);
+void test_x64gen_leave_non_16bytes_boundary(void);
+void test_x64gen_leave_16bytes_boundary(void);
 
 void run_ctrlinst_x64gen_test(Vector* input_immcs, Vector* input_liveseqs, Vector* expected);
 
-CU_Suite* add_test_suite_ctrlinst_x64gen() {
+CU_Suite* add_test_suite_ctrlinst_x64gen(void) {
     CU_Suite* suite = CU_add_suite("test_suite_ctrlinst_x64gen", NULL, NULL);
     CU_ADD_TEST(suite, test_x64gen_jmp);
     CU_ADD_TEST(suite, test_x64gen_jeq_reg_int);
@@ -44,7 +44,7 @@ CU_Suite* add_test_suite_ctrlinst_x64gen() {
     return suite;
 }
 
-void test_x64gen_jmp() {
+void test_x64gen_jmp(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_JMP,                          // inst
@@ -66,7 +66,7 @@ void test_x64gen_jmp() {
     delete_vector(expected);
 }
 
-void test_x64gen_jeq_reg_int() {
+void test_x64gen_jeq_reg_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -112,7 +112,7 @@ void test_x64gen_jeq_reg_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_jeq_reg_reg() {
+void test_x64gen_jeq_reg_reg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -167,7 +167,7 @@ void test_x64gen_jeq_reg_reg() {
     delete_vector(expected);
 }
 
-void test_x64gen_jneq_reg_int() {
+void test_x64gen_jneq_reg_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -209,7 +209,7 @@ void test_x64gen_jneq_reg_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_jneq_reg_reg() {
+void test_x64gen_jneq_reg_reg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -268,7 +268,7 @@ void test_x64gen_jneq_reg_reg() {
     delete_vector(expected);
 }
 
-void test_x64gen_call_label_six_or_less() {
+void test_x64gen_call_label_six_or_less(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_PREP,                                       // inst
@@ -365,7 +365,7 @@ void test_x64gen_call_label_six_or_less() {
     delete_vector(expected);
 }
 
-void test_x64gen_call_label_seven_or_more_odd() {
+void test_x64gen_call_label_seven_or_more_odd(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_PREP,                                       // inst
@@ -506,7 +506,7 @@ void test_x64gen_call_label_seven_or_more_odd() {
     delete_vector(expected);
 }
 
-void test_x64gen_call_label_seven_or_more_even() {
+void test_x64gen_call_label_seven_or_more_even(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_PREP,                                       // inst
@@ -652,7 +652,7 @@ void test_x64gen_call_label_seven_or_more_even() {
     delete_vector(expected);
 }
 
-void test_x64gen_call_ptr_without_evacuation() {
+void test_x64gen_call_ptr_without_evacuation(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -723,7 +723,7 @@ void test_x64gen_call_ptr_without_evacuation() {
     delete_vector(expected);
 }
 
-void test_x64gen_call_ptr_with_evacuation() {
+void test_x64gen_call_ptr_with_evacuation(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -803,7 +803,7 @@ void test_x64gen_call_ptr_with_evacuation() {
     delete_vector(expected);
 }
 
-void test_x64gen_call_caller_saved_evacuation() {
+void test_x64gen_call_caller_saved_evacuation(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_PREP,                                       // inst
@@ -901,7 +901,7 @@ void test_x64gen_call_caller_saved_evacuation() {
     delete_vector(expected);
 }
 
-void test_x64gen_enter_zero() {
+void test_x64gen_enter_zero(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_ENTER,                                      // inst
@@ -927,7 +927,7 @@ void test_x64gen_enter_zero() {
     delete_vector(expected);
 }
 
-void test_x64gen_enter_non_16bytes_boundary() {
+void test_x64gen_enter_non_16bytes_boundary(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_ENTER,                                       // inst
@@ -957,7 +957,7 @@ void test_x64gen_enter_non_16bytes_boundary() {
     delete_vector(expected);
 }
 
-void test_x64gen_enter_16bytes_boundary() {
+void test_x64gen_enter_16bytes_boundary(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_ENTER,                                       // inst
@@ -987,7 +987,7 @@ void test_x64gen_enter_16bytes_boundary() {
     delete_vector(expected);
 }
 
-void test_x64gen_leave_zero() {
+void test_x64gen_leave_zero(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LEAVE,                                      // inst
@@ -1013,7 +1013,7 @@ void test_x64gen_leave_zero() {
     delete_vector(expected);
 }
 
-void test_x64gen_leave_non_16bytes_boundary() {
+void test_x64gen_leave_non_16bytes_boundary(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LEAVE,                                       // inst
@@ -1043,7 +1043,7 @@ void test_x64gen_leave_non_16bytes_boundary() {
     delete_vector(expected);
 }
 
-void test_x64gen_leave_16bytes_boundary() {
+void test_x64gen_leave_16bytes_boundary(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LEAVE,                                       // inst

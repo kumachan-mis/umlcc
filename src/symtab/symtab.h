@@ -8,7 +8,7 @@ typedef struct SymbolTable SymbolTable;
 
 struct SymbolTable {
     Map* symbol_map;
-    int memory_size;
+    int memory_nbytes;
     SymbolTable* outer_scope;
 };
 

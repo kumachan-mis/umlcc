@@ -175,9 +175,9 @@ Vector* gen_pointer_additive_expr_immcode(Immcgen* immcgen) {
     switch (srt->type) {
         case SRT_PADD_EXPR: {
             Srt* lhs_srt = vector_at(srt->children, 0);
-            int mul_amount = dtype_size(lhs_srt->dtype->pointer->to_dtype);
+            int nbytes = dtype_nbytes(lhs_srt->dtype->pointer->to_dtype);
             ImmcOpe* mul_fst_src = immcope_copy(snd_src);
-            ImmcOpe* mul_snd_src = new_signed_immcope(mul_fst_src->suffix, INTEGER_INT, mul_amount);
+            ImmcOpe* mul_snd_src = new_signed_immcope(mul_fst_src->suffix, INTEGER_INT, nbytes);
             ImmcOpe* mul_dst = immcope_copy(snd_src);
             vector_push(codes, new_inst_immc(IMMC_INST_MUL, mul_dst, mul_fst_src, mul_snd_src));
             vector_push(codes, new_inst_immc(IMMC_INST_ADD, dst, fst_src, snd_src));
@@ -185,9 +185,9 @@ Vector* gen_pointer_additive_expr_immcode(Immcgen* immcgen) {
         }
         case SRT_PSUB_EXPR: {
             Srt* lhs_srt = vector_at(srt->children, 0);
-            int mul_amount = dtype_size(lhs_srt->dtype->pointer->to_dtype);
+            int nbytes = dtype_nbytes(lhs_srt->dtype->pointer->to_dtype);
             ImmcOpe* mul_fst_src = immcope_copy(snd_src);
-            ImmcOpe* mul_snd_src = new_signed_immcope(mul_fst_src->suffix, INTEGER_INT, mul_amount);
+            ImmcOpe* mul_snd_src = new_signed_immcope(mul_fst_src->suffix, INTEGER_INT, nbytes);
             ImmcOpe* mul_dst = immcope_copy(snd_src);
             vector_push(codes, new_inst_immc(IMMC_INST_MUL, mul_dst, mul_fst_src, mul_snd_src));
             vector_push(codes, new_inst_immc(IMMC_INST_SUB, dst, fst_src, snd_src));
@@ -195,9 +195,9 @@ Vector* gen_pointer_additive_expr_immcode(Immcgen* immcgen) {
         }
         case SRT_PDIFF_EXPR: {
             Srt* lhs_srt = vector_at(srt->children, 0);
-            int div_amount = dtype_size(lhs_srt->dtype->pointer->to_dtype);
+            int nbytes = dtype_nbytes(lhs_srt->dtype->pointer->to_dtype);
             ImmcOpe* div_fst_src = immcope_copy(dst);
-            ImmcOpe* div_snd_src = new_signed_immcope(div_fst_src->suffix, INTEGER_INT, div_amount);
+            ImmcOpe* div_snd_src = new_signed_immcope(div_fst_src->suffix, INTEGER_INT, nbytes);
             ImmcOpe* div_dst = immcope_copy(dst);
             vector_push(codes, new_inst_immc(IMMC_INST_SUB, dst, fst_src, snd_src));
             vector_push(codes, new_inst_immc(IMMC_INST_DIV, div_dst, div_fst_src, div_snd_src));

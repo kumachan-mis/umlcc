@@ -3,6 +3,6 @@
 
 #include <CUnit/Basic.h>
 
-CU_Suite* add_test_suite_x64();
+CU_Suite* add_test_suite_x64(void);
 
 #endif

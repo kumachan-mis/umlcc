@@ -224,7 +224,7 @@ int dtype_isobject(DType* dtype) {
     return DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_ARRAY;
 }
 
-int dtype_size(DType* dtype) {
+int dtype_nbytes(DType* dtype) {
     switch (dtype->type) {
         case DTYPE_CHAR:
             return 1;
@@ -233,7 +233,7 @@ int dtype_size(DType* dtype) {
         case DTYPE_POINTER:
             return 8;
         case DTYPE_ARRAY:
-            return dtype->array->size * dtype_size(dtype->array->of_dtype);
+            return dtype->array->size * dtype_nbytes(dtype->array->of_dtype);
         default:
             return 0;
     }

@@ -100,7 +100,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     symboltable_define_label(resolver->symbol_table, symbol_name, symbol_dtype);
 
     resolver->symbol_table = symboltable_enter_scope(resolver->symbol_table);
-    resolver->symbol_table->memory_size = 0;
+    resolver->symbol_table->memory_nbytes = 0;
     resolver->return_dtype = symbol_dtype->function->return_dtype;
 
     Vector* params = declarator_srt->dtype->function->params;
@@ -116,7 +116,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     resolverret_assign(&body_srt, &errs, resolve_compound_stmt(resolver));
     resolver->ast = ast;
 
-    resolver->symbol_table->memory_size = 0;
+    resolver->symbol_table->memory_nbytes = 0;
     resolver->symbol_table = symboltable_exit_scope(resolver->symbol_table);
     resolver->return_dtype = NULL;
 
