@@ -276,7 +276,7 @@ int dtype_nbytes(DType* dtype) {
             int size = 0, num_members = vector_size(dtype->dstruct->members);
             for (int i = 0; i < num_members; i++) {
                 DMember* member = vector_at(dtype->dstruct->members, i);
-                size += dtype_size(member->dtype);
+                size += dtype_nbytes(member->dtype);
             }
             return size;
         }
