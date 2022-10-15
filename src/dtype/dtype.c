@@ -261,7 +261,7 @@ int dtype_isobject(DType* dtype) {
            (dtype->type == DTYPE_STRUCT && dtype->dstruct->members != NULL);
 }
 
-int dtype_size(DType* dtype) {
+int dtype_nbytes(DType* dtype) {
     switch (dtype->type) {
         case DTYPE_CHAR:
             return 1;
@@ -270,7 +270,7 @@ int dtype_size(DType* dtype) {
         case DTYPE_POINTER:
             return 8;
         case DTYPE_ARRAY:
-            return dtype->darray->size * dtype_size(dtype->darray->of_dtype);
+            return dtype->darray->size * dtype_nbytes(dtype->darray->of_dtype);
         case DTYPE_STRUCT: {
             if (dtype->dstruct->members == NULL) return 0;
             int size = 0, num_members = vector_size(dtype->dstruct->members);

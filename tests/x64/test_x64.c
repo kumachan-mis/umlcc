@@ -3,23 +3,23 @@
 
 #include <stdlib.h>
 
-void test_new_inst_x64_0arg();
-void test_new_inst_x64_1arg();
-void test_new_inst_x64_2arg();
-void test_new_int_data_x64();
-void test_new_str_data_x64();
-void test_new_label_x64();
-void test_x64_tostring_0arg_0suffix_inst();
-void test_x64_tostring_0arg_1suffix_inst();
-void test_x64_tostring_1arg_0suffix_inst();
-void test_x64_tostring_1arg_1suffix_inst();
-void test_x64_tostring_2arg_1suffix_inst();
-void test_x64_tostring_2arg_2suffix_inst();
-void test_x64_tostring_int_data();
-void test_x64_tostring_str_data();
-void test_x64_tostring_label();
+void test_new_inst_x64_0arg(void);
+void test_new_inst_x64_1arg(void);
+void test_new_inst_x64_2arg(void);
+void test_new_int_data_x64(void);
+void test_new_str_data_x64(void);
+void test_new_label_x64(void);
+void test_x64_tostring_0arg_0suffix_inst(void);
+void test_x64_tostring_0arg_1suffix_inst(void);
+void test_x64_tostring_1arg_0suffix_inst(void);
+void test_x64_tostring_1arg_1suffix_inst(void);
+void test_x64_tostring_2arg_1suffix_inst(void);
+void test_x64_tostring_2arg_2suffix_inst(void);
+void test_x64_tostring_int_data(void);
+void test_x64_tostring_str_data(void);
+void test_x64_tostring_label(void);
 
-CU_Suite* add_test_suite_x64() {
+CU_Suite* add_test_suite_x64(void) {
     CU_Suite* suite = CU_add_suite("test_suite_x64", NULL, NULL);
     CU_ADD_TEST(suite, test_new_inst_x64_0arg);
     CU_ADD_TEST(suite, test_new_inst_x64_1arg);
@@ -39,7 +39,7 @@ CU_Suite* add_test_suite_x64() {
     return suite;
 }
 
-void test_new_inst_x64_0arg() {
+void test_new_inst_x64_0arg(void) {
     X64* x64 = new_inst_x64(X64_INST_RET, NULL, NULL);
 
     for (int i = 0; i < 2; i++) {
@@ -59,7 +59,7 @@ void test_new_inst_x64_0arg() {
     delete_x64(x64);
 }
 
-void test_new_inst_x64_1arg() {
+void test_new_inst_x64_1arg(void) {
     X64Ope* src = new_jlabel_x64ope(new_string("function"));
     X64* x64 = new_inst_x64(X64_INST_CALL, src, NULL);
 
@@ -81,7 +81,7 @@ void test_new_inst_x64_1arg() {
     delete_x64(x64);
 }
 
-void test_new_inst_x64_2arg() {
+void test_new_inst_x64_2arg(void) {
     X64Ope* src = new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8);
     X64Ope* dst = new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID);
     X64* x64 = new_inst_x64(X64_INST_ADDX, src, dst);
@@ -105,7 +105,7 @@ void test_new_inst_x64_2arg() {
     delete_x64(x64);
 }
 
-void test_new_int_data_x64() {
+void test_new_int_data_x64(void) {
     X64* x64 = new_int_data_x64(X64_DATA_QUAD, new_signed_iliteral(INTEGER_INT, 623));
 
     for (int i = 0; i < 2; i++) {
@@ -128,7 +128,7 @@ void test_new_int_data_x64() {
     delete_x64(x64);
 }
 
-void test_new_str_data_x64() {
+void test_new_str_data_x64(void) {
     char sliteral_const[15] = "string\0literal";
     int sliteral_size = 15;
 
@@ -156,7 +156,7 @@ void test_new_str_data_x64() {
     delete_x64(x64);
 }
 
-void test_new_label_x64() {
+void test_new_label_x64(void) {
     X64* x64 = new_label_x64(X64_LABEL_VARIABLE, X64_VIS_GLOBAL, new_string("variable"));
 
     for (int i = 0; i < 2; i++) {
@@ -176,7 +176,7 @@ void test_new_label_x64() {
     delete_x64(x64);
 }
 
-void test_x64_tostring_0arg_0suffix_inst() {
+void test_x64_tostring_0arg_0suffix_inst(void) {
     X64* x64 = new_inst_x64(X64_INST_RET, NULL, NULL);
     char* x64_str = x64_tostring(x64);
 
@@ -186,7 +186,7 @@ void test_x64_tostring_0arg_0suffix_inst() {
     free(x64_str);
 }
 
-void test_x64_tostring_0arg_1suffix_inst() {
+void test_x64_tostring_0arg_1suffix_inst(void) {
     X64Ope* src = new_suffix_x64ope(X64_SUFFIX_LONG);
     X64* x64 = new_inst_x64(X64_INST_CXTD, src, NULL);
     char* x64_str = x64_tostring(x64);
@@ -197,7 +197,7 @@ void test_x64_tostring_0arg_1suffix_inst() {
     free(x64_str);
 }
 
-void test_x64_tostring_1arg_0suffix_inst() {
+void test_x64_tostring_1arg_0suffix_inst(void) {
     X64Ope* src = new_jlabel_x64ope(new_string("function"));
     X64* x64 = new_inst_x64(X64_INST_CALL, src, NULL);
 
@@ -209,7 +209,7 @@ void test_x64_tostring_1arg_0suffix_inst() {
     free(x64_str);
 }
 
-void test_x64_tostring_1arg_1suffix_inst() {
+void test_x64_tostring_1arg_1suffix_inst(void) {
     X64Ope* src = new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8);
     X64* x64 = new_inst_x64(X64_INST_PUSHX, src, NULL);
     char* x64_str = x64_tostring(x64);
@@ -220,7 +220,7 @@ void test_x64_tostring_1arg_1suffix_inst() {
     free(x64_str);
 }
 
-void test_x64_tostring_2arg_1suffix_inst() {
+void test_x64_tostring_2arg_1suffix_inst(void) {
     X64Ope* src = NULL;
     X64Ope* dst = NULL;
     X64* x64 = NULL;
@@ -251,7 +251,7 @@ void test_x64_tostring_2arg_1suffix_inst() {
     free(x64_str);
 }
 
-void test_x64_tostring_2arg_2suffix_inst() {
+void test_x64_tostring_2arg_2suffix_inst(void) {
     X64Ope* src = new_reg_x64ope(X64_SUFFIX_BYTE, DX_REG_ID);
     X64Ope* dst = new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID);
     X64* x64 = new_inst_x64(X64_INST_MOVSXX, src, dst);
@@ -263,7 +263,7 @@ void test_x64_tostring_2arg_2suffix_inst() {
     free(x64_str);
 }
 
-void test_x64_tostring_int_data() {
+void test_x64_tostring_int_data(void) {
     X64* x64 = NULL;
     char* x64_str = NULL;
 
@@ -298,7 +298,7 @@ void test_x64_tostring_int_data() {
     free(x64_str);
 }
 
-void test_x64_tostring_str_data() {
+void test_x64_tostring_str_data(void) {
     char sliteral_const[15] = "string\0literal";
     int sliteral_size = 15;
 
@@ -315,7 +315,7 @@ void test_x64_tostring_str_data() {
     free(x64_str);
 }
 
-void test_x64_tostring_label() {
+void test_x64_tostring_label(void) {
     X64* x64 = NULL;
     char* x64_str = NULL;
 

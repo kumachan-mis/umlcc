@@ -2,19 +2,19 @@
 #include "../../src/x64gen/inst.h"
 #include "../testlib/testlib.h"
 
-void test_x64gen_sal_reg_int();
-void test_x64gen_sar_reg_int();
+void test_x64gen_sal_reg_int(void);
+void test_x64gen_sar_reg_int(void);
 
 void run_shrotinst_x64gen_test(Vector* input_immcs, Vector* input_liveseqs, Vector* expected);
 
-CU_Suite* add_test_suite_shrotinst_x64gen() {
+CU_Suite* add_test_suite_shrotinst_x64gen(void) {
     CU_Suite* suite = CU_add_suite("test_suite_shrotinst_x64gen", NULL, NULL);
     CU_ADD_TEST(suite, test_x64gen_sal_reg_int);
     CU_ADD_TEST(suite, test_x64gen_sar_reg_int);
     return suite;
 }
 
-void test_x64gen_sal_reg_int() {
+void test_x64gen_sal_reg_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -58,7 +58,7 @@ void test_x64gen_sal_reg_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_sar_reg_int() {
+void test_x64gen_sar_reg_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst

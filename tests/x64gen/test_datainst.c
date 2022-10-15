@@ -4,34 +4,34 @@
 
 #include <stdlib.h>
 
-void test_x64gen_load_int();
-void test_x64gen_load_reg();
-void test_x64gen_load_ptr();
-void test_x64gen_load_mem();
-void test_x64gen_load_label();
-void test_x64gen_addr_mem();
-void test_x64gen_addr_label();
-void test_x64gen_str_byte();
-void test_x64gen_str_word();
-void test_x64gen_str_long();
-void test_x64gen_str_quad();
-void test_x64gen_str_other();
-void test_x64gen_store_int_ptr();
-void test_x64gen_store_int_mem();
-void test_x64gen_store_int_label();
-void test_x64gen_store_reg_ptr();
-void test_x64gen_store_reg_mem();
-void test_x64gen_store_reg_label();
-void test_x64gen_ldarg_sixth_or_less();
-void test_x64gen_ldarg_seventh_or_more();
-void test_x64gen_starg_int();
-void test_x64gen_starg_reg();
-void test_x64gen_stret_int();
-void test_x64gen_stret_reg();
+void test_x64gen_load_int(void);
+void test_x64gen_load_reg(void);
+void test_x64gen_load_ptr(void);
+void test_x64gen_load_mem(void);
+void test_x64gen_load_label(void);
+void test_x64gen_addr_mem(void);
+void test_x64gen_addr_label(void);
+void test_x64gen_str_byte(void);
+void test_x64gen_str_word(void);
+void test_x64gen_str_long(void);
+void test_x64gen_str_quad(void);
+void test_x64gen_str_other(void);
+void test_x64gen_store_int_ptr(void);
+void test_x64gen_store_int_mem(void);
+void test_x64gen_store_int_label(void);
+void test_x64gen_store_reg_ptr(void);
+void test_x64gen_store_reg_mem(void);
+void test_x64gen_store_reg_label(void);
+void test_x64gen_ldarg_sixth_or_less(void);
+void test_x64gen_ldarg_seventh_or_more(void);
+void test_x64gen_starg_int(void);
+void test_x64gen_starg_reg(void);
+void test_x64gen_stret_int(void);
+void test_x64gen_stret_reg(void);
 
 void run_datainst_x64gen_test(Vector* input_immcs, Vector* input_liveseqs, Vector* expected);
 
-CU_Suite* add_test_suite_datainst_x64gen() {
+CU_Suite* add_test_suite_datainst_x64gen(void) {
     CU_Suite* suite = CU_add_suite("test_suite_datainst_x64gen", NULL, NULL);
     CU_ADD_TEST(suite, test_x64gen_load_int);
     CU_ADD_TEST(suite, test_x64gen_load_reg);
@@ -60,7 +60,7 @@ CU_Suite* add_test_suite_datainst_x64gen() {
     return suite;
 }
 
-void test_x64gen_load_int() {
+void test_x64gen_load_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                                       // inst
@@ -88,7 +88,7 @@ void test_x64gen_load_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_load_reg() {
+void test_x64gen_load_reg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -119,7 +119,7 @@ void test_x64gen_load_reg() {
     delete_vector(expected);
 }
 
-void test_x64gen_load_ptr() {
+void test_x64gen_load_ptr(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -150,7 +150,7 @@ void test_x64gen_load_ptr() {
     delete_vector(expected);
 }
 
-void test_x64gen_load_mem() {
+void test_x64gen_load_mem(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_ADDR,                       // inst
@@ -178,7 +178,7 @@ void test_x64gen_load_mem() {
     delete_vector(expected);
 }
 
-void test_x64gen_load_label() {
+void test_x64gen_load_label(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_ADDR,                            // inst
@@ -206,7 +206,7 @@ void test_x64gen_load_label() {
     delete_vector(expected);
 }
 
-void test_x64gen_addr_mem() {
+void test_x64gen_addr_mem(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -234,7 +234,7 @@ void test_x64gen_addr_mem() {
     delete_vector(expected);
 }
 
-void test_x64gen_addr_label() {
+void test_x64gen_addr_label(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                            // inst
@@ -262,7 +262,7 @@ void test_x64gen_addr_label() {
     delete_vector(expected);
 }
 
-void test_x64gen_str_byte() {
+void test_x64gen_str_byte(void) {
     char sliteral_const[1] = "";
     int sliteral_size = 1;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
@@ -291,7 +291,7 @@ void test_x64gen_str_byte() {
     delete_vector(expected);
 }
 
-void test_x64gen_str_word() {
+void test_x64gen_str_word(void) {
     char sliteral_const[10] = "123456789";
     int sliteral_size = 10;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
@@ -329,7 +329,7 @@ void test_x64gen_str_word() {
     delete_vector(expected);
 }
 
-void test_x64gen_str_long() {
+void test_x64gen_str_long(void) {
     char sliteral_const[12] = "ABCDEFGHIJK";
     int sliteral_size = 12;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
@@ -367,7 +367,7 @@ void test_x64gen_str_long() {
     delete_vector(expected);
 }
 
-void test_x64gen_str_quad() {
+void test_x64gen_str_quad(void) {
     char sliteral_const[16] = "ABCDEFGHIJKLMNO";
     int sliteral_size = 16;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
@@ -410,7 +410,7 @@ void test_x64gen_str_quad() {
     delete_vector(expected);
 }
 
-void test_x64gen_str_other() {
+void test_x64gen_str_other(void) {
     char sliteral_const[11] = "ABCDEFGHIJ";
     int sliteral_size = 11;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
@@ -453,7 +453,7 @@ void test_x64gen_str_other() {
     delete_vector(expected);
 }
 
-void test_x64gen_store_int_ptr() {
+void test_x64gen_store_int_ptr(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_STORE,                                      // inst
@@ -481,7 +481,7 @@ void test_x64gen_store_int_ptr() {
     delete_vector(expected);
 }
 
-void test_x64gen_store_int_mem() {
+void test_x64gen_store_int_mem(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_STORE,                                      // inst
@@ -503,7 +503,7 @@ void test_x64gen_store_int_mem() {
     delete_vector(expected);
 }
 
-void test_x64gen_store_int_label() {
+void test_x64gen_store_int_label(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_STORE,                                      // inst
@@ -525,7 +525,7 @@ void test_x64gen_store_int_label() {
     delete_vector(expected);
 }
 
-void test_x64gen_store_reg_ptr() {
+void test_x64gen_store_reg_ptr(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_STORE,                      // inst
@@ -556,7 +556,7 @@ void test_x64gen_store_reg_ptr() {
     delete_vector(expected);
 }
 
-void test_x64gen_store_reg_mem() {
+void test_x64gen_store_reg_mem(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_STORE,                      // inst
@@ -584,7 +584,7 @@ void test_x64gen_store_reg_mem() {
     delete_vector(expected);
 }
 
-void test_x64gen_store_reg_label() {
+void test_x64gen_store_reg_label(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_STORE,                           // inst
@@ -612,7 +612,7 @@ void test_x64gen_store_reg_label() {
     delete_vector(expected);
 }
 
-void test_x64gen_ldarg_sixth_or_less() {
+void test_x64gen_ldarg_sixth_or_less(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LDARG,                      // inst
@@ -643,7 +643,7 @@ void test_x64gen_ldarg_sixth_or_less() {
     delete_vector(expected);
 }
 
-void test_x64gen_ldarg_seventh_or_more() {
+void test_x64gen_ldarg_seventh_or_more(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LDARG,                      // inst
@@ -701,7 +701,7 @@ void test_x64gen_ldarg_seventh_or_more() {
     delete_vector(expected);
 }
 
-void test_x64gen_starg_int() {
+void test_x64gen_starg_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_STARG,                                      // inst
@@ -723,7 +723,7 @@ void test_x64gen_starg_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_starg_reg() {
+void test_x64gen_starg_reg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_STARG,                      // inst
@@ -751,7 +751,7 @@ void test_x64gen_starg_reg() {
     delete_vector(expected);
 }
 
-void test_x64gen_stret_int() {
+void test_x64gen_stret_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_STRET,                                      // inst
@@ -773,7 +773,7 @@ void test_x64gen_stret_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_stret_reg() {
+void test_x64gen_stret_reg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_STRET,                      // inst

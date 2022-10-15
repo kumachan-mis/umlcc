@@ -45,7 +45,7 @@ void test_dtype_isarithmetic(void);
 void test_dtype_isscalar(void);
 void test_dtype_isaggregate(void);
 void test_dtype_isobject(void);
-void test_dtype_size(void);
+void test_dtype_nbytes(void);
 
 CU_Suite* add_test_suite_dtype(void) {
     CU_Suite* suite = CU_add_suite("test_suite_dtype", NULL, NULL);
@@ -93,7 +93,7 @@ CU_Suite* add_test_suite_dtype(void) {
     CU_ADD_TEST(suite, test_dtype_isscalar);
     CU_ADD_TEST(suite, test_dtype_isaggregate);
     CU_ADD_TEST(suite, test_dtype_isobject);
-    CU_ADD_TEST(suite, test_dtype_size);
+    CU_ADD_TEST(suite, test_dtype_nbytes);
     return suite;
 }
 
@@ -956,21 +956,21 @@ void test_dtype_isobject(void) {
     delete_dtype(typedef_dtype);
 }
 
-void test_dtype_size(void) {
+void test_dtype_nbytes(void) {
     DType* char_dtype = new_integer_dtype(DTYPE_CHAR);
-    CU_ASSERT_EQUAL(dtype_size(char_dtype), 1);
+    CU_ASSERT_EQUAL(dtype_nbytes(char_dtype), 1);
     delete_dtype(char_dtype);
 
     DType* int_dtype = new_integer_dtype(DTYPE_INT);
-    CU_ASSERT_EQUAL(dtype_size(int_dtype), 4);
+    CU_ASSERT_EQUAL(dtype_nbytes(int_dtype), 4);
     delete_dtype(int_dtype);
 
     DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
-    CU_ASSERT_EQUAL(dtype_size(pointer_dtype), 8);
+    CU_ASSERT_EQUAL(dtype_nbytes(pointer_dtype), 8);
     delete_dtype(pointer_dtype);
 
     DType* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 17);
-    CU_ASSERT_EQUAL(dtype_size(array_dtype), 68);
+    CU_ASSERT_EQUAL(dtype_nbytes(array_dtype), 68);
     delete_dtype(array_dtype);
 
     DType* named_struct_dtype = new_named_struct_dtype(new_string("Structure"));
@@ -986,11 +986,11 @@ void test_dtype_size(void) {
     delete_dtype(unnamed_struct_dtype);
 
     DType* func_dtype = new_function_dtype(new_vector(&t_dparam), new_integer_dtype(DTYPE_INT));
-    CU_ASSERT_EQUAL(dtype_size(func_dtype), 0);
+    CU_ASSERT_EQUAL(dtype_nbytes(func_dtype), 0);
     delete_dtype(func_dtype);
 
     DType* typedef_dtype = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
     typedef_dtype->ddecoration->typedef_flag = 1;
-    CU_ASSERT_EQUAL(dtype_size(typedef_dtype), 0);
+    CU_ASSERT_EQUAL(dtype_nbytes(typedef_dtype), 0);
     delete_dtype(typedef_dtype);
 }

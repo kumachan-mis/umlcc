@@ -2,24 +2,24 @@
 #include "../../src/x64gen/inst.h"
 #include "../testlib/testlib.h"
 
-void test_x64gen_add_reg_int();
-void test_x64gen_add_reg_reg();
-void test_x64gen_sub_reg_int();
-void test_x64gen_sub_reg_reg();
-void test_x64gen_mul_reg_int();
-void test_x64gen_mul_reg_reg();
-void test_x64gen_div_reg_int();
-void test_x64gen_div_reg_reg();
-void test_x64gen_div_rdx_inarg();
-void test_x64gen_div_rdx_inuse();
-void test_x64gen_mod_reg_int();
-void test_x64gen_mod_reg_reg();
-void test_x64gen_mod_rdx_inarg();
-void test_x64gen_mod_rdx_inuse();
+void test_x64gen_add_reg_int(void);
+void test_x64gen_add_reg_reg(void);
+void test_x64gen_sub_reg_int(void);
+void test_x64gen_sub_reg_reg(void);
+void test_x64gen_mul_reg_int(void);
+void test_x64gen_mul_reg_reg(void);
+void test_x64gen_div_reg_int(void);
+void test_x64gen_div_reg_reg(void);
+void test_x64gen_div_rdx_inarg(void);
+void test_x64gen_div_rdx_inuse(void);
+void test_x64gen_mod_reg_int(void);
+void test_x64gen_mod_reg_reg(void);
+void test_x64gen_mod_rdx_inarg(void);
+void test_x64gen_mod_rdx_inuse(void);
 
 void run_arithinst_x64gen_test(Vector* input_immcs, Vector* input_liveseqs, Vector* expected);
 
-CU_Suite* add_test_suite_arithinst_x64gen() {
+CU_Suite* add_test_suite_arithinst_x64gen(void) {
     CU_Suite* suite = CU_add_suite("test_suite_arithinst_x64gen", NULL, NULL);
     CU_ADD_TEST(suite, test_x64gen_add_reg_int);
     CU_ADD_TEST(suite, test_x64gen_add_reg_reg);
@@ -38,7 +38,7 @@ CU_Suite* add_test_suite_arithinst_x64gen() {
     return suite;
 }
 
-void test_x64gen_add_reg_int() {
+void test_x64gen_add_reg_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -79,7 +79,7 @@ void test_x64gen_add_reg_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_add_reg_reg() {
+void test_x64gen_add_reg_reg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -136,7 +136,7 @@ void test_x64gen_add_reg_reg() {
     delete_vector(expected);
 }
 
-void test_x64gen_sub_reg_int() {
+void test_x64gen_sub_reg_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -177,7 +177,7 @@ void test_x64gen_sub_reg_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_sub_reg_reg() {
+void test_x64gen_sub_reg_reg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -234,7 +234,7 @@ void test_x64gen_sub_reg_reg() {
     delete_vector(expected);
 }
 
-void test_x64gen_mul_reg_int() {
+void test_x64gen_mul_reg_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -283,7 +283,7 @@ void test_x64gen_mul_reg_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_mul_reg_reg() {
+void test_x64gen_mul_reg_reg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -344,7 +344,7 @@ void test_x64gen_mul_reg_reg() {
     delete_vector(expected);
 }
 
-void test_x64gen_div_reg_int() {
+void test_x64gen_div_reg_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -401,7 +401,7 @@ void test_x64gen_div_reg_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_div_reg_reg() {
+void test_x64gen_div_reg_reg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -470,7 +470,7 @@ void test_x64gen_div_reg_reg() {
     delete_vector(expected);
 }
 
-void test_x64gen_div_rdx_inarg() {
+void test_x64gen_div_rdx_inarg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -539,7 +539,7 @@ void test_x64gen_div_rdx_inarg() {
     delete_vector(expected);
 }
 
-void test_x64gen_div_rdx_inuse() {
+void test_x64gen_div_rdx_inuse(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -619,7 +619,7 @@ void test_x64gen_div_rdx_inuse() {
     delete_vector(expected);
 }
 
-void test_x64gen_mod_reg_int() {
+void test_x64gen_mod_reg_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -676,7 +676,7 @@ void test_x64gen_mod_reg_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_mod_reg_reg() {
+void test_x64gen_mod_reg_reg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -745,7 +745,7 @@ void test_x64gen_mod_reg_reg() {
     delete_vector(expected);
 }
 
-void test_x64gen_mod_rdx_inarg() {
+void test_x64gen_mod_rdx_inarg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst
@@ -809,7 +809,7 @@ void test_x64gen_mod_rdx_inarg() {
     delete_vector(expected);
 }
 
-void test_x64gen_mod_rdx_inuse() {
+void test_x64gen_mod_rdx_inuse(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                       // inst

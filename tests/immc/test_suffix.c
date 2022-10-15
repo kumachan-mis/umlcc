@@ -2,14 +2,14 @@
 #include "../../src/immc/suffix.h"
 
 void test_immcsuffix_get(void);
-void test_immcsuffix_tosize(void);
+void test_immcsuffix_tonbytes(void);
 void test_immcsuffix_tochar(void);
 void test_immcsuffix_greater(void);
 
 CU_Suite* add_test_suite_immcsuffix(void) {
     CU_Suite* suite = CU_add_suite("test_suite_immcsuffix", NULL, NULL);
     CU_ADD_TEST(suite, test_immcsuffix_get);
-    CU_ADD_TEST(suite, test_immcsuffix_tosize);
+    CU_ADD_TEST(suite, test_immcsuffix_tonbytes);
     CU_ADD_TEST(suite, test_immcsuffix_tochar);
     CU_ADD_TEST(suite, test_immcsuffix_greater);
     return suite;
@@ -24,12 +24,12 @@ void test_immcsuffix_get(void) {
     CU_ASSERT_EQUAL(immcsuffix_get(16), IMMC_SUFFIX_NONE);
 }
 
-void test_immcsuffix_tosize(void) {
-    CU_ASSERT_EQUAL(immcsuffix_tosize(IMMC_SUFFIX_NONE), 0);
-    CU_ASSERT_EQUAL(immcsuffix_tosize(IMMC_SUFFIX_BYTE), 1);
-    CU_ASSERT_EQUAL(immcsuffix_tosize(IMMC_SUFFIX_WORD), 2);
-    CU_ASSERT_EQUAL(immcsuffix_tosize(IMMC_SUFFIX_LONG), 4);
-    CU_ASSERT_EQUAL(immcsuffix_tosize(IMMC_SUFFIX_QUAD), 8);
+void test_immcsuffix_tonbytes(void) {
+    CU_ASSERT_EQUAL(immcsuffix_tonbytes(IMMC_SUFFIX_NONE), 0);
+    CU_ASSERT_EQUAL(immcsuffix_tonbytes(IMMC_SUFFIX_BYTE), 1);
+    CU_ASSERT_EQUAL(immcsuffix_tonbytes(IMMC_SUFFIX_WORD), 2);
+    CU_ASSERT_EQUAL(immcsuffix_tonbytes(IMMC_SUFFIX_LONG), 4);
+    CU_ASSERT_EQUAL(immcsuffix_tonbytes(IMMC_SUFFIX_QUAD), 8);
 }
 
 void test_immcsuffix_tochar(void) {

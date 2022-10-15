@@ -313,7 +313,7 @@ void test_resolve_init_error_function(void) {
     delete_vector(expected);
 }
 
-void test_resolve_init_error_typedef_name() {
+void test_resolve_init_error_typedef_name(void) {
     Ast* local_input = new_ast(AST_DECL, 2,               // non-terminal
                                new_ast(AST_DECL_SPECS, 2, // non-terminal
                                        new_ast(AST_STG_TYPEDEF, 0), new_ast(AST_TYPE_INT, 0)),
