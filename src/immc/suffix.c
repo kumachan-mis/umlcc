@@ -1,7 +1,7 @@
 #include "./suffix.h"
 
-ImmcSuffix immcsuffix_get(int size) {
-    switch (size) {
+ImmcSuffix immcsuffix_get(int nbytes) {
+    switch (nbytes) {
         case 1:
             return IMMC_SUFFIX_BYTE;
         case 2:
@@ -15,7 +15,7 @@ ImmcSuffix immcsuffix_get(int size) {
     }
 }
 
-int immcsuffix_tosize(ImmcSuffix suffix) {
+int immcsuffix_tonbytes(ImmcSuffix suffix) {
     switch (suffix) {
         case IMMC_SUFFIX_BYTE:
             return 1;

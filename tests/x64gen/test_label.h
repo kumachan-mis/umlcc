@@ -3,6 +3,6 @@
 
 #include <CUnit/Basic.h>
 
-CU_Suite* add_test_suite_label_x64gen();
+CU_Suite* add_test_suite_label_x64gen(void);
 
 #endif

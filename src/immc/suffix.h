@@ -9,8 +9,8 @@ typedef enum ImmcSuffix {
     IMMC_SUFFIX_QUAD
 } ImmcSuffix;
 
-ImmcSuffix immcsuffix_get(int size);
-int immcsuffix_tosize(ImmcSuffix suffix);
+ImmcSuffix immcsuffix_get(int nbytes);
+int immcsuffix_tonbytes(ImmcSuffix suffix);
 char immcsuffix_tochar(ImmcSuffix suffix);
 ImmcSuffix immcsuffix_greater(ImmcSuffix a, ImmcSuffix b);
 

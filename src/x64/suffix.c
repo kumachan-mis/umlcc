@@ -1,7 +1,7 @@
 #include "./suffix.h"
 
-X64Suffix x64suffix_get(int size) {
-    switch (size) {
+X64Suffix x64suffix_get(int nbytes) {
+    switch (nbytes) {
         case 1:
             return X64_SUFFIX_BYTE;
         case 2:
@@ -15,7 +15,7 @@ X64Suffix x64suffix_get(int size) {
     }
 }
 
-int x64suffix_tosize(X64Suffix suffix) {
+int x64suffix_tonbytes(X64Suffix suffix) {
     switch (suffix) {
         case X64_SUFFIX_BYTE:
             return 1;

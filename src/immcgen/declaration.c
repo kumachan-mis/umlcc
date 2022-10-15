@@ -37,7 +37,7 @@ Vector* gen_global_init_decl_immcode(Immcgen* immcgen) {
     vector_push(codes, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, label_name));
 
     if (vector_size(immcgen->srt->children) == 1) {
-        IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, dtype_size(decl_srt->dtype));
+        IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, dtype_nbytes(decl_srt->dtype));
         vector_push(codes, new_int_data_immc(IMMC_DATA_ZERO, iliteral));
         return codes;
     }
@@ -141,7 +141,7 @@ Vector* gen_local_string_initializer_immcode(Immcgen* immcgen) {
     ImmcOpe* src = new_str_immcope(sliteral_copy(srt->sliteral));
 
     vector_push(codes, new_inst_immc(IMMC_INST_STR, dst, src, NULL));
-    immcgen->initialized_offset -= dtype_size(immcgen->initialized_dtype);
+    immcgen->initialized_offset -= dtype_nbytes(immcgen->initialized_dtype);
 
     return codes;
 }
@@ -166,7 +166,7 @@ Vector* gen_global_scalar_initializer_immcode(Immcgen* immcgen) {
         srt = vector_at(srt->children, 0);
     }
 
-    int initialized_size = dtype_size(immcgen->initialized_dtype);
+    int initialized_size = dtype_nbytes(immcgen->initialized_dtype);
     switch (initialized_size) {
         case 1:
             vector_push(codes, new_int_data_immc(IMMC_DATA_BYTE, iliteral_copy(srt->iliteral)));
@@ -196,7 +196,7 @@ Vector* gen_local_scalar_initializer_immcode(Immcgen* immcgen) {
     ImmcOpe* src = gen_child_int_immcope(immcgen, codes, 0);
 
     vector_push(codes, new_inst_immc(IMMC_INST_STORE, dst, src, NULL));
-    immcgen->initialized_offset -= dtype_size(immcgen->initialized_dtype);
+    immcgen->initialized_offset -= dtype_nbytes(immcgen->initialized_dtype);
 
     return codes;
 }

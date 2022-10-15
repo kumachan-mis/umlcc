@@ -5,19 +5,19 @@
 
 #include <stdlib.h>
 
-void test_x64gen_data_int();
-void test_x64gen_data_str();
+void test_x64gen_data_int(void);
+void test_x64gen_data_str(void);
 
 void run_data_x64gen_test(Vector* input, Vector* expected);
 
-CU_Suite* add_test_suite_data_x64gen() {
+CU_Suite* add_test_suite_data_x64gen(void) {
     CU_Suite* suite = CU_add_suite("test_suite_data_x64gen", NULL, NULL);
     CU_ADD_TEST(suite, test_x64gen_data_int);
     CU_ADD_TEST(suite, test_x64gen_data_str);
     return suite;
 }
 
-void test_x64gen_data_int() {
+void test_x64gen_data_int(void) {
     Vector* input = NULL;
     Vector* expected = NULL;
 
@@ -57,7 +57,7 @@ void test_x64gen_data_int() {
     delete_vector(expected);
 }
 
-void test_x64gen_data_str() {
+void test_x64gen_data_str(void) {
     char sliteral_const[15] = "string\0literal";
     int sliteral_size = 15;
 

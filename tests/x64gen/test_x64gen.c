@@ -2,19 +2,19 @@
 #include "../../src/x64gen/x64gen.h"
 #include "../testlib/testlib.h"
 
-void test_x64gen_without_evacuation();
-void test_x64gen_with_evacuation();
+void test_x64gen_without_evacuation(void);
+void test_x64gen_with_evacuation(void);
 
 void run_x64gen_test(Vector* input_immcs, Vector* input_liveseqs, Vector* expected);
 
-CU_Suite* add_test_suite_x64gen() {
+CU_Suite* add_test_suite_x64gen(void) {
     CU_Suite* suite = CU_add_suite("test_suite_x64gen", NULL, NULL);
     CU_ADD_TEST(suite, test_x64gen_without_evacuation);
     CU_ADD_TEST(suite, test_x64gen_with_evacuation);
     return suite;
 }
 
-void test_x64gen_without_evacuation() {
+void test_x64gen_without_evacuation(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("count")));
     vector_push(input_immcs, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 1)));
@@ -107,7 +107,7 @@ void test_x64gen_without_evacuation() {
     delete_vector(expected);
 }
 
-void test_x64gen_with_evacuation() {
+void test_x64gen_with_evacuation(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("count")));
     vector_push(input_immcs, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 1)));

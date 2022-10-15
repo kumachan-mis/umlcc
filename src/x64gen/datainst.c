@@ -14,7 +14,7 @@ Vector* gen_load_x64code(X64gen* x64gen) {
     ImmcOpe* immc_dst = immc->inst->dst;
     ImmcOpe* immc_src = immc->inst->fst_src;
 
-    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(immc_dst->suffix));
+    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immc_dst->suffix));
     int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
 
     switch (immc_src->type) {
@@ -25,7 +25,7 @@ Vector* gen_load_x64code(X64gen* x64gen) {
             break;
         }
         case IMMC_OPERAND_REG: {
-            X64Suffix src_suffix = x64suffix_get(immcsuffix_tosize(immc_src->suffix));
+            X64Suffix src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_src->suffix));
             int src_id = CALLER_SAVED_REG_IDS[immc_src->reg_id];
             append_mov_code(codes, src_id, src_suffix, dst_id, dst_suffix);
             break;
@@ -66,7 +66,7 @@ Vector* gen_addr_x64code(X64gen* x64gen) {
     ImmcOpe* immmc_dst = immc->inst->dst;
     ImmcOpe* immc_src = immc->inst->fst_src;
 
-    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tosize(immmc_dst->suffix));
+    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immmc_dst->suffix));
     int dst_id = CALLER_SAVED_REG_IDS[immmc_dst->reg_id];
     X64Ope* dst = new_reg_x64ope(dst_suffix, dst_id);
 
@@ -103,7 +103,7 @@ Vector* gen_str_x64code(X64gen* x64gen) {
     int index_offset = 0;
 
     int tmp_reg_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
-    int unit_size = x64suffix_tosize(X64_SUFFIX_QUAD);
+    int unit_size = x64suffix_tonbytes(X64_SUFFIX_QUAD);
 
     while (index_offset + unit_size < immc_src->sliteral->size) {
         unsigned long long unit_value = 0ULL;
@@ -196,12 +196,12 @@ Vector* gen_store_x64code(X64gen* x64gen) {
 
     switch (immc_src->type) {
         case IMMC_OPERAND_INT: {
-            X64Suffix src_suffix = x64suffix_get(immcsuffix_tosize(immc_src->suffix));
+            X64Suffix src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_src->suffix));
             src = new_int_x64ope(src_suffix, iliteral_copy(immc_src->iliteral));
             break;
         }
         case IMMC_OPERAND_REG: {
-            X64Suffix src_suffix = x64suffix_get(immcsuffix_tosize(immc_src->suffix));
+            X64Suffix src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_src->suffix));
             src = new_reg_x64ope(src_suffix, CALLER_SAVED_REG_IDS[immc_src->reg_id]);
             break;
         }
@@ -225,7 +225,7 @@ Vector* gen_ldarg_x64code(X64gen* x64gen) {
     ImmcOpe* immc_dst = immc->inst->dst;
     ImmcOpe* immc_src = immc->inst->fst_src;
 
-    X64Suffix src_suffix = x64suffix_get(immcsuffix_tosize(immc_src->suffix));
+    X64Suffix src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_src->suffix));
 
     if (immc_src->reg_id < NUM_ARG_REGS) {
         X64Ope* src = new_reg_x64ope(src_suffix, ARG_REG_IDS[immc_src->reg_id]);
@@ -287,7 +287,7 @@ Vector* gen_stret_x64code(X64gen* x64gen) {
     x64gen->index++;
 
     ImmcOpe* immc_ret = immc->inst->fst_src;
-    X64Suffix ret_suffix = x64suffix_get(immcsuffix_tosize(immc_ret->suffix));
+    X64Suffix ret_suffix = x64suffix_get(immcsuffix_tonbytes(immc_ret->suffix));
 
     switch (immc_ret->type) {
         case IMMC_OPERAND_INT: {
