@@ -5,6 +5,12 @@
 
 ResolverReturn* resolve_decl(Resolver* resolver);
 ResolverReturnDType* resolve_decl_specifiers(Resolver* resolver);
+ResolverReturnDType* resolve_specifier_qualifier_list(Resolver* resolver);
+ResolverReturnDType* resolve_struct_specifier(Resolver* resolver);
+ResolverReturnDMembers* resolve_struct_decl_list(Resolver* resolver);
+ResolverReturnDMembers* resolve_struct_decl(Resolver* resolver);
+ResolverReturnDMembers* resolve_struct_declarator_list(Resolver* resolver);
+ResolverReturnDMember* resolve_struct_declarator(Resolver* resolver);
 ResolverReturn* resolve_init_declarator_list(Resolver* resolver);
 ResolverReturn* resolve_init_declarator(Resolver* resolver);
 ResolverReturn* resolve_declarator(Resolver* resolver);

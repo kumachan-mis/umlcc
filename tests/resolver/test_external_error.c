@@ -91,7 +91,7 @@ void test_resolve_function_definition_error_decl_specifier(void) {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("declaration specifiers are invalid\n"));
+    vector_push(expected, new_error("combination of type specifiers is invalid\n"));
 
     run_resolver_error_test(input, expected);
 

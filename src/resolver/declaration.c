@@ -20,21 +20,29 @@ ResolverReturn* resolve_decl(Resolver* resolver) {
 
     if (errs != NULL) return new_resolverret_errors(errs);
 
+    if (vector_size(ast->children) == 1) {
+        delete_dtype(resolver->specifier_dtype);
+        resolver->specifier_dtype = NULL;
+        srt = new_srt(SRT_DECL_LIST, 0);
+        return new_resolverret(srt);
+    }
+
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&srt, &errs, resolve_init_declarator_list(resolver));
     resolver->ast = ast;
 
-    if (errs != NULL) return new_resolverret_errors(errs);
-
     delete_dtype(resolver->specifier_dtype);
     resolver->specifier_dtype = NULL;
+
+    if (errs != NULL) return new_resolverret_errors(errs);
     return new_resolverret(srt);
 }
 
 ResolverReturnDType* resolve_decl_specifiers(Resolver* resolver) {
+    ResolverReturnDType* resolve_type_specifier_list(Resolver * resolver);
+
     DType* dtype = NULL;
     Vector* errs = NULL;
-    Error* err = NULL;
 
     Ast* ast = resolver->ast;
 
@@ -54,9 +62,34 @@ ResolverReturnDType* resolve_decl_specifiers(Resolver* resolver) {
         }
     }
 
+    DType* child_dtype = NULL;
+    resolverret_dtype_assign(&child_dtype, &errs, resolve_type_specifier_list(resolver));
+
+    if (errs != NULL) {
+        if (dtype != NULL) delete_dtype(dtype);
+        return new_resolverret_dtype_errors(errs);
+    }
+
+    dtype = dtype_connect(dtype, child_dtype);
+    return new_resolverret_dtype(dtype);
+}
+
+ResolverReturnDType* resolve_specifier_qualifier_list(Resolver* resolver) {
+    ResolverReturnDType* resolve_type_specifier_list(Resolver * resolver);
+
+    return resolve_type_specifier_list(resolver);
+}
+
+ResolverReturnDType* resolve_type_specifier_list(Resolver* resolver) {
+    DType* dtype = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+
+    Ast* ast = resolver->ast;
+
     if (vector_size(ast->children) != 1) {
         errs = new_vector(&t_error);
-        err = new_error("declaration specifiers are invalid\n");
+        err = new_error("combination of type specifiers is invalid\n");
         vector_push(errs, err);
         return new_resolverret_dtype_errors(errs);
     }
@@ -64,27 +97,220 @@ ResolverReturnDType* resolve_decl_specifiers(Resolver* resolver) {
     Ast* child = vector_at(ast->children, 0);
     switch (child->type) {
         case AST_TYPE_INT:
-            dtype = dtype_connect(dtype, new_integer_dtype(DTYPE_INT));
+            dtype = new_integer_dtype(DTYPE_INT);
             break;
         case AST_TYPE_CHAR:
-            dtype = dtype_connect(dtype, new_integer_dtype(DTYPE_CHAR));
+            dtype = new_integer_dtype(DTYPE_CHAR);
+            break;
+        case AST_TYPE_STRUCT:
+            resolver->ast = child;
+            resolverret_dtype_assign(&dtype, &errs, resolve_struct_specifier(resolver));
+            resolver->ast = ast;
             break;
         case AST_TYPEDEF_NAME: {
             Symbol* symbol = symboltable_search(resolver->symbol_table, child->ident_name);
-            dtype = dtype_connect(dtype, dtype_copy(symbol->dtype->ddecoration->deco_dtype));
+            dtype = dtype_copy(symbol->dtype->ddecoration->deco_dtype);
             break;
         }
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
-                            "unreachable statement (in resolve_decl_specifiers)\n");
+                            "unreachable statement (in resolve_type_specifier_list)\n");
             exit(1);
     }
 
+    if (errs != NULL) return new_resolverret_dtype_errors(errs);
+    return new_resolverret_dtype(dtype);
+}
+
+ResolverReturnDType* resolve_struct_specifier(Resolver* resolver) {
+    DType* dtype = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+
+    Ast* ast = resolver->ast;
+    Ast* child = NULL;
+
+    char* struct_name = NULL;
+    child = vector_at(ast->children, 0);
+    if (child != NULL && child->type == AST_STRUCT_NAME) struct_name = new_string(child->ident_name);
+
+    Vector* members = NULL;
+    child = vector_at(ast->children, struct_name != NULL ? 1 : 0);
+    if (child != NULL && child->type == AST_STRUCT_DECL_LIST) {
+        resolver->ast = child;
+        resolverret_dmembers_assign(&members, &errs, resolve_struct_decl_list(resolver));
+        resolver->ast = ast;
+    }
     if (errs != NULL) {
-        delete_dtype(dtype);
+        if (struct_name != NULL) free(struct_name);
         return new_resolverret_dtype_errors(errs);
     }
+
+    if (struct_name == NULL) {
+        dtype = new_unnamed_struct_dtype(members);
+        return new_resolverret_dtype(dtype);
+    }
+
+    if (members == NULL) {
+        DType* unnamed_dtype = tagtable_search_struct(resolver->tag_table, struct_name);
+        int nbytes = unnamed_dtype != NULL ? unnamed_dtype->dstruct->nbytes : 0;
+        dtype = new_named_struct_dtype(struct_name, nbytes);
+        return new_resolverret_dtype(dtype);
+    }
+
+    if (!tagtable_can_define_struct(resolver->tag_table, struct_name)) {
+        errs = new_vector(&t_error);
+        err = new_error("struct '%s' is already declared\n", struct_name);
+        vector_push(errs, err);
+        free(struct_name);
+        delete_vector(members);
+        return new_resolverret_dtype_errors(errs);
+    }
+
+    tagtable_define_struct(resolver->tag_table, new_string(struct_name), members);
+
+    DType* unnamed_dtype = tagtable_search_struct(resolver->tag_table, struct_name);
+    int nbytes = unnamed_dtype != NULL ? unnamed_dtype->dstruct->nbytes : 0;
+    dtype = new_named_struct_dtype(struct_name, nbytes);
     return new_resolverret_dtype(dtype);
+}
+
+ResolverReturnDMembers* resolve_struct_decl_list(Resolver* resolver) {
+    Vector* members = new_vector(&t_dmember);
+    Vector* errs = NULL;
+    Error* err = NULL;
+
+    Ast* ast = resolver->ast;
+
+    int num_children = vector_size(ast->children);
+    for (int i = 0; i < num_children; i++) {
+        Vector* child_members = NULL;
+        Vector* child_errs = NULL;
+
+        resolver->ast = vector_at(ast->children, i);
+        resolverret_dmembers_assign(&child_members, &child_errs, resolve_struct_decl(resolver));
+
+        if (child_errs != NULL) {
+            if (errs == NULL) errs = new_vector(&t_error);
+            vector_extend(errs, child_errs);
+            delete_vector(child_errs);
+            continue;
+        } else if (errs != NULL) {
+            delete_vector(child_members);
+            continue;
+        }
+
+        vector_extend(members, child_members);
+        delete_vector(child_members);
+    }
+
+    resolver->ast = ast;
+
+    if (errs != NULL) {
+        delete_vector(members);
+        return new_resolverret_dmembers_errors(errs);
+    }
+
+    Set* member_names_set = new_set(&t_hashable_string);
+    int num_members = vector_size(members);
+    for (int i = 0; i < num_members; i++) {
+        DMember* member = vector_at(members, i);
+        if (!set_contains(member_names_set, member->name)) {
+            set_add(member_names_set, new_string(member->name));
+            continue;
+        }
+        if (errs == NULL) errs = new_vector(&t_error);
+        err = new_error("struct member '%s' is already declared\n", member->name);
+        vector_push(errs, err);
+    }
+    delete_set(member_names_set);
+
+    if (errs != NULL) {
+        delete_vector(members);
+        return new_resolverret_dmembers_errors(errs);
+    }
+    return new_resolverret_dmembers(members);
+}
+
+ResolverReturnDMembers* resolve_struct_decl(Resolver* resolver) {
+    Vector* members = NULL;
+    Vector* errs = NULL;
+
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_specifier_qualifier_list(resolver));
+    resolver->ast = ast;
+
+    if (errs != NULL) return new_resolverret_dmembers_errors(errs);
+
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_dmembers_assign(&members, &errs, resolve_struct_declarator_list(resolver));
+    resolver->ast = ast;
+
+    delete_dtype(resolver->specifier_dtype);
+    resolver->specifier_dtype = NULL;
+
+    if (errs != NULL) return new_resolverret_dmembers_errors(errs);
+    return new_resolverret_dmembers(members);
+}
+
+ResolverReturnDMembers* resolve_struct_declarator_list(Resolver* resolver) {
+    Vector* members = new_vector(&t_dmember);
+    Vector* errs = NULL;
+    Ast* ast = resolver->ast;
+
+    int num_children = vector_size(ast->children);
+    for (int i = 0; i < num_children; i++) {
+        DMember* member = NULL;
+        Vector* child_errs = NULL;
+        resolver->ast = vector_at(ast->children, i);
+        resolverret_dmember_assign(&member, &child_errs, resolve_struct_declarator(resolver));
+
+        if (child_errs != NULL) {
+            if (errs == NULL) errs = new_vector(&t_error);
+            vector_extend(errs, child_errs);
+            delete_vector(child_errs);
+            continue;
+        } else if (errs != NULL) {
+            delete_dmember(member);
+            continue;
+        }
+
+        vector_push(members, member);
+    }
+
+    resolver->ast = ast;
+
+    if (errs != NULL) {
+        delete_vector(members);
+        return new_resolverret_dmembers_errors(errs);
+    }
+    return new_resolverret_dmembers(members);
+}
+
+ResolverReturnDMember* resolve_struct_declarator(Resolver* resolver) {
+    DMember* member = NULL;
+    Srt* srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+
+    resolverret_assign(&srt, &errs, resolve_declarator(resolver));
+    if (errs != NULL) return new_resolverret_dmember_errors(errs);
+
+    DType* specifier_dtype = dtype_copy(resolver->specifier_dtype);
+    srt->dtype = dtype_connect(srt->dtype, specifier_dtype);
+
+    if (srt->dtype->type == DTYPE_FUNCTION || dtype_isincomplete(srt->dtype)) {
+        errs = new_vector(&t_error);
+        err = new_error("struct member should not have incomplete or function type\n");
+        vector_push(errs, err);
+        return new_resolverret_dmember_errors(errs);
+    }
+
+    member = new_dmember(new_string(srt->ident_name), dtype_copy(srt->dtype));
+    delete_srt(srt);
+    return new_resolverret_dmember(member);
 }
 
 ResolverReturn* resolve_init_declarator_list(Resolver* resolver) {
@@ -122,6 +348,8 @@ ResolverReturn* resolve_init_declarator_list(Resolver* resolver) {
 }
 
 ResolverReturn* resolve_init_declarator(Resolver* resolver) {
+    // TODO: validate incomplete type declaration
+
     Srt* srt = new_srt(SRT_INIT_DECL, 0);
     Srt* child_srt = NULL;
     Vector* errs = NULL;
@@ -381,9 +609,9 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
 }
 
 ResolverReturn* resolve_initializer(Resolver* resolver) {
-    ResolverReturn* resolve_array_initializer(Resolver * resolver);
-    ResolverReturn* resolve_string_initializer(Resolver * resolver);
     ResolverReturn* resolve_scalar_initializer(Resolver * resolver);
+    ResolverReturn* resolve_aggregate_initializer(Resolver * resolver);
+    ResolverReturn* resolve_string_initializer(Resolver * resolver);
 
     Srt* srt = NULL;
     Vector* errs = NULL;
@@ -400,9 +628,15 @@ ResolverReturn* resolve_initializer(Resolver* resolver) {
         case DTYPE_ARRAY:
             if (dtype->darray->of_dtype->type == DTYPE_CHAR) {
                 resolverret_assign(&srt, &errs, resolve_string_initializer(resolver));
-            } else {
-                resolverret_assign(&srt, &errs, resolve_array_initializer(resolver));
+                break;
             }
+            resolverret_assign(&srt, &errs, resolve_aggregate_initializer(resolver));
+            break;
+        case DTYPE_STRUCT:
+            if (dtype->dstruct->members == NULL) {
+                resolver->initialized_dtype = tagtable_search_struct(resolver->tag_table, dtype->dstruct->name);
+            }
+            resolverret_assign(&srt, &errs, resolve_aggregate_initializer(resolver));
             break;
         case DTYPE_FUNCTION:
             errs = new_vector(&t_error);
@@ -425,8 +659,8 @@ ResolverReturn* resolve_initializer(Resolver* resolver) {
 }
 
 ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
-    ResolverReturn* resolve_zero_array_initializer(Resolver * resolver);
     ResolverReturn* resolve_zero_scalar_initializer(Resolver * resolver);
+    ResolverReturn* resolve_zero_aggregate_initializer(Resolver * resolver);
 
     Srt* srt = NULL;
     Vector* errs = NULL;
@@ -441,8 +675,9 @@ ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_zero_scalar_initializer(resolver));
             break;
         case DTYPE_ARRAY:
-            // resolve_zero_array_initializer does not return an error
-            resolverret_assign(&srt, &errs, resolve_zero_array_initializer(resolver));
+        case DTYPE_STRUCT:
+            // resolve_zero_aggregate_initializer does not return an error
+            resolverret_assign(&srt, &errs, resolve_zero_aggregate_initializer(resolver));
             break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
@@ -450,145 +685,6 @@ ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
             exit(1);
     }
 
-    return new_resolverret(srt);
-}
-
-ResolverReturn* resolve_array_initializer(Resolver* resolver) {
-    Srt* srt = new_srt(SRT_INIT, 0);
-    Vector* errs = NULL;
-    Error* err = NULL;
-
-    Ast* ast = resolver->ast;
-    DType* dtype = resolver->initialized_dtype;
-    int initializer_len = vector_size(ast->children);
-
-    if (ast->type != AST_INIT_LIST) {
-        errs = new_vector(&t_error);
-        err = new_error("an array should be initialized with an initializer list\n");
-        vector_push(errs, err);
-        delete_srt(srt);
-        return new_resolverret_errors(errs);
-    }
-
-    if (initializer_len == 0) {
-        errs = new_vector(&t_error);
-        err = new_error("one or more initializer is required in an initializer list\n");
-        vector_push(errs, err);
-        delete_srt(srt);
-        return new_resolverret_errors(errs);
-    }
-
-    int array_index = 0;
-
-    while (resolver->initialized_offset < initializer_len && array_index < dtype->darray->size) {
-        Srt* child_srt = NULL;
-        Vector* child_errs = NULL;
-
-        Ast* child_ast = vector_at(ast->children, resolver->initialized_offset);
-        int original_offset = resolver->initialized_offset;
-        int original_is_nested = resolver->is_nested_initializing;
-
-        resolver->initialized_dtype = dtype->darray->of_dtype;
-
-        if (dtype_isaggregate(dtype->darray->of_dtype) && child_ast->type != AST_INIT_LIST) {
-            resolver->ast = ast;
-            resolver->is_nested_initializing = 1;
-            resolverret_assign(&child_srt, &child_errs, resolve_initializer(resolver));
-        } else {
-            resolver->ast = child_ast;
-            resolver->initialized_offset = 0;
-            resolver->is_nested_initializing = 0;
-            resolverret_assign(&child_srt, &child_errs, resolve_initializer(resolver));
-            resolver->initialized_offset = original_offset + 1;
-        }
-        resolver->is_nested_initializing = original_is_nested;
-
-        array_index++;
-
-        if (child_errs != NULL) {
-            if (errs == NULL) errs = new_vector(&t_error);
-            vector_extend(errs, child_errs);
-            delete_vector(child_errs);
-            continue;
-        } else if (errs != NULL) {
-            delete_srt(child_srt);
-            continue;
-        }
-
-        vector_push(srt->children, child_srt);
-    }
-
-    for (int i = array_index; i < dtype->darray->size; i++) {
-        Srt* child_srt = NULL;
-        Vector* child_errs = NULL;
-
-        resolver->ast = NULL;
-        resolver->initialized_dtype = dtype->darray->of_dtype;
-
-        // resolve_zero_initializer does not return an error
-        resolverret_assign(&child_srt, &child_errs, resolve_zero_initializer(resolver));
-        vector_push(srt->children, child_srt);
-    }
-
-    if (!resolver->is_nested_initializing && array_index == dtype->darray->size &&
-        resolver->initialized_offset < initializer_len) {
-        if (errs != NULL) delete_vector(errs);
-        errs = new_vector(&t_error);
-        err = new_error("initializer list is too long\n");
-        vector_push(errs, err);
-    }
-
-    resolver->ast = ast;
-    resolver->initialized_dtype = dtype;
-    if (errs != NULL) {
-        delete_srt(srt);
-        return new_resolverret_errors(errs);
-    }
-    return new_resolverret(srt);
-}
-
-ResolverReturn* resolve_string_initializer(Resolver* resolver) {
-    Srt* srt = NULL;
-    Vector* errs = NULL;
-    Error* err = NULL;
-    Ast* literal_ast = resolver->ast;
-    DType* dtype = resolver->initialized_dtype;
-
-    if (literal_ast->type == AST_INIT_LIST && vector_size(literal_ast->children) == 1) {
-        literal_ast = vector_at(literal_ast->children, 0);
-    }
-
-    if (literal_ast->type != AST_STRING_EXPR) return resolve_array_initializer(resolver);
-
-    if (literal_ast->sliteral->size - 1 > dtype->darray->size) {
-        errs = new_vector(&t_error);
-        err = new_error("initializer string literal is too long\n");
-        vector_push(errs, err);
-        return new_resolverret_errors(errs);
-    }
-
-    StringLiteral* sliteral = sliteral_zero_padding_copy(literal_ast->sliteral, dtype->darray->size);
-    srt = new_sliteral_srt(SRT_STRING_EXPR, dtype_copy(dtype), sliteral);
-    srt = new_srt(SRT_INIT, 1, srt);
-    return new_resolverret(srt);
-}
-
-ResolverReturn* resolve_zero_array_initializer(Resolver* resolver) {
-    Srt* srt = new_srt(SRT_INIT, 0);
-
-    DType* dtype = resolver->initialized_dtype;
-
-    for (int i = 0; i < dtype->darray->size; i++) {
-        Srt* child_srt = NULL;
-        Vector* child_errs = NULL;
-        resolver->initialized_dtype = dtype->darray->of_dtype;
-
-        // resolve_zero_initializer does not return an error
-        resolverret_assign(&child_srt, &child_errs, resolve_zero_initializer(resolver));
-        vector_push(srt->children, child_srt);
-    }
-
-    resolver->initialized_dtype = dtype;
     return new_resolverret(srt);
 }
 
@@ -604,12 +700,6 @@ ResolverReturn* resolve_scalar_initializer(Resolver* resolver) {
 
     if (ast->type == AST_INIT_LIST) {
         int init_list_len = vector_size(ast->children);
-        if (init_list_len == 0) {
-            errs = new_vector(&t_error);
-            err = new_error("one or more initializer is required in an initializer list\n");
-            vector_push(errs, err);
-            return new_resolverret_errors(errs);
-        }
         if (init_list_len > 1) {
             errs = new_vector(&t_error);
             err = new_error("initializer list is too long\n");
@@ -649,6 +739,118 @@ ResolverReturn* resolve_scalar_initializer(Resolver* resolver) {
     return new_resolverret(srt);
 }
 
+ResolverReturn* resolve_aggregate_initializer(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_INIT, 0);
+    Vector* errs = NULL;
+    Error* err = NULL;
+
+    Ast* ast = resolver->ast;
+    DType* dtype = resolver->initialized_dtype;
+    int initializer_len = vector_size(ast->children);
+
+    if (ast->type != AST_INIT_LIST) {
+        errs = new_vector(&t_error);
+        err = new_error("initializer list is required\n");
+        vector_push(errs, err);
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    int aggregate_size = dtype_aggregate_size(dtype), aggregate_index = 0;
+    while (resolver->initialized_offset < initializer_len && aggregate_index < aggregate_size) {
+        Srt* child_srt = NULL;
+        Vector* child_errs = NULL;
+
+        Ast* child_ast = vector_at(ast->children, resolver->initialized_offset);
+        int original_offset = resolver->initialized_offset;
+        int original_is_nested = resolver->is_nested_initializing;
+
+        resolver->initialized_dtype = dtype_aggregate_at(dtype, aggregate_index);
+
+        if (dtype_isaggregate(resolver->initialized_dtype) && child_ast->type != AST_INIT_LIST) {
+            resolver->ast = ast;
+            resolver->is_nested_initializing = 1;
+            resolverret_assign(&child_srt, &child_errs, resolve_initializer(resolver));
+        } else {
+            resolver->ast = child_ast;
+            resolver->initialized_offset = 0;
+            resolver->is_nested_initializing = 0;
+            resolverret_assign(&child_srt, &child_errs, resolve_initializer(resolver));
+            resolver->initialized_offset = original_offset + 1;
+        }
+        resolver->is_nested_initializing = original_is_nested;
+
+        aggregate_index++;
+
+        if (child_errs != NULL) {
+            if (errs == NULL) errs = new_vector(&t_error);
+            vector_extend(errs, child_errs);
+            delete_vector(child_errs);
+            continue;
+        } else if (errs != NULL) {
+            delete_srt(child_srt);
+            continue;
+        }
+
+        vector_push(srt->children, child_srt);
+    }
+
+    for (int i = aggregate_index; i < aggregate_size; i++) {
+        Srt* child_srt = NULL;
+        Vector* child_errs = NULL;
+
+        resolver->ast = NULL;
+        resolver->initialized_dtype = dtype_aggregate_at(dtype, aggregate_index);
+        ;
+
+        // resolve_zero_initializer does not return an error
+        resolverret_assign(&child_srt, &child_errs, resolve_zero_initializer(resolver));
+        vector_push(srt->children, child_srt);
+    }
+
+    if (!resolver->is_nested_initializing && aggregate_index == aggregate_size &&
+        resolver->initialized_offset < initializer_len) {
+        if (errs != NULL) delete_vector(errs);
+        errs = new_vector(&t_error);
+        err = new_error("initializer list is too long\n");
+        vector_push(errs, err);
+    }
+
+    resolver->ast = ast;
+    resolver->initialized_dtype = dtype;
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_string_initializer(Resolver* resolver) {
+    Srt* srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* literal_ast = resolver->ast;
+    DType* dtype = resolver->initialized_dtype;
+
+    if (literal_ast->type == AST_INIT_LIST && vector_size(literal_ast->children) == 1) {
+        literal_ast = vector_at(literal_ast->children, 0);
+    }
+
+    if (literal_ast->type != AST_STRING_EXPR) return resolve_aggregate_initializer(resolver);
+
+    if (literal_ast->sliteral->size - 1 > dtype->darray->size) {
+        errs = new_vector(&t_error);
+        err = new_error("initializer string literal is too long\n");
+        vector_push(errs, err);
+        return new_resolverret_errors(errs);
+    }
+
+    StringLiteral* sliteral = sliteral_zero_padding_copy(literal_ast->sliteral, dtype->darray->size);
+    srt = new_sliteral_srt(SRT_STRING_EXPR, dtype_copy(dtype), sliteral);
+    srt = new_srt(SRT_INIT, 1, srt);
+    return new_resolverret(srt);
+}
+
 ResolverReturn* resolve_zero_scalar_initializer(Resolver* resolver) {
     Srt* srt = NULL;
     DType* dtype = resolver->initialized_dtype;
@@ -658,5 +860,25 @@ ResolverReturn* resolve_zero_scalar_initializer(Resolver* resolver) {
     if (!dtype_equals(dtype, srt->dtype)) srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(dtype), 1, srt);
 
     srt = new_srt(SRT_INIT, 1, srt);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_zero_aggregate_initializer(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_INIT, 0);
+
+    DType* dtype = resolver->initialized_dtype;
+    int aggregate_size = dtype_aggregate_size(dtype);
+
+    for (int i = 0; i < aggregate_size; i++) {
+        Srt* child_srt = NULL;
+        Vector* child_errs = NULL;
+        resolver->initialized_dtype = dtype_aggregate_at(dtype, i);
+
+        // resolve_zero_initializer does not return an error
+        resolverret_assign(&child_srt, &child_errs, resolve_zero_initializer(resolver));
+        vector_push(srt->children, child_srt);
+    }
+
+    resolver->initialized_dtype = dtype;
     return new_resolverret(srt);
 }

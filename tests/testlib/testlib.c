@@ -280,7 +280,7 @@ void testlib_assert_darray_equal(DArray* actual, DArray* expected) {
 }
 
 void testlib_assert_dstruct_equal(DStruct* actual, DStruct* expected) {
-    void testlib_assert_dmember_equal(DMember * actual, DMember * expected);
+    void testlib_assert_dmembers_equal(Vector * actual, Vector * expected);
 
     if (actual == NULL || expected == NULL) {
         CU_ASSERT_TRUE(actual == NULL && expected == NULL);
@@ -288,13 +288,25 @@ void testlib_assert_dstruct_equal(DStruct* actual, DStruct* expected) {
     }
 
     testlib_assert_string_equal(actual->name, expected->name);
-    CU_ASSERT_EQUAL(vector_size(actual->members), vector_size(expected->members));
-    if (vector_size(actual->members) != vector_size(expected->members)) return;
+    testlib_assert_dmembers_equal(actual->members, expected->members);
+    CU_ASSERT_EQUAL(actual->nbytes, expected->nbytes);
+}
 
-    int num_members = vector_size(expected->members);
+void testlib_assert_dmembers_equal(Vector* actual, Vector* expected) {
+    void testlib_assert_dmember_equal(DMember * actual, DMember * expected);
+
+    if (actual == NULL || expected == NULL) {
+        CU_ASSERT_TRUE(actual == NULL && expected == NULL);
+        return;
+    }
+
+    CU_ASSERT_EQUAL(vector_size(actual), vector_size(expected));
+    if (vector_size(actual) != vector_size(expected)) return;
+
+    int num_members = vector_size(expected);
     for (int i = 0; i < num_members; i++) {
-        DMember* actual_member = vector_at(actual->members, i);
-        DMember* expected_member = vector_at(expected->members, i);
+        DMember* actual_member = vector_at(actual, i);
+        DMember* expected_member = vector_at(expected, i);
         testlib_assert_dmember_equal(actual_member, expected_member);
     }
 }

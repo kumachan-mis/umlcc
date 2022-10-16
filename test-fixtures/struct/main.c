@@ -29,6 +29,23 @@ int main() {
     put_int(test.a[2]);
     put_blank_line();
 
+    struct Coordinate {
+        int x;
+        int y;
+        int z;
+    };
+
+    struct Coordinate point;
+
+    point.y = 2;
+    point.z = 5;
+    point.x = 3;
+
+    put_int(point.x);
+    put_int(point.y);
+    put_int(point.z);
+    put_blank_line();
+
     Node* node = new_node(10);
     node->next = new_node(20);
     put_int(node->value);

@@ -47,13 +47,15 @@ ParserReturn* parse_decl_specifiers(Parser* parser) {
     Ast* ast = new_ast(AST_DECL_SPECS, 0);
     Ast* child = NULL;
     Error* err = NULL;
+    CToken* ctoken = NULL;
     int typedef_flag = 0;
 
     while (1) {
-        if (ctoken_is_storage_class_specifier(parser)) {
+        ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken_is_storage_class_specifier(ctoken)) {
             parserret_assign(&child, &err, parse_storage_class_specifier(parser));
             typedef_flag = typedef_flag || child->type == AST_STG_TYPEDEF;
-        } else if (ctoken_is_type_specifier(parser)) {
+        } else if (ctoken_is_type_specifier(ctoken, parser->typedef_names_set)) {
             parserret_assign(&child, &err, parse_type_specifier(parser));
         } else {
             break;
@@ -70,7 +72,7 @@ ParserReturn* parse_decl_specifiers(Parser* parser) {
 
     if (vector_size(ast->children) == 0) {
         delete_ast(ast);
-        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        ctoken = vector_at(parser->ctokens, parser->index);
         err = new_error("one of declaration specifiers expected, but got %s\n", ctoken_types[ctoken->type]);
         return new_parserret_error(err);
     }
@@ -83,11 +85,13 @@ ParserReturn* parse_specifier_qualifier_list(Parser* parser) {
     Ast* ast = new_ast(AST_SPEC_QUAL_LIST, 0);
     Ast* child = NULL;
     Error* err = NULL;
+    CToken* ctoken = NULL;
 
     // TODO: consider type qualifiers
 
     while (1) {
-        if (ctoken_is_type_specifier(parser)) {
+        ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken_is_type_specifier(ctoken, parser->typedef_names_set)) {
             parserret_assign(&child, &err, parse_type_specifier(parser));
         } else {
             break;
@@ -104,7 +108,7 @@ ParserReturn* parse_specifier_qualifier_list(Parser* parser) {
 
     if (vector_size(ast->children) == 0) {
         delete_ast(ast);
-        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        ctoken = vector_at(parser->ctokens, parser->index);
         err = new_error("one of type specifiers or type qualifiers expected, but got %s\n", ctoken_types[ctoken->type]);
         return new_parserret_error(err);
     }
@@ -220,7 +224,8 @@ ParserReturn* parse_struct_decl_list(Parser* parser) {
         if (err != NULL) break;
 
         vector_push(ast->children, child);
-        if (!ctoken_is_type_specifier(parser)) break;
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        if (!ctoken_is_type_specifier(ctoken, parser->typedef_names_set)) break;
     }
 
     if (err != NULL) {

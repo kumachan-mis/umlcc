@@ -101,6 +101,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
 
     resolver->symbol_table = symboltable_enter_scope(resolver->symbol_table);
     resolver->symbol_table->memory_nbytes = 0;
+    resolver->tag_table = tagtable_enter_scope(resolver->tag_table);
     resolver->return_dtype = symbol_dtype->dfunction->return_dtype;
 
     Vector* params = declarator_srt->dtype->dfunction->params;
@@ -116,9 +117,10 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     resolverret_assign(&body_srt, &errs, resolve_compound_stmt(resolver));
     resolver->ast = ast;
 
+    resolver->return_dtype = NULL;
+    resolver->tag_table = tagtable_exit_scope(resolver->tag_table);
     resolver->symbol_table->memory_nbytes = 0;
     resolver->symbol_table = symboltable_exit_scope(resolver->symbol_table);
-    resolver->return_dtype = NULL;
 
     if (errs != NULL) {
         delete_srt(declarator_srt);

@@ -13,10 +13,11 @@ BaseType t_dmember = {
     .delete_object = (void (*)(void*))delete_dmember,
 };
 
-DStruct* new_named_dstruct(char* name) {
+DStruct* new_named_dstruct(char* name, int nbytes) {
     DStruct* dstruct = malloc(sizeof(DStruct));
     dstruct->name = name;
     dstruct->members = NULL;
+    dstruct->nbytes = nbytes;
     return dstruct;
 }
 
@@ -24,6 +25,14 @@ DStruct* new_unnamed_dstruct(Vector* members) {
     DStruct* dstruct = malloc(sizeof(DStruct));
     dstruct->name = NULL;
     dstruct->members = members;
+    dstruct->nbytes = 0;
+
+    int num_members = vector_size(members);
+    for (int i = 0; i < num_members; i++) {
+        DMember* member = vector_at(members, i);
+        dstruct->nbytes += dtype_nbytes(member->dtype);
+    }
+
     return dstruct;
 }
 
@@ -33,7 +42,18 @@ DStruct* dstruct_copy(DStruct* dstruct) {
     if (dstruct->name != NULL) copied_dstruct->name = new_string(dstruct->name);
     copied_dstruct->members = NULL;
     if (dstruct->members != NULL) copied_dstruct->members = vector_copy(dstruct->members);
+    copied_dstruct->nbytes = dstruct->nbytes;
     return copied_dstruct;
+}
+
+DType* dstruct_at(DStruct* dstruct, int index) {
+    DMember* member = vector_at(dstruct->members, index);
+    if (member == NULL) return NULL;
+    return member->dtype;
+}
+
+int dstruct_size(DStruct* dstruct) {
+    return vector_size(dstruct->members);
 }
 
 int dstruct_equals(DStruct* dstruct, DStruct* other) {

@@ -13,7 +13,9 @@ ResolverReturn* resolve_stmt(Resolver* resolver) {
     switch (ast->type) {
         case AST_CMPD_STMT:
             resolver->symbol_table = symboltable_enter_scope(resolver->symbol_table);
+            resolver->tag_table = tagtable_enter_scope(resolver->tag_table);
             resolverret_assign(&srt, &errs, resolve_compound_stmt(resolver));
+            resolver->tag_table = tagtable_exit_scope(resolver->tag_table);
             resolver->symbol_table = symboltable_exit_scope(resolver->symbol_table);
             break;
         case AST_RET_STMT:

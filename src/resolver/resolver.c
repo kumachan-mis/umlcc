@@ -8,13 +8,14 @@ Resolver* new_resolver(Ast* ast) {
     resolver->ast = ast;
     resolver->trans_unit_srt = NULL;
     resolver->symbol_table = new_symboltable();
+    resolver->tag_table = new_tagtable();
     resolver->return_dtype = NULL;
     resolver->specifier_dtype = NULL;
     resolver->initialized_dtype = NULL;
     resolver->initialized_offset = -1;
     resolver->is_nested_initializing = 0;
     resolver->sliteral_id = -1;
-    resolver->call_dtype = NULL;
+    resolver->expr_dtype = NULL;
     return resolver;
 }
 
@@ -26,9 +27,10 @@ void delete_resolver(Resolver* resolver) {
     delete_ast(resolver->ast);
     if (resolver->trans_unit_srt != NULL) delete_srt(resolver->trans_unit_srt);
     delete_symboltable(resolver->symbol_table);
+    delete_tagtable(resolver->tag_table);
     if (resolver->return_dtype != NULL) delete_dtype(resolver->return_dtype);
     if (resolver->specifier_dtype != NULL) delete_dtype(resolver->specifier_dtype);
     if (resolver->initialized_dtype != NULL) delete_dtype(resolver->initialized_dtype);
-    if (resolver->call_dtype != NULL) delete_dtype(resolver->call_dtype);
+    if (resolver->expr_dtype != NULL) delete_dtype(resolver->expr_dtype);
     free(resolver);
 }

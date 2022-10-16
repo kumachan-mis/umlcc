@@ -59,7 +59,7 @@ void test_resolve_decl_specifiers_error(void) {
     Ast* global_input = ast_copy(local_input);
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("declaration specifiers are invalid\n"));
+    vector_push(expected, new_error("combination of type specifiers is invalid\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, expected);
     run_global_decl_resolver_error_test(global_input, NULL, expected);
@@ -390,7 +390,7 @@ void test_resolve_init_error_scalar_array(void) {
     Ast* global_input = ast_copy(local_input);
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("an array should be initialized with an initializer list\n"));
+    vector_push(expected, new_error("initializer list is required\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, expected);
     run_global_decl_resolver_error_test(global_input, NULL, expected);

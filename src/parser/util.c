@@ -39,20 +39,20 @@ ErrorableInt* external_may_function_definition(Parser* parser) {
 }
 
 ErrorableInt* blockitem_may_decl(Parser* parser) {
-    int may_decl = ctoken_is_storage_class_specifier(parser) || ctoken_is_type_specifier(parser);
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    int may_decl =
+        ctoken_is_storage_class_specifier(ctoken) || ctoken_is_type_specifier(ctoken, parser->typedef_names_set);
     return new_errint(may_decl);
 }
 
-int ctoken_is_storage_class_specifier(Parser* parser) {
-    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+int ctoken_is_storage_class_specifier(CToken* ctoken) {
     return ctoken->type == CTOKEN_KEYWORD_TYPEDEF;
 }
 
-int ctoken_is_type_specifier(Parser* parser) {
-    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+int ctoken_is_type_specifier(CToken* ctoken, Set* typedef_names_set) {
     return ctoken->type == CTOKEN_KEYWORD_CHAR || ctoken->type == CTOKEN_KEYWORD_INT ||
            ctoken->type == CTOKEN_KEYWORD_STRUCT ||
-           (ctoken->type == CTOKEN_IDENT && set_contains(parser->typedef_names_set, ctoken->ident_name));
+           (ctoken->type == CTOKEN_IDENT && set_contains(typedef_names_set, ctoken->ident_name));
 }
 
 Error* consume_ctoken(Parser* parser, CTokenType ctoken_type) {

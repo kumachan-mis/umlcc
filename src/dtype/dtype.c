@@ -44,12 +44,12 @@ DType* new_array_dtype(DType* of_dtype, int size) {
     return dtype;
 }
 
-DType* new_named_struct_dtype(char* name) {
+DType* new_named_struct_dtype(char* name, int nbytes) {
     DType* dtype = malloc(sizeof(DType));
     dtype->type = DTYPE_STRUCT;
     dtype->dpointer = NULL;
     dtype->darray = NULL;
-    dtype->dstruct = new_named_dstruct(name);
+    dtype->dstruct = new_named_dstruct(name, nbytes);
     dtype->dfunction = NULL;
     dtype->ddecoration = NULL;
     return dtype;
@@ -199,6 +199,28 @@ DType* dtype_connect(DType* socket_dtype, DType* plug_dtype) {
     }
 }
 
+DType* dtype_aggregate_at(DType* dtype, int index) {
+    switch (dtype->type) {
+        case DTYPE_ARRAY:
+            return darray_at(dtype->darray, index);
+        case DTYPE_STRUCT:
+            return dstruct_at(dtype->dstruct, index);
+        default:
+            return NULL;
+    }
+}
+
+int dtype_aggregate_size(DType* dtype) {
+    switch (dtype->type) {
+        case DTYPE_ARRAY:
+            return darray_size(dtype->darray);
+        case DTYPE_STRUCT:
+            return dstruct_size(dtype->dstruct);
+        default:
+            return 0;
+    }
+}
+
 int dtype_equals(DType* dtype, DType* other) {
     if (dtype->type != other->type) return 0;
 
@@ -258,7 +280,11 @@ int dtype_isaggregate(DType* dtype) {
 
 int dtype_isobject(DType* dtype) {
     return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_ARRAY) ||
-           (dtype->type == DTYPE_STRUCT && dtype->dstruct->members != NULL);
+           (dtype->type == DTYPE_STRUCT && dtype->dstruct->nbytes > 0);
+}
+
+int dtype_isincomplete(DType* dtype) {
+    return dtype->type == DTYPE_STRUCT && dtype->dstruct->nbytes <= 0;
 }
 
 int dtype_nbytes(DType* dtype) {
@@ -271,15 +297,8 @@ int dtype_nbytes(DType* dtype) {
             return 8;
         case DTYPE_ARRAY:
             return dtype->darray->size * dtype_nbytes(dtype->darray->of_dtype);
-        case DTYPE_STRUCT: {
-            if (dtype->dstruct->members == NULL) return 0;
-            int size = 0, num_members = vector_size(dtype->dstruct->members);
-            for (int i = 0; i < num_members; i++) {
-                DMember* member = vector_at(dtype->dstruct->members, i);
-                size += dtype_nbytes(member->dtype);
-            }
-            return size;
-        }
+        case DTYPE_STRUCT:
+            return dtype->dstruct->nbytes;
         default:
             return 0;
     }
