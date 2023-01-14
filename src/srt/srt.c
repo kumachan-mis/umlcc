@@ -102,7 +102,7 @@ int srt_islvalue(Srt* srt) {
 
 int srt_ismodifiable(Srt* srt) {
     if (srt->dtype == NULL || !dtype_isobject(srt->dtype) || srt->dtype->type == DTYPE_ARRAY) return 0;
-    return srt->type == SRT_IDENT_EXPR || srt->type == SRT_INDIR_EXPR || srt->type == SRT_MEMBER_EXPR;
+    return srt->type == SRT_IDENT_EXPR || srt->type == SRT_INDIR_EXPR || srt->type == SRT_TOMEMBER_EXPR;
 }
 
 void delete_srt(Srt* srt) {

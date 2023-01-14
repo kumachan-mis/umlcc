@@ -16,6 +16,7 @@ typedef enum SrtType {
 
     // declaration
     SRT_DECL_LIST,
+    SRT_DECL_TYPE,
     SRT_INIT_DECL,
     SRT_DECL,
     SRT_INIT,
@@ -53,7 +54,7 @@ typedef enum SrtType {
     SRT_LNOT_EXPR,
     //   postfix-expression
     SRT_CALL_EXPR,
-    SRT_MEMBER_EXPR,
+    SRT_TOMEMBER_EXPR,
     SRT_ARG_LIST,
     //   primary-expression
     SRT_IDENT_EXPR,

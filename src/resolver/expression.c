@@ -601,7 +601,7 @@ ResolverReturn* resolve_logical_not_expr(Resolver* resolver) {
 ResolverReturn* resolve_postfix_expr(Resolver* resolver) {
     ResolverReturn* resolve_subscription_expr(Resolver * resolver);
     ResolverReturn* resolve_call_expr(Resolver * resolver);
-    ResolverReturn* resolve_member_expr(Resolver * resolver);
+    ResolverReturn* resolve_member_like_expr(Resolver * resolver);
     ResolverReturn* resolve_tomember_expr(Resolver * resolver);
 
     Srt* srt = NULL;
@@ -616,10 +616,8 @@ ResolverReturn* resolve_postfix_expr(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_call_expr(resolver));
             break;
         case AST_MEMBER_EXPR:
-            resolverret_assign(&srt, &errs, resolve_member_expr(resolver));
-            break;
         case AST_TOMEMBER_EXPR:
-            resolverret_assign(&srt, &errs, resolve_tomember_expr(resolver));
+            resolverret_assign(&srt, &errs, resolve_member_like_expr(resolver));
             break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
@@ -735,7 +733,7 @@ ResolverReturn* resolve_call_expr(Resolver* resolver) {
     return new_resolverret(srt);
 }
 
-ResolverReturn* resolve_member_expr(Resolver* resolver) {
+ResolverReturn* resolve_member_like_expr(Resolver* resolver) {
     ResolverReturn* resolve_member_name_expr(Resolver * resolver);
 
     Srt* srt = NULL;
@@ -751,7 +749,7 @@ ResolverReturn* resolve_member_expr(Resolver* resolver) {
     resolver->ast = ast;
     if (errs != NULL) return new_resolverret_errors(errs);
 
-    if (lhs_srt->dtype->type != DTYPE_STRUCT) {
+    if (ast->type == AST_MEMBER_EXPR && lhs_srt->dtype->type != DTYPE_STRUCT) {
         errs = new_vector(&t_error);
         err = new_error("dot-accessed object is not a struct\n");
         vector_push(errs, err);
@@ -759,57 +757,19 @@ ResolverReturn* resolve_member_expr(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    DType* original_member_dtype = resolver->expr_dtype;
-    resolver->expr_dtype = lhs_srt->dtype;
-    if (resolver->expr_dtype->dstruct->members == NULL) {
-        resolver->expr_dtype = tagtable_search_struct(resolver->tag_table, resolver->expr_dtype->dstruct->name);
-    }
-
-    resolver->ast = vector_at(ast->children, 1);
-    resolverret_assign(&rhs_srt, &errs, resolve_member_name_expr(resolver));
-    resolver->ast = ast;
-    if (errs != NULL) {
-        resolver->expr_dtype = original_member_dtype;
-        delete_srt(lhs_srt);
-        return new_resolverret_errors(errs);
-    }
-
-    dtype = dtype_copy(rhs_srt->dtype);
-    srt = new_dtyped_srt(SRT_MEMBER_EXPR, dtype, 2, lhs_srt, rhs_srt);
-
-    resolver->expr_dtype = original_member_dtype;
-    return new_resolverret(srt);
-}
-
-ResolverReturn* resolve_tomember_expr(Resolver* resolver) {
-    ResolverReturn* resolve_member_name_expr(Resolver * resolver);
-
-    Srt* srt = NULL;
-    DType* dtype = NULL;
-    Srt* lhs_srt = NULL;
-    Srt* rhs_srt = NULL;
-    Vector* errs = NULL;
-    Error* err = NULL;
-    Ast* ast = resolver->ast;
-
-    resolver->ast = vector_at(ast->children, 0);
-    resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
-    resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
-
-    if (lhs_srt->dtype->type != DTYPE_POINTER || lhs_srt->dtype->dpointer->to_dtype->type != DTYPE_STRUCT) {
+    if (ast->type == AST_TOMEMBER_EXPR &&
+        (lhs_srt->dtype->type != DTYPE_POINTER || lhs_srt->dtype->dpointer->to_dtype->type != DTYPE_STRUCT)) {
         errs = new_vector(&t_error);
-        err = new_error("arrow-accessed object is not a struct pointer\n");
+        err = new_error("arrow-accessed object is not a pointer to a struct\n");
         vector_push(errs, err);
         delete_srt(lhs_srt);
         return new_resolverret_errors(errs);
     }
 
-    DType* lhs_dtype = dtype_copy(lhs_srt->dtype->dpointer->to_dtype);
-    lhs_srt = new_dtyped_srt(SRT_INDIR_EXPR, lhs_dtype, 1, lhs_srt);
+    if (lhs_srt->dtype->type == DTYPE_STRUCT) lhs_srt->dtype = new_pointer_dtype(lhs_srt->dtype);
 
     DType* original_member_dtype = resolver->expr_dtype;
-    resolver->expr_dtype = lhs_srt->dtype;
+    resolver->expr_dtype = lhs_srt->dtype->dpointer->to_dtype;
     if (resolver->expr_dtype->dstruct->members == NULL) {
         resolver->expr_dtype = tagtable_search_struct(resolver->tag_table, resolver->expr_dtype->dstruct->name);
     }
@@ -824,7 +784,7 @@ ResolverReturn* resolve_tomember_expr(Resolver* resolver) {
     }
 
     dtype = dtype_copy(rhs_srt->dtype);
-    srt = new_dtyped_srt(SRT_MEMBER_EXPR, dtype, 2, lhs_srt, rhs_srt);
+    srt = new_dtyped_srt(SRT_TOMEMBER_EXPR, dtype, 2, lhs_srt, rhs_srt);
 
     resolver->expr_dtype = original_member_dtype;
     return new_resolverret(srt);

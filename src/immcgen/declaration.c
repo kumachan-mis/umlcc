@@ -87,6 +87,7 @@ Vector* gen_decl_immcode(Immcgen* immcgen) {
 
 Vector* gen_initializer_immcode(Immcgen* immcgen) {
     Vector* gen_array_initializer_immcode(Immcgen * immcgen);
+    Vector* gen_struct_initializer_immcode(Immcgen * immcgen);
     Vector* gen_scalar_initializer_immcode(Immcgen * immcgen);
 
     DType* dtype = immcgen->initialized_dtype;
@@ -94,6 +95,8 @@ Vector* gen_initializer_immcode(Immcgen* immcgen) {
     switch (dtype->type) {
         case DTYPE_ARRAY:
             return gen_array_initializer_immcode(immcgen);
+        case DTYPE_STRUCT:
+            return gen_struct_initializer_immcode(immcgen);
         default:
             return gen_scalar_initializer_immcode(immcgen);
     }
@@ -117,6 +120,19 @@ Vector* gen_array_initializer_immcode(Immcgen* immcgen) {
 
     for (int i = 0; i < dtype->darray->size; i++) {
         immcgen->initialized_dtype = dtype->darray->of_dtype;
+        append_child_immcode(immcgen, codes, i);
+    }
+
+    return codes;
+}
+
+Vector* gen_struct_initializer_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+    DType* dtype = immcgen->initialized_dtype;
+
+    int num_members = vector_size(dtype->dstruct->members);
+    for (int i = 0; i < num_members; i++) {
+        immcgen->initialized_dtype = vector_at(dtype->dstruct->members, i);
         append_child_immcode(immcgen, codes, i);
     }
 
