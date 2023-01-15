@@ -1,6 +1,5 @@
 #include "./expression.h"
 #include "../common/type.h"
-#include "../common/util.h"
 #include "./conversion.h"
 
 #include <stdio.h>
@@ -321,33 +320,29 @@ ResolverReturn* resolve_add_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
-
         lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
         rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
         dtype = new_integer_dtype(DTYPE_INT);
         srt = new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
-
-    } else if ((lhs_srt->dtype->type == DTYPE_POINTER && dtype_isinteger(rhs_srt->dtype)) ||
-               (dtype_isinteger(lhs_srt->dtype) && rhs_srt->dtype->type == DTYPE_POINTER)) {
-
-        if (rhs_srt->dtype->type == DTYPE_POINTER) swap_ptr((void**)&lhs_srt, (void**)&rhs_srt);
+        return new_resolverret(srt);
+    } else if (lhs_srt->dtype->type == DTYPE_POINTER && dtype_isinteger(rhs_srt->dtype)) {
         dtype = dtype_copy(lhs_srt->dtype);
         srt = new_dtyped_srt(SRT_PADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
-
-    } else {
-
-        errs = new_vector(&t_error);
-        err = new_error("binary + expression should be either arithmetic + arithmetic, "
-                        "pointer + integer, or integer + pointer\n");
-        vector_push(errs, err);
+        return new_resolverret(srt);
+    } else if (dtype_isinteger(lhs_srt->dtype) && rhs_srt->dtype->type == DTYPE_POINTER) {
+        dtype = dtype_copy(rhs_srt->dtype);
+        srt = new_dtyped_srt(SRT_PADD_EXPR, dtype, 2, rhs_srt, lhs_srt);
+        return new_resolverret(srt);
     }
 
-    if (errs != NULL) {
-        delete_srt(lhs_srt);
-        delete_srt(rhs_srt);
-        return new_resolverret_errors(errs);
-    }
-    return new_resolverret(srt);
+    errs = new_vector(&t_error);
+    err = new_error("binary + expression should be either arithmetic + arithmetic, "
+                    "pointer + integer, or integer + pointer\n");
+    vector_push(errs, err);
+
+    delete_srt(lhs_srt);
+    delete_srt(rhs_srt);
+    return new_resolverret_errors(errs);
 }
 
 ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
@@ -379,43 +374,34 @@ ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
-
         lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
         rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
         dtype = new_integer_dtype(DTYPE_INT);
         srt = new_dtyped_srt(SRT_SUB_EXPR, dtype, 2, lhs_srt, rhs_srt);
-
+        return new_resolverret(srt);
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && dtype_isinteger(rhs_srt->dtype)) {
-
         dtype = dtype_copy(lhs_srt->dtype);
         srt = new_dtyped_srt(SRT_PSUB_EXPR, dtype, 2, lhs_srt, rhs_srt);
-
+        return new_resolverret(srt);
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER &&
                dtype_iscompatible(lhs_srt->dtype, rhs_srt->dtype)) {
-
         dtype = new_integer_dtype(DTYPE_INT);
         srt = new_dtyped_srt(SRT_PDIFF_EXPR, dtype, 2, lhs_srt, rhs_srt);
+        return new_resolverret(srt);
+    }
 
-    } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
-
-        errs = new_vector(&t_error);
+    errs = new_vector(&t_error);
+    if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
         err = new_error("operands of pointer - pointer are not compatible\n");
-        vector_push(errs, err);
-
     } else {
-
-        errs = new_vector(&t_error);
         err = new_error("binary - expression should be either arithmetic - arithmetic, "
                         "pointer - integer, or pointer - pointer\n");
-        vector_push(errs, err);
     }
+    vector_push(errs, err);
 
-    if (errs != NULL) {
-        delete_srt(lhs_srt);
-        delete_srt(rhs_srt);
-        return new_resolverret_errors(errs);
-    }
-    return new_resolverret(srt);
+    delete_srt(lhs_srt);
+    delete_srt(rhs_srt);
+    return new_resolverret_errors(errs);
 }
 
 ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
@@ -672,7 +658,11 @@ ResolverReturn* resolve_subscription_expr(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    if (rhs_srt->dtype->type == DTYPE_POINTER) swap_ptr((void**)&lhs_srt, (void**)&rhs_srt);
+    if (rhs_srt->dtype->type == DTYPE_POINTER) {
+        Srt* tmp_srt = lhs_srt;
+        lhs_srt = rhs_srt;
+        rhs_srt = tmp_srt;
+    }
 
     if (!dtype_isobject(lhs_srt->dtype->pointer->to_dtype)) {
         errs = new_vector(&t_error);
