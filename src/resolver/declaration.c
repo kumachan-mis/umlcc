@@ -806,7 +806,6 @@ ResolverReturn* resolve_aggregate_initializer(Resolver* resolver) {
 
         resolver->ast = NULL;
         resolver->initialized_dtype = dtype_aggregate_at(dtype, aggregate_index);
-        ;
 
         // resolve_zero_initializer does not return an error
         resolverret_assign(&child_srt, &child_errs, resolve_zero_initializer(resolver));
