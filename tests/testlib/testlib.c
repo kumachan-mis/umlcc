@@ -252,10 +252,10 @@ void testlib_assert_dtype_equal(DType* actual, DType* expected) {
     }
 
     CU_ASSERT_EQUAL(actual->type, expected->type);
-    testlib_assert_dpointer_equal(actual->pointer, expected->pointer);
-    testlib_assert_darray_equal(actual->array, expected->array);
-    testlib_assert_dfunction_equal(actual->function, expected->function);
-    testlib_assert_ddecoration_equal(actual->decoration, expected->decoration);
+    testlib_assert_dpointer_equal(actual->dpointer, expected->dpointer);
+    testlib_assert_darray_equal(actual->darray, expected->darray);
+    testlib_assert_dfunction_equal(actual->dfunction, expected->dfunction);
+    testlib_assert_ddecoration_equal(actual->ddecoration, expected->ddecoration);
 }
 
 void testlib_assert_dpointer_equal(DPointer* actual, DPointer* expected) {

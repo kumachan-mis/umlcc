@@ -9,7 +9,7 @@ Srt* convert_to_ptr(Srt* srt) {
 
 Srt* convert_to_ptr_if_array(Srt* srt) {
     if (srt->dtype == NULL || srt->dtype->type != DTYPE_ARRAY) return srt;
-    DType* dtype = new_pointer_dtype(dtype_copy(srt->dtype->array->of_dtype));
+    DType* dtype = new_pointer_dtype(dtype_copy(srt->dtype->darray->of_dtype));
     return new_dtyped_srt(SRT_ADDR_EXPR, dtype, 1, srt);
 }
 

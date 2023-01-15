@@ -61,12 +61,12 @@ void test_immcgen_assignment_expr(void) {
     DType* int_dtype = new_integer_dtype(DTYPE_INT);
 
     Srt* input = new_dtyped_srt(
-        SRT_ASSIGN_EXPR, dtype_copy(pointer_dtype->pointer->to_dtype), 2,                              // non-terminal
-        new_dtyped_srt(SRT_ADDR_EXPR, dtype_copy(pointer_dtype), 1,                                    // non-terminal
-                       new_dtyped_srt(SRT_INDIR_EXPR, dtype_copy(pointer_dtype->pointer->to_dtype), 1, // non-terminal
+        SRT_ASSIGN_EXPR, dtype_copy(pointer_dtype->dpointer->to_dtype), 2,                              // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, dtype_copy(pointer_dtype), 1,                                     // non-terminal
+                       new_dtyped_srt(SRT_INDIR_EXPR, dtype_copy(pointer_dtype->dpointer->to_dtype), 1, // non-terminal
                                       new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("x")))),
         new_dtyped_srt(
-            SRT_CAST_EXPR, dtype_copy(pointer_dtype->pointer->to_dtype), 1, // non-terminal
+            SRT_CAST_EXPR, dtype_copy(pointer_dtype->dpointer->to_dtype), 1, // non-terminal
             new_dtyped_srt(
                 SRT_ASSIGN_EXPR, dtype_copy(int_dtype), 2,                                 // non-terminal
                 new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(int_dtype)), 1, // non-terminal

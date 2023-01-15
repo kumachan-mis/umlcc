@@ -22,10 +22,10 @@ typedef enum DTypeType {
 
 struct DType {
     DTypeType type;
-    DPointer* pointer;
-    DArray* array;
-    DFunction* function;
-    DDecoration* decoration;
+    DPointer* dpointer;
+    DArray* darray;
+    DFunction* dfunction;
+    DDecoration* ddecoration;
 };
 
 extern BaseType t_dtype;

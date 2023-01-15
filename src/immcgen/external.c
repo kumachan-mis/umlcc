@@ -28,7 +28,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
     immcgen->return_label_id = immcgen->label_id;
 
     Vector* param_codes = new_vector(&t_immc);
-    Vector* params = declarator_srt->dtype->function->params;
+    Vector* params = declarator_srt->dtype->dfunction->params;
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
         DParam* dparam = vector_at(params, i);

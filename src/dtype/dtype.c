@@ -14,90 +14,90 @@ BaseType t_dtype = {
 DType* new_integer_dtype(DTypeType type) {
     DType* dtype = malloc(sizeof(DType));
     dtype->type = type;
-    dtype->pointer = NULL;
-    dtype->array = NULL;
-    dtype->function = NULL;
-    dtype->decoration = NULL;
+    dtype->dpointer = NULL;
+    dtype->darray = NULL;
+    dtype->dfunction = NULL;
+    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_pointer_dtype(DType* to_dtype) {
     DType* dtype = malloc(sizeof(DType));
     dtype->type = DTYPE_POINTER;
-    dtype->pointer = new_dpointer(to_dtype);
-    dtype->array = NULL;
-    dtype->function = NULL;
-    dtype->decoration = NULL;
+    dtype->dpointer = new_dpointer(to_dtype);
+    dtype->darray = NULL;
+    dtype->dfunction = NULL;
+    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_array_dtype(DType* of_dtype, int size) {
     DType* dtype = malloc(sizeof(DType));
     dtype->type = DTYPE_ARRAY;
-    dtype->pointer = NULL;
-    dtype->array = new_darray(of_dtype, size);
-    dtype->function = NULL;
-    dtype->decoration = NULL;
+    dtype->dpointer = NULL;
+    dtype->darray = new_darray(of_dtype, size);
+    dtype->dfunction = NULL;
+    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_function_dtype(Vector* params, DType* return_dtype) {
     DType* dtype = malloc(sizeof(DType));
     dtype->type = DTYPE_FUNCTION;
-    dtype->pointer = NULL;
-    dtype->array = NULL;
-    dtype->function = new_dfunction(params, return_dtype);
-    dtype->decoration = NULL;
+    dtype->dpointer = NULL;
+    dtype->darray = NULL;
+    dtype->dfunction = new_dfunction(params, return_dtype);
+    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_decoration_dtype(DType* deco_dtype) {
     DType* dtype = malloc(sizeof(DType));
     dtype->type = DTYPE_DECORATION;
-    dtype->pointer = NULL;
-    dtype->array = NULL;
-    dtype->function = NULL;
-    dtype->decoration = new_ddecoration(deco_dtype);
+    dtype->dpointer = NULL;
+    dtype->darray = NULL;
+    dtype->dfunction = NULL;
+    dtype->ddecoration = new_ddecoration(deco_dtype);
     return dtype;
 }
 
 DType* new_socket_pointer_dtype(void) {
     DType* dtype = malloc(sizeof(DType));
     dtype->type = DTYPE_POINTER;
-    dtype->pointer = new_socket_dpointer();
-    dtype->array = NULL;
-    dtype->function = NULL;
-    dtype->decoration = NULL;
+    dtype->dpointer = new_socket_dpointer();
+    dtype->darray = NULL;
+    dtype->dfunction = NULL;
+    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_socket_array_dtype(int size) {
     DType* dtype = malloc(sizeof(DType));
     dtype->type = DTYPE_ARRAY;
-    dtype->pointer = NULL;
-    dtype->array = new_socket_darray(size);
-    dtype->function = NULL;
-    dtype->decoration = NULL;
+    dtype->dpointer = NULL;
+    dtype->darray = new_socket_darray(size);
+    dtype->dfunction = NULL;
+    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_socket_function_dtype(Vector* params) {
     DType* dtype = malloc(sizeof(DType));
     dtype->type = DTYPE_FUNCTION;
-    dtype->pointer = NULL;
-    dtype->array = NULL;
-    dtype->function = new_socket_dfunction(params);
-    dtype->decoration = NULL;
+    dtype->dpointer = NULL;
+    dtype->darray = NULL;
+    dtype->dfunction = new_socket_dfunction(params);
+    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_socket_decoration_dtype(void) {
     DType* dtype = malloc(sizeof(DType));
     dtype->type = DTYPE_DECORATION;
-    dtype->pointer = NULL;
-    dtype->array = NULL;
-    dtype->function = NULL;
-    dtype->decoration = new_socket_ddecoration();
+    dtype->dpointer = NULL;
+    dtype->darray = NULL;
+    dtype->dfunction = NULL;
+    dtype->ddecoration = new_socket_ddecoration();
     return dtype;
 }
 
@@ -105,14 +105,14 @@ DType* dtype_copy(DType* dtype) {
     DType* copied_dtype = malloc(sizeof(DType));
     copied_dtype->type = dtype->type;
 
-    copied_dtype->pointer = NULL;
-    if (dtype->pointer != NULL) copied_dtype->pointer = dpointer_copy(dtype->pointer);
-    copied_dtype->array = NULL;
-    if (dtype->array != NULL) copied_dtype->array = darray_copy(dtype->array);
-    copied_dtype->function = NULL;
-    if (dtype->function != NULL) copied_dtype->function = dfunction_copy(dtype->function);
-    copied_dtype->decoration = NULL;
-    if (dtype->decoration != NULL) copied_dtype->decoration = ddecoration_copy(dtype->decoration);
+    copied_dtype->dpointer = NULL;
+    if (dtype->dpointer != NULL) copied_dtype->dpointer = dpointer_copy(dtype->dpointer);
+    copied_dtype->darray = NULL;
+    if (dtype->darray != NULL) copied_dtype->darray = darray_copy(dtype->darray);
+    copied_dtype->dfunction = NULL;
+    if (dtype->dfunction != NULL) copied_dtype->dfunction = dfunction_copy(dtype->dfunction);
+    copied_dtype->ddecoration = NULL;
+    if (dtype->ddecoration != NULL) copied_dtype->ddecoration = ddecoration_copy(dtype->ddecoration);
     return copied_dtype;
 }
 
@@ -126,36 +126,36 @@ DType* dtype_connect(DType* socket_dtype, DType* plug_dtype) {
             case DTYPE_INT:
                 return socket_dtype;
             case DTYPE_POINTER: {
-                DType* next = dpointer_next(tail->pointer);
+                DType* next = dpointer_next(tail->dpointer);
                 if (next == NULL) {
-                    tail->pointer = dpointer_connect(tail->pointer, plug_dtype);
+                    tail->dpointer = dpointer_connect(tail->dpointer, plug_dtype);
                     return socket_dtype;
                 }
                 tail = next;
                 break;
             }
             case DTYPE_ARRAY: {
-                DType* next = darray_next(tail->array);
+                DType* next = darray_next(tail->darray);
                 if (next == NULL) {
-                    tail->array = darray_connect(tail->array, plug_dtype);
+                    tail->darray = darray_connect(tail->darray, plug_dtype);
                     return socket_dtype;
                 }
                 tail = next;
                 break;
             }
             case DTYPE_FUNCTION: {
-                DType* next = dfunction_next(tail->function);
+                DType* next = dfunction_next(tail->dfunction);
                 if (next == NULL) {
-                    tail->function = dfunction_connect(tail->function, plug_dtype);
+                    tail->dfunction = dfunction_connect(tail->dfunction, plug_dtype);
                     return socket_dtype;
                 }
                 tail = next;
                 break;
             }
             case DTYPE_DECORATION: {
-                DType* next = ddecoration_next(tail->decoration);
+                DType* next = ddecoration_next(tail->ddecoration);
                 if (next == NULL) {
-                    tail->decoration = ddecoration_connect(tail->decoration, plug_dtype);
+                    tail->ddecoration = ddecoration_connect(tail->ddecoration, plug_dtype);
                     return socket_dtype;
                 }
                 tail = next;
@@ -173,13 +173,13 @@ int dtype_equals(DType* dtype, DType* other) {
         case DTYPE_INT:
             return 1;
         case DTYPE_POINTER:
-            return dpointer_equals(dtype->pointer, other->pointer);
+            return dpointer_equals(dtype->dpointer, other->dpointer);
         case DTYPE_ARRAY:
-            return darray_equals(dtype->array, other->array);
+            return darray_equals(dtype->darray, other->darray);
         case DTYPE_FUNCTION:
-            return dfunction_equals(dtype->function, other->function);
+            return dfunction_equals(dtype->dfunction, other->dfunction);
         case DTYPE_DECORATION:
-            return ddecoration_equals(dtype->decoration, other->decoration);
+            return ddecoration_equals(dtype->ddecoration, other->ddecoration);
         default:
             return 0;
     }
@@ -196,7 +196,7 @@ int dtype_isassignable(DType* dtype, DType* other) {
     if (dtype_isarithmetic(dtype) && dtype_isarithmetic(other)) return 1;
 
     if (dtype->type == DTYPE_POINTER && other->type == DTYPE_POINTER &&
-        dtype_iscompatible(dtype->pointer->to_dtype, other->pointer->to_dtype)) {
+        dtype_iscompatible(dtype->dpointer->to_dtype, other->dpointer->to_dtype)) {
         return 1;
     }
 
@@ -233,16 +233,16 @@ int dtype_nbytes(DType* dtype) {
         case DTYPE_POINTER:
             return 8;
         case DTYPE_ARRAY:
-            return dtype->array->size * dtype_nbytes(dtype->array->of_dtype);
+            return dtype->darray->size * dtype_nbytes(dtype->darray->of_dtype);
         default:
             return 0;
     }
 }
 
 void delete_dtype(DType* dtype) {
-    if (dtype->pointer != NULL) delete_dpointer(dtype->pointer);
-    if (dtype->array != NULL) delete_darray(dtype->array);
-    if (dtype->function != NULL) delete_dfunction(dtype->function);
-    if (dtype->decoration != NULL) delete_ddecoration(dtype->decoration);
+    if (dtype->dpointer != NULL) delete_dpointer(dtype->dpointer);
+    if (dtype->darray != NULL) delete_darray(dtype->darray);
+    if (dtype->dfunction != NULL) delete_dfunction(dtype->dfunction);
+    if (dtype->ddecoration != NULL) delete_ddecoration(dtype->ddecoration);
     free(dtype);
 }

@@ -115,8 +115,8 @@ Vector* gen_array_initializer_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     DType* dtype = immcgen->initialized_dtype;
 
-    for (int i = 0; i < dtype->array->size; i++) {
-        immcgen->initialized_dtype = dtype->array->of_dtype;
+    for (int i = 0; i < dtype->darray->size; i++) {
+        immcgen->initialized_dtype = dtype->darray->of_dtype;
         append_child_immcode(immcgen, codes, i);
     }
 

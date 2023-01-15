@@ -44,7 +44,7 @@ ResolverReturnDType* resolve_decl_specifiers(Resolver* resolver) {
         switch (child->type) {
             case AST_STG_TYPEDEF:
                 if (dtype == NULL) dtype = new_socket_decoration_dtype();
-                dtype->decoration->typedef_flag = 1;
+                dtype->ddecoration->typedef_flag = 1;
                 vector_erase(ast->children, i);
                 num_children--;
                 break;
@@ -71,7 +71,7 @@ ResolverReturnDType* resolve_decl_specifiers(Resolver* resolver) {
             break;
         case AST_TYPEDEF_NAME: {
             Symbol* symbol = symboltable_search(resolver->symbol_table, child->ident_name);
-            dtype = dtype_connect(dtype, dtype_copy(symbol->dtype->decoration->deco_dtype));
+            dtype = dtype_connect(dtype, dtype_copy(symbol->dtype->ddecoration->deco_dtype));
             break;
         }
         default:
@@ -140,8 +140,8 @@ ResolverReturn* resolve_init_declarator(Resolver* resolver) {
 
     if (resolver->specifier_dtype->type == DTYPE_DECORATION) {
         DType* decoration_dtype = dtype_copy(resolver->specifier_dtype);
-        DType* specifier_dtype = decoration_dtype->decoration->deco_dtype;
-        decoration_dtype->decoration->deco_dtype = NULL;
+        DType* specifier_dtype = decoration_dtype->ddecoration->deco_dtype;
+        decoration_dtype->ddecoration->deco_dtype = NULL;
         child_srt->dtype = dtype_connect(child_srt->dtype, specifier_dtype);
         child_srt->dtype = dtype_connect(decoration_dtype, child_srt->dtype);
     } else {
@@ -343,7 +343,7 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
     resolver->ast = ast;
     if (errs != NULL) return new_resolverret_dparam_errors(errs);
 
-    if (specifiers_dtype->type == DTYPE_DECORATION && specifiers_dtype->decoration->typedef_flag) {
+    if (specifiers_dtype->type == DTYPE_DECORATION && specifiers_dtype->ddecoration->typedef_flag) {
         errs = new_vector(&t_error);
         err = new_error("storage specifiers are invalid for a function parameter\n");
         vector_push(errs, err);
@@ -361,7 +361,7 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
 
     declarator_srt->dtype = dtype_connect(declarator_srt->dtype, specifiers_dtype);
     if (declarator_srt->dtype->type == DTYPE_ARRAY) {
-        DType* array_of_dtype = dtype_copy(declarator_srt->dtype->array->of_dtype);
+        DType* array_of_dtype = dtype_copy(declarator_srt->dtype->darray->of_dtype);
         delete_dtype(declarator_srt->dtype);
         declarator_srt->dtype = new_pointer_dtype(array_of_dtype);
     }
@@ -398,7 +398,7 @@ ResolverReturn* resolve_initializer(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_scalar_initializer(resolver));
             break;
         case DTYPE_ARRAY:
-            if (dtype->array->of_dtype->type == DTYPE_CHAR) {
+            if (dtype->darray->of_dtype->type == DTYPE_CHAR) {
                 resolverret_assign(&srt, &errs, resolve_string_initializer(resolver));
             } else {
                 resolverret_assign(&srt, &errs, resolve_array_initializer(resolver));
@@ -480,7 +480,7 @@ ResolverReturn* resolve_array_initializer(Resolver* resolver) {
 
     int array_index = 0;
 
-    while (resolver->initialized_offset < initializer_len && array_index < dtype->array->size) {
+    while (resolver->initialized_offset < initializer_len && array_index < dtype->darray->size) {
         Srt* child_srt = NULL;
         Vector* child_errs = NULL;
 
@@ -488,9 +488,9 @@ ResolverReturn* resolve_array_initializer(Resolver* resolver) {
         int original_offset = resolver->initialized_offset;
         int original_is_nested = resolver->is_nested_initializing;
 
-        resolver->initialized_dtype = dtype->array->of_dtype;
+        resolver->initialized_dtype = dtype->darray->of_dtype;
 
-        if (dtype_isaggregate(dtype->array->of_dtype) && child_ast->type != AST_INIT_LIST) {
+        if (dtype_isaggregate(dtype->darray->of_dtype) && child_ast->type != AST_INIT_LIST) {
             resolver->ast = ast;
             resolver->is_nested_initializing = 1;
             resolverret_assign(&child_srt, &child_errs, resolve_initializer(resolver));
@@ -518,19 +518,19 @@ ResolverReturn* resolve_array_initializer(Resolver* resolver) {
         vector_push(srt->children, child_srt);
     }
 
-    for (int i = array_index; i < dtype->array->size; i++) {
+    for (int i = array_index; i < dtype->darray->size; i++) {
         Srt* child_srt = NULL;
         Vector* child_errs = NULL;
 
         resolver->ast = NULL;
-        resolver->initialized_dtype = dtype->array->of_dtype;
+        resolver->initialized_dtype = dtype->darray->of_dtype;
 
         // resolve_zero_initializer does not return an error
         resolverret_assign(&child_srt, &child_errs, resolve_zero_initializer(resolver));
         vector_push(srt->children, child_srt);
     }
 
-    if (!resolver->is_nested_initializing && array_index == dtype->array->size &&
+    if (!resolver->is_nested_initializing && array_index == dtype->darray->size &&
         resolver->initialized_offset < initializer_len) {
         if (errs != NULL) delete_vector(errs);
         errs = new_vector(&t_error);
@@ -560,14 +560,14 @@ ResolverReturn* resolve_string_initializer(Resolver* resolver) {
 
     if (literal_ast->type != AST_STRING_EXPR) return resolve_array_initializer(resolver);
 
-    if (literal_ast->sliteral->size - 1 > dtype->array->size) {
+    if (literal_ast->sliteral->size - 1 > dtype->darray->size) {
         errs = new_vector(&t_error);
         err = new_error("initializer string literal is too long\n");
         vector_push(errs, err);
         return new_resolverret_errors(errs);
     }
 
-    StringLiteral* sliteral = sliteral_zero_padding_copy(literal_ast->sliteral, dtype->array->size);
+    StringLiteral* sliteral = sliteral_zero_padding_copy(literal_ast->sliteral, dtype->darray->size);
     srt = new_sliteral_srt(SRT_STRING_EXPR, dtype_copy(dtype), sliteral);
     srt = new_srt(SRT_INIT, 1, srt);
     return new_resolverret(srt);
@@ -578,10 +578,10 @@ ResolverReturn* resolve_zero_array_initializer(Resolver* resolver) {
 
     DType* dtype = resolver->initialized_dtype;
 
-    for (int i = 0; i < dtype->array->size; i++) {
+    for (int i = 0; i < dtype->darray->size; i++) {
         Srt* child_srt = NULL;
         Vector* child_errs = NULL;
-        resolver->initialized_dtype = dtype->array->of_dtype;
+        resolver->initialized_dtype = dtype->darray->of_dtype;
 
         // resolve_zero_initializer does not return an error
         resolverret_assign(&child_srt, &child_errs, resolve_zero_initializer(resolver));
