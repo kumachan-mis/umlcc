@@ -288,7 +288,7 @@ void test_resolve_typedef_decl(void) {
 
     DType* test_dtype = NULL;
     test_dtype = new_decoration_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
-    test_dtype->decoration->typedef_flag = 1;
+    test_dtype->ddecoration->typedef_flag = 1;
     SymbolTable* local_table = new_symboltable();
     symboltable_define_label(local_table, new_string("test_type"), test_dtype);
     SymbolTable* global_table = symboltable_copy(local_table);

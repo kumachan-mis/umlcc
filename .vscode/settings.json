@@ -7,5 +7,4 @@
     "files.associations": {
         "*.i": "asm-intel-x86-generic"
     },
-    "githubPullRequests.defaultMergeMethod": "squash",
 }

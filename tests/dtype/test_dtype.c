@@ -85,10 +85,10 @@ void test_new_integer_dtype_int(void) {
             dtype = copied_dtype;
         }
         CU_ASSERT_EQUAL(dtype->type, DTYPE_INT);
-        CU_ASSERT_PTR_NULL(dtype->pointer);
-        CU_ASSERT_PTR_NULL(dtype->array);
-        CU_ASSERT_PTR_NULL(dtype->function);
-        CU_ASSERT_PTR_NULL(dtype->decoration);
+        CU_ASSERT_PTR_NULL(dtype->dpointer);
+        CU_ASSERT_PTR_NULL(dtype->darray);
+        CU_ASSERT_PTR_NULL(dtype->dfunction);
+        CU_ASSERT_PTR_NULL(dtype->ddecoration);
     }
 
     delete_dtype(dtype);
@@ -104,10 +104,10 @@ void test_new_integer_dtype_char(void) {
             dtype = copied_dtype;
         }
         CU_ASSERT_EQUAL(dtype->type, DTYPE_CHAR);
-        CU_ASSERT_PTR_NULL(dtype->pointer);
-        CU_ASSERT_PTR_NULL(dtype->array);
-        CU_ASSERT_PTR_NULL(dtype->function);
-        CU_ASSERT_PTR_NULL(dtype->decoration);
+        CU_ASSERT_PTR_NULL(dtype->dpointer);
+        CU_ASSERT_PTR_NULL(dtype->darray);
+        CU_ASSERT_PTR_NULL(dtype->dfunction);
+        CU_ASSERT_PTR_NULL(dtype->ddecoration);
     }
 
     delete_dtype(dtype);
@@ -121,14 +121,14 @@ void test_new_pointer_dtype(void) {
         if (i > 0) {
             DType* copied_dtype = dtype_copy(dtype);
             delete_dtype(dtype);
-            to_dtype = copied_dtype->pointer->to_dtype;
+            to_dtype = copied_dtype->dpointer->to_dtype;
             dtype = copied_dtype;
         }
         CU_ASSERT_EQUAL(dtype->type, DTYPE_POINTER);
-        CU_ASSERT_PTR_EQUAL(dtype->pointer->to_dtype, to_dtype);
-        CU_ASSERT_PTR_NULL(dtype->array);
-        CU_ASSERT_PTR_NULL(dtype->function);
-        CU_ASSERT_PTR_NULL(dtype->decoration);
+        CU_ASSERT_PTR_EQUAL(dtype->dpointer->to_dtype, to_dtype);
+        CU_ASSERT_PTR_NULL(dtype->darray);
+        CU_ASSERT_PTR_NULL(dtype->dfunction);
+        CU_ASSERT_PTR_NULL(dtype->ddecoration);
     }
 
     delete_dtype(dtype);
@@ -142,15 +142,15 @@ void test_new_array_dtype(void) {
         if (i > 0) {
             DType* copied_dtype = dtype_copy(dtype);
             delete_dtype(dtype);
-            of_dtype = copied_dtype->array->of_dtype;
+            of_dtype = copied_dtype->darray->of_dtype;
             dtype = copied_dtype;
         }
         CU_ASSERT_EQUAL(dtype->type, DTYPE_ARRAY);
-        CU_ASSERT_PTR_NULL(dtype->pointer);
-        CU_ASSERT_PTR_EQUAL(dtype->array->of_dtype, of_dtype);
-        CU_ASSERT_EQUAL(dtype->array->size, 5);
-        CU_ASSERT_PTR_NULL(dtype->function);
-        CU_ASSERT_PTR_NULL(dtype->decoration);
+        CU_ASSERT_PTR_NULL(dtype->dpointer);
+        CU_ASSERT_PTR_EQUAL(dtype->darray->of_dtype, of_dtype);
+        CU_ASSERT_EQUAL(dtype->darray->size, 5);
+        CU_ASSERT_PTR_NULL(dtype->dfunction);
+        CU_ASSERT_PTR_NULL(dtype->ddecoration);
     }
 
     delete_dtype(dtype);
@@ -170,22 +170,22 @@ void test_new_function_dtype(void) {
             DType* copied_dtype = dtype_copy(dtype);
             delete_dtype(dtype);
 
-            dparam = vector_at(copied_dtype->function->params, 0);
+            dparam = vector_at(copied_dtype->dfunction->params, 0);
             param_name = dparam->name;
             param_dtype = dparam->dtype;
 
-            params = copied_dtype->function->params;
-            return_dtype = copied_dtype->function->return_dtype;
+            params = copied_dtype->dfunction->params;
+            return_dtype = copied_dtype->dfunction->return_dtype;
             dtype = copied_dtype;
         }
         CU_ASSERT_EQUAL(dtype->type, DTYPE_FUNCTION);
-        CU_ASSERT_PTR_NULL(dtype->pointer);
-        CU_ASSERT_PTR_NULL(dtype->array);
-        CU_ASSERT_PTR_EQUAL(dtype->function->params, params);
+        CU_ASSERT_PTR_NULL(dtype->dpointer);
+        CU_ASSERT_PTR_NULL(dtype->darray);
+        CU_ASSERT_PTR_EQUAL(dtype->dfunction->params, params);
         CU_ASSERT_STRING_EQUAL(dparam->name, "param");
         CU_ASSERT_PTR_EQUAL(dparam->dtype, param_dtype);
-        CU_ASSERT_PTR_EQUAL(dtype->function->return_dtype, return_dtype);
-        CU_ASSERT_PTR_NULL(dtype->decoration);
+        CU_ASSERT_PTR_EQUAL(dtype->dfunction->return_dtype, return_dtype);
+        CU_ASSERT_PTR_NULL(dtype->ddecoration);
     }
 
     delete_dtype(dtype);
@@ -194,21 +194,21 @@ void test_new_function_dtype(void) {
 void test_new_decoration_dtype(void) {
     DType* deco_dtype = new_integer_dtype(DTYPE_INT);
     DType* dtype = new_decoration_dtype(deco_dtype);
-    dtype->decoration->typedef_flag = 1;
+    dtype->ddecoration->typedef_flag = 1;
 
     for (int i = 0; i < 2; i++) {
         if (i > 0) {
             DType* copied_dtype = dtype_copy(dtype);
             delete_dtype(dtype);
-            deco_dtype = copied_dtype->decoration->deco_dtype;
+            deco_dtype = copied_dtype->ddecoration->deco_dtype;
             dtype = copied_dtype;
         }
         CU_ASSERT_EQUAL(dtype->type, DTYPE_DECORATION);
-        CU_ASSERT_PTR_NULL(dtype->pointer);
-        CU_ASSERT_PTR_NULL(dtype->array);
-        CU_ASSERT_PTR_NULL(dtype->function);
-        CU_ASSERT_PTR_EQUAL(dtype->decoration->deco_dtype, deco_dtype);
-        CU_ASSERT_TRUE(dtype->decoration->typedef_flag);
+        CU_ASSERT_PTR_NULL(dtype->dpointer);
+        CU_ASSERT_PTR_NULL(dtype->darray);
+        CU_ASSERT_PTR_NULL(dtype->dfunction);
+        CU_ASSERT_PTR_EQUAL(dtype->ddecoration->deco_dtype, deco_dtype);
+        CU_ASSERT_TRUE(dtype->ddecoration->typedef_flag);
     }
 
     delete_dtype(dtype);
@@ -219,18 +219,18 @@ void test_socket_pointer_dtype(void) {
     DType* dtype = new_socket_pointer_dtype();
 
     CU_ASSERT_EQUAL(dtype->type, DTYPE_POINTER);
-    CU_ASSERT_PTR_NULL(dtype->pointer->to_dtype);
-    CU_ASSERT_PTR_NULL(dtype->array);
-    CU_ASSERT_PTR_NULL(dtype->function);
-    CU_ASSERT_PTR_NULL(dtype->decoration);
+    CU_ASSERT_PTR_NULL(dtype->dpointer->to_dtype);
+    CU_ASSERT_PTR_NULL(dtype->darray);
+    CU_ASSERT_PTR_NULL(dtype->dfunction);
+    CU_ASSERT_PTR_NULL(dtype->ddecoration);
 
     dtype = dtype_connect(dtype, to_dtype);
 
     CU_ASSERT_EQUAL(dtype->type, DTYPE_POINTER);
-    CU_ASSERT_PTR_EQUAL(dtype->pointer->to_dtype, to_dtype);
-    CU_ASSERT_PTR_NULL(dtype->array);
-    CU_ASSERT_PTR_NULL(dtype->function);
-    CU_ASSERT_PTR_NULL(dtype->decoration);
+    CU_ASSERT_PTR_EQUAL(dtype->dpointer->to_dtype, to_dtype);
+    CU_ASSERT_PTR_NULL(dtype->darray);
+    CU_ASSERT_PTR_NULL(dtype->dfunction);
+    CU_ASSERT_PTR_NULL(dtype->ddecoration);
 
     delete_dtype(dtype);
 }
@@ -240,20 +240,20 @@ void test_socket_array_dtype(void) {
     DType* dtype = new_socket_array_dtype(7);
 
     CU_ASSERT_EQUAL(dtype->type, DTYPE_ARRAY);
-    CU_ASSERT_PTR_NULL(dtype->pointer);
-    CU_ASSERT_PTR_NULL(dtype->array->of_dtype);
-    CU_ASSERT_EQUAL(dtype->array->size, 7);
-    CU_ASSERT_PTR_NULL(dtype->function);
-    CU_ASSERT_PTR_NULL(dtype->decoration);
+    CU_ASSERT_PTR_NULL(dtype->dpointer);
+    CU_ASSERT_PTR_NULL(dtype->darray->of_dtype);
+    CU_ASSERT_EQUAL(dtype->darray->size, 7);
+    CU_ASSERT_PTR_NULL(dtype->dfunction);
+    CU_ASSERT_PTR_NULL(dtype->ddecoration);
 
     dtype = dtype_connect(dtype, of_dtype);
 
     CU_ASSERT_EQUAL(dtype->type, DTYPE_ARRAY);
-    CU_ASSERT_PTR_NULL(dtype->pointer);
-    CU_ASSERT_PTR_EQUAL(dtype->array->of_dtype, of_dtype);
-    CU_ASSERT_EQUAL(dtype->array->size, 7);
-    CU_ASSERT_PTR_NULL(dtype->function);
-    CU_ASSERT_PTR_NULL(dtype->decoration);
+    CU_ASSERT_PTR_NULL(dtype->dpointer);
+    CU_ASSERT_PTR_EQUAL(dtype->darray->of_dtype, of_dtype);
+    CU_ASSERT_EQUAL(dtype->darray->size, 7);
+    CU_ASSERT_PTR_NULL(dtype->dfunction);
+    CU_ASSERT_PTR_NULL(dtype->ddecoration);
 
     delete_dtype(dtype);
 }
@@ -268,24 +268,24 @@ void test_socket_function_dtype(void) {
     DType* dtype = new_socket_function_dtype(params);
 
     CU_ASSERT_EQUAL(dtype->type, DTYPE_FUNCTION);
-    CU_ASSERT_PTR_NULL(dtype->pointer);
-    CU_ASSERT_PTR_NULL(dtype->array);
-    CU_ASSERT_PTR_EQUAL(dtype->function->params, params);
+    CU_ASSERT_PTR_NULL(dtype->dpointer);
+    CU_ASSERT_PTR_NULL(dtype->darray);
+    CU_ASSERT_PTR_EQUAL(dtype->dfunction->params, params);
     CU_ASSERT_STRING_EQUAL(dparam->name, "param");
     CU_ASSERT_PTR_EQUAL(dparam->dtype, param_dtype);
-    CU_ASSERT_PTR_NULL(dtype->function->return_dtype);
-    CU_ASSERT_PTR_NULL(dtype->decoration);
+    CU_ASSERT_PTR_NULL(dtype->dfunction->return_dtype);
+    CU_ASSERT_PTR_NULL(dtype->ddecoration);
 
     dtype = dtype_connect(dtype, return_dtype);
 
     CU_ASSERT_EQUAL(dtype->type, DTYPE_FUNCTION);
-    CU_ASSERT_PTR_NULL(dtype->pointer);
-    CU_ASSERT_PTR_NULL(dtype->array);
-    CU_ASSERT_PTR_EQUAL(dtype->function->params, params);
+    CU_ASSERT_PTR_NULL(dtype->dpointer);
+    CU_ASSERT_PTR_NULL(dtype->darray);
+    CU_ASSERT_PTR_EQUAL(dtype->dfunction->params, params);
     CU_ASSERT_STRING_EQUAL(dparam->name, "param");
     CU_ASSERT_PTR_EQUAL(dparam->dtype, param_dtype);
-    CU_ASSERT_PTR_EQUAL(dtype->function->return_dtype, return_dtype);
-    CU_ASSERT_PTR_NULL(dtype->decoration);
+    CU_ASSERT_PTR_EQUAL(dtype->dfunction->return_dtype, return_dtype);
+    CU_ASSERT_PTR_NULL(dtype->ddecoration);
 
     delete_dtype(dtype);
 }
@@ -295,20 +295,20 @@ void test_socket_decoration_dtype(void) {
     DType* dtype = new_socket_decoration_dtype();
 
     CU_ASSERT_EQUAL(dtype->type, DTYPE_DECORATION);
-    CU_ASSERT_PTR_NULL(dtype->pointer);
-    CU_ASSERT_PTR_NULL(dtype->array);
-    CU_ASSERT_PTR_NULL(dtype->function);
-    CU_ASSERT_PTR_NULL(dtype->decoration->deco_dtype);
-    CU_ASSERT_FALSE(dtype->decoration->typedef_flag);
+    CU_ASSERT_PTR_NULL(dtype->dpointer);
+    CU_ASSERT_PTR_NULL(dtype->darray);
+    CU_ASSERT_PTR_NULL(dtype->dfunction);
+    CU_ASSERT_PTR_NULL(dtype->ddecoration->deco_dtype);
+    CU_ASSERT_FALSE(dtype->ddecoration->typedef_flag);
 
     dtype = dtype_connect(dtype, deco_dtype);
 
     CU_ASSERT_EQUAL(dtype->type, DTYPE_DECORATION);
-    CU_ASSERT_PTR_NULL(dtype->pointer);
-    CU_ASSERT_PTR_NULL(dtype->array);
-    CU_ASSERT_PTR_NULL(dtype->function);
-    CU_ASSERT_PTR_EQUAL(dtype->decoration->deco_dtype, deco_dtype);
-    CU_ASSERT_FALSE(dtype->decoration->typedef_flag);
+    CU_ASSERT_PTR_NULL(dtype->dpointer);
+    CU_ASSERT_PTR_NULL(dtype->darray);
+    CU_ASSERT_PTR_NULL(dtype->dfunction);
+    CU_ASSERT_PTR_EQUAL(dtype->ddecoration->deco_dtype, deco_dtype);
+    CU_ASSERT_FALSE(dtype->ddecoration->typedef_flag);
 
     delete_dtype(dtype);
 }
@@ -319,12 +319,12 @@ void test_socket_nested_dtype(void) {
     DType* dtype = dtype_connect(socket_dtype, plug_dtype);
 
     CU_ASSERT_EQUAL(dtype->type, DTYPE_ARRAY);
-    CU_ASSERT_EQUAL(dtype->array->size, 10);
-    CU_ASSERT_EQUAL(dtype->array->of_dtype->type, DTYPE_POINTER);
-    CU_ASSERT_PTR_EQUAL(dtype->array->of_dtype->pointer->to_dtype, plug_dtype);
-    CU_ASSERT_PTR_NULL(dtype->array->of_dtype->array);
-    CU_ASSERT_PTR_NULL(dtype->array->of_dtype->function);
-    CU_ASSERT_PTR_NULL(dtype->array->of_dtype->decoration);
+    CU_ASSERT_EQUAL(dtype->darray->size, 10);
+    CU_ASSERT_EQUAL(dtype->darray->of_dtype->type, DTYPE_POINTER);
+    CU_ASSERT_PTR_EQUAL(dtype->darray->of_dtype->dpointer->to_dtype, plug_dtype);
+    CU_ASSERT_PTR_NULL(dtype->darray->of_dtype->darray);
+    CU_ASSERT_PTR_NULL(dtype->darray->of_dtype->dfunction);
+    CU_ASSERT_PTR_NULL(dtype->darray->of_dtype->ddecoration);
 
     delete_dtype(dtype);
 }
@@ -334,10 +334,10 @@ void test_socket_null_dtype(void) {
     DType* dtype = dtype_connect(NULL, plug_dtype);
 
     CU_ASSERT_EQUAL(dtype->type, DTYPE_INT);
-    CU_ASSERT_PTR_NULL(dtype->pointer);
-    CU_ASSERT_PTR_NULL(dtype->array);
-    CU_ASSERT_PTR_NULL(dtype->function);
-    CU_ASSERT_PTR_NULL(dtype->decoration);
+    CU_ASSERT_PTR_NULL(dtype->dpointer);
+    CU_ASSERT_PTR_NULL(dtype->darray);
+    CU_ASSERT_PTR_NULL(dtype->dfunction);
+    CU_ASSERT_PTR_NULL(dtype->ddecoration);
 
     delete_dtype(dtype);
 }
@@ -401,9 +401,9 @@ void test_dtype_equals_function(void) {
 
 void test_dtype_equals_decoration(void) {
     DType* dtype = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
-    dtype->decoration->typedef_flag = 1;
+    dtype->ddecoration->typedef_flag = 1;
     DType* other = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
-    other->decoration->typedef_flag = 1;
+    other->ddecoration->typedef_flag = 1;
 
     CU_ASSERT_TRUE(dtype_equals(dtype, other));
 
@@ -526,9 +526,9 @@ void test_dtype_equals_function_diff_param_order(void) {
 
 void test_dtype_equals_decoration_diff_deco(void) {
     DType* dtype = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
-    dtype->decoration->typedef_flag = 0;
+    dtype->ddecoration->typedef_flag = 0;
     DType* other = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
-    other->decoration->typedef_flag = 1;
+    other->ddecoration->typedef_flag = 1;
 
     CU_ASSERT_FALSE(dtype_equals(dtype, other));
 
@@ -538,9 +538,9 @@ void test_dtype_equals_decoration_diff_deco(void) {
 
 void test_dtype_equals_decoration_diff_deco_dtype(void) {
     DType* dtype = new_decoration_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
-    dtype->decoration->typedef_flag = 1;
+    dtype->ddecoration->typedef_flag = 1;
     DType* other = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
-    other->decoration->typedef_flag = 1;
+    other->ddecoration->typedef_flag = 1;
 
     CU_ASSERT_FALSE(dtype_equals(dtype, other));
 
@@ -570,7 +570,7 @@ void test_dtype_isinteger(void) {
     delete_dtype(func_dtype);
 
     DType* typedef_dtype = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
-    typedef_dtype->decoration->typedef_flag = 1;
+    typedef_dtype->ddecoration->typedef_flag = 1;
     CU_ASSERT_FALSE(dtype_isinteger(typedef_dtype));
     delete_dtype(typedef_dtype);
 }
@@ -597,7 +597,7 @@ void test_dtype_isarithmetic(void) {
     delete_dtype(func_dtype);
 
     DType* typedef_dtype = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
-    typedef_dtype->decoration->typedef_flag = 1;
+    typedef_dtype->ddecoration->typedef_flag = 1;
     CU_ASSERT_FALSE(dtype_isarithmetic(typedef_dtype));
     delete_dtype(typedef_dtype);
 }
@@ -624,7 +624,7 @@ void test_dtype_isscalar(void) {
     delete_dtype(func_dtype);
 
     DType* typedef_dtype = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
-    typedef_dtype->decoration->typedef_flag = 1;
+    typedef_dtype->ddecoration->typedef_flag = 1;
     CU_ASSERT_FALSE(dtype_isscalar(typedef_dtype));
     delete_dtype(typedef_dtype);
 }
@@ -651,7 +651,7 @@ void test_dtype_isaggregate(void) {
     delete_dtype(func_dtype);
 
     DType* typedef_dtype = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
-    typedef_dtype->decoration->typedef_flag = 1;
+    typedef_dtype->ddecoration->typedef_flag = 1;
     CU_ASSERT_FALSE(dtype_isaggregate(typedef_dtype));
     delete_dtype(typedef_dtype);
 }
@@ -678,7 +678,7 @@ void test_dtype_isobject(void) {
     delete_dtype(func_dtype);
 
     DType* typedef_dtype = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
-    typedef_dtype->decoration->typedef_flag = 1;
+    typedef_dtype->ddecoration->typedef_flag = 1;
     CU_ASSERT_FALSE(dtype_isobject(typedef_dtype));
     delete_dtype(typedef_dtype);
 }
@@ -705,7 +705,7 @@ void test_dtype_nbytes(void) {
     delete_dtype(func_dtype);
 
     DType* typedef_dtype = new_decoration_dtype(new_integer_dtype(DTYPE_INT));
-    typedef_dtype->decoration->typedef_flag = 1;
+    typedef_dtype->ddecoration->typedef_flag = 1;
     CU_ASSERT_EQUAL(dtype_nbytes(typedef_dtype), 0);
     delete_dtype(typedef_dtype);
 }
