@@ -549,7 +549,6 @@ ResolverReturn* resolve_indirection_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-
     if (errs != NULL) return new_resolverret_errors(errs);
 
     child_srt = convert_to_ptr_if_array(child_srt);
@@ -579,7 +578,6 @@ ResolverReturn* resolve_logical_not_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-
     if (errs != NULL) return new_resolverret_errors(errs);
 
     child_srt = convert_to_ptr_if_array(child_srt);
@@ -700,7 +698,6 @@ ResolverReturn* resolve_call_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-
     if (errs != NULL) return new_resolverret_errors(errs);
 
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
@@ -719,7 +716,6 @@ ResolverReturn* resolve_call_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&rhs_srt, &errs, resolve_argument_expr_list(resolver));
     resolver->ast = ast;
-
     if (errs != NULL) {
         resolver->expr_dtype = original_call_dtype;
         delete_srt(lhs_srt);
