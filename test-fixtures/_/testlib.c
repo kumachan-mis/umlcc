@@ -45,13 +45,13 @@ int put_blank_line(void) {
 }
 
 typedef struct Node {
-    int value;
     struct Node* next;
+    int value;
 } Node;
 
 Node* new_node(int value) {
     Node* node = malloc(sizeof(Node));
-    node->value = 0;
+    node->value = value;
     node->next = NULL;
     return node;
 }

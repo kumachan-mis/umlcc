@@ -671,7 +671,13 @@ ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_zero_scalar_initializer(resolver));
             break;
         case DTYPE_ARRAY:
+            // resolve_zero_aggregate_initializer does not return an error
+            resolverret_assign(&srt, &errs, resolve_zero_aggregate_initializer(resolver));
+            break;
         case DTYPE_STRUCT:
+            if (dtype->dstruct->members == NULL) {
+                resolver->initialized_dtype = tagtable_search_struct(resolver->tag_table, dtype->dstruct->name);
+            }
             // resolve_zero_aggregate_initializer does not return an error
             resolverret_assign(&srt, &errs, resolve_zero_aggregate_initializer(resolver));
             break;

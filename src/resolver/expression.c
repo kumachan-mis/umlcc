@@ -762,7 +762,10 @@ ResolverReturn* resolve_member_like_expr(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    if (lhs_srt->dtype->type == DTYPE_STRUCT) lhs_srt->dtype = new_pointer_dtype(lhs_srt->dtype);
+    if (lhs_srt->dtype->type == DTYPE_STRUCT) {
+        DType* lhs_dtype = new_pointer_dtype(dtype_copy(lhs_srt->dtype));
+        lhs_srt = new_dtyped_srt(SRT_ADDR_EXPR, lhs_dtype, 1, lhs_srt);
+    }
 
     DType* original_member_dtype = resolver->expr_dtype;
     resolver->expr_dtype = lhs_srt->dtype->dpointer->to_dtype;

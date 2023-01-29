@@ -1,6 +1,6 @@
 typedef struct Node {
-    int value;
     struct Node* next;
+    int value;
 } Node;
 
 Node* new_node(int value);

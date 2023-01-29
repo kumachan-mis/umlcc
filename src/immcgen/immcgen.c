@@ -36,6 +36,9 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
         case SRT_DECL_LIST:
             codes = gen_decl_list_immcode(immcgen);
             break;
+        case SRT_TAG_DECL:
+            codes = gen_tag_decl_immcode(immcgen);
+            break;
         case SRT_INIT_DECL:
             codes = gen_init_decl_immcode(immcgen);
             break;

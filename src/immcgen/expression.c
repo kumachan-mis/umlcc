@@ -308,7 +308,11 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
 
             Srt* struct_srt = vector_at(child->children, 0);
             Srt* member_srt = vector_at(child->children, 1);
+
             DType* struct_dtype = struct_srt->dtype->dpointer->to_dtype;
+            if (struct_dtype->dstruct->members == NULL) {
+                struct_dtype = tagtable_search_struct(immcgen->tag_table, struct_dtype->dstruct->name);
+            }
 
             int num_members = vector_size(struct_dtype->dstruct->members);
             int member_offset = 0;
@@ -362,7 +366,7 @@ Vector* gen_not_expr_immcode(Immcgen* immcgen) {
 
 Vector* gen_postfix_expr_immcode(Immcgen* immcgen) {
     Vector* gen_call_expr_immcode(Immcgen * immcgen);
-    Vector* gen_member_expr_immcode(Immcgen * immcgen);
+    Vector* gen_tomember_expr_immcode(Immcgen * immcgen);
 
     Vector* codes = NULL;
     Srt* srt = immcgen->srt;
@@ -372,7 +376,7 @@ Vector* gen_postfix_expr_immcode(Immcgen* immcgen) {
             codes = gen_call_expr_immcode(immcgen);
             break;
         case SRT_TOMEMBER_EXPR:
-            codes = gen_member_expr_immcode(immcgen);
+            codes = gen_tomember_expr_immcode(immcgen);
             break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
@@ -414,7 +418,7 @@ Vector* gen_call_expr_immcode(Immcgen* immcgen) {
     return codes;
 }
 
-Vector* gen_member_expr_immcode(Immcgen* immcgen) {
+Vector* gen_tomember_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = immcgen->srt;
 
@@ -422,7 +426,11 @@ Vector* gen_member_expr_immcode(Immcgen* immcgen) {
 
     Srt* struct_srt = vector_at(srt->children, 0);
     Srt* member_srt = vector_at(srt->children, 1);
+
     DType* struct_dtype = struct_srt->dtype->dpointer->to_dtype;
+    if (struct_dtype->dstruct->members == NULL) {
+        struct_dtype = tagtable_search_struct(immcgen->tag_table, struct_dtype->dstruct->name);
+    }
 
     int num_members = vector_size(struct_dtype->dstruct->members);
     int member_offset = 0;
