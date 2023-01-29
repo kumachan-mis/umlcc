@@ -166,8 +166,10 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
     tagtable_define_struct(resolver->tag_table, new_string(struct_name), members);
 
     DType* unnamed_dtype = tagtable_search_struct(resolver->tag_table, struct_name);
-    int nbytes = unnamed_dtype != NULL ? unnamed_dtype->dstruct->nbytes : 0;
-    dtype = new_named_struct_dtype(struct_name, nbytes);
+    Srt* tag_decl_srt = new_identifier_srt(SRT_TAG_DECL, dtype_copy(unnamed_dtype), new_string(struct_name));
+    vector_push(resolver->scope_srt->children, tag_decl_srt);
+
+    dtype = new_named_struct_dtype(struct_name, unnamed_dtype->dstruct->nbytes);
     return new_resolverret_dtype(dtype);
 }
 

@@ -7,6 +7,7 @@ Resolver* new_resolver(Ast* ast) {
     Resolver* resolver = malloc(sizeof(Resolver));
     resolver->ast = ast;
     resolver->trans_unit_srt = NULL;
+    resolver->scope_srt = NULL;
     resolver->symbol_table = new_symboltable();
     resolver->tag_table = new_tagtable();
     resolver->return_dtype = NULL;
@@ -26,6 +27,7 @@ ResolverReturn* resolver_resolve_semantics(Resolver* resolver) {
 void delete_resolver(Resolver* resolver) {
     delete_ast(resolver->ast);
     if (resolver->trans_unit_srt != NULL) delete_srt(resolver->trans_unit_srt);
+    if (resolver->scope_srt != NULL) delete_srt(resolver->scope_srt);
     delete_symboltable(resolver->symbol_table);
     delete_tagtable(resolver->tag_table);
     if (resolver->return_dtype != NULL) delete_dtype(resolver->return_dtype);

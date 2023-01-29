@@ -38,6 +38,9 @@ ResolverReturn* resolve_compound_stmt(Resolver* resolver) {
     Srt* srt = new_srt(SRT_CMPD_STMT, 0);
     Vector* errs = NULL;
     Ast* ast = resolver->ast;
+    Srt* scope_srt = resolver->scope_srt;
+
+    resolver->scope_srt = srt;
 
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
@@ -64,6 +67,7 @@ ResolverReturn* resolve_compound_stmt(Resolver* resolver) {
         vector_push(srt->children, child_srt);
     }
 
+    resolver->scope_srt = scope_srt;
     resolver->ast = ast;
     if (errs != NULL) {
         delete_srt(srt);

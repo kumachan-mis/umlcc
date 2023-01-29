@@ -16,6 +16,7 @@ typedef enum SrtType {
 
     // declaration
     SRT_DECL_LIST,
+    SRT_TAG_DECL,
     SRT_INIT_DECL,
     SRT_DECL,
     SRT_INIT,

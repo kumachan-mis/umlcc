@@ -9,6 +9,7 @@
 typedef struct Resolver {
     Ast* ast;
     Srt* trans_unit_srt;
+    Srt* scope_srt;
     SymbolTable* symbol_table;
     TagTable* tag_table;
     DType* return_dtype;

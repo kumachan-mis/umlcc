@@ -12,6 +12,8 @@ ResolverReturn* resolve_transration_unit(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->trans_unit_srt = srt;
+    resolver->scope_srt = srt;
+
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
         Srt* child_srt = NULL;
@@ -37,8 +39,9 @@ ResolverReturn* resolve_transration_unit(Resolver* resolver) {
         vector_push(srt->children, child_srt);
     }
 
-    resolver->ast = ast;
+    resolver->scope_srt = NULL;
     resolver->trans_unit_srt = NULL;
+    resolver->ast = ast;
     if (errs != NULL) {
         delete_srt(srt);
         return new_resolverret_errors(errs);
