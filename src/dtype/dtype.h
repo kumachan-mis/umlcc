@@ -57,6 +57,7 @@ int dtype_isscalar(DType* dtype);
 int dtype_isaggregate(DType* dtype);
 int dtype_isobject(DType* dtype);
 int dtype_isincomplete(DType* dtype);
+int dtype_top_nbytes(DType* dtype);
 int dtype_nbytes(DType* dtype);
 void delete_dtype(DType* dtype);
 

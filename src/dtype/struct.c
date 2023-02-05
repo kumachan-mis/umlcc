@@ -30,6 +30,9 @@ DStruct* new_unnamed_dstruct(Vector* members) {
     int num_members = vector_size(members);
     for (int i = 0; i < num_members; i++) {
         DMember* member = vector_at(members, i);
+        int member_top_nbytes = dtype_top_nbytes(member->dtype);
+        member->memory_offset = (dstruct->nbytes + member_top_nbytes - 1) / member_top_nbytes * member_top_nbytes;
+        dstruct->nbytes = member->memory_offset;
         dstruct->nbytes += dtype_nbytes(member->dtype);
     }
 
@@ -84,6 +87,7 @@ DMember* new_dmember(char* name, DType* dtype) {
     DMember* dmember = malloc(sizeof(DMember));
     dmember->name = name;
     dmember->dtype = dtype;
+    dmember->memory_offset = 0;
     return dmember;
 }
 
@@ -91,6 +95,7 @@ DMember* dmember_copy(DMember* dmember) {
     DMember* copied_dmember = malloc(sizeof(DMember));
     copied_dmember->name = new_string(dmember->name);
     copied_dmember->dtype = dtype_copy(dmember->dtype);
+    copied_dmember->memory_offset = dmember->memory_offset;
     return copied_dmember;
 }
 

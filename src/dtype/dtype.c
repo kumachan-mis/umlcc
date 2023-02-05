@@ -287,6 +287,25 @@ int dtype_isincomplete(DType* dtype) {
     return dtype->type == DTYPE_STRUCT && dtype->dstruct->nbytes <= 0;
 }
 
+int dtype_top_nbytes(DType* dtype) {
+    switch (dtype->type) {
+        case DTYPE_CHAR:
+            return 1;
+        case DTYPE_INT:
+            return 4;
+        case DTYPE_POINTER:
+            return 8;
+        case DTYPE_ARRAY:
+            return dtype_top_nbytes(dtype->darray->of_dtype);
+        case DTYPE_STRUCT: {
+            DMember* member = vector_at(dtype->dstruct->members, 0);
+            return dtype_top_nbytes(member->dtype);
+        }
+        default:
+            return 0;
+    }
+}
+
 int dtype_nbytes(DType* dtype) {
     switch (dtype->type) {
         case DTYPE_CHAR:

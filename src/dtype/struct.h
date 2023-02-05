@@ -9,6 +9,7 @@ typedef struct DType DType;
 
 DType* dtype_copy(DType* dtype);
 int dtype_equals(DType* dtype, DType* other);
+int dtype_top_nbytes(DType* dtype);
 int dtype_nbytes(DType* dtype);
 void delete_dtype(DType* dtype);
 #endif
@@ -25,6 +26,7 @@ struct DStruct {
 struct DMember {
     char* name;
     DType* dtype;
+    int memory_offset;
 };
 
 #ifdef UMLCC_DTYPE_H_PRIVATE

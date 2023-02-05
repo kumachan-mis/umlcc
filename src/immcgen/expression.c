@@ -314,14 +314,17 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
                 struct_dtype = tagtable_search_struct(immcgen->tag_table, struct_dtype->dstruct->name);
             }
 
+            DMember* accessed_member = NULL;
             int num_members = vector_size(struct_dtype->dstruct->members);
-            int member_offset = 0;
             for (int i = 0; i < num_members; i++) {
                 DMember* dmember = vector_at(struct_dtype->dstruct->members, i);
-                if (strcmp(dmember->name, member_srt->ident_name) == 0) break;
-                member_offset += dtype_nbytes(dmember->dtype);
+                if (strcmp(dmember->name, member_srt->ident_name) == 0) {
+                    accessed_member = dmember;
+                    break;
+                }
             }
-            ImmcOpe* snd_src = new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, member_offset);
+
+            ImmcOpe* snd_src = new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, accessed_member->memory_offset);
             dst = create_dest_reg_immcope(immcgen);
             vector_push(codes, new_inst_immc(IMMC_INST_ADD, dst, src, snd_src));
             update_expr_register(immcgen, dst);
@@ -432,14 +435,17 @@ Vector* gen_tomember_expr_immcode(Immcgen* immcgen) {
         struct_dtype = tagtable_search_struct(immcgen->tag_table, struct_dtype->dstruct->name);
     }
 
+    DMember* accessed_member = NULL;
     int num_members = vector_size(struct_dtype->dstruct->members);
-    int member_offset = 0;
     for (int i = 0; i < num_members; i++) {
         DMember* dmember = vector_at(struct_dtype->dstruct->members, i);
-        if (strcmp(dmember->name, member_srt->ident_name) == 0) break;
-        member_offset += dtype_nbytes(dmember->dtype);
+        if (strcmp(dmember->name, member_srt->ident_name) == 0) {
+            accessed_member = dmember;
+            break;
+        }
     }
-    ImmcOpe* add_snd_src = new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, member_offset);
+
+    ImmcOpe* add_snd_src = new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, accessed_member->memory_offset);
     ImmcOpe* add_dst = create_dest_reg_immcope(immcgen);
     vector_push(codes, new_inst_immc(IMMC_INST_ADD, add_dst, add_fst_src, add_snd_src));
 

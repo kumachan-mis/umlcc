@@ -45,8 +45,8 @@ int put_blank_line(void) {
 }
 
 typedef struct Node {
-    struct Node* next;
     int value;
+    struct Node* next;
 } Node;
 
 Node* new_node(int value) {
