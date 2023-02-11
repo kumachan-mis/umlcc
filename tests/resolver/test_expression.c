@@ -26,8 +26,8 @@ void test_resolve_iliteral_expr_int(void);
 void test_resolve_iliteral_expr_char(void);
 void test_resolve_sliteral_expr(void);
 
-void run_expr_resolver_test(Ast* input, SymbolTable* local_table, SymbolTable* global_table, Srt* expected,
-                            Srt* expected_trans_unit);
+void run_global_expr_resolver_test(Ast* input, SymbolTable* symbol_table, Srt* expected, Srt* expected_trans_unit);
+void run_local_expr_resolver_test(Ast* input, SymbolTable* symbol_table, Srt* expected, Srt* expected_trans_unit);
 
 CU_Suite* add_test_suite_expr_resolver(void) {
     CU_Suite* suite = CU_add_suite("test_suite_expr_resolver", NULL, NULL);
@@ -84,7 +84,7 @@ void test_resolve_assignment_expr(void) {
                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("y"))),
                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)))));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -138,7 +138,7 @@ void test_resolve_logical_or_expr(void) {
             new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("n")))));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -179,7 +179,7 @@ void test_resolve_logical_and_expr(void) {
                     new_dtyped_srt(SRT_ADDR_EXPR, dtype_copy(param_dtype), 1, // non-terminal
                                    new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(arg_dtype), new_string("object"))))));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -201,7 +201,7 @@ void test_resolve_equal_expr(void) {
         new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("y"))));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -224,7 +224,7 @@ void test_resolve_not_equal_expr(void) {
             new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -244,7 +244,7 @@ void test_resolve_add_expr(void) {
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("n"))),
         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3)));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -264,7 +264,7 @@ void test_resolve_subtract_expr(void) {
             new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4))),
         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 6)));
 
-    run_expr_resolver_test(input, NULL, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -284,7 +284,7 @@ void test_resolve_pointer_add_expr(void) {
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("ptr")),
         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -302,7 +302,7 @@ void test_resolve_pointer_subtract_expr(void) {
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("ptr")),
         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4)));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -322,7 +322,7 @@ void test_resolve_pointer_difference_expr(void) {
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("p")),
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("q")));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -340,7 +340,7 @@ void test_resolve_multiply_expr(void) {
         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4)),
         new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("n")));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -360,7 +360,7 @@ void test_resolve_division_expr(void) {
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("amount"))),
         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -385,7 +385,7 @@ void test_resolve_modulo_expr(void) {
             new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 9))),
         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 5)));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -411,7 +411,7 @@ void test_resolve_address_expr(void) {
                                new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("a"))),
                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1)))));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -427,7 +427,7 @@ void test_resolve_indirection_expr(void) {
         SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("ptr")));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -445,7 +445,7 @@ void test_resolve_logical_not_expr(void) {
         new_dtyped_srt(SRT_LNOT_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("flag"))));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -474,7 +474,7 @@ void test_resolve_call_expr(void) {
                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("a"))),
                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3))));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -496,7 +496,7 @@ void test_resolve_subscription_expr(void) {
                            new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("array"))),
             new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -509,7 +509,7 @@ void test_resolve_ident_expr_local(void) {
 
     Srt* expected = new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("local"));
 
-    run_expr_resolver_test(input, local_table, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, local_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -522,7 +522,7 @@ void test_resolve_ident_expr_global(void) {
 
     Srt* expected = new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("global"));
 
-    run_expr_resolver_test(input, NULL, global_table, expected, NULL);
+    run_global_expr_resolver_test(input, global_table, expected, NULL);
 
     delete_srt(expected);
 }
@@ -532,7 +532,7 @@ void test_resolve_iliteral_expr_int(void) {
 
     Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3));
 
-    run_expr_resolver_test(input, NULL, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -542,7 +542,7 @@ void test_resolve_iliteral_expr_char(void) {
 
     Srt* expected = new_iliteral_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 89));
 
-    run_expr_resolver_test(input, NULL, NULL, expected, NULL);
+    run_local_expr_resolver_test(input, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -563,23 +563,18 @@ void test_resolve_sliteral_expr(void) {
                             new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6),
                                              new_sliteral(new_string("Hello"), 6))))));
 
-    run_expr_resolver_test(input, NULL, NULL, expected, expected_trans_unit);
+    run_local_expr_resolver_test(input, NULL, expected, expected_trans_unit);
 
     delete_srt(expected);
     delete_srt(expected_trans_unit);
 }
 
-void run_expr_resolver_test(Ast* input, SymbolTable* local_table, SymbolTable* global_table, Srt* expected,
-                            Srt* expected_trans_unit) {
+void run_global_expr_resolver_test(Ast* input, SymbolTable* symbol_table, Srt* expected, Srt* expected_trans_unit) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
-    if (global_table != NULL) {
+    if (symbol_table != NULL) {
         delete_symboltable(resolver->symbol_table);
-        resolver->symbol_table = global_table;
-    }
-    if (local_table != NULL) {
-        local_table->outer_scope = resolver->symbol_table;
-        resolver->symbol_table = local_table;
+        resolver->symbol_table = symbol_table;
     }
 
     Srt* actual = NULL;
@@ -588,7 +583,27 @@ void run_expr_resolver_test(Ast* input, SymbolTable* local_table, SymbolTable* g
 
     testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
-    if (expected_trans_unit != NULL) { testlib_assert_srt_equal(resolver->trans_unit_srt, expected_trans_unit); }
+    if (expected_trans_unit != NULL) testlib_assert_srt_equal(resolver->trans_unit_srt, expected_trans_unit);
+
+    if (actual != NULL) delete_srt(actual);
+    delete_resolver(resolver);
+}
+
+void run_local_expr_resolver_test(Ast* input, SymbolTable* symbol_table, Srt* expected, Srt* expected_trans_unit) {
+    Resolver* resolver = new_resolver(input);
+    resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
+    if (symbol_table != NULL) {
+        symbol_table->outer_scope = resolver->symbol_table;
+        resolver->symbol_table = symbol_table;
+    }
+
+    Srt* actual = NULL;
+    Vector* errs = NULL;
+    resolverret_assign(&actual, &errs, resolve_expr(resolver));
+
+    testlib_assert_srt_equal(actual, expected);
+    CU_ASSERT_PTR_NULL(errs);
+    if (expected_trans_unit != NULL) testlib_assert_srt_equal(resolver->trans_unit_srt, expected_trans_unit);
 
     if (actual != NULL) delete_srt(actual);
     delete_resolver(resolver);

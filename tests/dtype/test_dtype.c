@@ -1049,7 +1049,10 @@ void test_dtype_nbytes(void) {
     vector_push(unnamed_struct_members, new_dmember(new_string("c"), new_integer_dtype(DTYPE_CHAR)));
     vector_push(unnamed_struct_members, new_dmember(new_string("a"), new_array_dtype(new_integer_dtype(DTYPE_INT), 7)));
     DType* unnamed_struct_dtype = new_unnamed_struct_dtype(unnamed_struct_members);
-    CU_ASSERT_EQUAL(dtype_nbytes(unnamed_struct_dtype), 29);
+    // char c   ->  1 byte
+    // padding  ->  3 bytes
+    // int a[7] -> 28 bytes
+    CU_ASSERT_EQUAL(dtype_nbytes(unnamed_struct_dtype), 32);
     delete_dtype(unnamed_struct_dtype);
 
     DType* func_dtype = new_function_dtype(new_vector(&t_dparam), new_integer_dtype(DTYPE_INT));
