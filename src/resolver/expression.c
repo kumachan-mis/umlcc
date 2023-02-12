@@ -773,6 +773,14 @@ ResolverReturn* resolve_member_like_expr(Resolver* resolver) {
         resolver->expr_dtype = tagtable_search_struct(resolver->tag_table, resolver->expr_dtype->dstruct->name);
     }
 
+    if (resolver->expr_dtype == NULL) {
+        errs = new_vector(&t_error);
+        err = new_error("struct '%s' is incomplete\n", lhs_srt->dtype->dpointer->to_dtype->dstruct->name);
+        vector_push(errs, err);
+        delete_srt(lhs_srt);
+        return new_resolverret_errors(errs);
+    }
+
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&rhs_srt, &errs, resolve_member_name_expr(resolver));
     resolver->ast = ast;
