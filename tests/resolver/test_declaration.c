@@ -8,6 +8,10 @@ void test_resolve_char_decl(void);
 void test_resolve_int_decl(void);
 void test_resolve_pointer_decl(void);
 void test_resolve_array_decl(void);
+void test_resolve_named_struct_decl(void);
+void test_resolve_unnamed_struct_decl(void);
+void test_resolve_nameonly_struct_decl(void);
+void test_resolve_struct_name_decl(void);
 void test_resolve_function_decl(void);
 void test_resolve_parameter_decl(void);
 void test_resolve_typedef_decl(void);
@@ -27,8 +31,10 @@ void test_resolve_list_init_flatten(void);
 void test_resolve_list_init_mix(void);
 void test_resolve_list_init_chararray(void);
 
-void run_local_decl_resolver_test(Ast* input, SymbolTable* local_table, Srt* expected);
-void run_global_decl_resolver_test(Ast* input, SymbolTable* global_table, Srt* expected);
+void run_local_decl_resolver_test(Ast* input, SymbolTable* symbol_table, TagTable* tag_table, Srt* expected,
+                                  Srt* expected_scope);
+void run_global_decl_resolver_test(Ast* input, SymbolTable* symbol_table, TagTable* tag_table, Srt* expected,
+                                   Srt* expected_scope);
 
 CU_Suite* add_test_suite_decl_resolver(void) {
     CU_Suite* suite = CU_add_suite("test_suite_decl_resolver", NULL, NULL);
@@ -36,6 +42,10 @@ CU_Suite* add_test_suite_decl_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_int_decl);
     CU_ADD_TEST(suite, test_resolve_pointer_decl);
     CU_ADD_TEST(suite, test_resolve_array_decl);
+    CU_ADD_TEST(suite, test_resolve_named_struct_decl);
+    CU_ADD_TEST(suite, test_resolve_unnamed_struct_decl);
+    CU_ADD_TEST(suite, test_resolve_nameonly_struct_decl);
+    CU_ADD_TEST(suite, test_resolve_struct_name_decl);
     CU_ADD_TEST(suite, test_resolve_function_decl);
     CU_ADD_TEST(suite, test_resolve_parameter_decl);
     CU_ADD_TEST(suite, test_resolve_typedef_decl);
@@ -70,8 +80,8 @@ void test_resolve_char_decl(void) {
                             new_srt(SRT_INIT_DECL, 1, // non-terminal
                                     new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c"))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -89,8 +99,8 @@ void test_resolve_int_decl(void) {
                             new_srt(SRT_INIT_DECL, 1, // non-terminal
                                     new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("i"))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -118,8 +128,8 @@ void test_resolve_pointer_decl(void) {
                         new_identifier_srt(SRT_DECL, new_pointer_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT))),
                                            new_string("q"))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -158,10 +168,166 @@ void test_resolve_array_decl(void) {
                 new_identifier_srt(SRT_DECL, new_array_dtype(new_array_dtype(new_integer_dtype(DTYPE_INT), 6), 3),
                                    new_string("c"))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
+}
+
+void test_resolve_named_struct_decl(void) {
+    Ast* local_input = new_ast(
+        AST_DECL, 2,                        // non-terminal
+        new_ast(AST_DECL_SPECS, 1,          // non-terminal
+                new_ast(AST_TYPE_STRUCT, 2, // non-terminal
+                        new_identifier_ast(AST_STRUCT_NAME, new_string("Test")),
+                        new_ast(AST_STRUCT_DECL_LIST, 3,               // non-terminal
+                                new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                        new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                new_ast(AST_TYPE_INT, 0)),
+                                        new_ast(AST_STRUCT_DECLOR_LIST, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("x")),
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("y")))),
+                                new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                        new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                new_ast(AST_TYPE_CHAR, 0)),
+                                        new_ast(AST_STRUCT_DECLOR_LIST, 1,   // non-terminal
+                                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("s")),
+                                                        new_iliteral_ast(AST_INT_EXPR,
+                                                                         new_signed_iliteral(INTEGER_INT, 10))))),
+                                new_ast(AST_STRUCT_DECL, 2,                 // non-terminal
+                                        new_ast(AST_SPEC_QUAL_LIST, 1,      // non-terminal
+                                                new_ast(AST_TYPE_STRUCT, 1, // non-terminal
+                                                        new_identifier_ast(AST_STRUCT_NAME, new_string("Test")))),
+                                        new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
+                                                new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("next")))))))),
+        new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("test"))))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Srt* expected =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_pointer_dtype(new_named_struct_dtype(new_string("Test"), 32)),
+                                           new_string("test"))));
+
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dmember(new_string("s"), new_array_dtype(new_integer_dtype(DTYPE_CHAR), 10)));
+    vector_push(members,
+                new_dmember(new_string("next"), new_pointer_dtype(new_named_struct_dtype(new_string("Test"), 0))));
+    DType* struct_dtype = new_unnamed_struct_dtype(members);
+
+    Srt* expected_scope = new_srt(SRT_CMPD_STMT, 1, // non-terminal
+                                  new_identifier_srt(SRT_TAG_DECL, struct_dtype, new_string("Test")));
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, expected_scope);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, expected_scope);
+
+    delete_srt(expected);
+    delete_srt(expected_scope);
+}
+
+void test_resolve_unnamed_struct_decl(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                                                   // non-terminal
+                new_ast(AST_DECL_SPECS, 1,                                     // non-terminal
+                        new_ast(AST_TYPE_STRUCT, 1,                            // non-terminal
+                                new_ast(AST_STRUCT_DECL_LIST, 1,               // non-terminal
+                                        new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                                new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                        new_ast(AST_TYPE_INT, 0)),
+                                                new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("member"))))))),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("test")))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    DType* struct_dtype = new_unnamed_struct_dtype(members);
+
+    Srt* expected = new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                    new_identifier_srt(SRT_DECL, struct_dtype, new_string("test"))));
+
+    Srt* expected_scope = new_srt(SRT_CMPD_STMT, 0);
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, expected_scope);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, expected_scope);
+
+    delete_srt(expected);
+    delete_srt(expected_scope);
+}
+
+void test_resolve_nameonly_struct_decl(void) {
+    Ast* local_input = new_ast(AST_DECL, 2,                        // non-terminal
+                               new_ast(AST_DECL_SPECS, 1,          // non-terminal
+                                       new_ast(AST_TYPE_STRUCT, 1, // non-terminal
+                                               new_identifier_ast(AST_STRUCT_NAME, new_string("Test")))),
+                               new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                       new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                               new_identifier_ast(AST_IDENT_DECLOR, new_string("test")))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+
+    TagTable* local_tag_table = new_tagtable();
+    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+    TagTable* global_tag_table = tagtable_copy(local_tag_table);
+
+    Srt* expected = new_srt(
+        SRT_DECL_LIST, 1,         // non-terminal
+        new_srt(SRT_INIT_DECL, 1, // non-terminal
+                new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Test"), 4), new_string("test"))));
+
+    Srt* expected_scope = new_srt(SRT_CMPD_STMT, 0);
+
+    run_local_decl_resolver_test(local_input, NULL, local_tag_table, expected, expected_scope);
+    run_global_decl_resolver_test(global_input, NULL, global_tag_table, expected, expected_scope);
+
+    delete_srt(expected);
+    delete_srt(expected_scope);
+}
+
+void test_resolve_struct_name_decl(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 1,                        // non-terminal
+                new_ast(AST_DECL_SPECS, 1,          // non-terminal
+                        new_ast(AST_TYPE_STRUCT, 2, // non-terminal
+                                new_identifier_ast(AST_STRUCT_NAME, new_string("Test")),
+                                new_ast(AST_STRUCT_DECL_LIST, 1,               // non-terminal
+                                        new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                                new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                        new_ast(AST_TYPE_INT, 0)),
+                                                new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))))))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Srt* expected = new_srt(SRT_DECL_LIST, 0);
+
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    DType* struct_dtype = new_unnamed_struct_dtype(members);
+
+    Srt* expected_scope = new_srt(SRT_CMPD_STMT, 1, // non-terminal
+                                  new_identifier_srt(SRT_TAG_DECL, struct_dtype, new_string("Test")));
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, expected_scope);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, expected_scope);
+
+    delete_srt(expected);
+    delete_srt(expected_scope);
 }
 
 void test_resolve_function_decl(void) {
@@ -217,8 +383,8 @@ void test_resolve_function_decl(void) {
                             new_srt(SRT_INIT_DECL, 1, // non-terminal
                                     new_identifier_srt(SRT_DECL, hdtype, new_string("h"))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -271,8 +437,8 @@ void test_resolve_parameter_decl(void) {
                             new_srt(SRT_INIT_DECL, 1, // non-terminal
                                     new_identifier_srt(SRT_DECL, func_dtype, new_string("func"))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -298,8 +464,8 @@ void test_resolve_typedef_decl(void) {
         new_srt(SRT_INIT_DECL, 1, // non-terminal
                 new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("x"))));
 
-    run_local_decl_resolver_test(local_input, local_table, expected);
-    run_global_decl_resolver_test(global_input, global_table, expected);
+    run_local_decl_resolver_test(local_input, local_table, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, global_table, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -335,8 +501,8 @@ void test_resolve_scalar_init(void) {
                                        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                         new_signed_iliteral(INTEGER_INT, 2))))));
 
-    run_local_decl_resolver_test(local_input, local_table, expected);
-    run_global_decl_resolver_test(global_input, global_table, expected);
+    run_local_decl_resolver_test(local_input, local_table, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, global_table, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -360,8 +526,8 @@ void test_resolve_scalar_init_enclosed(void) {
                                             new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                              new_signed_iliteral(INTEGER_INT, 9)))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -395,8 +561,8 @@ void test_resolve_sliteral_init(void) {
                         new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
                                          sliteral_copy(sliteral)))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -431,8 +597,8 @@ void test_resolve_sliteral_init_border(void) {
                         new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), array_size),
                                          zero_padding_sliteral))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -467,8 +633,8 @@ void test_resolve_sliteral_init_lacked(void) {
                         new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), array_size),
                                          zero_padding_sliteral))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -503,8 +669,8 @@ void test_resolve_sliteral_init_enclosed(void) {
                         new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size),
                                          sliteral_copy(sliteral)))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -535,8 +701,8 @@ void test_resolve_list_init_zero(void) {
                                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                  new_signed_iliteral(INTEGER_INT, 0))))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -584,8 +750,8 @@ void test_resolve_list_init_zero_nested(void) {
                                         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                          new_signed_iliteral(INTEGER_INT, 0)))))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -621,8 +787,8 @@ void test_resolve_list_init(void) {
                                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                  new_signed_iliteral(INTEGER_INT, 4))))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -656,8 +822,8 @@ void test_resolve_list_init_lacked(void) {
                                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                  new_signed_iliteral(INTEGER_INT, 0))))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -712,8 +878,8 @@ void test_resolve_list_init_nested(void) {
                                         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                          new_signed_iliteral(INTEGER_INT, 6)))))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -764,8 +930,8 @@ void test_resolve_list_init_nested_lacked(void) {
                                         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                          new_signed_iliteral(INTEGER_INT, 0)))))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -814,8 +980,8 @@ void test_resolve_list_init_flatten(void) {
                                         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                          new_signed_iliteral(INTEGER_INT, 0)))))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -869,8 +1035,8 @@ void test_resolve_list_init_mix(void) {
                                         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                          new_signed_iliteral(INTEGER_INT, 0)))))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
@@ -907,21 +1073,29 @@ void test_resolve_list_init_chararray(void) {
                                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                                 new_signed_iliteral(INTEGER_INT, 0)))))));
 
-    run_local_decl_resolver_test(local_input, NULL, expected);
-    run_global_decl_resolver_test(global_input, NULL, expected);
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
 
-void run_local_decl_resolver_test(Ast* input, SymbolTable* local_table, Srt* expected) {
+void run_local_decl_resolver_test(Ast* input, SymbolTable* symbol_table, TagTable* tag_table, Srt* expected,
+                                  Srt* expected_scope) {
     Resolver* resolver = new_resolver(input);
-    if (local_table != NULL) {
-        local_table->outer_scope = resolver->symbol_table;
-        resolver->symbol_table = local_table;
+    if (symbol_table != NULL) {
+        symbol_table->outer_scope = resolver->symbol_table;
+        resolver->symbol_table = symbol_table;
     } else {
         resolver->symbol_table = symboltable_enter_scope(resolver->symbol_table);
     }
-    resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
+    if (tag_table != NULL) {
+        tag_table->outer_scope = resolver->tag_table;
+        resolver->tag_table = tag_table;
+    } else {
+        resolver->tag_table = tagtable_enter_scope(resolver->tag_table);
+    }
+    resolver->scope_srt = new_srt(SRT_CMPD_STMT, 0);
+    resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 1, resolver->scope_srt);
 
     Srt* actual = NULL;
     Vector* errs = NULL;
@@ -929,18 +1103,26 @@ void run_local_decl_resolver_test(Ast* input, SymbolTable* local_table, Srt* exp
 
     testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
+    if (expected_scope != NULL) testlib_assert_srt_equal(resolver->scope_srt, expected_scope);
 
+    resolver->scope_srt = NULL;
     if (actual != NULL) delete_srt(actual);
     delete_resolver(resolver);
 }
 
-void run_global_decl_resolver_test(Ast* input, SymbolTable* global_table, Srt* expected) {
+void run_global_decl_resolver_test(Ast* input, SymbolTable* symbol_table, TagTable* tag_table, Srt* expected,
+                                   Srt* expected_scope) {
     Resolver* resolver = new_resolver(input);
-    if (global_table != NULL) {
+    if (symbol_table != NULL) {
         delete_symboltable(resolver->symbol_table);
-        resolver->symbol_table = global_table;
+        resolver->symbol_table = symbol_table;
     }
-    resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
+    if (tag_table != NULL) {
+        delete_tagtable(resolver->tag_table);
+        resolver->tag_table = tag_table;
+    }
+    resolver->scope_srt = new_srt(SRT_CMPD_STMT, 0);
+    resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 1, resolver->scope_srt);
 
     Srt* actual = NULL;
     Vector* errs = NULL;
@@ -948,7 +1130,9 @@ void run_global_decl_resolver_test(Ast* input, SymbolTable* global_table, Srt* e
 
     testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
+    if (expected_scope != NULL) testlib_assert_srt_equal(resolver->scope_srt, expected_scope);
 
+    resolver->scope_srt = NULL;
     if (actual != NULL) delete_srt(actual);
     delete_resolver(resolver);
 }
