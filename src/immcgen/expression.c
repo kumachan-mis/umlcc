@@ -446,7 +446,8 @@ Vector* gen_tomember_expr_immcode(Immcgen* immcgen) {
     }
 
     ImmcOpe* add_snd_src = new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, accessed_member->memory_offset);
-    ImmcOpe* add_dst = create_dest_reg_immcope(immcgen);
+    immcgen->next_reg_id++;
+    ImmcOpe* add_dst = new_reg_immcope(IMMC_SUFFIX_QUAD, immcgen->next_reg_id);
     vector_push(codes, new_inst_immc(IMMC_INST_ADD, add_dst, add_fst_src, add_snd_src));
 
     ImmcOpe* src = new_ptr_immcope(add_dst->reg_id);
