@@ -306,6 +306,7 @@ ResolverReturnDMember* resolve_struct_declarator(Resolver* resolver) {
         errs = new_vector(&t_error);
         err = new_error("struct member should not have incomplete or function type\n");
         vector_push(errs, err);
+        delete_srt(srt);
         return new_resolverret_dmember_errors(errs);
     }
 
