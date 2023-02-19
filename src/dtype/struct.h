@@ -9,7 +9,7 @@ typedef struct DType DType;
 
 DType* dtype_copy(DType* dtype);
 int dtype_equals(DType* dtype, DType* other);
-int dtype_top_nbytes(DType* dtype);
+int dtype_alignment(DType* dtype);
 int dtype_nbytes(DType* dtype);
 void delete_dtype(DType* dtype);
 #endif
@@ -21,6 +21,7 @@ struct DStruct {
     char* name;
     Vector* members;
     int nbytes;
+    int alignment;
 };
 
 struct DMember {
@@ -30,7 +31,7 @@ struct DMember {
 };
 
 #ifdef UMLCC_DTYPE_H_PRIVATE
-DStruct* new_named_dstruct(char* name, int nbytes);
+DStruct* new_named_dstruct(char* name, int nbytes, int alignment);
 DStruct* new_unnamed_dstruct(Vector* members);
 DStruct* dstruct_copy(DStruct* dstruct);
 DType* dstruct_at(DStruct* dstruct, int index);

@@ -290,6 +290,7 @@ void testlib_assert_dstruct_equal(DStruct* actual, DStruct* expected) {
     testlib_assert_string_equal(actual->name, expected->name);
     testlib_assert_dmembers_equal(actual->members, expected->members);
     CU_ASSERT_EQUAL(actual->nbytes, expected->nbytes);
+    CU_ASSERT_EQUAL(actual->alignment, expected->alignment);
 }
 
 void testlib_assert_dmembers_equal(Vector* actual, Vector* expected) {

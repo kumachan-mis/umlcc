@@ -13,11 +13,12 @@ BaseType t_dmember = {
     .delete_object = (void (*)(void*))delete_dmember,
 };
 
-DStruct* new_named_dstruct(char* name, int nbytes) {
+DStruct* new_named_dstruct(char* name, int nbytes, int alignment) {
     DStruct* dstruct = malloc(sizeof(DStruct));
     dstruct->name = name;
     dstruct->members = NULL;
     dstruct->nbytes = nbytes;
+    dstruct->alignment = alignment;
     return dstruct;
 }
 
@@ -26,16 +27,22 @@ DStruct* new_unnamed_dstruct(Vector* members) {
     dstruct->name = NULL;
     dstruct->members = members;
     dstruct->nbytes = 0;
+    dstruct->alignment = 0;
 
     int num_members = vector_size(members);
     for (int i = 0; i < num_members; i++) {
         DMember* member = vector_at(members, i);
-        int member_top_nbytes = dtype_top_nbytes(member->dtype);
-        member->memory_offset = (dstruct->nbytes + member_top_nbytes - 1) / member_top_nbytes * member_top_nbytes;
+        int alignment = dtype_alignment(member->dtype);
+
+        member->memory_offset = (dstruct->nbytes + alignment - 1) / alignment * alignment;
         dstruct->nbytes = member->memory_offset;
         dstruct->nbytes += dtype_nbytes(member->dtype);
+
+        if (alignment > dstruct->alignment) dstruct->alignment = alignment;
     }
 
+    int nbytes = dstruct->nbytes, alignment = dstruct->alignment;
+    dstruct->nbytes = (nbytes + alignment - 1) / alignment * alignment;
     return dstruct;
 }
 
@@ -46,6 +53,7 @@ DStruct* dstruct_copy(DStruct* dstruct) {
     copied_dstruct->members = NULL;
     if (dstruct->members != NULL) copied_dstruct->members = vector_copy(dstruct->members);
     copied_dstruct->nbytes = dstruct->nbytes;
+    copied_dstruct->alignment = dstruct->alignment;
     return copied_dstruct;
 }
 

@@ -963,7 +963,7 @@ void test_resolve_member_expr_error_non_struct(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
     Vector* members = new_vector(&t_dmember);
     vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
@@ -985,7 +985,7 @@ void test_resolve_member_expr_error_incomplete_struct(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 0);
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 0, 0);
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("test"), named_struct);
@@ -1004,7 +1004,7 @@ void test_resolve_member_expr_error_unknown_member(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("unknown")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
     Vector* members = new_vector(&t_dmember);
     vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
@@ -1026,7 +1026,7 @@ void test_resolve_tomember_expr_error_non_pointer_to_struct(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
     Vector* members = new_vector(&t_dmember);
     vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
@@ -1048,7 +1048,7 @@ void test_resolve_tomember_expr_error_incomplete_struct(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 0);
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 0, 0);
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("test"), new_pointer_dtype(named_struct));
@@ -1067,7 +1067,7 @@ void test_resolve_tomember_expr_error_unknown_member(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("unknown")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
     Vector* members = new_vector(&t_dmember);
     vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 

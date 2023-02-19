@@ -559,7 +559,7 @@ void test_resolve_member_expr(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
     Vector* members = new_vector(&t_dmember);
     vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
@@ -584,7 +584,7 @@ void test_resolve_tomember_expr(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
     Vector* members = new_vector(&t_dmember);
     vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 

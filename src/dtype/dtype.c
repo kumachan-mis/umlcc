@@ -44,12 +44,12 @@ DType* new_array_dtype(DType* of_dtype, int size) {
     return dtype;
 }
 
-DType* new_named_struct_dtype(char* name, int nbytes) {
+DType* new_named_struct_dtype(char* name, int nbytes, int alignment) {
     DType* dtype = malloc(sizeof(DType));
     dtype->type = DTYPE_STRUCT;
     dtype->dpointer = NULL;
     dtype->darray = NULL;
-    dtype->dstruct = new_named_dstruct(name, nbytes);
+    dtype->dstruct = new_named_dstruct(name, nbytes, alignment);
     dtype->dfunction = NULL;
     dtype->ddecoration = NULL;
     return dtype;
@@ -287,7 +287,7 @@ int dtype_isincomplete(DType* dtype) {
     return dtype->type == DTYPE_STRUCT && dtype->dstruct->nbytes <= 0;
 }
 
-int dtype_top_nbytes(DType* dtype) {
+int dtype_alignment(DType* dtype) {
     switch (dtype->type) {
         case DTYPE_CHAR:
             return 1;
@@ -296,11 +296,9 @@ int dtype_top_nbytes(DType* dtype) {
         case DTYPE_POINTER:
             return 8;
         case DTYPE_ARRAY:
-            return dtype_top_nbytes(dtype->darray->of_dtype);
-        case DTYPE_STRUCT: {
-            DMember* member = vector_at(dtype->dstruct->members, 0);
-            return dtype_top_nbytes(member->dtype);
-        }
+            return dtype_alignment(dtype->darray->of_dtype);
+        case DTYPE_STRUCT:
+            return dtype->dstruct->alignment;
         default:
             return 0;
     }

@@ -149,8 +149,12 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
 
     if (members == NULL) {
         DType* unnamed_dtype = tagtable_search_struct(resolver->tag_table, struct_name);
-        int nbytes = unnamed_dtype != NULL ? unnamed_dtype->dstruct->nbytes : 0;
-        dtype = new_named_struct_dtype(struct_name, nbytes);
+        int nbytes = 0, alignment = 0;
+        if (unnamed_dtype != NULL) {
+            nbytes = unnamed_dtype->dstruct->nbytes;
+            alignment = unnamed_dtype->dstruct->alignment;
+        }
+        dtype = new_named_struct_dtype(struct_name, nbytes, alignment);
         return new_resolverret_dtype(dtype);
     }
 
@@ -169,7 +173,7 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
     Srt* tag_decl_srt = new_identifier_srt(SRT_TAG_DECL, dtype_copy(unnamed_dtype), new_string(struct_name));
     vector_push(resolver->scope_srt->children, tag_decl_srt);
 
-    dtype = new_named_struct_dtype(struct_name, unnamed_dtype->dstruct->nbytes);
+    dtype = new_named_struct_dtype(struct_name, unnamed_dtype->dstruct->nbytes, unnamed_dtype->dstruct->alignment);
     return new_resolverret_dtype(dtype);
 }
 
@@ -796,7 +800,7 @@ ResolverReturn* resolve_aggregate_initializer(Resolver* resolver) {
         vector_push(srt->children, child_srt);
     }
 
-    for (int i = aggregate_index; i < aggregate_size; i++) {
+    while (aggregate_index < aggregate_size) {
         Srt* child_srt = NULL;
         Vector* child_errs = NULL;
 
@@ -805,6 +809,9 @@ ResolverReturn* resolve_aggregate_initializer(Resolver* resolver) {
 
         // resolve_zero_initializer does not return an error
         resolverret_assign(&child_srt, &child_errs, resolve_zero_initializer(resolver));
+
+        aggregate_index++;
+
         vector_push(srt->children, child_srt);
     }
 

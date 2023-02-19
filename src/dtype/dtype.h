@@ -36,7 +36,7 @@ extern BaseType t_dtype;
 DType* new_integer_dtype(DTypeType type);
 DType* new_pointer_dtype(DType* to_dtype);
 DType* new_array_dtype(DType* of_dtype, int size);
-DType* new_named_struct_dtype(char* name, int nbytes);
+DType* new_named_struct_dtype(char* name, int nbytes, int alignment);
 DType* new_unnamed_struct_dtype(Vector* members);
 DType* new_function_dtype(Vector* params, DType* return_dtype);
 DType* new_decoration_dtype(DType* deco_dtype);
@@ -57,7 +57,7 @@ int dtype_isscalar(DType* dtype);
 int dtype_isaggregate(DType* dtype);
 int dtype_isobject(DType* dtype);
 int dtype_isincomplete(DType* dtype);
-int dtype_top_nbytes(DType* dtype);
+int dtype_alignment(DType* dtype);
 int dtype_nbytes(DType* dtype);
 void delete_dtype(DType* dtype);
 
