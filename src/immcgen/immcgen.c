@@ -11,6 +11,7 @@ Immcgen* new_immcgen(Srt* srt) {
     Immcgen* immcgen = malloc(sizeof(Immcgen));
     immcgen->srt = srt;
     immcgen->symbol_table = new_symboltable();
+    immcgen->tag_table = new_tagtable();
     immcgen->expr_reg_suffix = IMMC_SUFFIX_NONE;
     immcgen->expr_reg_id = -1;
     immcgen->next_reg_id = -1;
@@ -35,6 +36,9 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
         case SRT_DECL_LIST:
             codes = gen_decl_list_immcode(immcgen);
             break;
+        case SRT_TAG_DECL:
+            codes = gen_tag_decl_immcode(immcgen);
+            break;
         case SRT_INIT_DECL:
             codes = gen_init_decl_immcode(immcgen);
             break;
@@ -46,7 +50,9 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
             break;
         case SRT_CMPD_STMT:
             immcgen->symbol_table = symboltable_enter_scope(immcgen->symbol_table);
+            immcgen->tag_table = tagtable_enter_scope(immcgen->tag_table);
             codes = gen_compound_stmt_immcode(immcgen);
+            immcgen->tag_table = tagtable_exit_scope(immcgen->tag_table);
             immcgen->symbol_table = symboltable_exit_scope(immcgen->symbol_table);
             break;
         case SRT_RET_STMT:
@@ -88,6 +94,7 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
             codes = gen_unary_expr_immcode(immcgen);
             break;
         case SRT_CALL_EXPR:
+        case SRT_TOMEMBER_EXPR:
             codes = gen_postfix_expr_immcode(immcgen);
             break;
         case SRT_IDENT_EXPR:
@@ -107,6 +114,7 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
 void delete_immcgen(Immcgen* immcgen) {
     delete_srt(immcgen->srt);
     delete_symboltable(immcgen->symbol_table);
+    delete_tagtable(immcgen->tag_table);
     if (immcgen->initialized_dtype != NULL) delete_dtype(immcgen->initialized_dtype);
     free(immcgen);
 }

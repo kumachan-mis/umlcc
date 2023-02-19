@@ -20,6 +20,8 @@ void test_parse_call_expr_error_arg_expr(void);
 void test_parse_call_expr_error_arg_list(void);
 void test_parse_subscription_expr_error_index(void);
 void test_parse_subscription_expr_error_bracket(void);
+void test_parse_member_expr_error(void);
+void test_parse_tomember_expr_error(void);
 void test_parse_parenthesized_expr_error_child(void);
 void test_parse_parenthesized_expr_error_paren(void);
 
@@ -44,6 +46,8 @@ CU_Suite* add_test_suite_expr_parser_error(void) {
     CU_ADD_TEST(suite, test_parse_call_expr_error_arg_list);
     CU_ADD_TEST(suite, test_parse_subscription_expr_error_index);
     CU_ADD_TEST(suite, test_parse_subscription_expr_error_bracket);
+    CU_ADD_TEST(suite, test_parse_member_expr_error);
+    CU_ADD_TEST(suite, test_parse_tomember_expr_error);
     CU_ADD_TEST(suite, test_parse_parenthesized_expr_error_child);
     CU_ADD_TEST(suite, test_parse_parenthesized_expr_error_paren);
     return suite;
@@ -253,7 +257,7 @@ void test_parse_call_expr_error_arg_list(void) {
     vector_push(input, new_ctoken(CTOKEN_EXCLAM));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token , expected, but got !\n");
+    Error* expected = new_error("token ) expected, but got !\n");
 
     run_expr_parser_error_test(input, expected);
 
@@ -284,6 +288,34 @@ void test_parse_subscription_expr_error_bracket(void) {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("token ] expected, but got }\n");
+
+    run_expr_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_member_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_DOT));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token identifier expected, but got integer-constant\n");
+
+    run_expr_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_tomember_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_ARROW));
+    vector_push(input, new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(new_string("y"), 2)));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token identifier expected, but got string-literal\n");
 
     run_expr_parser_error_test(input, expected);
 

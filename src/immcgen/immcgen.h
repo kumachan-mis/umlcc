@@ -4,11 +4,13 @@
 #include "../immc/immc.h"
 #include "../srt/srt.h"
 #include "../symtab/symtab.h"
+#include "../tagtab/tagtab.h"
 #include "../vector/vector.h"
 
 typedef struct Immcgen {
     Srt* srt;
     SymbolTable* symbol_table;
+    TagTable* tag_table;
     ImmcSuffix expr_reg_suffix;
     int expr_reg_id;
     int next_reg_id;

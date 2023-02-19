@@ -3,19 +3,22 @@
 
 #include "../ast/ast.h"
 #include "../symtab/symtab.h"
+#include "../tagtab/tagtab.h"
 #include "./resolverret.h"
 
 typedef struct Resolver {
     Ast* ast;
     Srt* trans_unit_srt;
+    Srt* scope_srt;
     SymbolTable* symbol_table;
+    TagTable* tag_table;
     DType* return_dtype;
     DType* specifier_dtype;
     DType* initialized_dtype;
     int initialized_offset;
     int is_nested_initializing;
     int sliteral_id;
-    DType* call_dtype;
+    DType* expr_dtype;
 } Resolver;
 
 Resolver* new_resolver(Ast* ast);

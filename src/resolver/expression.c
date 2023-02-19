@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 ResolverReturn* resolve_expr(Resolver* resolver) {
     Srt* srt = NULL;
@@ -38,6 +39,8 @@ ResolverReturn* resolve_expr(Resolver* resolver) {
             break;
         case AST_SUBSC_EXPR:
         case AST_CALL_EXPR:
+        case AST_MEMBER_EXPR:
+        case AST_TOMEMBER_EXPR:
             resolverret_assign(&srt, &errs, resolve_postfix_expr(resolver));
             break;
         case AST_IDENT_EXPR:
@@ -546,7 +549,6 @@ ResolverReturn* resolve_indirection_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-
     if (errs != NULL) return new_resolverret_errors(errs);
 
     child_srt = convert_to_ptr_if_array(child_srt);
@@ -576,7 +578,6 @@ ResolverReturn* resolve_logical_not_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-
     if (errs != NULL) return new_resolverret_errors(errs);
 
     child_srt = convert_to_ptr_if_array(child_srt);
@@ -598,6 +599,8 @@ ResolverReturn* resolve_logical_not_expr(Resolver* resolver) {
 ResolverReturn* resolve_postfix_expr(Resolver* resolver) {
     ResolverReturn* resolve_subscription_expr(Resolver * resolver);
     ResolverReturn* resolve_call_expr(Resolver * resolver);
+    ResolverReturn* resolve_member_like_expr(Resolver * resolver);
+    ResolverReturn* resolve_tomember_expr(Resolver * resolver);
 
     Srt* srt = NULL;
     Vector* errs = NULL;
@@ -609,6 +612,10 @@ ResolverReturn* resolve_postfix_expr(Resolver* resolver) {
             break;
         case AST_CALL_EXPR:
             resolverret_assign(&srt, &errs, resolve_call_expr(resolver));
+            break;
+        case AST_MEMBER_EXPR:
+        case AST_TOMEMBER_EXPR:
+            resolverret_assign(&srt, &errs, resolve_member_like_expr(resolver));
             break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
@@ -685,12 +692,12 @@ ResolverReturn* resolve_call_expr(Resolver* resolver) {
     Srt* lhs_srt = NULL;
     Srt* rhs_srt = NULL;
     Vector* errs = NULL;
+    Error* err = NULL;
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-
     if (errs != NULL) return new_resolverret_errors(errs);
 
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
@@ -698,28 +705,95 @@ ResolverReturn* resolve_call_expr(Resolver* resolver) {
 
     if (lhs_srt->dtype->type != DTYPE_POINTER || lhs_srt->dtype->dpointer->to_dtype->type != DTYPE_FUNCTION) {
         errs = new_vector(&t_error);
-        Error* err = new_error("called object is not a function or a function pointer\n");
+        err = new_error("called object is not a function or a function pointer\n");
         vector_push(errs, err);
         delete_srt(lhs_srt);
         return new_resolverret_errors(errs);
     }
 
-    DType* original_call_dtype = resolver->call_dtype;
-    resolver->call_dtype = lhs_srt->dtype->dpointer->to_dtype;
+    DType* original_call_dtype = resolver->expr_dtype;
+    resolver->expr_dtype = lhs_srt->dtype->dpointer->to_dtype;
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&rhs_srt, &errs, resolve_argument_expr_list(resolver));
     resolver->ast = ast;
-
     if (errs != NULL) {
-        resolver->call_dtype = original_call_dtype;
+        resolver->expr_dtype = original_call_dtype;
         delete_srt(lhs_srt);
         return new_resolverret_errors(errs);
     }
 
-    dtype = dtype_copy(resolver->call_dtype->dfunction->return_dtype);
+    dtype = dtype_copy(resolver->expr_dtype->dfunction->return_dtype);
     srt = new_dtyped_srt(SRT_CALL_EXPR, dtype, 2, lhs_srt, rhs_srt);
 
-    resolver->call_dtype = original_call_dtype;
+    resolver->expr_dtype = original_call_dtype;
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_member_like_expr(Resolver* resolver) {
+    ResolverReturn* resolve_member_name_expr(Resolver * resolver);
+
+    Srt* srt = NULL;
+    DType* dtype = NULL;
+    Srt* lhs_srt = NULL;
+    Srt* rhs_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) return new_resolverret_errors(errs);
+
+    if (ast->type == AST_MEMBER_EXPR && lhs_srt->dtype->type != DTYPE_STRUCT) {
+        errs = new_vector(&t_error);
+        err = new_error("dot-accessed object is not a struct\n");
+        vector_push(errs, err);
+        delete_srt(lhs_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    if (ast->type == AST_TOMEMBER_EXPR &&
+        (lhs_srt->dtype->type != DTYPE_POINTER || lhs_srt->dtype->dpointer->to_dtype->type != DTYPE_STRUCT)) {
+        errs = new_vector(&t_error);
+        err = new_error("arrow-accessed object is not a pointer to a struct\n");
+        vector_push(errs, err);
+        delete_srt(lhs_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    if (lhs_srt->dtype->type == DTYPE_STRUCT) {
+        DType* lhs_dtype = new_pointer_dtype(dtype_copy(lhs_srt->dtype));
+        lhs_srt = new_dtyped_srt(SRT_ADDR_EXPR, lhs_dtype, 1, lhs_srt);
+    }
+
+    DType* original_member_dtype = resolver->expr_dtype;
+    resolver->expr_dtype = lhs_srt->dtype->dpointer->to_dtype;
+    if (resolver->expr_dtype->dstruct->members == NULL) {
+        resolver->expr_dtype = tagtable_search_struct(resolver->tag_table, resolver->expr_dtype->dstruct->name);
+    }
+
+    if (resolver->expr_dtype == NULL) {
+        errs = new_vector(&t_error);
+        err = new_error("struct '%s' is incomplete\n", lhs_srt->dtype->dpointer->to_dtype->dstruct->name);
+        vector_push(errs, err);
+        delete_srt(lhs_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_assign(&rhs_srt, &errs, resolve_member_name_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        resolver->expr_dtype = original_member_dtype;
+        delete_srt(lhs_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    dtype = dtype_copy(rhs_srt->dtype);
+    srt = new_dtyped_srt(SRT_TOMEMBER_EXPR, dtype, 2, lhs_srt, rhs_srt);
+
+    resolver->expr_dtype = original_member_dtype;
     return new_resolverret(srt);
 }
 
@@ -728,7 +802,7 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
     Vector* errs = NULL;
     Error* err = NULL;
     Ast* ast = resolver->ast;
-    DType* call_dtype = resolver->call_dtype;
+    DType* call_dtype = resolver->expr_dtype;
 
     int num_params = vector_size(call_dtype->dfunction->params);
     int num_args = vector_size(ast->children);
@@ -781,6 +855,32 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
         delete_srt(srt);
         return new_resolverret_errors(errs);
     }
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_member_name_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+    DType* member_dtype = resolver->expr_dtype;
+
+    int num_members = vector_size(member_dtype->dstruct->members);
+    for (int i = 0; i < num_members; i++) {
+        DMember* member = vector_at(member_dtype->dstruct->members, i);
+        if (strcmp(member->name, ast->ident_name) != 0) continue;
+
+        srt = new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(member->dtype), new_string(member->name));
+        break;
+    }
+
+    if (srt == NULL) {
+        errs = new_vector(&t_error);
+        err = new_error("member '%s' does not exist in struct\n", ast->ident_name);
+        vector_push(errs, err);
+        return new_resolverret_errors(errs);
+    }
+
     return new_resolverret(srt);
 }
 

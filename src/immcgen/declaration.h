@@ -4,6 +4,7 @@
 #include "./immcgen.h"
 
 Vector* gen_decl_list_immcode(Immcgen* immcgen);
+Vector* gen_tag_decl_immcode(Immcgen* immcgen);
 Vector* gen_init_decl_immcode(Immcgen* immcgen);
 Vector* gen_decl_immcode(Immcgen* immcgen);
 Vector* gen_initializer_immcode(Immcgen* immcgen);

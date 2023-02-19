@@ -243,6 +243,7 @@ void testlib_assert_x64ope_equal(X64Ope* actual, X64Ope* expected) {
 void testlib_assert_dtype_equal(DType* actual, DType* expected) {
     void testlib_assert_dpointer_equal(DPointer * actual, DPointer * expected);
     void testlib_assert_darray_equal(DArray * actual, DArray * expected);
+    void testlib_assert_dstruct_equal(DStruct * actual, DStruct * expected);
     void testlib_assert_dfunction_equal(DFunction * actual, DFunction * expected);
     void testlib_assert_ddecoration_equal(DDecoration * actual, DDecoration * expected);
 
@@ -254,6 +255,7 @@ void testlib_assert_dtype_equal(DType* actual, DType* expected) {
     CU_ASSERT_EQUAL(actual->type, expected->type);
     testlib_assert_dpointer_equal(actual->dpointer, expected->dpointer);
     testlib_assert_darray_equal(actual->darray, expected->darray);
+    testlib_assert_dstruct_equal(actual->dstruct, expected->dstruct);
     testlib_assert_dfunction_equal(actual->dfunction, expected->dfunction);
     testlib_assert_ddecoration_equal(actual->ddecoration, expected->ddecoration);
 }
@@ -275,6 +277,49 @@ void testlib_assert_darray_equal(DArray* actual, DArray* expected) {
 
     CU_ASSERT_EQUAL(actual->size, expected->size);
     testlib_assert_dtype_equal(actual->of_dtype, expected->of_dtype);
+}
+
+void testlib_assert_dstruct_equal(DStruct* actual, DStruct* expected) {
+    void testlib_assert_dmembers_equal(Vector * actual, Vector * expected);
+
+    if (actual == NULL || expected == NULL) {
+        CU_ASSERT_TRUE(actual == NULL && expected == NULL);
+        return;
+    }
+
+    testlib_assert_string_equal(actual->name, expected->name);
+    testlib_assert_dmembers_equal(actual->members, expected->members);
+    CU_ASSERT_EQUAL(actual->nbytes, expected->nbytes);
+    CU_ASSERT_EQUAL(actual->alignment, expected->alignment);
+}
+
+void testlib_assert_dmembers_equal(Vector* actual, Vector* expected) {
+    void testlib_assert_dmember_equal(DMember * actual, DMember * expected);
+
+    if (actual == NULL || expected == NULL) {
+        CU_ASSERT_TRUE(actual == NULL && expected == NULL);
+        return;
+    }
+
+    CU_ASSERT_EQUAL(vector_size(actual), vector_size(expected));
+    if (vector_size(actual) != vector_size(expected)) return;
+
+    int num_members = vector_size(expected);
+    for (int i = 0; i < num_members; i++) {
+        DMember* actual_member = vector_at(actual, i);
+        DMember* expected_member = vector_at(expected, i);
+        testlib_assert_dmember_equal(actual_member, expected_member);
+    }
+}
+
+void testlib_assert_dmember_equal(DMember* actual, DMember* expected) {
+    if (actual == NULL || expected == NULL) {
+        CU_ASSERT_TRUE(actual == NULL && expected == NULL);
+        return;
+    }
+
+    testlib_assert_string_equal(actual->name, expected->name);
+    testlib_assert_dtype_equal(actual->dtype, expected->dtype);
 }
 
 void testlib_assert_dfunction_equal(DFunction* actual, DFunction* expected) {

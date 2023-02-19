@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 char put_char(char c) {
     printf("%c\n", c);
@@ -40,5 +41,23 @@ int put_str(char* x) {
 
 int put_blank_line(void) {
     printf("\n");
+    return 0;
+}
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+Node* new_node(int value) {
+    Node* node = malloc(sizeof(Node));
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+int delete_node(Node* node) {
+    if (node->next != NULL) delete_node(node->next);
+    free(node);
     return 0;
 }

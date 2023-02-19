@@ -22,6 +22,8 @@ DArray* new_socket_darray(int size);
 DArray* darray_copy(DArray* darray);
 DType* darray_next(DArray* darray);
 DArray* darray_connect(DArray* socket, DType* plug);
+DType* darray_at(DArray* darray, int index);
+int darray_size(DArray* darray);
 int darray_equals(DArray* darray, DArray* other);
 void delete_darray(DArray* darray);
 #endif

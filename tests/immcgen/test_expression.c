@@ -18,15 +18,18 @@ void test_immcgen_modulo_expr(void);
 void test_immcgen_address_expr_local(void);
 void test_immcgen_address_expr_global(void);
 void test_immcgen_address_expr_indir(void);
+void test_immcgen_address_expr_tomember(void);
 void test_immcgen_indirection_expr(void);
 void test_immcgen_logical_not_expr(void);
 void test_immcgen_call_expr(void);
+void test_immcgen_tomember_expr(void);
 void test_immcgen_ident_expr_local(void);
 void test_immcgen_ident_expr_global(void);
 void test_immcgen_iliteral_expr_int(void);
 void test_immcgen_iliteral_expr_char(void);
 
-void run_expr_immcgen_test(Srt* input, SymbolTable* local_table, SymbolTable* global_table, Vector* expected);
+void run_global_expr_immcgen_test(Srt* input, SymbolTable* symbol_table, TagTable* tag_table, Vector* expected);
+void run_local_expr_immcgen_test(Srt* input, SymbolTable* symbol_table, TagTable* tag_table, Vector* expected);
 
 CU_Suite* add_test_suite_expr_immcgen(void) {
     CU_Suite* suite = CU_add_suite("test_suite_expr_immcgen", NULL, NULL);
@@ -46,9 +49,11 @@ CU_Suite* add_test_suite_expr_immcgen(void) {
     CU_ADD_TEST(suite, test_immcgen_address_expr_local);
     CU_ADD_TEST(suite, test_immcgen_address_expr_global);
     CU_ADD_TEST(suite, test_immcgen_address_expr_indir);
+    CU_ADD_TEST(suite, test_immcgen_address_expr_tomember);
     CU_ADD_TEST(suite, test_immcgen_indirection_expr);
     CU_ADD_TEST(suite, test_immcgen_logical_not_expr);
     CU_ADD_TEST(suite, test_immcgen_call_expr);
+    CU_ADD_TEST(suite, test_immcgen_tomember_expr);
     CU_ADD_TEST(suite, test_immcgen_ident_expr_local);
     CU_ADD_TEST(suite, test_immcgen_ident_expr_global);
     CU_ADD_TEST(suite, test_immcgen_iliteral_expr_int);
@@ -104,7 +109,7 @@ void test_immcgen_assignment_expr(void) {
                               new_reg_immcope(IMMC_SUFFIX_BYTE, 1), // fst_src
                               NULL));                               // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -185,7 +190,7 @@ void test_immcgen_logical_or_expr(void) {
                               NULL));                                               // snd_sr
     vector_push(expected, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L1")));
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -281,7 +286,7 @@ void test_immcgen_logical_and_expr(void) {
                               NULL));                                               // snd_sr
     vector_push(expected, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L1")));
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -325,7 +330,7 @@ void test_immcgen_equal_expr(void) {
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 3))); // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -359,7 +364,7 @@ void test_immcgen_not_equal_expr(void) {
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -391,7 +396,7 @@ void test_immcgen_add_expr(void) {
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 3))); // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -422,7 +427,7 @@ void test_immcgen_subtract_expr(void) {
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 6))); // snd_src
 
-    run_expr_immcgen_test(input, NULL, NULL, expected);
+    run_local_expr_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
@@ -458,7 +463,7 @@ void test_immcgen_pointer_add_expr(void) {
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 0),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1))); // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -494,7 +499,7 @@ void test_immcgen_pointer_subtract_expr(void) {
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 0),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1))); // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -531,7 +536,7 @@ void test_immcgen_pointer_difference_expr(void) {
                               new_reg_immcope(IMMC_SUFFIX_LONG, 2),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 1))); // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -562,7 +567,7 @@ void test_immcgen_multiply_expr(void) {
                               new_reg_immcope(IMMC_SUFFIX_LONG, 0),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1))); // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -594,7 +599,7 @@ void test_immcgen_division_expr(void) {
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2))); // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -634,7 +639,7 @@ void test_immcgen_modulo_expr(void) {
                               new_reg_immcope(IMMC_SUFFIX_LONG, 2),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 5))); // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -653,7 +658,7 @@ void test_immcgen_address_expr_local(void) {
                               new_mem_immcope(4),                   // fst_src
                               NULL));                               // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -672,7 +677,7 @@ void test_immcgen_address_expr_global(void) {
                               new_label_immcope(new_string("x")),   // fst_src
                               NULL));                               // snd_src
 
-    run_expr_immcgen_test(input, NULL, global_table, expected);
+    run_global_expr_immcgen_test(input, global_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -715,7 +720,42 @@ void test_immcgen_address_expr_indir(void) {
                               new_reg_immcope(IMMC_SUFFIX_QUAD, 0),   // fst_src
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1))); // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_immcgen_address_expr_tomember(void) {
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 8, 4);
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("cmember"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dmember(new_string("imember"), new_integer_dtype(DTYPE_INT)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("test"), named_struct);
+    TagTable* local_tag_table = new_tagtable();
+    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+
+    Srt* input = new_dtyped_srt(
+        SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1,                           // non-terminal
+        new_dtyped_srt(SRT_TOMEMBER_EXPR, new_integer_dtype(DTYPE_CHAR), 2,                          // non-terminal
+                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(named_struct)), 1, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(named_struct), new_string("test"))),
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("cmember"))));
+
+    Vector* expected = new_vector(&t_immc);
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_ADDR,                       // inst
+                              new_reg_immcope(IMMC_SUFFIX_QUAD, 0), // dst
+                              new_mem_immcope(8),                   // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_ADD,                                          // inst
+                              new_reg_immcope(IMMC_SUFFIX_QUAD, 1),                   // dst
+                              new_reg_immcope(IMMC_SUFFIX_QUAD, 0),                   // fst_src
+                              new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 0))); // snd_src
+
+    run_local_expr_immcgen_test(input, local_table, local_tag_table, expected);
 
     delete_vector(expected);
 }
@@ -740,7 +780,7 @@ void test_immcgen_indirection_expr(void) {
                               new_ptr_immcope(0),                   // fst_src
                               NULL));                               // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -771,7 +811,7 @@ void test_immcgen_logical_not_expr(void) {
                               new_reg_immcope(IMMC_SUFFIX_LONG, 1),                   // fst_src
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -832,7 +872,46 @@ void test_immcgen_call_expr(void) {
                               new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2), // fst_src
                               NULL));                                               // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_immcgen_tomember_expr(void) {
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 8, 4);
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("cmember"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dmember(new_string("imember"), new_integer_dtype(DTYPE_INT)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("test"), named_struct);
+    TagTable* local_tag_table = new_tagtable();
+    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+
+    Srt* input =
+        new_dtyped_srt(SRT_TOMEMBER_EXPR, new_integer_dtype(DTYPE_INT), 2,                           // non-terminal
+                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(named_struct)), 1, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(named_struct), new_string("test"))),
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("imember")));
+
+    Vector* expected = new_vector(&t_immc);
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_ADDR,                       // inst
+                              new_reg_immcope(IMMC_SUFFIX_QUAD, 0), // dst
+                              new_mem_immcope(8),                   // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_ADD,                                          // inst
+                              new_reg_immcope(IMMC_SUFFIX_QUAD, 1),                   // dst
+                              new_reg_immcope(IMMC_SUFFIX_QUAD, 0),                   // fst_src
+                              new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 4))); // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_LOAD,                       // inst
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 2), // dst
+                              new_ptr_immcope(1),                   // fst_src
+                              NULL));                               // snd_src
+
+    run_local_expr_immcgen_test(input, local_table, local_tag_table, expected);
 
     delete_vector(expected);
 }
@@ -850,7 +929,7 @@ void test_immcgen_ident_expr_local(void) {
                               new_mem_immcope(1),                   // fst_src
                               NULL));                               // snd_src
 
-    run_expr_immcgen_test(input, local_table, NULL, expected);
+    run_local_expr_immcgen_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -868,7 +947,7 @@ void test_immcgen_ident_expr_global(void) {
                               new_label_immcope(new_string("global")), // fst_src
                               NULL));                                  // snd_src
 
-    run_expr_immcgen_test(input, NULL, global_table, expected);
+    run_global_expr_immcgen_test(input, global_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -883,7 +962,7 @@ void test_immcgen_iliteral_expr_int(void) {
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 3), // fst_src
                               NULL));                                               // snd_src
 
-    run_expr_immcgen_test(input, NULL, NULL, expected);
+    run_local_expr_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
@@ -898,20 +977,39 @@ void test_immcgen_iliteral_expr_char(void) {
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 89), // fst_src
                               NULL));                                                // snd_src
 
-    run_expr_immcgen_test(input, NULL, NULL, expected);
+    run_local_expr_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
 
-void run_expr_immcgen_test(Srt* input, SymbolTable* local_table, SymbolTable* global_table, Vector* expected) {
+void run_global_expr_immcgen_test(Srt* input, SymbolTable* symbol_table, TagTable* tag_table, Vector* expected) {
     Immcgen* immcgen = new_immcgen(input);
-    if (global_table != NULL) {
+    if (symbol_table != NULL) {
         delete_symboltable(immcgen->symbol_table);
-        immcgen->symbol_table = global_table;
+        immcgen->symbol_table = symbol_table;
     }
-    if (local_table != NULL) {
-        local_table->outer_scope = immcgen->symbol_table;
-        immcgen->symbol_table = local_table;
+    if (tag_table != NULL) {
+        delete_tagtable(immcgen->tag_table);
+        immcgen->tag_table = tag_table;
+    }
+
+    Vector* actual = immcgen_generate_immcode(immcgen);
+
+    testlib_assert_immcs_equal(actual, expected);
+
+    if (actual != NULL) delete_vector(actual);
+    delete_immcgen(immcgen);
+}
+
+void run_local_expr_immcgen_test(Srt* input, SymbolTable* symbol_table, TagTable* tag_table, Vector* expected) {
+    Immcgen* immcgen = new_immcgen(input);
+    if (symbol_table != NULL) {
+        symbol_table->outer_scope = immcgen->symbol_table;
+        immcgen->symbol_table = symbol_table;
+    }
+    if (tag_table != NULL) {
+        tag_table->outer_scope = immcgen->tag_table;
+        immcgen->tag_table = tag_table;
     }
 
     Vector* actual = immcgen_generate_immcode(immcgen);

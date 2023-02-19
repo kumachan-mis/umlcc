@@ -13,7 +13,9 @@ ResolverReturn* resolve_stmt(Resolver* resolver) {
     switch (ast->type) {
         case AST_CMPD_STMT:
             resolver->symbol_table = symboltable_enter_scope(resolver->symbol_table);
+            resolver->tag_table = tagtable_enter_scope(resolver->tag_table);
             resolverret_assign(&srt, &errs, resolve_compound_stmt(resolver));
+            resolver->tag_table = tagtable_exit_scope(resolver->tag_table);
             resolver->symbol_table = symboltable_exit_scope(resolver->symbol_table);
             break;
         case AST_RET_STMT:
@@ -36,6 +38,9 @@ ResolverReturn* resolve_compound_stmt(Resolver* resolver) {
     Srt* srt = new_srt(SRT_CMPD_STMT, 0);
     Vector* errs = NULL;
     Ast* ast = resolver->ast;
+    Srt* scope_srt = resolver->scope_srt;
+
+    resolver->scope_srt = srt;
 
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
@@ -62,6 +67,7 @@ ResolverReturn* resolve_compound_stmt(Resolver* resolver) {
         vector_push(srt->children, child_srt);
     }
 
+    resolver->scope_srt = scope_srt;
     resolver->ast = ast;
     if (errs != NULL) {
         delete_srt(srt);
@@ -79,7 +85,6 @@ ResolverReturn* resolve_return_stmt(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-
     if (errs != NULL) return new_resolverret_errors(errs);
 
     if (!dtype_isassignable(srt->dtype, resolver->return_dtype)) {
@@ -106,7 +111,6 @@ ResolverReturn* resolve_expression_stmt(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-
     if (errs != NULL) return new_resolverret_errors(errs);
 
     srt = new_srt(SRT_EXPR_STMT, 1, srt);

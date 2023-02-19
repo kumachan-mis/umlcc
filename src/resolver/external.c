@@ -12,6 +12,8 @@ ResolverReturn* resolve_transration_unit(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->trans_unit_srt = srt;
+    resolver->scope_srt = srt;
+
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
         Srt* child_srt = NULL;
@@ -37,8 +39,9 @@ ResolverReturn* resolve_transration_unit(Resolver* resolver) {
         vector_push(srt->children, child_srt);
     }
 
-    resolver->ast = ast;
+    resolver->scope_srt = NULL;
     resolver->trans_unit_srt = NULL;
+    resolver->ast = ast;
     if (errs != NULL) {
         delete_srt(srt);
         return new_resolverret_errors(errs);
@@ -101,6 +104,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
 
     resolver->symbol_table = symboltable_enter_scope(resolver->symbol_table);
     resolver->symbol_table->memory_nbytes = 0;
+    resolver->tag_table = tagtable_enter_scope(resolver->tag_table);
     resolver->return_dtype = symbol_dtype->dfunction->return_dtype;
 
     Vector* params = declarator_srt->dtype->dfunction->params;
@@ -116,9 +120,10 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     resolverret_assign(&body_srt, &errs, resolve_compound_stmt(resolver));
     resolver->ast = ast;
 
+    resolver->return_dtype = NULL;
+    resolver->tag_table = tagtable_exit_scope(resolver->tag_table);
     resolver->symbol_table->memory_nbytes = 0;
     resolver->symbol_table = symboltable_exit_scope(resolver->symbol_table);
-    resolver->return_dtype = NULL;
 
     if (errs != NULL) {
         delete_srt(declarator_srt);

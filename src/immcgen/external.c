@@ -25,6 +25,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
     immcgen->label_id++;
     immcgen->symbol_table = symboltable_enter_scope(immcgen->symbol_table);
     immcgen->symbol_table->memory_nbytes = 0;
+    immcgen->tag_table = tagtable_enter_scope(immcgen->tag_table);
     immcgen->return_label_id = immcgen->label_id;
 
     Vector* param_codes = new_vector(&t_immc);
@@ -64,6 +65,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
     vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, return_label_name));
     vector_push(codes, new_inst_immc(IMMC_INST_LEAVE, NULL, immcope_copy(memory_nbytes), NULL));
 
+    immcgen->tag_table = tagtable_exit_scope(immcgen->tag_table);
     immcgen->symbol_table->memory_nbytes = 0;
     immcgen->symbol_table = symboltable_exit_scope(immcgen->symbol_table);
     immcgen->srt = srt;

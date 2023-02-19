@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 Vector* gen_assignment_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
@@ -300,6 +301,35 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             update_expr_register(immcgen, dst);
             break;
         }
+        case SRT_TOMEMBER_EXPR: {
+            immcgen->srt = child;
+            src = gen_child_reg_immcope(immcgen, codes, 0);
+            immcgen->srt = srt;
+
+            Srt* struct_srt = vector_at(child->children, 0);
+            Srt* member_srt = vector_at(child->children, 1);
+
+            DType* struct_dtype = struct_srt->dtype->dpointer->to_dtype;
+            if (struct_dtype->dstruct->members == NULL) {
+                struct_dtype = tagtable_search_struct(immcgen->tag_table, struct_dtype->dstruct->name);
+            }
+
+            DMember* accessed_member = NULL;
+            int num_members = vector_size(struct_dtype->dstruct->members);
+            for (int i = 0; i < num_members; i++) {
+                DMember* dmember = vector_at(struct_dtype->dstruct->members, i);
+                if (strcmp(dmember->name, member_srt->ident_name) == 0) {
+                    accessed_member = dmember;
+                    break;
+                }
+            }
+
+            ImmcOpe* snd_src = new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, accessed_member->memory_offset);
+            dst = create_dest_reg_immcope(immcgen);
+            vector_push(codes, new_inst_immc(IMMC_INST_ADD, dst, src, snd_src));
+            update_expr_register(immcgen, dst);
+            break;
+        }
         case SRT_INDIR_EXPR:
             immcgen->srt = child;
             append_child_immcode(immcgen, codes, 0);
@@ -338,13 +368,18 @@ Vector* gen_not_expr_immcode(Immcgen* immcgen) {
 }
 
 Vector* gen_postfix_expr_immcode(Immcgen* immcgen) {
+    Vector* gen_call_expr_immcode(Immcgen * immcgen);
+    Vector* gen_tomember_expr_immcode(Immcgen * immcgen);
+
     Vector* codes = NULL;
     Srt* srt = immcgen->srt;
-    Vector* gen_call_expr_immcode(Immcgen * immcgen);
 
     switch (srt->type) {
         case SRT_CALL_EXPR:
             codes = gen_call_expr_immcode(immcgen);
+            break;
+        case SRT_TOMEMBER_EXPR:
+            codes = gen_tomember_expr_immcode(immcgen);
             break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
@@ -381,6 +416,43 @@ Vector* gen_call_expr_immcode(Immcgen* immcgen) {
 
     ImmcOpe* clean_src = new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, num_args);
     vector_push(codes, new_inst_immc(IMMC_INST_CLEAN, NULL, clean_src, NULL));
+
+    update_expr_register(immcgen, dst);
+    return codes;
+}
+
+Vector* gen_tomember_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+    Srt* srt = immcgen->srt;
+
+    ImmcOpe* add_fst_src = gen_child_reg_immcope(immcgen, codes, 0);
+
+    Srt* struct_srt = vector_at(srt->children, 0);
+    Srt* member_srt = vector_at(srt->children, 1);
+
+    DType* struct_dtype = struct_srt->dtype->dpointer->to_dtype;
+    if (struct_dtype->dstruct->members == NULL) {
+        struct_dtype = tagtable_search_struct(immcgen->tag_table, struct_dtype->dstruct->name);
+    }
+
+    DMember* accessed_member = NULL;
+    int num_members = vector_size(struct_dtype->dstruct->members);
+    for (int i = 0; i < num_members; i++) {
+        DMember* dmember = vector_at(struct_dtype->dstruct->members, i);
+        if (strcmp(dmember->name, member_srt->ident_name) == 0) {
+            accessed_member = dmember;
+            break;
+        }
+    }
+
+    ImmcOpe* add_snd_src = new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, accessed_member->memory_offset);
+    immcgen->next_reg_id++;
+    ImmcOpe* add_dst = new_reg_immcope(IMMC_SUFFIX_QUAD, immcgen->next_reg_id);
+    vector_push(codes, new_inst_immc(IMMC_INST_ADD, add_dst, add_fst_src, add_snd_src));
+
+    ImmcOpe* src = new_ptr_immcope(add_dst->reg_id);
+    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
+    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
 
     update_expr_register(immcgen, dst);
     return codes;

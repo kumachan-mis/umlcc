@@ -73,7 +73,7 @@ void test_read_function_definition(void) {
 }
 
 void test_read_declaration_without_init(void) {
-    char* input = "typedef int* ptr2int; char* input;";
+    char* input = "typedef int* ptr2int; char* input; typedef struct X { int m; } X;";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_TYPEDEF));
@@ -85,6 +85,16 @@ void test_read_declaration_without_init(void) {
     vector_push(expected, new_ctoken(CTOKEN_ASTERISK));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("input")));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_TYPEDEF));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_STRUCT));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("X")));
+    vector_push(expected, new_ctoken(CTOKEN_LBRACE));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("m")));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_RBRACE));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("X")));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
     run_lexer_test(input, expected);
@@ -93,7 +103,7 @@ void test_read_declaration_without_init(void) {
 }
 
 void test_read_declaration_with_init(void) {
-    char* input = "int int_array[3] = {8, 2, 0};";
+    char* input = "int int_array[3] = {8, 2, 0}; struct X { int m; } x = {3};";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_INT));
@@ -108,6 +118,19 @@ void test_read_declaration_with_init(void) {
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
     vector_push(expected, new_ctoken(CTOKEN_COMMA));
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(expected, new_ctoken(CTOKEN_RBRACE));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_STRUCT));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("X")));
+    vector_push(expected, new_ctoken(CTOKEN_LBRACE));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("m")));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_RBRACE));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(expected, new_ctoken(CTOKEN_EQUAL));
+    vector_push(expected, new_ctoken(CTOKEN_LBRACE));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
     vector_push(expected, new_ctoken(CTOKEN_RBRACE));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
@@ -237,7 +260,7 @@ void test_read_unary_expr(void) {
 }
 
 void test_read_postfix_expr(void) {
-    char* input = "arr[10][4]; exec_process(a,  b);";
+    char* input = "arr[10][4]; exec_process(a,  b); s.x = t->y;";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("arr")));
@@ -254,6 +277,14 @@ void test_read_postfix_expr(void) {
     vector_push(expected, new_ctoken(CTOKEN_COMMA));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("b")));
     vector_push(expected, new_ctoken(CTOKEN_RPALEN));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("s")));
+    vector_push(expected, new_ctoken(CTOKEN_DOT));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(expected, new_ctoken(CTOKEN_EQUAL));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("t")));
+    vector_push(expected, new_ctoken(CTOKEN_ARROW));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 

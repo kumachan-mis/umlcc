@@ -6,11 +6,12 @@ void test_resolve_assign_expr_error_unassignable(void);
 void test_resolve_assign_expr_error_unmodifiable(void);
 void test_resolve_assign_expr_error_lhs(void);
 void test_resolve_assign_expr_error_rhs(void);
-void test_resolve_logical_or_expr_error_non_scalar(void);
+void test_resolve_logical_or_expr_error_non_scalar_lhs(void);
+void test_resolve_logical_or_expr_error_non_scalar_rhs(void);
 void test_resolve_logical_or_expr_error_lhs(void);
 void test_resolve_logical_or_expr_error_rhs(void);
-void test_resolve_logical_and_expr_error_non_scalar_rhs(void);
 void test_resolve_logical_and_expr_error_non_scalar_lhs(void);
+void test_resolve_logical_and_expr_error_non_scalar_rhs(void);
 void test_resolve_logical_and_expr_error_lhs(void);
 void test_resolve_logical_and_expr_error_rhs(void);
 void test_resolve_equal_expr_error_operand_dtype(void);
@@ -52,9 +53,15 @@ void test_resolve_subscription_expr_error_non_pointer(void);
 void test_resolve_subscription_expr_error_non_integer(void);
 void test_resolve_subscription_expr_error_lhs(void);
 void test_resolve_subscription_expr_error_rhs(void);
+void test_resolve_member_expr_error_non_struct(void);
+void test_resolve_member_expr_error_unknown_member(void);
+void test_resolve_member_expr_error_incomplete_struct(void);
+void test_resolve_tomember_expr_error_non_pointer_to_struct(void);
+void test_resolve_tomember_expr_error_unknown_member(void);
+void test_resolve_tomember_expr_error_incomplete_struct(void);
 void test_resolve_ident_expr_error(void);
 
-void run_expr_resolver_error_test(Ast* input, SymbolTable* local_table, SymbolTable* global_table, Vector* expected);
+void run_expr_resolver_error_test(Ast* input, SymbolTable* symbol_table, TagTable* tag_table, Vector* expected);
 
 CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_expr_resolver_error", NULL, NULL);
@@ -62,11 +69,12 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_assign_expr_error_unmodifiable);
     CU_ADD_TEST(suite, test_resolve_assign_expr_error_lhs);
     CU_ADD_TEST(suite, test_resolve_assign_expr_error_rhs);
-    CU_ADD_TEST(suite, test_resolve_logical_or_expr_error_non_scalar);
+    CU_ADD_TEST(suite, test_resolve_logical_or_expr_error_non_scalar_lhs);
+    CU_ADD_TEST(suite, test_resolve_logical_or_expr_error_non_scalar_rhs);
     CU_ADD_TEST(suite, test_resolve_logical_or_expr_error_lhs);
     CU_ADD_TEST(suite, test_resolve_logical_or_expr_error_rhs);
-    CU_ADD_TEST(suite, test_resolve_logical_and_expr_error_non_scalar_rhs);
     CU_ADD_TEST(suite, test_resolve_logical_and_expr_error_non_scalar_lhs);
+    CU_ADD_TEST(suite, test_resolve_logical_and_expr_error_non_scalar_rhs);
     CU_ADD_TEST(suite, test_resolve_logical_and_expr_error_lhs);
     CU_ADD_TEST(suite, test_resolve_logical_and_expr_error_rhs);
     CU_ADD_TEST(suite, test_resolve_equal_expr_error_operand_dtype);
@@ -108,6 +116,12 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_subscription_expr_error_non_integer);
     CU_ADD_TEST(suite, test_resolve_subscription_expr_error_lhs);
     CU_ADD_TEST(suite, test_resolve_subscription_expr_error_rhs);
+    CU_ADD_TEST(suite, test_resolve_member_expr_error_non_struct);
+    CU_ADD_TEST(suite, test_resolve_member_expr_error_unknown_member);
+    CU_ADD_TEST(suite, test_resolve_member_expr_error_incomplete_struct);
+    CU_ADD_TEST(suite, test_resolve_tomember_expr_error_non_pointer_to_struct);
+    CU_ADD_TEST(suite, test_resolve_tomember_expr_error_unknown_member);
+    CU_ADD_TEST(suite, test_resolve_tomember_expr_error_incomplete_struct);
     CU_ADD_TEST(suite, test_resolve_ident_expr_error);
     return suite;
 }
@@ -175,8 +189,42 @@ void test_resolve_assign_expr_error_rhs(void) {
     delete_vector(expected);
 }
 
-void test_resolve_logical_or_expr_error_non_scalar(void) {
-    // TODO: implement here after non-scalar dtype is introduced
+void test_resolve_logical_or_expr_error_non_scalar_lhs(void) {
+    Ast* input = new_ast(AST_LOR_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("structure"), new_unnamed_struct_dtype(members));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("each of operands of || should have scalar type\n"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_logical_or_expr_error_non_scalar_rhs(void) {
+    Ast* input = new_ast(AST_LOR_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")));
+
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("structure"), new_unnamed_struct_dtype(members));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("each of operands of || should have scalar type\n"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
 }
 
 void test_resolve_logical_or_expr_error_lhs(void) {
@@ -208,12 +256,42 @@ void test_resolve_logical_or_expr_error_rhs(void) {
     delete_vector(expected);
 }
 
-void test_resolve_logical_and_expr_error_non_scalar_rhs(void) {
-    // TODO: implement here after non-scalar dtype is introduced
+void test_resolve_logical_and_expr_error_non_scalar_lhs(void) {
+    Ast* input = new_ast(AST_LAND_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")));
+
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("structure"), new_unnamed_struct_dtype(members));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("each of operands of && should have scalar type\n"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
 }
 
-void test_resolve_logical_and_expr_error_non_scalar_lhs(void) {
-    // TODO: implement here after non-scalar dtype is introduced
+void test_resolve_logical_and_expr_error_non_scalar_rhs(void) {
+    Ast* input = new_ast(AST_LAND_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("structure"), new_unnamed_struct_dtype(members));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("each of operands of && should have scalar type\n"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
 }
 
 void test_resolve_logical_and_expr_error_lhs(void) {
@@ -671,7 +749,20 @@ void test_resolve_indirection_expr_error_child(void) {
 }
 
 void test_resolve_logical_not_expr_error_non_scalar(void) {
-    // TODO: implement here after non-scalar dtype is introduced
+    Ast* input = new_ast(AST_LNOT_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")));
+
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("structure"), new_unnamed_struct_dtype(members));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operand of unary ! does not have scalar type\n"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
 }
 
 void test_resolve_logical_not_expr_error_child(void) {
@@ -867,6 +958,132 @@ void test_resolve_subscription_expr_error_rhs(void) {
     delete_vector(expected);
 }
 
+void test_resolve_member_expr_error_non_struct(void) {
+    Ast* input = new_ast(AST_MEMBER_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
+
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("test"), new_pointer_dtype(named_struct));
+    TagTable* local_tag_table = new_tagtable();
+    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("dot-accessed object is not a struct\n"));
+
+    run_expr_resolver_error_test(input, local_table, local_tag_table, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_member_expr_error_incomplete_struct(void) {
+    Ast* input = new_ast(AST_MEMBER_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
+
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 0, 0);
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("test"), named_struct);
+    TagTable* local_tag_table = new_tagtable();
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("struct 'Test' is incomplete\n"));
+
+    run_expr_resolver_error_test(input, local_table, local_tag_table, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_member_expr_error_unknown_member(void) {
+    Ast* input = new_ast(AST_MEMBER_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("unknown")));
+
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("test"), named_struct);
+    TagTable* local_tag_table = new_tagtable();
+    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("member 'unknown' does not exist in struct\n"));
+
+    run_expr_resolver_error_test(input, local_table, local_tag_table, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_tomember_expr_error_non_pointer_to_struct(void) {
+    Ast* input = new_ast(AST_TOMEMBER_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
+
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("test"), named_struct);
+    TagTable* local_tag_table = new_tagtable();
+    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("arrow-accessed object is not a pointer to a struct\n"));
+
+    run_expr_resolver_error_test(input, local_table, local_tag_table, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_tomember_expr_error_incomplete_struct(void) {
+    Ast* input = new_ast(AST_TOMEMBER_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
+
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 0, 0);
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("test"), new_pointer_dtype(named_struct));
+    TagTable* local_tag_table = new_tagtable();
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("struct 'Test' is incomplete\n"));
+
+    run_expr_resolver_error_test(input, local_table, local_tag_table, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_tomember_expr_error_unknown_member(void) {
+    Ast* input = new_ast(AST_TOMEMBER_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("unknown")));
+
+    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("test"), new_pointer_dtype(named_struct));
+    TagTable* local_tag_table = new_tagtable();
+    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("member 'unknown' does not exist in struct\n"));
+
+    run_expr_resolver_error_test(input, local_table, local_tag_table, expected);
+
+    delete_vector(expected);
+}
+
 void test_resolve_ident_expr_error(void) {
     Ast* input = new_identifier_ast(AST_IDENT_EXPR, new_string("x"));
 
@@ -878,16 +1095,16 @@ void test_resolve_ident_expr_error(void) {
     delete_vector(expected);
 }
 
-void run_expr_resolver_error_test(Ast* input, SymbolTable* local_table, SymbolTable* global_table, Vector* expected) {
+void run_expr_resolver_error_test(Ast* input, SymbolTable* symbol_table, TagTable* tag_table, Vector* expected) {
     Resolver* resolver = new_resolver(input);
     resolver->trans_unit_srt = new_srt(SRT_TRAS_UNIT, 0);
-    if (global_table != NULL) {
-        delete_symboltable(resolver->symbol_table);
-        resolver->symbol_table = global_table;
+    if (symbol_table != NULL) {
+        symbol_table->outer_scope = resolver->symbol_table;
+        resolver->symbol_table = symbol_table;
     }
-    if (local_table != NULL) {
-        local_table->outer_scope = resolver->symbol_table;
-        resolver->symbol_table = local_table;
+    if (tag_table != NULL) {
+        tag_table->outer_scope = resolver->tag_table;
+        resolver->tag_table = tag_table;
     }
 
     Srt* ret = NULL;

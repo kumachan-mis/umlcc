@@ -34,6 +34,15 @@ DArray* darray_connect(DArray* socket, DType* plug) {
     return socket;
 }
 
+DType* darray_at(DArray* darray, int index) {
+    if (index < 0 || index >= darray->size) return NULL;
+    return darray->of_dtype;
+}
+
+int darray_size(DArray* darray) {
+    return darray->size;
+}
+
 int darray_equals(DArray* darray, DArray* other) {
     return darray->size == other->size && dtype_equals(darray->of_dtype, other->of_dtype);
 }

@@ -13,6 +13,18 @@ Vector* gen_decl_list_immcode(Immcgen* immcgen) {
     return codes;
 }
 
+Vector* gen_tag_decl_immcode(Immcgen* immcgen) {
+    Srt* srt = immcgen->srt;
+
+    if (srt->dtype->type == DTYPE_STRUCT) {
+        char* struct_name = new_string(srt->ident_name);
+        Vector* struct_members = vector_copy(srt->dtype->dstruct->members);
+        tagtable_define_struct(immcgen->tag_table, struct_name, struct_members);
+    }
+
+    return new_vector(&t_immc);
+}
+
 Vector* gen_init_decl_immcode(Immcgen* immcgen) {
     Vector* gen_global_init_decl_immcode(Immcgen * immcgen);
     Vector* gen_local_init_decl_immcode(Immcgen * immcgen);
@@ -87,6 +99,7 @@ Vector* gen_decl_immcode(Immcgen* immcgen) {
 
 Vector* gen_initializer_immcode(Immcgen* immcgen) {
     Vector* gen_array_initializer_immcode(Immcgen * immcgen);
+    Vector* gen_struct_initializer_immcode(Immcgen * immcgen);
     Vector* gen_scalar_initializer_immcode(Immcgen * immcgen);
 
     DType* dtype = immcgen->initialized_dtype;
@@ -94,6 +107,11 @@ Vector* gen_initializer_immcode(Immcgen* immcgen) {
     switch (dtype->type) {
         case DTYPE_ARRAY:
             return gen_array_initializer_immcode(immcgen);
+        case DTYPE_STRUCT:
+            if (dtype->dstruct->members == NULL) {
+                immcgen->initialized_dtype = tagtable_search_struct(immcgen->tag_table, dtype->dstruct->name);
+            }
+            return gen_struct_initializer_immcode(immcgen);
         default:
             return gen_scalar_initializer_immcode(immcgen);
     }
@@ -142,6 +160,63 @@ Vector* gen_local_string_initializer_immcode(Immcgen* immcgen) {
 
     vector_push(codes, new_inst_immc(IMMC_INST_STR, dst, src, NULL));
     immcgen->initialized_offset -= dtype_nbytes(immcgen->initialized_dtype);
+
+    return codes;
+}
+
+Vector* gen_struct_initializer_immcode(Immcgen* immcgen) {
+    Vector* gen_global_struct_initializer_immcode(Immcgen * immcgen);
+    Vector* gen_local_struct_initializer_immcode(Immcgen * immcgen);
+
+    if (immcgen->symbol_table->outer_scope == NULL) {
+        return gen_global_struct_initializer_immcode(immcgen);
+    } else {
+        return gen_local_struct_initializer_immcode(immcgen);
+    }
+}
+
+Vector* gen_global_struct_initializer_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    DType* dtype = immcgen->initialized_dtype;
+
+    int num_members = vector_size(dtype->dstruct->members);
+    for (int i = 0; i < num_members; i++) {
+        DMember* dmember = vector_at(dtype->dstruct->members, i);
+        immcgen->initialized_dtype = dmember->dtype;
+
+        append_child_immcode(immcgen, codes, i);
+
+        int next_offset = 0;
+        if (i == num_members - 1) {
+            next_offset = dtype_nbytes(dtype);
+        } else {
+            DMember* next_dmember = vector_at(dtype->dstruct->members, i + 1);
+            next_offset = next_dmember->memory_offset;
+        }
+
+        int padding = next_offset - (dmember->memory_offset + dtype_nbytes(dmember->dtype));
+        if (padding > 0) {
+            vector_push(codes, new_int_data_immc(IMMC_DATA_ZERO, new_signed_iliteral(INTEGER_INT, padding)));
+        }
+    }
+
+    return codes;
+}
+
+Vector* gen_local_struct_initializer_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    DType* dtype = immcgen->initialized_dtype;
+    int offset = immcgen->initialized_offset;
+
+    int num_members = vector_size(dtype->dstruct->members);
+    for (int i = 0; i < num_members; i++) {
+        DMember* dmember = vector_at(dtype->dstruct->members, i);
+        immcgen->initialized_dtype = dmember->dtype;
+        immcgen->initialized_offset = offset - dmember->memory_offset;
+        append_child_immcode(immcgen, codes, i);
+    }
 
     return codes;
 }

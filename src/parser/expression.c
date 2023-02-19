@@ -276,6 +276,28 @@ ParserReturn* parse_postfix_expr(Parser* parser) {
                 ast = new_ast(AST_CALL_EXPR, 2, ast, child);
                 err = consume_ctoken(parser, CTOKEN_RPALEN);
                 break;
+            case CTOKEN_DOT:
+                parser->index++;
+                ctoken = vector_at(parser->ctokens, parser->index);
+                if (ctoken->type != CTOKEN_IDENT) {
+                    err = new_error("token identifier expected, but got %s\n", ctoken_types[ctoken->type]);
+                    break;
+                }
+                parser->index++;
+                child = new_identifier_ast(AST_IDENT_EXPR, new_string(ctoken->ident_name));
+                ast = new_ast(AST_MEMBER_EXPR, 2, ast, child);
+                break;
+            case CTOKEN_ARROW:
+                parser->index++;
+                ctoken = vector_at(parser->ctokens, parser->index);
+                if (ctoken->type != CTOKEN_IDENT) {
+                    err = new_error("token identifier expected, but got %s\n", ctoken_types[ctoken->type]);
+                    break;
+                }
+                parser->index++;
+                child = new_identifier_ast(AST_IDENT_EXPR, new_string(ctoken->ident_name));
+                ast = new_ast(AST_TOMEMBER_EXPR, 2, ast, child);
+                break;
             default:
                 return new_parserret(ast);
         }
@@ -293,15 +315,15 @@ ParserReturn* parse_argument_expr_list(Parser* parser) {
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     if (ctoken->type == CTOKEN_RPALEN) return new_parserret(ast);
 
-    while (err == NULL) {
+    while (1) {
         parserret_assign(&child, &err, parse_assignment_expr(parser));
         if (err != NULL) break;
 
         vector_push(ast->children, child);
         ctoken = vector_at(parser->ctokens, parser->index);
-        if (ctoken->type == CTOKEN_RPALEN) break;
+        if (ctoken->type != CTOKEN_COMMA) break;
 
-        err = consume_ctoken(parser, CTOKEN_COMMA);
+        parser->index++;
     }
 
     if (err != NULL) {

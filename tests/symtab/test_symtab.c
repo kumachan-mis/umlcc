@@ -74,7 +74,7 @@ void test_symboltable_define_memory(void) {
 
     char* ident_name = new_string("identifier");
     DType* ident_dtype = new_integer_dtype(DTYPE_INT);
-    int ident_dtype_size = dtype_nbytes(ident_dtype);
+    int ident_dtype_nbytes = dtype_nbytes(ident_dtype);
 
     CU_ASSERT_TRUE(symboltable_can_define(table, ident_name));
 
@@ -83,15 +83,15 @@ void test_symboltable_define_memory(void) {
         if (i > 0) symbol = symboltable_search(table, ident_name);
         CU_ASSERT_EQUAL(symbol->type, SYMBOL_MEM);
         CU_ASSERT_STRING_EQUAL(symbol->name, ident_name);
-        CU_ASSERT_EQUAL(symbol->memory_offset, ident_dtype_size);
+        CU_ASSERT_EQUAL(symbol->memory_offset, ident_dtype_nbytes);
         CU_ASSERT_TRUE(dtype_equals(symbol->dtype, ident_dtype));
     }
 
-    CU_ASSERT_EQUAL(table->memory_nbytes, ident_dtype_size);
+    CU_ASSERT_EQUAL(table->memory_nbytes, ident_dtype_nbytes);
 
     char* symbol_name = new_string("symbol");
     DType* symbol_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
-    int symbol_dtype_size = dtype_nbytes(symbol_dtype);
+    int symbol_dtype_nbytes = dtype_nbytes(symbol_dtype);
 
     CU_ASSERT_TRUE(symboltable_can_define(table, symbol_name));
 
@@ -100,11 +100,11 @@ void test_symboltable_define_memory(void) {
         if (i > 0) symbol = symboltable_search(table, symbol_name);
         CU_ASSERT_EQUAL(symbol->type, SYMBOL_MEM);
         CU_ASSERT_STRING_EQUAL(symbol->name, symbol_name);
-        CU_ASSERT_EQUAL(symbol->memory_offset, ident_dtype_size + symbol_dtype_size);
+        CU_ASSERT_EQUAL(symbol->memory_offset, ident_dtype_nbytes + symbol_dtype_nbytes);
         CU_ASSERT_TRUE(dtype_equals(symbol->dtype, symbol_dtype));
     }
 
-    CU_ASSERT_EQUAL(table->memory_nbytes, ident_dtype_size + symbol_dtype_size);
+    CU_ASSERT_EQUAL(table->memory_nbytes, ident_dtype_nbytes + symbol_dtype_nbytes);
 
     delete_symboltable(table);
 }
@@ -115,7 +115,7 @@ void test_symboltable_duplicated(void) {
 
     char* ident_name = new_string("identifier");
     DType* ident_dtype = new_integer_dtype(DTYPE_INT);
-    int ident_dtype_size = dtype_nbytes(ident_dtype);
+    int ident_dtype_nbytes = dtype_nbytes(ident_dtype);
 
     CU_ASSERT_TRUE(symboltable_can_define(table, ident_name));
 
@@ -124,11 +124,11 @@ void test_symboltable_duplicated(void) {
         if (i > 0) symbol = symboltable_search(table, ident_name);
         CU_ASSERT_EQUAL(symbol->type, SYMBOL_MEM);
         CU_ASSERT_STRING_EQUAL(symbol->name, ident_name);
-        CU_ASSERT_EQUAL(symbol->memory_offset, ident_dtype_size);
+        CU_ASSERT_EQUAL(symbol->memory_offset, ident_dtype_nbytes);
         CU_ASSERT_TRUE(dtype_equals(symbol->dtype, ident_dtype));
     }
 
-    CU_ASSERT_EQUAL(table->memory_nbytes, ident_dtype_size);
+    CU_ASSERT_EQUAL(table->memory_nbytes, ident_dtype_nbytes);
 
     char* dup_name = new_string("identifier");
     DType* dup_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
@@ -141,7 +141,7 @@ void test_symboltable_duplicated(void) {
     symbol = symboltable_search(table, ident_name);
     CU_ASSERT_EQUAL(symbol->type, SYMBOL_MEM);
     CU_ASSERT_STRING_EQUAL(symbol->name, ident_name);
-    CU_ASSERT_EQUAL(symbol->memory_offset, ident_dtype_size);
+    CU_ASSERT_EQUAL(symbol->memory_offset, ident_dtype_nbytes);
     CU_ASSERT_TRUE(dtype_equals(symbol->dtype, ident_dtype));
 
     free(dup_name);
@@ -224,7 +224,7 @@ void test_symboltable_copy_without_outer(void) {
 
     char* ident_name = new_string("identifier");
     DType* ident_dtype = new_integer_dtype(DTYPE_INT);
-    int ident_dtype_size = dtype_nbytes(ident_dtype);
+    int ident_dtype_nbytes = dtype_nbytes(ident_dtype);
     symboltable_define_memory(table, ident_name, ident_dtype);
 
     char* symbol_name = new_string("symbol");
@@ -242,7 +242,7 @@ void test_symboltable_copy_without_outer(void) {
     copied_symbol = symboltable_search(copied_table, ident_name);
     CU_ASSERT_EQUAL(copied_symbol->type, SYMBOL_MEM);
     CU_ASSERT_STRING_EQUAL(copied_symbol->name, ident_name);
-    CU_ASSERT_EQUAL(copied_symbol->memory_offset, ident_dtype_size);
+    CU_ASSERT_EQUAL(copied_symbol->memory_offset, ident_dtype_nbytes);
     CU_ASSERT_TRUE(dtype_equals(copied_symbol->dtype, ident_dtype));
 
     delete_dtype(ident_dtype);
@@ -261,7 +261,7 @@ void test_symboltable_copy_without_outer(void) {
     delete_dtype(symbol_dtype);
     free(symbol_name);
 
-    CU_ASSERT_EQUAL(copied_table->memory_nbytes, ident_dtype_size);
+    CU_ASSERT_EQUAL(copied_table->memory_nbytes, ident_dtype_nbytes);
     CU_ASSERT_PTR_NULL(copied_table->outer_scope);
 
     delete_symboltable(copied_table);

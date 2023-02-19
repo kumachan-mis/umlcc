@@ -8,16 +8,23 @@ void test_immcgen_local_scalar_decl(void);
 void test_immcgen_global_scalar_decl(void);
 void test_immcgen_local_array_decl(void);
 void test_immcgen_global_array_decl(void);
+void test_immcgen_local_struct_decl(void);
+void test_immcgen_global_struct_decl(void);
 void test_immcgen_local_function_decl(void);
 void test_immcgen_global_function_decl(void);
+void test_immcgen_local_struct_tag_decl(void);
+void test_immcgen_global_struct_tag_decl(void);
 void test_immcgen_local_scalar_init(void);
 void test_immcgen_global_scalar_init(void);
 void test_immcgen_local_sliteral_init(void);
 void test_immcgen_global_sliteral_init(void);
 void test_immcgen_local_array_init(void);
 void test_immcgen_global_array_init(void);
-void run_local_decl_immcgen_test(Srt* input, SymbolTable* local_table, Vector* expected);
-void run_global_decl_immcgen_test(Srt* input, SymbolTable* global_table, Vector* expected);
+void test_immcgen_local_struct_init(void);
+void test_immcgen_global_struct_init(void);
+
+void run_local_decl_immcgen_test(Srt* input, SymbolTable* symbol_table, TagTable* tag_table, Vector* expected);
+void run_global_decl_immcgen_test(Srt* input, SymbolTable* symbol_table, TagTable* tag_table, Vector* expected);
 
 CU_Suite* add_test_suite_decl_immcgen(void) {
     CU_Suite* suite = CU_add_suite("test_suite_decl_immcgen", NULL, NULL);
@@ -25,14 +32,20 @@ CU_Suite* add_test_suite_decl_immcgen(void) {
     CU_ADD_TEST(suite, test_immcgen_global_scalar_decl);
     CU_ADD_TEST(suite, test_immcgen_local_array_decl);
     CU_ADD_TEST(suite, test_immcgen_global_array_decl);
+    CU_ADD_TEST(suite, test_immcgen_local_struct_decl);
+    CU_ADD_TEST(suite, test_immcgen_global_struct_decl);
     CU_ADD_TEST(suite, test_immcgen_local_function_decl);
     CU_ADD_TEST(suite, test_immcgen_global_function_decl);
+    CU_ADD_TEST(suite, test_immcgen_local_struct_tag_decl);
+    CU_ADD_TEST(suite, test_immcgen_global_struct_tag_decl);
     CU_ADD_TEST(suite, test_immcgen_local_scalar_init);
     CU_ADD_TEST(suite, test_immcgen_global_scalar_init);
     CU_ADD_TEST(suite, test_immcgen_local_sliteral_init);
     CU_ADD_TEST(suite, test_immcgen_global_sliteral_init);
     CU_ADD_TEST(suite, test_immcgen_local_array_init);
     CU_ADD_TEST(suite, test_immcgen_global_array_init);
+    CU_ADD_TEST(suite, test_immcgen_local_struct_init);
+    CU_ADD_TEST(suite, test_immcgen_global_struct_init);
     return suite;
 }
 
@@ -45,7 +58,7 @@ void test_immcgen_local_scalar_decl(void) {
 
     Vector* expected = new_vector(&t_immc);
 
-    run_local_decl_immcgen_test(input, NULL, expected);
+    run_local_decl_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
@@ -63,7 +76,7 @@ void test_immcgen_global_scalar_decl(void) {
     vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("i")));
     vector_push(expected, new_int_data_immc(IMMC_DATA_ZERO, new_signed_iliteral(INTEGER_INT, 4)));
 
-    run_global_decl_immcgen_test(input, NULL, expected);
+    run_global_decl_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
@@ -79,7 +92,7 @@ void test_immcgen_local_array_decl(void) {
 
     Vector* expected = new_vector(&t_immc);
 
-    run_local_decl_immcgen_test(input, NULL, expected);
+    run_local_decl_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
@@ -99,7 +112,51 @@ void test_immcgen_global_array_decl(void) {
     vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("b")));
     vector_push(expected, new_int_data_immc(IMMC_DATA_ZERO, new_signed_iliteral(INTEGER_INT, 24)));
 
-    run_global_decl_immcgen_test(input, NULL, expected);
+    run_global_decl_immcgen_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_immcgen_local_struct_decl(void) {
+    Srt* input = new_srt(
+        SRT_DECL_LIST, 1,         // non-terminal
+        new_srt(SRT_INIT_DECL, 1, // non-terminal
+                new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Test"), 12, 4), new_string("test"))));
+
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
+
+    TagTable* tag_table = new_tagtable();
+    tagtable_define_struct(tag_table, new_string("Test"), members);
+
+    Vector* expected = new_vector(&t_immc);
+
+    run_local_decl_immcgen_test(input, NULL, tag_table, expected);
+
+    delete_vector(expected);
+}
+
+void test_immcgen_global_struct_decl(void) {
+    Srt* input = new_srt(
+        SRT_DECL_LIST, 1,         // non-terminal
+        new_srt(SRT_INIT_DECL, 1, // non-terminal
+                new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Test"), 12, 4), new_string("test"))));
+
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
+
+    TagTable* tag_table = new_tagtable();
+    tagtable_define_struct(tag_table, new_string("Test"), members);
+
+    Vector* expected = new_vector(&t_immc);
+    vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("test")));
+    vector_push(expected, new_int_data_immc(IMMC_DATA_ZERO, new_signed_iliteral(INTEGER_INT, 12)));
+
+    run_global_decl_immcgen_test(input, NULL, tag_table, expected);
 
     delete_vector(expected);
 }
@@ -120,7 +177,7 @@ void test_immcgen_local_function_decl(void) {
 
     Vector* expected = new_vector(&t_immc);
 
-    run_local_decl_immcgen_test(input, NULL, expected);
+    run_local_decl_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
@@ -141,7 +198,39 @@ void test_immcgen_global_function_decl(void) {
 
     Vector* expected = new_vector(&t_immc);
 
-    run_global_decl_immcgen_test(input, NULL, expected);
+    run_global_decl_immcgen_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_immcgen_local_struct_tag_decl(void) {
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+
+    DType* struct_dtype = new_unnamed_struct_dtype(members);
+
+    Srt* input = new_identifier_srt(SRT_TAG_DECL, struct_dtype, new_string("Test"));
+
+    Vector* expected = new_vector(&t_immc);
+
+    run_local_decl_immcgen_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_immcgen_global_struct_tag_decl(void) {
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+
+    DType* struct_dtype = new_unnamed_struct_dtype(members);
+
+    Srt* input = new_identifier_srt(SRT_TAG_DECL, struct_dtype, new_string("Test"));
+
+    Vector* expected = new_vector(&t_immc);
+
+    run_global_decl_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
@@ -172,9 +261,9 @@ void test_immcgen_local_scalar_init(void) {
                             SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                             new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("y"))))));
 
-    SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
-    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_CHAR));
+    SymbolTable* symbol_table = new_symboltable();
+    symboltable_define_memory(symbol_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(symbol_table, new_string("y"), new_integer_dtype(DTYPE_CHAR));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -213,7 +302,7 @@ void test_immcgen_local_scalar_init(void) {
                               new_reg_immcope(IMMC_SUFFIX_LONG, 2), // fst_src
                               NULL));                               // snd_src
 
-    run_local_decl_immcgen_test(input, local_table, expected);
+    run_local_decl_immcgen_test(input, symbol_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -238,7 +327,7 @@ void test_immcgen_global_scalar_init(void) {
     vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("i")));
     vector_push(expected, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 2)));
 
-    run_global_decl_immcgen_test(input, NULL, expected);
+    run_global_decl_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
@@ -267,7 +356,7 @@ void test_immcgen_local_sliteral_init(void) {
                               new_str_immcope(sliteral_copy(sliteral)), // fst_src
                               NULL));                                   // snd_src
 
-    run_local_decl_immcgen_test(input, NULL, expected);
+    run_local_decl_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
@@ -293,7 +382,7 @@ void test_immcgen_global_sliteral_init(void) {
     vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("s")));
     vector_push(expected, new_str_data_immc(IMMC_DATA_STR, sliteral_copy(sliteral)));
 
-    run_global_decl_immcgen_test(input, NULL, expected);
+    run_global_decl_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
@@ -378,7 +467,7 @@ void test_immcgen_local_array_init(void) {
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
                               NULL));                                               // snd_src
 
-    run_local_decl_immcgen_test(input, NULL, expected);
+    run_local_decl_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
@@ -433,18 +522,112 @@ void test_immcgen_global_array_init(void) {
     vector_push(expected, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 0)));
     vector_push(expected, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 0)));
 
-    run_global_decl_immcgen_test(input, NULL, expected);
+    run_global_decl_immcgen_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
 
-void run_local_decl_immcgen_test(Srt* input, SymbolTable* local_table, Vector* expected) {
+void test_immcgen_local_struct_init(void) {
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
+
+    TagTable* tag_table = new_tagtable();
+    tagtable_define_struct(tag_table, new_string("Test"), members);
+
+    Srt* input = new_srt(
+        SRT_DECL_LIST, 1,         // non-terminal
+        new_srt(SRT_INIT_DECL, 2, // non-terminal
+                new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Test"), 12, 4), new_string("test")),
+                new_srt(SRT_INIT, 3,                                                            // non-terminal
+                        new_srt(SRT_INIT, 1,                                                    // non-terminal
+                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                new_signed_iliteral(INTEGER_INT, 3)))),
+                        new_srt(SRT_INIT, 1, // non-terminal
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                 new_signed_iliteral(INTEGER_INT, 2))),
+                        new_srt(SRT_INIT, 1, // non-terminal
+                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR),
+                                               1, // non-terminal
+                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                new_signed_iliteral(INTEGER_INT, 0)))))));
+    Vector* expected = new_vector(&t_immc);
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_STORE,                                      // inst
+                              new_mem_immcope(12),                                  // dst
+                              new_signed_immcope(IMMC_SUFFIX_BYTE, INTEGER_INT, 3), // fst_src
+                              NULL));                                               // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_STORE,                                      // inst
+                              new_mem_immcope(8),                                   // dst
+                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2), // fst_src
+                              NULL));                                               // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_STORE,                                      // inst
+                              new_mem_immcope(4),                                   // dst
+                              new_signed_immcope(IMMC_SUFFIX_BYTE, INTEGER_INT, 0), // fst_src
+                              NULL));                                               // snd_src
+
+    run_local_decl_immcgen_test(input, NULL, tag_table, expected);
+
+    delete_vector(expected);
+}
+
+void test_immcgen_global_struct_init(void) {
+    Vector* members = new_vector(&t_dmember);
+    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
+
+    TagTable* tag_table = new_tagtable();
+    tagtable_define_struct(tag_table, new_string("Test"), members);
+
+    Srt* input = new_srt(
+        SRT_DECL_LIST, 1,         // non-terminal
+        new_srt(SRT_INIT_DECL, 2, // non-terminal
+                new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Test"), 12, 4), new_string("test")),
+                new_srt(SRT_INIT, 3,                                                            // non-terminal
+                        new_srt(SRT_INIT, 1,                                                    // non-terminal
+                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                new_signed_iliteral(INTEGER_INT, 3)))),
+                        new_srt(SRT_INIT, 1, // non-terminal
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                 new_signed_iliteral(INTEGER_INT, 2))),
+                        new_srt(SRT_INIT, 1, // non-terminal
+                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR),
+                                               1, // non-terminal
+                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                new_signed_iliteral(INTEGER_INT, 0)))))));
+
+    Vector* expected = new_vector(&t_immc);
+    vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("test")));
+    vector_push(expected, new_int_data_immc(IMMC_DATA_BYTE, new_signed_iliteral(INTEGER_INT, 3)));
+    vector_push(expected, new_int_data_immc(IMMC_DATA_ZERO, new_signed_iliteral(INTEGER_INT, 3)));
+    vector_push(expected, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 2)));
+    vector_push(expected, new_int_data_immc(IMMC_DATA_BYTE, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(expected, new_int_data_immc(IMMC_DATA_ZERO, new_signed_iliteral(INTEGER_INT, 3)));
+
+    run_global_decl_immcgen_test(input, NULL, tag_table, expected);
+
+    delete_vector(expected);
+}
+
+void run_local_decl_immcgen_test(Srt* input, SymbolTable* symbol_table, TagTable* tag_table, Vector* expected) {
     Immcgen* immcgen = new_immcgen(input);
-    if (local_table != NULL) {
-        local_table->outer_scope = immcgen->symbol_table;
-        immcgen->symbol_table = local_table;
+    if (symbol_table != NULL) {
+        symbol_table->outer_scope = immcgen->symbol_table;
+        immcgen->symbol_table = symbol_table;
     } else {
         immcgen->symbol_table = symboltable_enter_scope(immcgen->symbol_table);
+    }
+    if (tag_table != NULL) {
+        tag_table->outer_scope = immcgen->tag_table;
+        immcgen->tag_table = tag_table;
+    } else {
+        immcgen->tag_table = tagtable_enter_scope(immcgen->tag_table);
     }
 
     Vector* actual = immcgen_generate_immcode(immcgen);
@@ -455,11 +638,15 @@ void run_local_decl_immcgen_test(Srt* input, SymbolTable* local_table, Vector* e
     delete_immcgen(immcgen);
 }
 
-void run_global_decl_immcgen_test(Srt* input, SymbolTable* global_table, Vector* expected) {
+void run_global_decl_immcgen_test(Srt* input, SymbolTable* symbol_table, TagTable* tag_table, Vector* expected) {
     Immcgen* immcgen = new_immcgen(input);
-    if (global_table != NULL) {
+    if (symbol_table != NULL) {
         delete_symboltable(immcgen->symbol_table);
-        immcgen->symbol_table = global_table;
+        immcgen->symbol_table = symbol_table;
+    }
+    if (tag_table != NULL) {
+        delete_tagtable(immcgen->tag_table);
+        immcgen->tag_table = tag_table;
     }
 
     Vector* actual = immcgen_generate_immcode(immcgen);

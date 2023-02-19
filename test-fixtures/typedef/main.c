@@ -1,5 +1,4 @@
-typedef int test_int;
-typedef int* test_intptr;
+typedef int test_int, *test_intptr;
 
 test_int put_int(test_int x);
 test_int put_str(char* s);

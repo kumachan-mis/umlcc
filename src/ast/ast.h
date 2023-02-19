@@ -15,7 +15,8 @@ typedef enum AstType {
 
     // declaration
     AST_DECL,
-    AST_DECL_SPECIFIERS,
+    AST_DECL_SPECS,
+    AST_SPEC_QUAL_LIST,
     AST_INIT_DECLOR_LIST,
     AST_INIT_DECLOR,
     //   storage-class-specifiers
@@ -23,7 +24,13 @@ typedef enum AstType {
     //   type-specifiers
     AST_TYPE_CHAR,
     AST_TYPE_INT,
+    AST_TYPE_STRUCT,
     AST_TYPEDEF_NAME,
+    //   struct-declaration
+    AST_STRUCT_NAME,
+    AST_STRUCT_DECL_LIST,
+    AST_STRUCT_DECL,
+    AST_STRUCT_DECLOR_LIST,
     //   declarators
     AST_IDENT_DECLOR,
     AST_PTR_DECLOR,
@@ -63,6 +70,8 @@ typedef enum AstType {
     //   postfix-expression
     AST_SUBSC_EXPR,
     AST_CALL_EXPR,
+    AST_MEMBER_EXPR,
+    AST_TOMEMBER_EXPR,
     AST_ARG_LIST,
     //   primary-expression
     AST_IDENT_EXPR,
