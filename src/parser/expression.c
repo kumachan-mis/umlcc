@@ -10,6 +10,11 @@ ParserReturn* parse_expr(Parser* parser) {
     return parserret;
 }
 
+ParserReturn* parse_constant_expr(Parser* parser) {
+    ParserReturn* parserret = parse_logical_or_expr(parser);
+    return parserret;
+}
+
 ParserReturn* parse_assignment_expr(Parser* parser) {
     Vector* stack = new_vector(&t_ast);
     Ast* ast = NULL;

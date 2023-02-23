@@ -25,12 +25,18 @@ typedef enum AstType {
     AST_TYPE_CHAR,
     AST_TYPE_INT,
     AST_TYPE_STRUCT,
+    AST_TYPE_ENUM,
     AST_TYPEDEF_NAME,
     //   struct-declaration
     AST_STRUCT_NAME,
     AST_STRUCT_DECL_LIST,
     AST_STRUCT_DECL,
     AST_STRUCT_DECLOR_LIST,
+    //    enum-declaration
+    AST_ENUM_NAME,
+    AST_ENUMOR_LIST,
+    AST_ENUMOR,
+    AST_ENUM_CONST,
     //   declarators
     AST_IDENT_DECLOR,
     AST_PTR_DECLOR,
