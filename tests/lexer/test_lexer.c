@@ -73,7 +73,7 @@ void test_read_function_definition(void) {
 }
 
 void test_read_declaration_without_init(void) {
-    char* input = "typedef int* ptr2int; char* input; typedef struct X { int m; } X;";
+    char* input = "typedef int* ptr2int; char* input; typedef struct X { int m; } X; typedef enum Y { PLUS, MINUS } Y;";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_TYPEDEF));
@@ -94,6 +94,16 @@ void test_read_declaration_without_init(void) {
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_RBRACE));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("X")));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_TYPEDEF));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_ENUM));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("Y")));
+    vector_push(expected, new_ctoken(CTOKEN_LBRACE));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("PLUS")));
+    vector_push(expected, new_ctoken(CTOKEN_COMMA));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("MINUS")));
+    vector_push(expected, new_ctoken(CTOKEN_RBRACE));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("Y")));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
