@@ -727,9 +727,9 @@ void test_immcgen_address_expr_indir(void) {
 
 void test_immcgen_address_expr_tomember(void) {
     DType* named_struct = new_named_struct_dtype(new_string("Test"), 8, 4);
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("cmember"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(members, new_dmember(new_string("imember"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("cmember"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dstructmember(new_string("imember"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("test"), named_struct);
@@ -879,9 +879,9 @@ void test_immcgen_call_expr(void) {
 
 void test_immcgen_tomember_expr(void) {
     DType* named_struct = new_named_struct_dtype(new_string("Test"), 8, 4);
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("cmember"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(members, new_dmember(new_string("imember"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("cmember"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dstructmember(new_string("imember"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("test"), named_struct);

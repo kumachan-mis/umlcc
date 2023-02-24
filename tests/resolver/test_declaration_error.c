@@ -205,8 +205,8 @@ void test_resolve_struct_error_duplicated(void) {
 
     Ast* global_input = ast_copy(local_input);
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
 
     TagTable* local_tag_table = new_tagtable();
     tagtable_define_struct(local_tag_table, new_string("Test"), members);
@@ -699,10 +699,10 @@ void test_resolve_init_error_struct_child(void) {
                                             new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 90))))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
-    vector_push(members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
 
     TagTable* local_tag_table = new_tagtable();
     tagtable_define_struct(local_tag_table, new_string("Struct"), members);
@@ -735,13 +735,13 @@ void test_resolve_init_error_too_long_nested_struct(void) {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* child_members = new_vector(&t_dmember);
-    vector_push(child_members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(child_members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    Vector* child_members = new_vector(&t_dstructmember);
+    vector_push(child_members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(child_members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("first"), new_named_struct_dtype(new_string("Child"), 8, 4)));
-    vector_push(members, new_dmember(new_string("second"), new_named_struct_dtype(new_string("Child"), 8, 4)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("first"), new_named_struct_dtype(new_string("Child"), 8, 4)));
+    vector_push(members, new_dstructmember(new_string("second"), new_named_struct_dtype(new_string("Child"), 8, 4)));
 
     TagTable* local_tag_table = new_tagtable();
     tagtable_define_struct(local_tag_table, new_string("Child"), child_members);

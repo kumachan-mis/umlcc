@@ -210,9 +210,9 @@ void test_new_named_dstruct(void) {
 void test_new_unnamed_dstruct(void) {
     char* member_name = new_string("member");
     DType* member_dtype = new_integer_dtype(DTYPE_INT);
-    DMember* dmember = new_dmember(member_name, member_dtype);
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, dmember);
+    DStructMember* dstructmember = new_dstructmember(member_name, member_dtype);
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, dstructmember);
     DType* dtype = new_unnamed_struct_dtype(members);
 
     for (int i = 0; i < 2; i++) {
@@ -220,9 +220,9 @@ void test_new_unnamed_dstruct(void) {
             DType* copied_dtype = dtype_copy(dtype);
             delete_dtype(dtype);
 
-            dmember = vector_at(copied_dtype->dstruct->members, 0);
-            member_name = dmember->name;
-            member_dtype = dmember->dtype;
+            dstructmember = vector_at(copied_dtype->dstruct->members, 0);
+            member_name = dstructmember->name;
+            member_dtype = dstructmember->dtype;
 
             members = copied_dtype->dstruct->members;
             dtype = copied_dtype;
@@ -231,8 +231,8 @@ void test_new_unnamed_dstruct(void) {
         CU_ASSERT_PTR_NULL(dtype->dpointer);
         CU_ASSERT_PTR_NULL(dtype->darray);
         CU_ASSERT_PTR_NULL(dtype->dstruct->name);
-        CU_ASSERT_STRING_EQUAL(dmember->name, "member");
-        CU_ASSERT_PTR_EQUAL(dmember->dtype, member_dtype);
+        CU_ASSERT_STRING_EQUAL(dstructmember->name, "member");
+        CU_ASSERT_PTR_EQUAL(dstructmember->dtype, member_dtype);
         CU_ASSERT_EQUAL(dtype->dstruct->nbytes, 4);
         CU_ASSERT_EQUAL(dtype->dstruct->alignment, 4);
         CU_ASSERT_PTR_NULL(dtype->dfunction);
@@ -491,12 +491,14 @@ void test_dtype_equals_named_struct(void) {
 }
 
 void test_dtype_equals_unnamed_struct(void) {
-    Vector* dtype_members = new_vector(&t_dmember);
-    vector_push(dtype_members, new_dmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
+    Vector* dtype_members = new_vector(&t_dstructmember);
+    vector_push(dtype_members,
+                new_dstructmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
     DType* dtype = new_unnamed_struct_dtype(dtype_members);
 
-    Vector* other_members = new_vector(&t_dmember);
-    vector_push(other_members, new_dmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
+    Vector* other_members = new_vector(&t_dstructmember);
+    vector_push(other_members,
+                new_dstructmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
     DType* other = new_unnamed_struct_dtype(other_members);
 
     CU_ASSERT_TRUE(dtype_equals(dtype, other));
@@ -576,8 +578,8 @@ void test_dtype_equals_array_diff_size(void) {
 
 void test_dtype_equals_struct_diff_isnamed(void) {
     DType* dtype = new_named_struct_dtype(new_string("Structure"), 1, 1);
-    Vector* other_members = new_vector(&t_dmember);
-    vector_push(other_members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_CHAR)));
+    Vector* other_members = new_vector(&t_dstructmember);
+    vector_push(other_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_CHAR)));
     DType* other = new_unnamed_struct_dtype(other_members);
 
     CU_ASSERT_FALSE(dtype_equals(dtype, other));
@@ -597,14 +599,17 @@ void test_dtype_equals_struct_diff_name(void) {
 }
 
 void test_dtype_equals_struct_diff_num_members(void) {
-    Vector* dtype_members = new_vector(&t_dmember);
-    vector_push(dtype_members, new_dmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
+    Vector* dtype_members = new_vector(&t_dstructmember);
+    vector_push(dtype_members,
+                new_dstructmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
     DType* dtype = new_unnamed_struct_dtype(dtype_members);
 
-    Vector* other_members = new_vector(&t_dmember);
-    vector_push(other_members, new_dmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
-    vector_push(other_members, new_dmember(new_string("next"),
-                                           new_pointer_dtype(new_named_struct_dtype(new_string("Structure"), 12, 4))));
+    Vector* other_members = new_vector(&t_dstructmember);
+    vector_push(other_members,
+                new_dstructmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
+    vector_push(other_members,
+                new_dstructmember(new_string("next"),
+                                  new_pointer_dtype(new_named_struct_dtype(new_string("Structure"), 12, 4))));
     DType* other = new_unnamed_struct_dtype(other_members);
 
     CU_ASSERT_FALSE(dtype_equals(dtype, other));
@@ -614,12 +619,13 @@ void test_dtype_equals_struct_diff_num_members(void) {
 }
 
 void test_dtype_equals_struct_diff_member_dtype(void) {
-    Vector* dtype_members = new_vector(&t_dmember);
-    vector_push(dtype_members, new_dmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
+    Vector* dtype_members = new_vector(&t_dstructmember);
+    vector_push(dtype_members,
+                new_dstructmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
     DType* dtype = new_unnamed_struct_dtype(dtype_members);
 
-    Vector* other_members = new_vector(&t_dmember);
-    vector_push(other_members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_CHAR)));
+    Vector* other_members = new_vector(&t_dstructmember);
+    vector_push(other_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_CHAR)));
     DType* other = new_unnamed_struct_dtype(other_members);
 
     CU_ASSERT_FALSE(dtype_equals(dtype, other));
@@ -629,12 +635,12 @@ void test_dtype_equals_struct_diff_member_dtype(void) {
 }
 
 void test_dtype_equals_struct_diff_member_name(void) {
-    Vector* dtype_members = new_vector(&t_dmember);
-    vector_push(dtype_members, new_dmember(new_string("a"), new_integer_dtype(DTYPE_INT)));
+    Vector* dtype_members = new_vector(&t_dstructmember);
+    vector_push(dtype_members, new_dstructmember(new_string("a"), new_integer_dtype(DTYPE_INT)));
     DType* dtype = new_unnamed_struct_dtype(dtype_members);
 
-    Vector* other_members = new_vector(&t_dmember);
-    vector_push(other_members, new_dmember(new_string("b"), new_integer_dtype(DTYPE_INT)));
+    Vector* other_members = new_vector(&t_dstructmember);
+    vector_push(other_members, new_dstructmember(new_string("b"), new_integer_dtype(DTYPE_INT)));
     DType* other = new_unnamed_struct_dtype(other_members);
 
     CU_ASSERT_FALSE(dtype_equals(dtype, other));
@@ -644,16 +650,20 @@ void test_dtype_equals_struct_diff_member_name(void) {
 }
 
 void test_dtype_equals_struct_diff_member_order(void) {
-    Vector* dtype_members = new_vector(&t_dmember);
-    vector_push(dtype_members, new_dmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
-    vector_push(dtype_members, new_dmember(new_string("next"),
-                                           new_pointer_dtype(new_named_struct_dtype(new_string("Structure"), 32, 8))));
+    Vector* dtype_members = new_vector(&t_dstructmember);
+    vector_push(dtype_members,
+                new_dstructmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
+    vector_push(dtype_members,
+                new_dstructmember(new_string("next"),
+                                  new_pointer_dtype(new_named_struct_dtype(new_string("Structure"), 32, 8))));
     DType* dtype = new_unnamed_struct_dtype(dtype_members);
 
-    Vector* other_members = new_vector(&t_dmember);
-    vector_push(other_members, new_dmember(new_string("next"),
-                                           new_pointer_dtype(new_named_struct_dtype(new_string("Structure"), 32, 8))));
-    vector_push(other_members, new_dmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
+    Vector* other_members = new_vector(&t_dstructmember);
+    vector_push(other_members,
+                new_dstructmember(new_string("next"),
+                                  new_pointer_dtype(new_named_struct_dtype(new_string("Structure"), 32, 8))));
+    vector_push(other_members,
+                new_dstructmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
     DType* other = new_unnamed_struct_dtype(other_members);
 
     CU_ASSERT_FALSE(dtype_equals(dtype, other));
@@ -801,8 +811,8 @@ void test_dtype_isinteger(void) {
     CU_ASSERT_FALSE(dtype_isinteger(incomplete_named_struct_dtype));
     delete_dtype(incomplete_named_struct_dtype);
 
-    Vector* unnamed_struct_members = new_vector(&t_dmember);
-    vector_push(unnamed_struct_members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* unnamed_struct_members = new_vector(&t_dstructmember);
+    vector_push(unnamed_struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* unnamed_struct_dtype = new_unnamed_struct_dtype(unnamed_struct_members);
     CU_ASSERT_FALSE(dtype_isinteger(unnamed_struct_dtype));
     delete_dtype(unnamed_struct_dtype);
@@ -842,8 +852,8 @@ void test_dtype_isarithmetic(void) {
     CU_ASSERT_FALSE(dtype_isarithmetic(incomplete_named_struct_dtype));
     delete_dtype(incomplete_named_struct_dtype);
 
-    Vector* unnamed_struct_members = new_vector(&t_dmember);
-    vector_push(unnamed_struct_members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* unnamed_struct_members = new_vector(&t_dstructmember);
+    vector_push(unnamed_struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* unnamed_struct_dtype = new_unnamed_struct_dtype(unnamed_struct_members);
     CU_ASSERT_FALSE(dtype_isarithmetic(unnamed_struct_dtype));
     delete_dtype(unnamed_struct_dtype);
@@ -883,8 +893,8 @@ void test_dtype_isscalar(void) {
     CU_ASSERT_FALSE(dtype_isscalar(incomplete_named_struct_dtype));
     delete_dtype(incomplete_named_struct_dtype);
 
-    Vector* unnamed_struct_members = new_vector(&t_dmember);
-    vector_push(unnamed_struct_members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* unnamed_struct_members = new_vector(&t_dstructmember);
+    vector_push(unnamed_struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* unnamed_struct_dtype = new_unnamed_struct_dtype(unnamed_struct_members);
     CU_ASSERT_FALSE(dtype_isscalar(unnamed_struct_dtype));
     delete_dtype(unnamed_struct_dtype);
@@ -924,8 +934,8 @@ void test_dtype_isaggregate(void) {
     CU_ASSERT_TRUE(dtype_isaggregate(incomplete_named_struct_dtype));
     delete_dtype(incomplete_named_struct_dtype);
 
-    Vector* unnamed_struct_members = new_vector(&t_dmember);
-    vector_push(unnamed_struct_members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* unnamed_struct_members = new_vector(&t_dstructmember);
+    vector_push(unnamed_struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* unnamed_struct_dtype = new_unnamed_struct_dtype(unnamed_struct_members);
     CU_ASSERT_TRUE(dtype_isaggregate(unnamed_struct_dtype));
     delete_dtype(unnamed_struct_dtype);
@@ -965,8 +975,8 @@ void test_dtype_isobject(void) {
     CU_ASSERT_FALSE(dtype_isobject(incomplete_named_struct_dtype));
     delete_dtype(incomplete_named_struct_dtype);
 
-    Vector* unnamed_struct_members = new_vector(&t_dmember);
-    vector_push(unnamed_struct_members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* unnamed_struct_members = new_vector(&t_dstructmember);
+    vector_push(unnamed_struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* unnamed_struct_dtype = new_unnamed_struct_dtype(unnamed_struct_members);
     CU_ASSERT_TRUE(dtype_isobject(unnamed_struct_dtype));
     delete_dtype(unnamed_struct_dtype);
@@ -1006,8 +1016,8 @@ void test_dtype_isincomplete(void) {
     CU_ASSERT_TRUE(dtype_isincomplete(incomplete_named_struct_dtype));
     delete_dtype(incomplete_named_struct_dtype);
 
-    Vector* unnamed_struct_members = new_vector(&t_dmember);
-    vector_push(unnamed_struct_members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* unnamed_struct_members = new_vector(&t_dstructmember);
+    vector_push(unnamed_struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* unnamed_struct_dtype = new_unnamed_struct_dtype(unnamed_struct_members);
     CU_ASSERT_FALSE(dtype_isincomplete(unnamed_struct_dtype));
     delete_dtype(unnamed_struct_dtype);
@@ -1047,9 +1057,10 @@ void test_dtype_nbytes(void) {
     CU_ASSERT_EQUAL(dtype_nbytes(incomplete_named_struct_dtype), 0);
     delete_dtype(incomplete_named_struct_dtype);
 
-    Vector* unnamed_struct_members = new_vector(&t_dmember);
-    vector_push(unnamed_struct_members, new_dmember(new_string("c"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(unnamed_struct_members, new_dmember(new_string("a"), new_array_dtype(new_integer_dtype(DTYPE_INT), 7)));
+    Vector* unnamed_struct_members = new_vector(&t_dstructmember);
+    vector_push(unnamed_struct_members, new_dstructmember(new_string("c"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(unnamed_struct_members,
+                new_dstructmember(new_string("a"), new_array_dtype(new_integer_dtype(DTYPE_INT), 7)));
     DType* unnamed_struct_dtype = new_unnamed_struct_dtype(unnamed_struct_members);
     // char c   ->  1 byte
     // padding  ->  3 bytes

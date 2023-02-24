@@ -38,6 +38,27 @@ DType* tagtable_search_struct(TagTable* table, char* name) {
     return dtype;
 }
 
+int tagtable_can_define_enum(TagTable* table, char* name) {
+    return map_get(table->enum_map, name) == NULL;
+}
+
+DType* tagtable_define_enum(TagTable* table, char* name, Vector* members) {
+    if (!tagtable_can_define_enum(table, name)) return NULL;
+    DType* dtype = new_unnamed_enum_dtype(members);
+    map_add(table->enum_map, name, dtype);
+    return dtype;
+}
+
+DType* tagtable_search_enum(TagTable* table, char* name) {
+    DType* dtype = NULL;
+    while (table != NULL) {
+        dtype = map_get(table->enum_map, name);
+        if (dtype != NULL) break;
+        table = table->outer_scope;
+    }
+    return dtype;
+}
+
 TagTable* tagtable_enter_scope(TagTable* table) {
     TagTable* inner_table = new_tagtable();
     inner_table->outer_scope = table;

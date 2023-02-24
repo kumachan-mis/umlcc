@@ -182,8 +182,8 @@ Vector* gen_global_struct_initializer_immcode(Immcgen* immcgen) {
 
     int num_members = vector_size(dtype->dstruct->members);
     for (int i = 0; i < num_members; i++) {
-        DMember* dmember = vector_at(dtype->dstruct->members, i);
-        immcgen->initialized_dtype = dmember->dtype;
+        DStructMember* member = vector_at(dtype->dstruct->members, i);
+        immcgen->initialized_dtype = member->dtype;
 
         append_child_immcode(immcgen, codes, i);
 
@@ -191,11 +191,11 @@ Vector* gen_global_struct_initializer_immcode(Immcgen* immcgen) {
         if (i == num_members - 1) {
             next_offset = dtype_nbytes(dtype);
         } else {
-            DMember* next_dmember = vector_at(dtype->dstruct->members, i + 1);
-            next_offset = next_dmember->memory_offset;
+            DStructMember* next_dstructmember = vector_at(dtype->dstruct->members, i + 1);
+            next_offset = next_dstructmember->memory_offset;
         }
 
-        int padding = next_offset - (dmember->memory_offset + dtype_nbytes(dmember->dtype));
+        int padding = next_offset - (member->memory_offset + dtype_nbytes(member->dtype));
         if (padding > 0) {
             vector_push(codes, new_int_data_immc(IMMC_DATA_ZERO, new_signed_iliteral(INTEGER_INT, padding)));
         }
@@ -212,9 +212,9 @@ Vector* gen_local_struct_initializer_immcode(Immcgen* immcgen) {
 
     int num_members = vector_size(dtype->dstruct->members);
     for (int i = 0; i < num_members; i++) {
-        DMember* dmember = vector_at(dtype->dstruct->members, i);
-        immcgen->initialized_dtype = dmember->dtype;
-        immcgen->initialized_offset = offset - dmember->memory_offset;
+        DStructMember* member = vector_at(dtype->dstruct->members, i);
+        immcgen->initialized_dtype = member->dtype;
+        immcgen->initialized_offset = offset - member->memory_offset;
         append_child_immcode(immcgen, codes, i);
     }
 

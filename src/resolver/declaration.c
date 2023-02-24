@@ -134,7 +134,7 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
     child = vector_at(ast->children, struct_name != NULL ? 1 : 0);
     if (child != NULL && child->type == AST_STRUCT_DECL_LIST) {
         resolver->ast = child;
-        resolverret_dmembers_assign(&members, &errs, resolve_struct_decl_list(resolver));
+        resolverret_dstructmembers_assign(&members, &errs, resolve_struct_decl_list(resolver));
         resolver->ast = ast;
     }
     if (errs != NULL) {
@@ -178,7 +178,7 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
 }
 
 ResolverReturnDMembers* resolve_struct_decl_list(Resolver* resolver) {
-    Vector* members = new_vector(&t_dmember);
+    Vector* members = new_vector(&t_dstructmember);
     Vector* errs = NULL;
     Error* err = NULL;
 
@@ -190,7 +190,7 @@ ResolverReturnDMembers* resolve_struct_decl_list(Resolver* resolver) {
         Vector* child_errs = NULL;
 
         resolver->ast = vector_at(ast->children, i);
-        resolverret_dmembers_assign(&child_members, &child_errs, resolve_struct_decl(resolver));
+        resolverret_dstructmembers_assign(&child_members, &child_errs, resolve_struct_decl(resolver));
 
         if (child_errs != NULL) {
             if (errs == NULL) errs = new_vector(&t_error);
@@ -210,13 +210,13 @@ ResolverReturnDMembers* resolve_struct_decl_list(Resolver* resolver) {
 
     if (errs != NULL) {
         delete_vector(members);
-        return new_resolverret_dmembers_errors(errs);
+        return new_resolverret_dstructmembers_errors(errs);
     }
 
     Set* member_names_set = new_set(&t_hashable_string);
     int num_members = vector_size(members);
     for (int i = 0; i < num_members; i++) {
-        DMember* member = vector_at(members, i);
+        DStructMember* member = vector_at(members, i);
         if (!set_contains(member_names_set, member->name)) {
             set_add(member_names_set, new_string(member->name));
             continue;
@@ -229,9 +229,9 @@ ResolverReturnDMembers* resolve_struct_decl_list(Resolver* resolver) {
 
     if (errs != NULL) {
         delete_vector(members);
-        return new_resolverret_dmembers_errors(errs);
+        return new_resolverret_dstructmembers_errors(errs);
     }
-    return new_resolverret_dmembers(members);
+    return new_resolverret_dstructmembers(members);
 }
 
 ResolverReturnDMembers* resolve_struct_decl(Resolver* resolver) {
@@ -243,30 +243,30 @@ ResolverReturnDMembers* resolve_struct_decl(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_specifier_qualifier_list(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_dmembers_errors(errs);
+    if (errs != NULL) return new_resolverret_dstructmembers_errors(errs);
 
     resolver->ast = vector_at(ast->children, 1);
-    resolverret_dmembers_assign(&members, &errs, resolve_struct_declarator_list(resolver));
+    resolverret_dstructmembers_assign(&members, &errs, resolve_struct_declarator_list(resolver));
     resolver->ast = ast;
 
     delete_dtype(resolver->specifier_dtype);
     resolver->specifier_dtype = NULL;
 
-    if (errs != NULL) return new_resolverret_dmembers_errors(errs);
-    return new_resolverret_dmembers(members);
+    if (errs != NULL) return new_resolverret_dstructmembers_errors(errs);
+    return new_resolverret_dstructmembers(members);
 }
 
 ResolverReturnDMembers* resolve_struct_declarator_list(Resolver* resolver) {
-    Vector* members = new_vector(&t_dmember);
+    Vector* members = new_vector(&t_dstructmember);
     Vector* errs = NULL;
     Ast* ast = resolver->ast;
 
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
-        DMember* member = NULL;
+        DStructMember* member = NULL;
         Vector* child_errs = NULL;
         resolver->ast = vector_at(ast->children, i);
-        resolverret_dmember_assign(&member, &child_errs, resolve_struct_declarator(resolver));
+        resolverret_dstructmember_assign(&member, &child_errs, resolve_struct_declarator(resolver));
 
         if (child_errs != NULL) {
             if (errs == NULL) errs = new_vector(&t_error);
@@ -274,7 +274,7 @@ ResolverReturnDMembers* resolve_struct_declarator_list(Resolver* resolver) {
             delete_vector(child_errs);
             continue;
         } else if (errs != NULL) {
-            delete_dmember(member);
+            delete_dstructmember(member);
             continue;
         }
 
@@ -285,19 +285,19 @@ ResolverReturnDMembers* resolve_struct_declarator_list(Resolver* resolver) {
 
     if (errs != NULL) {
         delete_vector(members);
-        return new_resolverret_dmembers_errors(errs);
+        return new_resolverret_dstructmembers_errors(errs);
     }
-    return new_resolverret_dmembers(members);
+    return new_resolverret_dstructmembers(members);
 }
 
 ResolverReturnDMember* resolve_struct_declarator(Resolver* resolver) {
-    DMember* member = NULL;
+    DStructMember* member = NULL;
     Srt* srt = NULL;
     Vector* errs = NULL;
     Error* err = NULL;
 
     resolverret_assign(&srt, &errs, resolve_declarator(resolver));
-    if (errs != NULL) return new_resolverret_dmember_errors(errs);
+    if (errs != NULL) return new_resolverret_dstructmember_errors(errs);
 
     DType* specifier_dtype = dtype_copy(resolver->specifier_dtype);
     srt->dtype = dtype_connect(srt->dtype, specifier_dtype);
@@ -307,12 +307,12 @@ ResolverReturnDMember* resolve_struct_declarator(Resolver* resolver) {
         err = new_error("struct member should not have incomplete or function type\n");
         vector_push(errs, err);
         delete_srt(srt);
-        return new_resolverret_dmember_errors(errs);
+        return new_resolverret_dstructmember_errors(errs);
     }
 
-    member = new_dmember(new_string(srt->ident_name), dtype_copy(srt->dtype));
+    member = new_dstructmember(new_string(srt->ident_name), dtype_copy(srt->dtype));
     delete_srt(srt);
-    return new_resolverret_dmember(member);
+    return new_resolverret_dstructmember(member);
 }
 
 ResolverReturn* resolve_init_declarator_list(Resolver* resolver) {

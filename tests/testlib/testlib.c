@@ -280,7 +280,7 @@ void testlib_assert_darray_equal(DArray* actual, DArray* expected) {
 }
 
 void testlib_assert_dstruct_equal(DStruct* actual, DStruct* expected) {
-    void testlib_assert_dmembers_equal(Vector * actual, Vector * expected);
+    void testlib_assert_dstructmembers_equal(Vector * actual, Vector * expected);
 
     if (actual == NULL || expected == NULL) {
         CU_ASSERT_TRUE(actual == NULL && expected == NULL);
@@ -288,13 +288,13 @@ void testlib_assert_dstruct_equal(DStruct* actual, DStruct* expected) {
     }
 
     testlib_assert_string_equal(actual->name, expected->name);
-    testlib_assert_dmembers_equal(actual->members, expected->members);
+    testlib_assert_dstructmembers_equal(actual->members, expected->members);
     CU_ASSERT_EQUAL(actual->nbytes, expected->nbytes);
     CU_ASSERT_EQUAL(actual->alignment, expected->alignment);
 }
 
-void testlib_assert_dmembers_equal(Vector* actual, Vector* expected) {
-    void testlib_assert_dmember_equal(DMember * actual, DMember * expected);
+void testlib_assert_dstructmembers_equal(Vector* actual, Vector* expected) {
+    void testlib_assert_dstructmember_equal(DStructMember * actual, DStructMember * expected);
 
     if (actual == NULL || expected == NULL) {
         CU_ASSERT_TRUE(actual == NULL && expected == NULL);
@@ -306,13 +306,13 @@ void testlib_assert_dmembers_equal(Vector* actual, Vector* expected) {
 
     int num_members = vector_size(expected);
     for (int i = 0; i < num_members; i++) {
-        DMember* actual_member = vector_at(actual, i);
-        DMember* expected_member = vector_at(expected, i);
-        testlib_assert_dmember_equal(actual_member, expected_member);
+        DStructMember* actual_member = vector_at(actual, i);
+        DStructMember* expected_member = vector_at(expected, i);
+        testlib_assert_dstructmember_equal(actual_member, expected_member);
     }
 }
 
-void testlib_assert_dmember_equal(DMember* actual, DMember* expected) {
+void testlib_assert_dstructmember_equal(DStructMember* actual, DStructMember* expected) {
     if (actual == NULL || expected == NULL) {
         CU_ASSERT_TRUE(actual == NULL && expected == NULL);
         return;

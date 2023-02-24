@@ -867,7 +867,7 @@ ResolverReturn* resolve_member_name_expr(Resolver* resolver) {
 
     int num_members = vector_size(member_dtype->dstruct->members);
     for (int i = 0; i < num_members; i++) {
-        DMember* member = vector_at(member_dtype->dstruct->members, i);
+        DStructMember* member = vector_at(member_dtype->dstruct->members, i);
         if (strcmp(member->name, ast->ident_name) != 0) continue;
 
         srt = new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(member->dtype), new_string(member->name));
