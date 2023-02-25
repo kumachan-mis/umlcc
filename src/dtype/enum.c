@@ -7,6 +7,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+BaseType t_denummember = {
+    .copy_object = (void* (*)(void*))denummember_copy,
+    .delete_object = (void (*)(void*))delete_denummember,
+};
+
 DEnum* new_named_denum(char* name) {
     DEnum* denum = malloc(sizeof(DEnum));
     denum->name = name;
@@ -51,6 +56,7 @@ int denum_equals(DEnum* denum, DEnum* other) {
 void delete_denum(DEnum* denum) {
     if (denum->name != NULL) free(denum->name);
     if (denum->members != NULL) delete_vector(denum->members);
+    free(denum);
 }
 
 DEnumMember* new_denummember(char* name, int value) {
