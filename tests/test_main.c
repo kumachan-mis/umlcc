@@ -38,6 +38,7 @@
 #include "./srt/test_srt.h"
 #include "./symtab/test_symbol.h"
 #include "./symtab/test_symtab.h"
+#include "./tagtab/test_tagtab.h"
 #include "./vector/test_vector.h"
 #include "./x64/test_ope.h"
 #include "./x64/test_suffix.h"
@@ -67,6 +68,7 @@ int main(void) {
     add_test_suite_dtype();
     add_test_suite_symbol();
     add_test_suite_symboltable();
+    add_test_suite_tagtable();
     add_test_suite_liveness();
     add_test_suite_liveseq();
     add_test_suite_error();
