@@ -1,5 +1,3 @@
-
-
 enum Size {
     SMALL = 10,
     MEDIUM = 20,
