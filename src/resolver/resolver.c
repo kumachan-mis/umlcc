@@ -12,6 +12,7 @@ Resolver* new_resolver(Ast* ast) {
     resolver->tag_table = new_tagtable();
     resolver->return_dtype = NULL;
     resolver->specifier_dtype = NULL;
+    resolver->default_enum_value = 0;
     resolver->initialized_dtype = NULL;
     resolver->initialized_offset = -1;
     resolver->is_nested_initializing = 0;

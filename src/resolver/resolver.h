@@ -14,6 +14,7 @@ typedef struct Resolver {
     TagTable* tag_table;
     DType* return_dtype;
     DType* specifier_dtype;
+    int default_enum_value;
     DType* initialized_dtype;
     int initialized_offset;
     int is_nested_initializing;

@@ -103,6 +103,11 @@ ResolverDTypeReturn* resolve_type_specifier_list(Resolver* resolver) {
             resolverret_dtype_assign(&dtype, &errs, resolve_struct_specifier(resolver));
             resolver->ast = ast;
             break;
+        case AST_TYPE_ENUM:
+            resolver->ast = child;
+            resolverret_dtype_assign(&dtype, &errs, resolve_enum_specifier(resolver));
+            resolver->ast = ast;
+            break;
         case AST_TYPEDEF_NAME: {
             Symbol* symbol = symboltable_search(resolver->symbol_table, child->ident_name);
             dtype = dtype_copy(symbol->dtype->ddecoration->deco_dtype);
@@ -177,7 +182,7 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
     return new_resolverret_dtype(dtype);
 }
 
-ResolverReturnDMembers* resolve_struct_decl_list(Resolver* resolver) {
+ResolverReturnDStructMembers* resolve_struct_decl_list(Resolver* resolver) {
     Vector* members = new_vector(&t_dstructmember);
     Vector* errs = NULL;
     Error* err = NULL;
@@ -234,7 +239,7 @@ ResolverReturnDMembers* resolve_struct_decl_list(Resolver* resolver) {
     return new_resolverret_dstructmembers(members);
 }
 
-ResolverReturnDMembers* resolve_struct_decl(Resolver* resolver) {
+ResolverReturnDStructMembers* resolve_struct_decl(Resolver* resolver) {
     Vector* members = NULL;
     Vector* errs = NULL;
 
@@ -256,7 +261,7 @@ ResolverReturnDMembers* resolve_struct_decl(Resolver* resolver) {
     return new_resolverret_dstructmembers(members);
 }
 
-ResolverReturnDMembers* resolve_struct_declarator_list(Resolver* resolver) {
+ResolverReturnDStructMembers* resolve_struct_declarator_list(Resolver* resolver) {
     Vector* members = new_vector(&t_dstructmember);
     Vector* errs = NULL;
     Ast* ast = resolver->ast;
@@ -290,7 +295,7 @@ ResolverReturnDMembers* resolve_struct_declarator_list(Resolver* resolver) {
     return new_resolverret_dstructmembers(members);
 }
 
-ResolverReturnDMember* resolve_struct_declarator(Resolver* resolver) {
+ResolverReturnDStructMember* resolve_struct_declarator(Resolver* resolver) {
     DStructMember* member = NULL;
     Srt* srt = NULL;
     Vector* errs = NULL;
@@ -313,6 +318,152 @@ ResolverReturnDMember* resolve_struct_declarator(Resolver* resolver) {
     member = new_dstructmember(new_string(srt->ident_name), dtype_copy(srt->dtype));
     delete_srt(srt);
     return new_resolverret_dstructmember(member);
+}
+
+ResolverDTypeReturn* resolve_enum_specifier(Resolver* resolver) {
+    DType* dtype = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+
+    Ast* ast = resolver->ast;
+    Ast* child = NULL;
+
+    char* enum_name = NULL;
+    child = vector_at(ast->children, 0);
+    if (child != NULL && child->type == AST_ENUM_NAME) enum_name = new_string(child->ident_name);
+
+    Vector* members = NULL;
+    child = vector_at(ast->children, enum_name != NULL ? 1 : 0);
+    if (child != NULL && child->type == AST_ENUMOR_LIST) {
+        resolver->ast = child;
+        resolverret_denummembers_assign(&members, &errs, resolve_enumerator_list(resolver));
+        resolver->ast = ast;
+    }
+    if (errs != NULL) {
+        if (enum_name != NULL) free(enum_name);
+        return new_resolverret_dtype_errors(errs);
+    }
+
+    if (enum_name == NULL) {
+        delete_vector(members);
+        dtype = new_integer_dtype(DTYPE_INT);
+        return new_resolverret_dtype(dtype);
+    }
+
+    if (members == NULL) {
+        free(enum_name);
+        dtype = new_integer_dtype(DTYPE_INT);
+        return new_resolverret_dtype(dtype);
+    }
+
+    if (!tagtable_can_define_enum(resolver->tag_table, enum_name)) {
+        errs = new_vector(&t_error);
+        err = new_error("enum '%s' is already declared\n", enum_name);
+        vector_push(errs, err);
+        free(enum_name);
+        delete_vector(members);
+        return new_resolverret_dtype_errors(errs);
+    }
+
+    tagtable_define_enum(resolver->tag_table, enum_name, members);
+
+    dtype = new_integer_dtype(DTYPE_INT);
+    return new_resolverret_dtype(dtype);
+}
+
+ResolverReturnDEnumMembers* resolve_enumerator_list(Resolver* resolver) {
+    Vector* members = new_vector(&t_denummember);
+    Vector* errs = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->default_enum_value = 0;
+    int num_children = vector_size(ast->children);
+    for (int i = 0; i < num_children; i++) {
+        DEnumMember* member = NULL;
+        Vector* child_errs = NULL;
+        resolver->ast = vector_at(ast->children, i);
+        resolverret_denummember_assign(&member, &child_errs, resolve_enumerator(resolver));
+
+        if (child_errs != NULL) {
+            if (errs == NULL) errs = new_vector(&t_error);
+            vector_extend(errs, child_errs);
+            delete_vector(child_errs);
+            continue;
+        } else if (errs != NULL) {
+            delete_denummember(member);
+            continue;
+        }
+
+        vector_push(members, member);
+    }
+
+    resolver->ast = ast;
+    resolver->default_enum_value = 0;
+
+    if (errs != NULL) {
+        delete_vector(members);
+        return new_resolverret_denummembers_errors(errs);
+    }
+    return new_resolverret_denummembers(members);
+}
+
+ResolverReturnDEnumMember* resolve_enumerator(Resolver* resolver) {
+    DEnumMember* member = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+
+    Ast* ast = resolver->ast;
+    Ast* child = NULL;
+
+    child = vector_at(ast->children, 0);
+    member = new_denummember(new_string(child->ident_name), resolver->default_enum_value);
+
+    if (vector_size(ast->children) == 1) {
+        resolver->default_enum_value++;
+        char* member_name = new_string(member->name);
+        DType* member_dtype = new_integer_dtype(DTYPE_INT);
+        IntegerLiteral* member_iliteral = new_signed_iliteral(INTEGER_INT, member->value);
+        symboltable_define_integer(resolver->symbol_table, member_name, member_dtype, member_iliteral);
+        return new_resolverret_denummember(member);
+    }
+
+    Srt* enum_const_srt = NULL;
+
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_assign(&enum_const_srt, &errs, resolve_expr(resolver));
+    if (errs != NULL) {
+        delete_denummember(member);
+        return new_resolverret_denummember_errors(errs);
+    }
+
+    if (enum_const_srt->type != SRT_INT_EXPR || enum_const_srt->iliteral->is_unsigned) {
+        errs = new_vector(&t_error);
+        err = new_error("only direct integer is supported as enumeration constant\n");
+        vector_push(errs, err);
+        delete_denummember(member);
+        delete_srt(enum_const_srt);
+        return new_resolverret_denummember_errors(errs);
+    }
+
+    member->value = enum_const_srt->iliteral->signed_value;
+    resolver->default_enum_value = enum_const_srt->iliteral->signed_value;
+    resolver->default_enum_value++;
+    delete_srt(enum_const_srt);
+
+    if (!symboltable_can_define(resolver->symbol_table, member->name)) {
+        errs = new_vector(&t_error);
+        err = new_error("identifier '%s' is already declared\n", member->name);
+        vector_push(errs, err);
+        delete_denummember(member);
+        return new_resolverret_denummember_errors(errs);
+    }
+
+    char* member_name = new_string(member->name);
+    DType* member_dtype = new_integer_dtype(DTYPE_INT);
+    IntegerLiteral* member_iliteral = new_signed_iliteral(INTEGER_INT, member->value);
+    symboltable_define_integer(resolver->symbol_table, member_name, member_dtype, member_iliteral);
+
+    return new_resolverret_denummember(member);
 }
 
 ResolverReturn* resolve_init_declarator_list(Resolver* resolver) {
