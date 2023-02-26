@@ -25,7 +25,8 @@ ErrorableInt* external_may_function_definition(Parser* parser) {
         delete_set(parser->typedef_names_set);
         parser->index = index;
         parser->typedef_names_set = original_typedef_names_set;
-        return new_errint_error(err);
+        delete_error(err);
+        return new_errint(0);
     }
     delete_ast(ast);
 

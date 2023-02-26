@@ -1,15 +1,17 @@
-typedef enum Number { ZERO, ONE } Number;
+
+
+enum Size {
+    SMALL = 10,
+    MEDIUM = 20,
+    LARGE = 30,
+    EXTRA_LARGE,
+};
 
 int put_int(int x);
 int put_blank_line();
 
 int main() {
-    enum Size {
-        SMALL = 10,
-        MEDIUM = 20,
-        LARGE = 30,
-        EXTRA_LARGE,
-    };
+    typedef enum Number { ZERO, ONE } Number;
 
     put_int(ZERO);
     put_int(ONE);
