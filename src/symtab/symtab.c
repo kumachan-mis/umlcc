@@ -42,6 +42,14 @@ Symbol* symboltable_define_memory(SymbolTable* table, char* name, DType* dtype) 
     return symbol;
 }
 
+Symbol* symboltable_define_integer(SymbolTable* table, char* name, DType* dtype, IntegerLiteral* iliteral) {
+    if (!symboltable_can_define(table, name)) return NULL;
+    Symbol* symbol = new_integer_symbol(name, dtype, iliteral);
+    char* symbol_name = new_string(name);
+    map_add(table->symbol_map, symbol_name, symbol);
+    return symbol;
+}
+
 Symbol* symboltable_search(SymbolTable* table, char* name) {
     Symbol* symbol = NULL;
     while (table != NULL) {
