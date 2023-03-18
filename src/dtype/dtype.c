@@ -129,8 +129,8 @@ DType* dtype_connect(DType* socket_dtype, DType* plug_dtype) {
         switch (tail->type) {
             case DTYPE_CHAR:
             case DTYPE_INT:
-            case DTYPE_ENUM:
             case DTYPE_STRUCT:
+            case DTYPE_ENUM:
                 return socket_dtype;
             case DTYPE_POINTER: {
                 DType* next = dpointer_next(tail->dpointer);
@@ -205,10 +205,10 @@ int dtype_equals(DType* dtype, DType* other) {
             return dpointer_equals(dtype->dpointer, other->dpointer);
         case DTYPE_ARRAY:
             return darray_equals(dtype->darray, other->darray);
-        case DTYPE_ENUM:
-            return denum_equals(dtype->denum, other->denum);
         case DTYPE_STRUCT:
             return dstruct_equals(dtype->dstruct, other->dstruct);
+        case DTYPE_ENUM:
+            return denum_equals(dtype->denum, other->denum);
         case DTYPE_FUNCTION:
             return dfunction_equals(dtype->dfunction, other->dfunction);
         case DTYPE_DECORATION:
@@ -272,10 +272,10 @@ int dtype_alignment(DType* dtype) {
             return 8;
         case DTYPE_ARRAY:
             return dtype_alignment(dtype->darray->of_dtype);
-        case DTYPE_ENUM:
-            return 4;
         case DTYPE_STRUCT:
             return dtype->dstruct->alignment;
+        case DTYPE_ENUM:
+            return 4;
         default:
             return 0;
     }
@@ -291,10 +291,10 @@ int dtype_nbytes(DType* dtype) {
             return 8;
         case DTYPE_ARRAY:
             return dtype->darray->size * dtype_nbytes(dtype->darray->of_dtype);
-        case DTYPE_ENUM:
-            return 4;
         case DTYPE_STRUCT:
             return dtype->dstruct->nbytes;
+        case DTYPE_ENUM:
+            return 4;
         default:
             return 0;
     }
@@ -303,8 +303,8 @@ int dtype_nbytes(DType* dtype) {
 void delete_dtype(DType* dtype) {
     if (dtype->dpointer != NULL) delete_dpointer(dtype->dpointer);
     if (dtype->darray != NULL) delete_darray(dtype->darray);
-    if (dtype->denum != NULL) delete_denum(dtype->denum);
     if (dtype->dstruct != NULL) delete_dstruct(dtype->dstruct);
+    if (dtype->denum != NULL) delete_denum(dtype->denum);
     if (dtype->dfunction != NULL) delete_dfunction(dtype->dfunction);
     if (dtype->ddecoration != NULL) delete_ddecoration(dtype->ddecoration);
     free(dtype);

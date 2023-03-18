@@ -80,7 +80,6 @@ Srt* new_identifier_srt(SrtType type, DType* dtype, char* ident_name);
 Srt* new_iliteral_srt(SrtType type, DType* dtype, IntegerLiteral* iliteral);
 Srt* new_sliteral_srt(SrtType type, DType* dtype, StringLiteral* sliteral);
 Srt* srt_copy(Srt* srt);
-int srt_islvalue(Srt* srt);
 int srt_ismodifiable(Srt* srt);
 void delete_srt(Srt* srt);
 

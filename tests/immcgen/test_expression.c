@@ -726,22 +726,23 @@ void test_immcgen_address_expr_indir(void) {
 }
 
 void test_immcgen_address_expr_tomember(void) {
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 8, 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Struct"), 8, 4);
     Vector* members = new_vector(&t_dstructmember);
     vector_push(members, new_dstructmember(new_string("cmember"), new_integer_dtype(DTYPE_CHAR)));
     vector_push(members, new_dstructmember(new_string("imember"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("test"), named_struct);
+    symboltable_define_memory(local_table, new_string("structure"), named_struct);
     TagTable* local_tag_table = new_tagtable();
-    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+    tagtable_define_struct(local_tag_table, new_string("Struct"), members);
 
     Srt* input = new_dtyped_srt(
-        SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1,                           // non-terminal
-        new_dtyped_srt(SRT_TOMEMBER_EXPR, new_integer_dtype(DTYPE_CHAR), 2,                          // non-terminal
-                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(named_struct)), 1, // non-terminal
-                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(named_struct), new_string("test"))),
-                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("cmember"))));
+        SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+        new_dtyped_srt(
+            SRT_TOMEMBER_EXPR, new_integer_dtype(DTYPE_CHAR), 2,                          // non-terminal
+            new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(named_struct)), 1, // non-terminal
+                           new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(named_struct), new_string("structure"))),
+            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("cmember"))));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -878,21 +879,21 @@ void test_immcgen_call_expr(void) {
 }
 
 void test_immcgen_tomember_expr(void) {
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 8, 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Struct"), 8, 4);
     Vector* members = new_vector(&t_dstructmember);
     vector_push(members, new_dstructmember(new_string("cmember"), new_integer_dtype(DTYPE_CHAR)));
     vector_push(members, new_dstructmember(new_string("imember"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("test"), named_struct);
+    symboltable_define_memory(local_table, new_string("structure"), named_struct);
     TagTable* local_tag_table = new_tagtable();
-    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+    tagtable_define_struct(local_tag_table, new_string("Struct"), members);
 
-    Srt* input =
-        new_dtyped_srt(SRT_TOMEMBER_EXPR, new_integer_dtype(DTYPE_INT), 2,                           // non-terminal
-                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(named_struct)), 1, // non-terminal
-                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(named_struct), new_string("test"))),
-                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("imember")));
+    Srt* input = new_dtyped_srt(
+        SRT_TOMEMBER_EXPR, new_integer_dtype(DTYPE_INT), 2,                           // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(named_struct)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(named_struct), new_string("structure"))),
+        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("imember")));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,

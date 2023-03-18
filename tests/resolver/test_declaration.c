@@ -203,7 +203,7 @@ void test_resolve_named_struct_decl(void) {
         AST_DECL, 2,                        // non-terminal
         new_ast(AST_DECL_SPECS, 1,          // non-terminal
                 new_ast(AST_TYPE_STRUCT, 2, // non-terminal
-                        new_identifier_ast(AST_STRUCT_NAME, new_string("Test")),
+                        new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")),
                         new_ast(AST_STRUCT_DECL_LIST, 3,               // non-terminal
                                 new_ast(AST_STRUCT_DECL, 2,            // non-terminal
                                         new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
@@ -222,33 +222,33 @@ void test_resolve_named_struct_decl(void) {
                                 new_ast(AST_STRUCT_DECL, 2,                 // non-terminal
                                         new_ast(AST_SPEC_QUAL_LIST, 1,      // non-terminal
                                                 new_ast(AST_TYPE_STRUCT, 1, // non-terminal
-                                                        new_identifier_ast(AST_STRUCT_NAME, new_string("Test")))),
+                                                        new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")))),
                                         new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
                                                 new_ast(AST_PTR_DECLOR, 1, // non-terminal
                                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("next")))))))),
         new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
                 new_ast(AST_INIT_DECLOR, 1,        // non-terminal
                         new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("test"))))));
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("structure"))))));
 
     Ast* global_input = ast_copy(local_input);
 
     Srt* expected = new_srt(
         SRT_DECL_LIST, 1,         // non-terminal
         new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_pointer_dtype(new_named_struct_dtype(new_string("Test"), 32, 8)),
-                                   new_string("test"))));
+                new_identifier_srt(SRT_DECL, new_pointer_dtype(new_named_struct_dtype(new_string("Struct"), 32, 8)),
+                                   new_string("structure"))));
 
     Vector* members = new_vector(&t_dstructmember);
     vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
     vector_push(members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
     vector_push(members, new_dstructmember(new_string("s"), new_array_dtype(new_integer_dtype(DTYPE_CHAR), 10)));
     vector_push(members, new_dstructmember(new_string("next"),
-                                           new_pointer_dtype(new_named_struct_dtype(new_string("Test"), 0, 0))));
+                                           new_pointer_dtype(new_named_struct_dtype(new_string("Struct"), 0, 0))));
     DType* struct_dtype = new_unnamed_struct_dtype(members);
 
     Srt* expected_scope = new_srt(SRT_CMPD_STMT, 1, // non-terminal
-                                  new_identifier_srt(SRT_TAG_DECL, struct_dtype, new_string("Test")));
+                                  new_identifier_srt(SRT_TAG_DECL, struct_dtype, new_string("Struct")));
 
     run_local_decl_resolver_test(local_input, NULL, NULL, expected, expected_scope);
     run_global_decl_resolver_test(global_input, NULL, NULL, expected, expected_scope);
@@ -270,7 +270,7 @@ void test_resolve_unnamed_struct_decl(void) {
                                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("member"))))))),
                 new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
                         new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("test")))));
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("structure")))));
 
     Ast* global_input = ast_copy(local_input);
 
@@ -280,7 +280,7 @@ void test_resolve_unnamed_struct_decl(void) {
 
     Srt* expected = new_srt(SRT_DECL_LIST, 1,         // non-terminal
                             new_srt(SRT_INIT_DECL, 1, // non-terminal
-                                    new_identifier_srt(SRT_DECL, struct_dtype, new_string("test"))));
+                                    new_identifier_srt(SRT_DECL, struct_dtype, new_string("structure"))));
 
     Srt* expected_scope = new_srt(SRT_CMPD_STMT, 0);
 
@@ -295,10 +295,10 @@ void test_resolve_nameonly_struct_decl(void) {
     Ast* local_input = new_ast(AST_DECL, 2,                        // non-terminal
                                new_ast(AST_DECL_SPECS, 1,          // non-terminal
                                        new_ast(AST_TYPE_STRUCT, 1, // non-terminal
-                                               new_identifier_ast(AST_STRUCT_NAME, new_string("Test")))),
+                                               new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")))),
                                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
                                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                               new_identifier_ast(AST_IDENT_DECLOR, new_string("test")))));
+                                               new_identifier_ast(AST_IDENT_DECLOR, new_string("structure")))));
 
     Ast* global_input = ast_copy(local_input);
 
@@ -306,13 +306,13 @@ void test_resolve_nameonly_struct_decl(void) {
     vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
 
     TagTable* local_tag_table = new_tagtable();
-    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+    tagtable_define_struct(local_tag_table, new_string("Struct"), members);
     TagTable* global_tag_table = tagtable_copy(local_tag_table);
 
-    Srt* expected = new_srt(
-        SRT_DECL_LIST, 1,         // non-terminal
-        new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Test"), 4, 4), new_string("test"))));
+    Srt* expected = new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                    new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Struct"), 4, 4),
+                                                       new_string("structure"))));
 
     Srt* expected_scope = new_srt(SRT_CMPD_STMT, 0);
 
@@ -328,7 +328,7 @@ void test_resolve_struct_name_decl(void) {
         new_ast(AST_DECL, 1,                        // non-terminal
                 new_ast(AST_DECL_SPECS, 1,          // non-terminal
                         new_ast(AST_TYPE_STRUCT, 2, // non-terminal
-                                new_identifier_ast(AST_STRUCT_NAME, new_string("Test")),
+                                new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")),
                                 new_ast(AST_STRUCT_DECL_LIST, 1,               // non-terminal
                                         new_ast(AST_STRUCT_DECL, 2,            // non-terminal
                                                 new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
@@ -345,7 +345,7 @@ void test_resolve_struct_name_decl(void) {
     DType* struct_dtype = new_unnamed_struct_dtype(members);
 
     Srt* expected_scope = new_srt(SRT_CMPD_STMT, 1, // non-terminal
-                                  new_identifier_srt(SRT_TAG_DECL, struct_dtype, new_string("Test")));
+                                  new_identifier_srt(SRT_TAG_DECL, struct_dtype, new_string("Struct")));
 
     run_local_decl_resolver_test(local_input, NULL, NULL, expected, expected_scope);
     run_global_decl_resolver_test(global_input, NULL, NULL, expected, expected_scope);

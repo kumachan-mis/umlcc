@@ -304,7 +304,7 @@ void test_parse_parameter_decl(void) {
 void test_parse_named_struct_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_STRUCT));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Test")));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Struct")));
     vector_push(input, new_ctoken(CTOKEN_LBRACE));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
@@ -318,13 +318,13 @@ void test_parse_named_struct_decl(void) {
     vector_push(input, new_ctoken(CTOKEN_RBRACKET));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_STRUCT));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Test")));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Struct")));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("next")));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_RBRACE));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("test")));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("structure")));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
@@ -332,7 +332,7 @@ void test_parse_named_struct_decl(void) {
         AST_DECL, 2,                        // non-terminal
         new_ast(AST_DECL_SPECS, 1,          // non-terminal
                 new_ast(AST_TYPE_STRUCT, 2, // non-terminal
-                        new_identifier_ast(AST_STRUCT_NAME, new_string("Test")),
+                        new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")),
                         new_ast(AST_STRUCT_DECL_LIST, 3,               // non-terminal
                                 new_ast(AST_STRUCT_DECL, 2,            // non-terminal
                                         new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
@@ -351,14 +351,14 @@ void test_parse_named_struct_decl(void) {
                                 new_ast(AST_STRUCT_DECL, 2,                 // non-terminal
                                         new_ast(AST_SPEC_QUAL_LIST, 1,      // non-terminal
                                                 new_ast(AST_TYPE_STRUCT, 1, // non-terminal
-                                                        new_identifier_ast(AST_STRUCT_NAME, new_string("Test")))),
+                                                        new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")))),
                                         new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
                                                 new_ast(AST_PTR_DECLOR, 1, // non-terminal
                                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("next")))))))),
         new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
                 new_ast(AST_INIT_DECLOR, 1,        // non-terminal
                         new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("test"))))));
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("structure"))))));
 
     run_decl_parser_test(input, NULL, expected);
 
@@ -374,7 +374,7 @@ void test_parse_unnamed_struct_decl(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_RBRACE));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("test")));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("structure")));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
@@ -391,7 +391,7 @@ void test_parse_unnamed_struct_decl(void) {
                 new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
                         new_ast(AST_INIT_DECLOR, 1,        // non-terminal
                                 new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("test"))))));
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("structure"))))));
 
     run_decl_parser_test(input, NULL, expected);
 
@@ -401,18 +401,18 @@ void test_parse_unnamed_struct_decl(void) {
 void test_parse_nameonly_struct_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_STRUCT));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Test")));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("test")));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Struct")));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("structure")));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Ast* expected = new_ast(AST_DECL, 2,                        // non-terminal
                             new_ast(AST_DECL_SPECS, 1,          // non-terminal
                                     new_ast(AST_TYPE_STRUCT, 1, // non-terminal
-                                            new_identifier_ast(AST_STRUCT_NAME, new_string("Test")))),
+                                            new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")))),
                             new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
                                     new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("test")))));
+                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("structure")))));
 
     run_decl_parser_test(input, NULL, expected);
 
@@ -422,7 +422,7 @@ void test_parse_nameonly_struct_decl(void) {
 void test_parse_struct_name_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_STRUCT));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Test")));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Struct")));
     vector_push(input, new_ctoken(CTOKEN_LBRACE));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
@@ -435,7 +435,7 @@ void test_parse_struct_name_decl(void) {
         new_ast(AST_DECL, 1,                        // non-terminal
                 new_ast(AST_DECL_SPECS, 1,          // non-terminal
                         new_ast(AST_TYPE_STRUCT, 2, // non-terminal
-                                new_identifier_ast(AST_STRUCT_NAME, new_string("Test")),
+                                new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")),
                                 new_ast(AST_STRUCT_DECL_LIST, 1,               // non-terminal
                                         new_ast(AST_STRUCT_DECL, 2,            // non-terminal
                                                 new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal

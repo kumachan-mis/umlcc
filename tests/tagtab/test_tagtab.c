@@ -152,7 +152,7 @@ void test_tagtable_define_struct(void) {
     TagTable* table = new_tagtable();
     DType* struct_dtype = NULL;
 
-    char* struct_name = new_string("Structure");
+    char* struct_name = new_string("Struct");
     Vector* struct_members = new_vector(&t_dstructmember);
     vector_push(struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* expected_struct_dtype = new_unnamed_struct_dtype(vector_copy(struct_members));
@@ -174,7 +174,7 @@ void test_tagtable_duplicated_struct(void) {
     TagTable* table = new_tagtable();
     DType* struct_dtype = NULL;
 
-    char* struct_name = new_string("Structure");
+    char* struct_name = new_string("Struct");
     Vector* struct_members = new_vector(&t_dstructmember);
     vector_push(struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* expected_struct_dtype = new_unnamed_struct_dtype(vector_copy(struct_members));
@@ -188,7 +188,7 @@ void test_tagtable_duplicated_struct(void) {
         CU_ASSERT_TRUE(dtype_equals(struct_dtype, expected_struct_dtype));
     }
 
-    char* dup_name = new_string("Structure");
+    char* dup_name = new_string("Struct");
     Vector* dup_members = new_vector(&t_dstructmember);
     vector_push(dup_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_CHAR)));
 
@@ -281,7 +281,7 @@ void test_tagtable_copy_without_outer(void) {
 
     tagtable_define_enum(table, enum_name, enum_members);
 
-    char* struct_name = new_string("Structure");
+    char* struct_name = new_string("Struct");
     Vector* struct_members = new_vector(&t_dstructmember);
     vector_push(struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* expected_struct_dtype = new_unnamed_struct_dtype(vector_copy(struct_members));
@@ -297,7 +297,7 @@ void test_tagtable_copy_without_outer(void) {
     CU_ASSERT_TRUE(dtype_equals(copied_dtype, expected_enum_dtype));
     free(enum_name);
 
-    struct_name = new_string("Structure");
+    struct_name = new_string("Struct");
     copied_dtype = tagtable_search_struct(copied_table, struct_name);
     CU_ASSERT_TRUE(dtype_equals(copied_dtype, expected_struct_dtype));
     free(struct_name);
