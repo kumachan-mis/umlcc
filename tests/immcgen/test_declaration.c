@@ -118,10 +118,10 @@ void test_immcgen_global_array_decl(void) {
 }
 
 void test_immcgen_local_struct_decl(void) {
-    Srt* input = new_srt(
-        SRT_DECL_LIST, 1,         // non-terminal
-        new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Test"), 12, 4), new_string("test"))));
+    Srt* input = new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                         new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                 new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Struct"), 12, 4),
+                                                    new_string("structure"))));
 
     Vector* members = new_vector(&t_dstructmember);
     vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
@@ -129,7 +129,7 @@ void test_immcgen_local_struct_decl(void) {
     vector_push(members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
 
     TagTable* tag_table = new_tagtable();
-    tagtable_define_struct(tag_table, new_string("Test"), members);
+    tagtable_define_struct(tag_table, new_string("Struct"), members);
 
     Vector* expected = new_vector(&t_immc);
 
@@ -139,10 +139,10 @@ void test_immcgen_local_struct_decl(void) {
 }
 
 void test_immcgen_global_struct_decl(void) {
-    Srt* input = new_srt(
-        SRT_DECL_LIST, 1,         // non-terminal
-        new_srt(SRT_INIT_DECL, 1, // non-terminal
-                new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Test"), 12, 4), new_string("test"))));
+    Srt* input = new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                         new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                 new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Struct"), 12, 4),
+                                                    new_string("structure"))));
 
     Vector* members = new_vector(&t_dstructmember);
     vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
@@ -150,10 +150,10 @@ void test_immcgen_global_struct_decl(void) {
     vector_push(members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
 
     TagTable* tag_table = new_tagtable();
-    tagtable_define_struct(tag_table, new_string("Test"), members);
+    tagtable_define_struct(tag_table, new_string("Struct"), members);
 
     Vector* expected = new_vector(&t_immc);
-    vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("test")));
+    vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("structure")));
     vector_push(expected, new_int_data_immc(IMMC_DATA_ZERO, new_signed_iliteral(INTEGER_INT, 12)));
 
     run_global_decl_immcgen_test(input, NULL, tag_table, expected);
@@ -210,7 +210,7 @@ void test_immcgen_local_struct_tag_decl(void) {
 
     DType* struct_dtype = new_unnamed_struct_dtype(members);
 
-    Srt* input = new_identifier_srt(SRT_TAG_DECL, struct_dtype, new_string("Test"));
+    Srt* input = new_identifier_srt(SRT_TAG_DECL, struct_dtype, new_string("Struct"));
 
     Vector* expected = new_vector(&t_immc);
 
@@ -226,7 +226,7 @@ void test_immcgen_global_struct_tag_decl(void) {
 
     DType* struct_dtype = new_unnamed_struct_dtype(members);
 
-    Srt* input = new_identifier_srt(SRT_TAG_DECL, struct_dtype, new_string("Test"));
+    Srt* input = new_identifier_srt(SRT_TAG_DECL, struct_dtype, new_string("Struct"));
 
     Vector* expected = new_vector(&t_immc);
 
@@ -534,25 +534,26 @@ void test_immcgen_local_struct_init(void) {
     vector_push(members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
 
     TagTable* tag_table = new_tagtable();
-    tagtable_define_struct(tag_table, new_string("Test"), members);
+    tagtable_define_struct(tag_table, new_string("Struct"), members);
 
-    Srt* input = new_srt(
-        SRT_DECL_LIST, 1,         // non-terminal
-        new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Test"), 12, 4), new_string("test")),
-                new_srt(SRT_INIT, 3,                                                            // non-terminal
-                        new_srt(SRT_INIT, 1,                                                    // non-terminal
-                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
-                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                                new_signed_iliteral(INTEGER_INT, 3)))),
-                        new_srt(SRT_INIT, 1, // non-terminal
-                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                 new_signed_iliteral(INTEGER_INT, 2))),
-                        new_srt(SRT_INIT, 1, // non-terminal
-                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR),
-                                               1, // non-terminal
-                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                                new_signed_iliteral(INTEGER_INT, 0)))))));
+    Srt* input =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Struct"), 12, 4),
+                                           new_string("structure")),
+                        new_srt(SRT_INIT, 3,                                                            // non-terminal
+                                new_srt(SRT_INIT, 1,                                                    // non-terminal
+                                        new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+                                                       new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                        new_signed_iliteral(INTEGER_INT, 3)))),
+                                new_srt(SRT_INIT, 1, // non-terminal
+                                        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                         new_signed_iliteral(INTEGER_INT, 2))),
+                                new_srt(SRT_INIT, 1, // non-terminal
+                                        new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR),
+                                                       1, // non-terminal
+                                                       new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                        new_signed_iliteral(INTEGER_INT, 0)))))));
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
                 new_inst_immc(IMMC_INST_STORE,                                      // inst
@@ -582,28 +583,29 @@ void test_immcgen_global_struct_init(void) {
     vector_push(members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
 
     TagTable* tag_table = new_tagtable();
-    tagtable_define_struct(tag_table, new_string("Test"), members);
+    tagtable_define_struct(tag_table, new_string("Struct"), members);
 
-    Srt* input = new_srt(
-        SRT_DECL_LIST, 1,         // non-terminal
-        new_srt(SRT_INIT_DECL, 2, // non-terminal
-                new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Test"), 12, 4), new_string("test")),
-                new_srt(SRT_INIT, 3,                                                            // non-terminal
-                        new_srt(SRT_INIT, 1,                                                    // non-terminal
-                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
-                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                                new_signed_iliteral(INTEGER_INT, 3)))),
-                        new_srt(SRT_INIT, 1, // non-terminal
-                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                 new_signed_iliteral(INTEGER_INT, 2))),
-                        new_srt(SRT_INIT, 1, // non-terminal
-                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR),
-                                               1, // non-terminal
-                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                                new_signed_iliteral(INTEGER_INT, 0)))))));
+    Srt* input =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Struct"), 12, 4),
+                                           new_string("structure")),
+                        new_srt(SRT_INIT, 3,                                                            // non-terminal
+                                new_srt(SRT_INIT, 1,                                                    // non-terminal
+                                        new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+                                                       new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                        new_signed_iliteral(INTEGER_INT, 3)))),
+                                new_srt(SRT_INIT, 1, // non-terminal
+                                        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                         new_signed_iliteral(INTEGER_INT, 2))),
+                                new_srt(SRT_INIT, 1, // non-terminal
+                                        new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR),
+                                                       1, // non-terminal
+                                                       new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                        new_signed_iliteral(INTEGER_INT, 0)))))));
 
     Vector* expected = new_vector(&t_immc);
-    vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("test")));
+    vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("structure")));
     vector_push(expected, new_int_data_immc(IMMC_DATA_BYTE, new_signed_iliteral(INTEGER_INT, 3)));
     vector_push(expected, new_int_data_immc(IMMC_DATA_ZERO, new_signed_iliteral(INTEGER_INT, 3)));
     vector_push(expected, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 2)));

@@ -560,23 +560,23 @@ void test_resolve_reversed_subscription_expr(void) {
 
 void test_resolve_member_expr(void) {
     Ast* input = new_ast(AST_MEMBER_EXPR, 2, // non-terminal
-                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Struct"), 4, 4);
     Vector* members = new_vector(&t_dstructmember);
     vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("test"), named_struct);
+    symboltable_define_memory(local_table, new_string("structure"), named_struct);
     TagTable* local_tag_table = new_tagtable();
-    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+    tagtable_define_struct(local_tag_table, new_string("Struct"), members);
 
-    Srt* expected =
-        new_dtyped_srt(SRT_TOMEMBER_EXPR, new_integer_dtype(DTYPE_INT), 2,                           // non-terminal
-                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(named_struct)), 1, // non-terminal
-                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(named_struct), new_string("test"))),
-                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("member")));
+    Srt* expected = new_dtyped_srt(
+        SRT_TOMEMBER_EXPR, new_integer_dtype(DTYPE_INT), 2,                           // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(named_struct)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(named_struct), new_string("structure"))),
+        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("member")));
 
     run_local_expr_resolver_test(input, local_table, local_tag_table, expected, NULL);
 
@@ -585,21 +585,21 @@ void test_resolve_member_expr(void) {
 
 void test_resolve_tomember_expr(void) {
     Ast* input = new_ast(AST_TOMEMBER_EXPR, 2, // non-terminal
-                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Struct"), 4, 4);
     Vector* members = new_vector(&t_dstructmember);
     vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("test"), new_pointer_dtype(named_struct));
+    symboltable_define_memory(local_table, new_string("structure"), new_pointer_dtype(named_struct));
     TagTable* local_tag_table = new_tagtable();
-    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+    tagtable_define_struct(local_tag_table, new_string("Struct"), members);
 
     Srt* expected = new_dtyped_srt(
         SRT_TOMEMBER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(dtype_copy(named_struct)), new_string("test")),
+        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(dtype_copy(named_struct)), new_string("structure")),
         new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("member")));
 
     run_local_expr_resolver_test(input, local_table, local_tag_table, expected, NULL);

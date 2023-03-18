@@ -960,17 +960,17 @@ void test_resolve_subscription_expr_error_rhs(void) {
 
 void test_resolve_member_expr_error_non_struct(void) {
     Ast* input = new_ast(AST_MEMBER_EXPR, 2, // non-terminal
-                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Struct"), 4, 4);
     Vector* members = new_vector(&t_dstructmember);
     vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("test"), new_pointer_dtype(named_struct));
+    symboltable_define_memory(local_table, new_string("structure"), new_pointer_dtype(named_struct));
     TagTable* local_tag_table = new_tagtable();
-    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+    tagtable_define_struct(local_tag_table, new_string("Struct"), members);
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("dot-accessed object is not a struct\n"));
@@ -982,17 +982,17 @@ void test_resolve_member_expr_error_non_struct(void) {
 
 void test_resolve_member_expr_error_incomplete_struct(void) {
     Ast* input = new_ast(AST_MEMBER_EXPR, 2, // non-terminal
-                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 0, 0);
+    DType* named_struct = new_named_struct_dtype(new_string("Struct"), 0, 0);
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("test"), named_struct);
+    symboltable_define_memory(local_table, new_string("structure"), named_struct);
     TagTable* local_tag_table = new_tagtable();
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("struct 'Test' is incomplete\n"));
+    vector_push(expected, new_error("struct 'Struct' is incomplete\n"));
 
     run_expr_resolver_error_test(input, local_table, local_tag_table, expected);
 
@@ -1001,17 +1001,17 @@ void test_resolve_member_expr_error_incomplete_struct(void) {
 
 void test_resolve_member_expr_error_unknown_member(void) {
     Ast* input = new_ast(AST_MEMBER_EXPR, 2, // non-terminal
-                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("unknown")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Struct"), 4, 4);
     Vector* members = new_vector(&t_dstructmember);
     vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("test"), named_struct);
+    symboltable_define_memory(local_table, new_string("structure"), named_struct);
     TagTable* local_tag_table = new_tagtable();
-    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+    tagtable_define_struct(local_tag_table, new_string("Struct"), members);
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("member 'unknown' does not exist in struct\n"));
@@ -1023,17 +1023,17 @@ void test_resolve_member_expr_error_unknown_member(void) {
 
 void test_resolve_tomember_expr_error_non_pointer_to_struct(void) {
     Ast* input = new_ast(AST_TOMEMBER_EXPR, 2, // non-terminal
-                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Struct"), 4, 4);
     Vector* members = new_vector(&t_dstructmember);
     vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("test"), named_struct);
+    symboltable_define_memory(local_table, new_string("structure"), named_struct);
     TagTable* local_tag_table = new_tagtable();
-    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+    tagtable_define_struct(local_tag_table, new_string("Struct"), members);
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("arrow-accessed object is not a pointer to a struct\n"));
@@ -1045,17 +1045,17 @@ void test_resolve_tomember_expr_error_non_pointer_to_struct(void) {
 
 void test_resolve_tomember_expr_error_incomplete_struct(void) {
     Ast* input = new_ast(AST_TOMEMBER_EXPR, 2, // non-terminal
-                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 0, 0);
+    DType* named_struct = new_named_struct_dtype(new_string("Struct"), 0, 0);
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("test"), new_pointer_dtype(named_struct));
+    symboltable_define_memory(local_table, new_string("structure"), new_pointer_dtype(named_struct));
     TagTable* local_tag_table = new_tagtable();
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("struct 'Test' is incomplete\n"));
+    vector_push(expected, new_error("struct 'Struct' is incomplete\n"));
 
     run_expr_resolver_error_test(input, local_table, local_tag_table, expected);
 
@@ -1064,17 +1064,17 @@ void test_resolve_tomember_expr_error_incomplete_struct(void) {
 
 void test_resolve_tomember_expr_error_unknown_member(void) {
     Ast* input = new_ast(AST_TOMEMBER_EXPR, 2, // non-terminal
-                         new_identifier_ast(AST_IDENT_EXPR, new_string("test")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("unknown")));
 
-    DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
+    DType* named_struct = new_named_struct_dtype(new_string("Struct"), 4, 4);
     Vector* members = new_vector(&t_dstructmember);
     vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("test"), new_pointer_dtype(named_struct));
+    symboltable_define_memory(local_table, new_string("structure"), new_pointer_dtype(named_struct));
     TagTable* local_tag_table = new_tagtable();
-    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+    tagtable_define_struct(local_tag_table, new_string("Struct"), members);
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("member 'unknown' does not exist in struct\n"));

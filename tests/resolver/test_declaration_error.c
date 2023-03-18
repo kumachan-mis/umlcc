@@ -198,7 +198,7 @@ void test_resolve_struct_error_duplicated(void) {
         new_ast(AST_DECL, 2,                        // non-terminal
                 new_ast(AST_DECL_SPECS, 1,          // non-terminal
                         new_ast(AST_TYPE_STRUCT, 2, // non-terminal
-                                new_identifier_ast(AST_STRUCT_NAME, new_string("Test")),
+                                new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")),
                                 new_ast(AST_STRUCT_DECL_LIST, 1,               // non-terminal
                                         new_ast(AST_STRUCT_DECL, 2,            // non-terminal
                                                 new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
@@ -207,7 +207,7 @@ void test_resolve_struct_error_duplicated(void) {
                                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("member"))))))),
                 new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
                         new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("test")))));
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("structure")))));
 
     Ast* global_input = ast_copy(local_input);
 
@@ -215,11 +215,11 @@ void test_resolve_struct_error_duplicated(void) {
     vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
 
     TagTable* local_tag_table = new_tagtable();
-    tagtable_define_struct(local_tag_table, new_string("Test"), members);
+    tagtable_define_struct(local_tag_table, new_string("Struct"), members);
     TagTable* global_tag_table = tagtable_copy(local_tag_table);
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("struct 'Test' is already declared\n"));
+    vector_push(expected, new_error("struct 'Struct' is already declared\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, local_tag_table, expected);
     run_global_decl_resolver_error_test(global_input, NULL, global_tag_table, expected);
@@ -247,7 +247,7 @@ void test_resolve_struct_member_error_duplicated(void) {
                                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("y"))))))),
                 new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
                         new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                new_identifier_ast(AST_IDENT_DECLOR, new_string("test")))));
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("structure")))));
 
     Ast* global_input = ast_copy(local_input);
 
@@ -277,9 +277,9 @@ void test_resolve_struct_member_error(void) {
                                 new_ast(AST_STRUCT_DECL, 2,                 // non-terminal
                                         new_ast(AST_SPEC_QUAL_LIST, 1,      // non-terminal
                                                 new_ast(AST_TYPE_STRUCT, 1, // non-terminal
-                                                        new_identifier_ast(AST_STRUCT_NAME, new_string("Test")))),
+                                                        new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")))),
                                         new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
-                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("test"))))))));
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("structure"))))))));
 
     Ast* global_input = ast_copy(local_input);
 
