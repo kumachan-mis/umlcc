@@ -1,4 +1,4 @@
-int put_int(int x);
+void put_int(int x);
 
 int bin_operator(int operator(int x, int y), int x, int y) {
     return operator(x, y);

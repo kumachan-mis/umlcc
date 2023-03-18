@@ -1,8 +1,8 @@
 typedef int test_int, *test_intptr;
 
-test_int put_int(test_int x);
-test_int put_str(char* s);
-test_int put_blank_line();
+test_void put_int(test_int x);
+test_void put_str(char* s);
+test_void put_blank_line();
 
 int main() {
     test_int a, b;

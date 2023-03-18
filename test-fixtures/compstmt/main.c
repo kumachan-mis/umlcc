@@ -1,4 +1,4 @@
-int put_int(int x);
+void put_int(int x);
 
 int main() {
     int x, y;

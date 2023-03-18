@@ -4,10 +4,10 @@ typedef struct Node {
 } Node;
 
 Node* new_node(int value);
-int delete_node(Node* node);
+void delete_node(Node* node);
 
-int put_int(int x);
-int put_blank_line();
+void put_int(int x);
+void put_blank_line();
 
 struct {
     char x;

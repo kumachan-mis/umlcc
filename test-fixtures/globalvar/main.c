@@ -10,9 +10,9 @@ char zca[5];
 int ia[4] = {1, 2, 3};
 int zia[4];
 
-int put_int(int x);
-int put_str(char* x);
-int put_blank_line();
+void put_int(int x);
+void put_str(char* x);
+void put_blank_line();
 
 int main() {
     put_int(c);

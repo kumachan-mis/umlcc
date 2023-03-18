@@ -1,5 +1,5 @@
-int put_int(int x);
-int put_blank_line();
+void put_int(int x);
+void put_blank_line();
 
 int main() {
     put_int(2 && 1);
