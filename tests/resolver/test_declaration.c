@@ -12,6 +12,10 @@ void test_resolve_named_struct_decl(void);
 void test_resolve_unnamed_struct_decl(void);
 void test_resolve_nameonly_struct_decl(void);
 void test_resolve_struct_name_decl(void);
+void test_resolve_named_enum_decl(void);
+void test_resolve_unnamed_enum_decl(void);
+void test_resolve_nameonly_enum_decl(void);
+void test_resolve_enum_name_decl(void);
 void test_resolve_function_decl(void);
 void test_resolve_parameter_decl(void);
 void test_resolve_typedef_decl(void);
@@ -54,6 +58,10 @@ CU_Suite* add_test_suite_decl_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_unnamed_struct_decl);
     CU_ADD_TEST(suite, test_resolve_nameonly_struct_decl);
     CU_ADD_TEST(suite, test_resolve_struct_name_decl);
+    CU_ADD_TEST(suite, test_resolve_named_enum_decl);
+    CU_ADD_TEST(suite, test_resolve_unnamed_enum_decl);
+    CU_ADD_TEST(suite, test_resolve_nameonly_enum_decl);
+    CU_ADD_TEST(suite, test_resolve_enum_name_decl);
     CU_ADD_TEST(suite, test_resolve_function_decl);
     CU_ADD_TEST(suite, test_resolve_parameter_decl);
     CU_ADD_TEST(suite, test_resolve_typedef_decl);
@@ -344,6 +352,110 @@ void test_resolve_struct_name_decl(void) {
 
     delete_srt(expected);
     delete_srt(expected_scope);
+}
+
+void test_resolve_named_enum_decl(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                                   // non-terminal
+                new_ast(AST_DECL_SPECS, 1,                     // non-terminal
+                        new_ast(AST_TYPE_ENUM, 1,              // non-terminal
+                                new_ast(AST_ENUMOR_LIST, 2,    // non-terminal
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("PLUS"))),
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("MINUS")))))),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("enumeration")))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Srt* expected =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("enumeration"))));
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_unnamed_enum_decl(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                                   // non-terminal
+                new_ast(AST_DECL_SPECS, 1,                     // non-terminal
+                        new_ast(AST_TYPE_ENUM, 1,              // non-terminal
+                                new_ast(AST_ENUMOR_LIST, 3,    // non-terminal
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("FIRST"))),
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("SECOND"))),
+                                        new_ast(AST_ENUMOR, 2, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("THIRD")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)))))),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("enumeration")))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Srt* expected =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("enumeration"))));
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_nameonly_enum_decl(void) {
+    Ast* local_input = new_ast(AST_DECL, 2,                      // non-terminal
+                               new_ast(AST_DECL_SPECS, 1,        // non-terminal
+                                       new_ast(AST_TYPE_ENUM, 1, // non-terminal
+                                               new_identifier_ast(AST_ENUM_NAME, new_string("Enum")))),
+                               new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                       new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                               new_identifier_ast(AST_IDENT_DECLOR, new_string("enumeration")))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Srt* expected =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("enumeration"))));
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_enum_name_decl(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 1,                      // non-terminal
+                new_ast(AST_DECL_SPECS, 1,        // non-terminal
+                        new_ast(AST_TYPE_ENUM, 2, // non-terminal
+                                new_identifier_ast(AST_ENUM_NAME, new_string("Enum")),
+                                new_ast(AST_ENUMOR_LIST, 3,    // non-terminal
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("FIRST"))),
+                                        new_ast(AST_ENUMOR, 2, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("SECOND")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))),
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("THIRD")))))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Srt* expected = new_srt(SRT_DECL_LIST, 0);
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
 }
 
 void test_resolve_function_decl(void) {

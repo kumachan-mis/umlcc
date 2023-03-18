@@ -12,6 +12,9 @@ void test_resolve_array_error_size_limit(void);
 void test_resolve_struct_error_duplicated(void);
 void test_resolve_struct_member_error_duplicated(void);
 void test_resolve_struct_member_error(void);
+void test_resolve_enum_error_duplicated(void);
+void test_resolve_enum_member_error_duplicated(void);
+void test_resolve_enum_error_const_limit(void);
 void test_resolve_param_list_error_duplicated(void);
 void test_resolve_param_error_storage_specifier(void);
 void test_resolve_param_error_declarator(void);
@@ -43,6 +46,9 @@ CU_Suite* add_test_suite_decl_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_struct_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_struct_member_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_struct_member_error);
+    CU_ADD_TEST(suite, test_resolve_enum_error_duplicated);
+    CU_ADD_TEST(suite, test_resolve_enum_member_error_duplicated);
+    CU_ADD_TEST(suite, test_resolve_enum_error_const_limit);
     CU_ADD_TEST(suite, test_resolve_param_list_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_param_error_storage_specifier);
     CU_ADD_TEST(suite, test_resolve_param_error_declarator);
@@ -179,7 +185,7 @@ void test_resolve_array_error_size_limit(void) {
     Ast* global_input = ast_copy(local_input);
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("only direct integer is supported as array size\n"));
+    vector_push(expected, new_error("only integer constant is supported as array size\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
     run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
@@ -283,6 +289,96 @@ void test_resolve_struct_member_error(void) {
 
     run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
     run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_enum_error_duplicated(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 1,                      // non-terminal
+                new_ast(AST_DECL_SPECS, 1,        // non-terminal
+                        new_ast(AST_TYPE_ENUM, 2, // non-terminal
+                                new_identifier_ast(AST_ENUM_NAME, new_string("Enum")),
+                                new_ast(AST_ENUMOR_LIST, 1,    // non-terminal
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("MEMBER")))))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* members = new_vector(&t_denummember);
+    vector_push(members, new_denummember(new_string("MEMBER"), 0));
+
+    TagTable* local_tag_table = new_tagtable();
+    tagtable_define_enum(local_tag_table, new_string("Enum"), members);
+    TagTable* global_tag_table = tagtable_copy(local_tag_table);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("enum 'Enum' is already declared\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, local_tag_table, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, global_tag_table, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_enum_member_error_duplicated(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 1,                      // non-terminal
+                new_ast(AST_DECL_SPECS, 1,        // non-terminal
+                        new_ast(AST_TYPE_ENUM, 2, // non-terminal
+                                new_identifier_ast(AST_ENUM_NAME, new_string("Enum")),
+                                new_ast(AST_ENUMOR_LIST, 4,    // non-terminal
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("FIRST"))),
+                                        new_ast(AST_ENUMOR, 2, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("SECOND")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))),
+                                        new_ast(AST_ENUMOR, 2, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("SECOND")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6))),
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("FIRST")))))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'SECOND' is already declared\n"));
+    vector_push(expected, new_error("identifier 'FIRST' is already declared\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_enum_error_const_limit(void) {
+    Ast* local_input = new_ast(
+        AST_DECL, 1, // non-terminal
+        new_ast(
+            AST_DECL_SPECS, 1,        // non-terminal
+            new_ast(AST_TYPE_ENUM, 2, // non-terminal
+                    new_identifier_ast(AST_ENUM_NAME, new_string("Enum")),
+                    new_ast(AST_ENUMOR_LIST, 1,    // non-terminal
+                            new_ast(AST_ENUMOR, 2, // non-terminal
+                                    new_identifier_ast(AST_ENUM_CONST, new_string("MEMBER")),
+                                    new_ast(AST_ADD_EXPR, 2,
+                                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)),
+                                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* members = new_vector(&t_denummember);
+    vector_push(members, new_denummember(new_string("MEMBER"), 0));
+
+    TagTable* local_tag_table = new_tagtable();
+    tagtable_define_enum(local_tag_table, new_string("Enum"), members);
+    TagTable* global_tag_table = tagtable_copy(local_tag_table);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("only integer constant is supported as enumeration constant\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, local_tag_table, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, global_tag_table, expected);
 
     delete_vector(expected);
 }

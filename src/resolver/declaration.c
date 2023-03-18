@@ -413,55 +413,50 @@ ResolverReturnDEnumMember* resolve_enumerator(Resolver* resolver) {
     Error* err = NULL;
 
     Ast* ast = resolver->ast;
-    Ast* child = NULL;
 
-    child = vector_at(ast->children, 0);
-    member = new_denummember(new_string(child->ident_name), resolver->default_enum_value);
+    Ast* child = vector_at(ast->children, 0);
+    if (!symboltable_can_define(resolver->symbol_table, child->ident_name)) {
+        errs = new_vector(&t_error);
+        err = new_error("identifier '%s' is already declared\n", child->ident_name);
+        vector_push(errs, err);
+        return new_resolverret_denummember_errors(errs);
+    }
 
     if (vector_size(ast->children) == 1) {
-        resolver->default_enum_value++;
-        char* member_name = new_string(member->name);
+        char* member_name = new_string(child->ident_name);
         DType* member_dtype = new_integer_dtype(DTYPE_INT);
-        IntegerLiteral* member_iliteral = new_signed_iliteral(INTEGER_INT, member->value);
+        IntegerLiteral* member_iliteral = new_signed_iliteral(INTEGER_INT, resolver->default_enum_value);
         symboltable_define_integer(resolver->symbol_table, member_name, member_dtype, member_iliteral);
+
+        member = new_denummember(new_string(child->ident_name), resolver->default_enum_value);
+        resolver->default_enum_value++;
+
         return new_resolverret_denummember(member);
     }
 
     Srt* enum_const_srt = NULL;
-
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&enum_const_srt, &errs, resolve_expr(resolver));
-    if (errs != NULL) {
-        delete_denummember(member);
-        return new_resolverret_denummember_errors(errs);
-    }
+    if (errs != NULL) return new_resolverret_denummember_errors(errs);
 
     if (enum_const_srt->type != SRT_INT_EXPR || enum_const_srt->iliteral->is_unsigned) {
         errs = new_vector(&t_error);
-        err = new_error("only direct integer is supported as enumeration constant\n");
+        err = new_error("only integer constant is supported as enumeration constant\n");
         vector_push(errs, err);
-        delete_denummember(member);
         delete_srt(enum_const_srt);
         return new_resolverret_denummember_errors(errs);
     }
 
-    member->value = enum_const_srt->iliteral->signed_value;
-    resolver->default_enum_value = enum_const_srt->iliteral->signed_value;
-    resolver->default_enum_value++;
+    int enum_value = enum_const_srt->iliteral->signed_value;
     delete_srt(enum_const_srt);
 
-    if (!symboltable_can_define(resolver->symbol_table, member->name)) {
-        errs = new_vector(&t_error);
-        err = new_error("identifier '%s' is already declared\n", member->name);
-        vector_push(errs, err);
-        delete_denummember(member);
-        return new_resolverret_denummember_errors(errs);
-    }
-
-    char* member_name = new_string(member->name);
+    char* member_name = new_string(child->ident_name);
     DType* member_dtype = new_integer_dtype(DTYPE_INT);
-    IntegerLiteral* member_iliteral = new_signed_iliteral(INTEGER_INT, member->value);
+    IntegerLiteral* member_iliteral = new_signed_iliteral(INTEGER_INT, enum_value);
     symboltable_define_integer(resolver->symbol_table, member_name, member_dtype, member_iliteral);
+
+    member = new_denummember(new_string(child->ident_name), enum_value);
+    resolver->default_enum_value = enum_value + 1;
 
     return new_resolverret_denummember(member);
 }
@@ -603,7 +598,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
 
                 if (array_size_srt->type != SRT_INT_EXPR || array_size_srt->iliteral->is_unsigned) {
                     errs = new_vector(&t_error);
-                    err = new_error("only direct integer is supported as array size\n");
+                    err = new_error("only integer constant is supported as array size\n");
                     vector_push(errs, err);
                     delete_srt(array_size_srt);
                     break;
