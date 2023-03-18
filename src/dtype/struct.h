@@ -15,7 +15,7 @@ void delete_dtype(DType* dtype);
 #endif
 
 typedef struct DStruct DStruct;
-typedef struct DMember DMember;
+typedef struct DStructMember DStructMember;
 
 struct DStruct {
     char* name;
@@ -24,7 +24,7 @@ struct DStruct {
     int alignment;
 };
 
-struct DMember {
+struct DStructMember {
     char* name;
     DType* dtype;
     int memory_offset;
@@ -40,11 +40,11 @@ int dstruct_equals(DStruct* dstruct, DStruct* other);
 void delete_dstruct(DStruct* dstruct);
 #endif
 
-extern BaseType t_dmember;
+extern BaseType t_dstructmember;
 
-DMember* new_dmember(char* name, DType* dtype);
-DMember* dmember_copy(DMember* dmember);
-int dmember_equals(DMember* dmember, DMember* other);
-void delete_dmember(DMember* dmember);
+DStructMember* new_dstructmember(char* name, DType* dtype);
+DStructMember* dstructmember_copy(DStructMember* dstructmember);
+int dstructmember_equals(DStructMember* dstructmember, DStructMember* other);
+void delete_dstructmember(DStructMember* dstructmember);
 
 #endif

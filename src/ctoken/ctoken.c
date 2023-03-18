@@ -9,7 +9,7 @@ BaseType t_ctoken = {
 
 char* ctoken_types[] = {
     // non-punctuators
-    "char", "int", "return", "struct", "typedef", "identifier", "integer-constant", "character-constant",
+    "char", "enum", "int", "return", "struct", "typedef", "identifier", "integer-constant", "character-constant",
     "string-literal",
     // punctuators
     "[", "]", "(", ")", "{", "}", ".", "->", "&", "*", "+", "-", "!", "/", "%", "==", "!=", "&&", "||", ";", "=", ",",

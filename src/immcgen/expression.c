@@ -314,12 +314,12 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
                 struct_dtype = tagtable_search_struct(immcgen->tag_table, struct_dtype->dstruct->name);
             }
 
-            DMember* accessed_member = NULL;
+            DStructMember* accessed_member = NULL;
             int num_members = vector_size(struct_dtype->dstruct->members);
             for (int i = 0; i < num_members; i++) {
-                DMember* dmember = vector_at(struct_dtype->dstruct->members, i);
-                if (strcmp(dmember->name, member_srt->ident_name) == 0) {
-                    accessed_member = dmember;
+                DStructMember* member = vector_at(struct_dtype->dstruct->members, i);
+                if (strcmp(member->name, member_srt->ident_name) == 0) {
+                    accessed_member = member;
                     break;
                 }
             }
@@ -435,12 +435,12 @@ Vector* gen_tomember_expr_immcode(Immcgen* immcgen) {
         struct_dtype = tagtable_search_struct(immcgen->tag_table, struct_dtype->dstruct->name);
     }
 
-    DMember* accessed_member = NULL;
+    DStructMember* accessed_member = NULL;
     int num_members = vector_size(struct_dtype->dstruct->members);
     for (int i = 0; i < num_members; i++) {
-        DMember* dmember = vector_at(struct_dtype->dstruct->members, i);
-        if (strcmp(dmember->name, member_srt->ident_name) == 0) {
-            accessed_member = dmember;
+        DStructMember* member = vector_at(struct_dtype->dstruct->members, i);
+        if (strcmp(member->name, member_srt->ident_name) == 0) {
+            accessed_member = member;
             break;
         }
     }

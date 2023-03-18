@@ -13,11 +13,16 @@ void test_parse_named_struct_decl(void);
 void test_parse_unnamed_struct_decl(void);
 void test_parse_nameonly_struct_decl(void);
 void test_parse_struct_name_decl(void);
+void test_parse_named_enum_decl(void);
+void test_parse_named_enum_decl_comma(void);
+void test_parse_unnamed_enum_decl(void);
+void test_parse_nameonly_enum_decl(void);
+void test_parse_enum_name_decl(void);
 void test_parse_typedef_decl(void);
 void test_parse_typedef_name_decl(void);
 void test_parse_expr_init(void);
-void test_parse_list_init_without_trailing_comma(void);
-void test_parse_list_init_with_trailing_comma(void);
+void test_parse_list_init(void);
+void test_parse_list_init_comma(void);
 
 void run_decl_parser_test(Vector* input, Set* typedef_names_set, Ast* expected);
 
@@ -33,11 +38,16 @@ CU_Suite* add_test_suite_decl_parser(void) {
     CU_ADD_TEST(suite, test_parse_unnamed_struct_decl);
     CU_ADD_TEST(suite, test_parse_nameonly_struct_decl);
     CU_ADD_TEST(suite, test_parse_struct_name_decl);
+    CU_ADD_TEST(suite, test_parse_named_enum_decl);
+    CU_ADD_TEST(suite, test_parse_named_enum_decl_comma);
+    CU_ADD_TEST(suite, test_parse_unnamed_enum_decl);
+    CU_ADD_TEST(suite, test_parse_nameonly_enum_decl);
+    CU_ADD_TEST(suite, test_parse_enum_name_decl);
     CU_ADD_TEST(suite, test_parse_typedef_decl);
     CU_ADD_TEST(suite, test_parse_typedef_name_decl);
     CU_ADD_TEST(suite, test_parse_expr_init);
-    CU_ADD_TEST(suite, test_parse_list_init_without_trailing_comma);
-    CU_ADD_TEST(suite, test_parse_list_init_with_trailing_comma);
+    CU_ADD_TEST(suite, test_parse_list_init);
+    CU_ADD_TEST(suite, test_parse_list_init_comma);
     return suite;
 }
 
@@ -438,6 +448,158 @@ void test_parse_struct_name_decl(void) {
     delete_ast(expected);
 }
 
+void test_parse_named_enum_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_ENUM));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("PLUS")));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("MINUS")));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("enumeration")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_DECL, 2,                                   // non-terminal
+                            new_ast(AST_DECL_SPECS, 1,                     // non-terminal
+                                    new_ast(AST_TYPE_ENUM, 1,              // non-terminal
+                                            new_ast(AST_ENUMOR_LIST, 2,    // non-terminal
+                                                    new_ast(AST_ENUMOR, 1, // non-terminal
+                                                            new_identifier_ast(AST_ENUM_CONST, new_string("PLUS"))),
+                                                    new_ast(AST_ENUMOR, 1, // non-terminal
+                                                            new_identifier_ast(AST_ENUM_CONST, new_string("MINUS")))))),
+                            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                    new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("enumeration")))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_named_enum_decl_comma(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_ENUM));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("PLUS")));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("MINUS")));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("enumeration")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_DECL, 2,                                   // non-terminal
+                            new_ast(AST_DECL_SPECS, 1,                     // non-terminal
+                                    new_ast(AST_TYPE_ENUM, 1,              // non-terminal
+                                            new_ast(AST_ENUMOR_LIST, 2,    // non-terminal
+                                                    new_ast(AST_ENUMOR, 1, // non-terminal
+                                                            new_identifier_ast(AST_ENUM_CONST, new_string("PLUS"))),
+                                                    new_ast(AST_ENUMOR, 1, // non-terminal
+                                                            new_identifier_ast(AST_ENUM_CONST, new_string("MINUS")))))),
+                            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                    new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("enumeration")))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_unnamed_enum_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_ENUM));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("FIRST")));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("SECOND")));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("THIRD")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("enumeration")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected =
+        new_ast(AST_DECL, 2,                                   // non-terminal
+                new_ast(AST_DECL_SPECS, 1,                     // non-terminal
+                        new_ast(AST_TYPE_ENUM, 1,              // non-terminal
+                                new_ast(AST_ENUMOR_LIST, 3,    // non-terminal
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("FIRST"))),
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("SECOND"))),
+                                        new_ast(AST_ENUMOR, 2, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("THIRD")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)))))),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("enumeration")))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_nameonly_enum_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_ENUM));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Enum")));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("enumeration")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_DECL, 2,                      // non-terminal
+                            new_ast(AST_DECL_SPECS, 1,        // non-terminal
+                                    new_ast(AST_TYPE_ENUM, 1, // non-terminal
+                                            new_identifier_ast(AST_ENUM_NAME, new_string("Enum")))),
+                            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                    new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("enumeration")))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_enum_name_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_ENUM));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Enum")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("FIRST")));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("SECOND")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 5)));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("THIRD")));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected =
+        new_ast(AST_DECL, 1,                      // non-terminal
+                new_ast(AST_DECL_SPECS, 1,        // non-terminal
+                        new_ast(AST_TYPE_ENUM, 2, // non-terminal
+                                new_identifier_ast(AST_ENUM_NAME, new_string("Enum")),
+                                new_ast(AST_ENUMOR_LIST, 3,    // non-terminal
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("FIRST"))),
+                                        new_ast(AST_ENUMOR, 2, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("SECOND")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))),
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("THIRD")))))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
 void test_parse_typedef_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_TYPEDEF));
@@ -509,7 +671,7 @@ void test_parse_expr_init(void) {
     delete_ast(expected);
 }
 
-void test_parse_list_init_without_trailing_comma(void) {
+void test_parse_list_init(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("array")));
@@ -543,7 +705,7 @@ void test_parse_list_init_without_trailing_comma(void) {
     delete_ast(expected);
 }
 
-void test_parse_list_init_with_trailing_comma(void) {
+void test_parse_list_init_comma(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("array")));

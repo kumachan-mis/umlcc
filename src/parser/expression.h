@@ -4,6 +4,7 @@
 #include "./parser.h"
 
 ParserReturn* parse_expr(Parser* parser);
+ParserReturn* parse_constant_expr(Parser* parser);
 ParserReturn* parse_assignment_expr(Parser* parser);
 ParserReturn* parse_logical_or_expr(Parser* parser);
 ParserReturn* parse_logical_and_expr(Parser* parser);

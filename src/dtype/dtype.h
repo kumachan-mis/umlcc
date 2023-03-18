@@ -8,6 +8,7 @@ typedef struct DType DType;
 
 #include "./array.h"
 #include "./decoration.h"
+#include "./enum.h"
 #include "./function.h"
 #include "./pointer.h"
 #include "./struct.h"
@@ -18,6 +19,7 @@ typedef enum DTypeType {
     DTYPE_POINTER,
     DTYPE_ARRAY,
     DTYPE_STRUCT,
+    DTYPE_ENUM,
     DTYPE_FUNCTION,
     DTYPE_DECORATION,
 } DTypeType;
@@ -27,6 +29,7 @@ struct DType {
     DPointer* dpointer;
     DArray* darray;
     DStruct* dstruct;
+    DEnum* denum;
     DFunction* dfunction;
     DDecoration* ddecoration;
 };
@@ -38,6 +41,8 @@ DType* new_pointer_dtype(DType* to_dtype);
 DType* new_array_dtype(DType* of_dtype, int size);
 DType* new_named_struct_dtype(char* name, int nbytes, int alignment);
 DType* new_unnamed_struct_dtype(Vector* members);
+DType* new_named_enum_dtype(char* name);
+DType* new_unnamed_enum_dtype(Vector* members);
 DType* new_function_dtype(Vector* params, DType* return_dtype);
 DType* new_decoration_dtype(DType* deco_dtype);
 DType* new_socket_pointer_dtype(void);

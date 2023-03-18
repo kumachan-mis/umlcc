@@ -151,6 +151,9 @@ ParserReturn* parse_type_specifier(Parser* parser) {
         case CTOKEN_KEYWORD_STRUCT:
             parserret_assign(&ast, &err, parse_struct_specifier(parser));
             break;
+        case CTOKEN_KEYWORD_ENUM:
+            parserret_assign(&ast, &err, parse_enum_specifier(parser));
+            break;
         case CTOKEN_IDENT:
             if (set_contains(parser->typedef_names_set, ctoken->ident_name)) {
                 parser->index++;
@@ -225,7 +228,7 @@ ParserReturn* parse_struct_decl_list(Parser* parser) {
 
         vector_push(ast->children, child);
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
-        if (!ctoken_is_type_specifier(ctoken, parser->typedef_names_set)) break;
+        if (ctoken->type == CTOKEN_RBRACE) break;
     }
 
     if (err != NULL) {
@@ -283,6 +286,108 @@ ParserReturn* parse_struct_declarator_list(Parser* parser) {
         delete_ast(ast);
         return new_parserret_error(err);
     }
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_enum_specifier(Parser* parser) {
+    Ast* ast = new_ast(AST_TYPE_ENUM, 0);
+    Ast* child = NULL;
+    Error* err = NULL;
+
+    err = consume_ctoken(parser, CTOKEN_KEYWORD_ENUM);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    CToken* ctoken = NULL;
+
+    ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type == CTOKEN_IDENT) {
+        parser->index++;
+        child = new_identifier_ast(AST_ENUM_NAME, new_string(ctoken->ident_name));
+        vector_push(ast->children, child);
+    }
+
+    ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type == CTOKEN_LBRACE) {
+        parser->index++;
+        parserret_assign(&child, &err, parse_enumerator_list(parser));
+        if (err != NULL) {
+            delete_ast(ast);
+            return new_parserret_error(err);
+        }
+
+        vector_push(ast->children, child);
+
+        err = consume_ctoken(parser, CTOKEN_RBRACE);
+        if (err != NULL) {
+            delete_ast(ast);
+            return new_parserret_error(err);
+        }
+    }
+
+    if (vector_size(ast->children) == 0) {
+        err = new_error("identifier or { expected, but got %s\n", ctoken_types[ctoken->type]);
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_enumerator_list(Parser* parser) {
+    Ast* ast = new_ast(AST_ENUMOR_LIST, 0);
+    Ast* child = NULL;
+    Error* err = NULL;
+
+    while (1) {
+        parserret_assign(&child, &err, parse_enumerator(parser));
+        if (err != NULL) break;
+        vector_push(ast->children, child);
+
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type == CTOKEN_RBRACE) break;
+
+        err = consume_ctoken(parser, CTOKEN_COMMA);
+        if (err != NULL) break;
+
+        ctoken = vector_at(parser->ctokens, parser->index);
+        if (ctoken->type == CTOKEN_RBRACE) break;
+    }
+
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_enumerator(Parser* parser) {
+    Ast* ast = new_ast(AST_ENUMOR, 0);
+    Ast* child = NULL;
+    Error* err = NULL;
+
+    CToken* ctoken = ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type != CTOKEN_IDENT) {
+        err = new_error("identifier expected, but got %s\n", ctoken_types[ctoken->type]);
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    vector_push(ast->children, new_identifier_ast(AST_ENUM_CONST, new_string(ctoken->ident_name)));
+    parser->index++;
+
+    ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type != CTOKEN_EQUAL) return new_parserret(ast);
+    parser->index++;
+
+    parserret_assign(&child, &err, parse_constant_expr(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    vector_push(ast->children, child);
     return new_parserret(ast);
 }
 
@@ -419,7 +524,7 @@ ParserReturn* parse_direct_declarator(Parser* parser) {
         switch (ctoken->type) {
             case CTOKEN_LBRACKET:
                 parser->index++;
-                parserret_assign(&child, &err, parse_assignment_expr(parser));
+                parserret_assign(&child, &err, parse_constant_expr(parser));
                 if (err != NULL) break;
 
                 child = new_ast(AST_ARRAY_DECLOR, 1, child);

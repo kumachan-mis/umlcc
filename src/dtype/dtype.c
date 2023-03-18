@@ -11,124 +11,94 @@ BaseType t_dtype = {
     .delete_object = (void (*)(void*))delete_dtype,
 };
 
+DType* new_base_dtype(DTypeType type);
+
 DType* new_integer_dtype(DTypeType type) {
-    DType* dtype = malloc(sizeof(DType));
-    dtype->type = type;
-    dtype->dpointer = NULL;
-    dtype->darray = NULL;
-    dtype->dstruct = NULL;
-    dtype->dfunction = NULL;
-    dtype->ddecoration = NULL;
+    DType* dtype = new_base_dtype(type);
     return dtype;
 }
 
 DType* new_pointer_dtype(DType* to_dtype) {
-    DType* dtype = malloc(sizeof(DType));
-    dtype->type = DTYPE_POINTER;
+    DType* dtype = new_base_dtype(DTYPE_POINTER);
     dtype->dpointer = new_dpointer(to_dtype);
-    dtype->darray = NULL;
-    dtype->dstruct = NULL;
-    dtype->dfunction = NULL;
-    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_array_dtype(DType* of_dtype, int size) {
-    DType* dtype = malloc(sizeof(DType));
-    dtype->type = DTYPE_ARRAY;
-    dtype->dpointer = NULL;
+    DType* dtype = new_base_dtype(DTYPE_ARRAY);
     dtype->darray = new_darray(of_dtype, size);
-    dtype->dstruct = NULL;
-    dtype->dfunction = NULL;
-    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_named_struct_dtype(char* name, int nbytes, int alignment) {
-    DType* dtype = malloc(sizeof(DType));
-    dtype->type = DTYPE_STRUCT;
-    dtype->dpointer = NULL;
-    dtype->darray = NULL;
+    DType* dtype = new_base_dtype(DTYPE_STRUCT);
     dtype->dstruct = new_named_dstruct(name, nbytes, alignment);
-    dtype->dfunction = NULL;
-    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_unnamed_struct_dtype(Vector* members) {
-    DType* dtype = malloc(sizeof(DType));
-    dtype->type = DTYPE_STRUCT;
-    dtype->dpointer = NULL;
-    dtype->darray = NULL;
+    DType* dtype = new_base_dtype(DTYPE_STRUCT);
     dtype->dstruct = new_unnamed_dstruct(members);
-    dtype->dfunction = NULL;
-    dtype->ddecoration = NULL;
+    return dtype;
+}
+
+DType* new_named_enum_dtype(char* name) {
+    DType* dtype = new_base_dtype(DTYPE_ENUM);
+    dtype->denum = new_named_denum(name);
+    return dtype;
+}
+
+DType* new_unnamed_enum_dtype(Vector* members) {
+    DType* dtype = new_base_dtype(DTYPE_ENUM);
+    dtype->denum = new_unnamed_denum(members);
     return dtype;
 }
 
 DType* new_function_dtype(Vector* params, DType* return_dtype) {
-    DType* dtype = malloc(sizeof(DType));
-    dtype->type = DTYPE_FUNCTION;
-    dtype->dpointer = NULL;
-    dtype->darray = NULL;
-    dtype->dstruct = NULL;
+    DType* dtype = new_base_dtype(DTYPE_FUNCTION);
     dtype->dfunction = new_dfunction(params, return_dtype);
-    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_decoration_dtype(DType* deco_dtype) {
-    DType* dtype = malloc(sizeof(DType));
-    dtype->type = DTYPE_DECORATION;
-    dtype->dpointer = NULL;
-    dtype->darray = NULL;
-    dtype->dstruct = NULL;
-    dtype->dfunction = NULL;
+    DType* dtype = new_base_dtype(DTYPE_DECORATION);
     dtype->ddecoration = new_ddecoration(deco_dtype);
     return dtype;
 }
 
 DType* new_socket_pointer_dtype(void) {
-    DType* dtype = malloc(sizeof(DType));
-    dtype->type = DTYPE_POINTER;
+    DType* dtype = new_base_dtype(DTYPE_POINTER);
     dtype->dpointer = new_socket_dpointer();
-    dtype->darray = NULL;
-    dtype->dstruct = NULL;
-    dtype->dfunction = NULL;
-    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_socket_array_dtype(int size) {
-    DType* dtype = malloc(sizeof(DType));
-    dtype->type = DTYPE_ARRAY;
-    dtype->dpointer = NULL;
+    DType* dtype = new_base_dtype(DTYPE_ARRAY);
     dtype->darray = new_socket_darray(size);
-    dtype->dstruct = NULL;
-    dtype->dfunction = NULL;
-    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_socket_function_dtype(Vector* params) {
-    DType* dtype = malloc(sizeof(DType));
-    dtype->type = DTYPE_FUNCTION;
-    dtype->dpointer = NULL;
-    dtype->darray = NULL;
-    dtype->dstruct = NULL;
+    DType* dtype = new_base_dtype(DTYPE_FUNCTION);
     dtype->dfunction = new_socket_dfunction(params);
-    dtype->ddecoration = NULL;
     return dtype;
 }
 
 DType* new_socket_decoration_dtype(void) {
+    DType* dtype = new_base_dtype(DTYPE_DECORATION);
+    dtype->ddecoration = new_socket_ddecoration();
+    return dtype;
+}
+
+DType* new_base_dtype(DTypeType type) {
     DType* dtype = malloc(sizeof(DType));
-    dtype->type = DTYPE_DECORATION;
+    dtype->type = type;
     dtype->dpointer = NULL;
     dtype->darray = NULL;
     dtype->dstruct = NULL;
+    dtype->denum = NULL;
     dtype->dfunction = NULL;
-    dtype->ddecoration = new_socket_ddecoration();
+    dtype->ddecoration = NULL;
     return dtype;
 }
 
@@ -142,6 +112,8 @@ DType* dtype_copy(DType* dtype) {
     if (dtype->darray != NULL) copied_dtype->darray = darray_copy(dtype->darray);
     copied_dtype->dstruct = NULL;
     if (dtype->dstruct != NULL) copied_dtype->dstruct = dstruct_copy(dtype->dstruct);
+    copied_dtype->denum = NULL;
+    if (dtype->denum != NULL) copied_dtype->denum = denum_copy(dtype->denum);
     copied_dtype->dfunction = NULL;
     if (dtype->dfunction != NULL) copied_dtype->dfunction = dfunction_copy(dtype->dfunction);
     copied_dtype->ddecoration = NULL;
@@ -157,6 +129,7 @@ DType* dtype_connect(DType* socket_dtype, DType* plug_dtype) {
         switch (tail->type) {
             case DTYPE_CHAR:
             case DTYPE_INT:
+            case DTYPE_ENUM:
             case DTYPE_STRUCT:
                 return socket_dtype;
             case DTYPE_POINTER: {
@@ -232,6 +205,8 @@ int dtype_equals(DType* dtype, DType* other) {
             return dpointer_equals(dtype->dpointer, other->dpointer);
         case DTYPE_ARRAY:
             return darray_equals(dtype->darray, other->darray);
+        case DTYPE_ENUM:
+            return denum_equals(dtype->denum, other->denum);
         case DTYPE_STRUCT:
             return dstruct_equals(dtype->dstruct, other->dstruct);
         case DTYPE_FUNCTION:
@@ -263,15 +238,15 @@ int dtype_isassignable(DType* dtype, DType* other) {
 }
 
 int dtype_isinteger(DType* dtype) {
-    return DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_INT;
+    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_INT) || dtype->type == DTYPE_ENUM;
 }
 
 int dtype_isarithmetic(DType* dtype) {
-    return DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_INT;
+    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_INT) || dtype->type == DTYPE_ENUM;
 }
 
 int dtype_isscalar(DType* dtype) {
-    return DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_POINTER;
+    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_POINTER) || dtype->type == DTYPE_ENUM;
 }
 
 int dtype_isaggregate(DType* dtype) {
@@ -279,7 +254,7 @@ int dtype_isaggregate(DType* dtype) {
 }
 
 int dtype_isobject(DType* dtype) {
-    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_ARRAY) ||
+    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_ARRAY) || dtype->type == DTYPE_ENUM ||
            (dtype->type == DTYPE_STRUCT && dtype->dstruct->nbytes > 0);
 }
 
@@ -297,6 +272,8 @@ int dtype_alignment(DType* dtype) {
             return 8;
         case DTYPE_ARRAY:
             return dtype_alignment(dtype->darray->of_dtype);
+        case DTYPE_ENUM:
+            return 4;
         case DTYPE_STRUCT:
             return dtype->dstruct->alignment;
         default:
@@ -314,6 +291,8 @@ int dtype_nbytes(DType* dtype) {
             return 8;
         case DTYPE_ARRAY:
             return dtype->darray->size * dtype_nbytes(dtype->darray->of_dtype);
+        case DTYPE_ENUM:
+            return 4;
         case DTYPE_STRUCT:
             return dtype->dstruct->nbytes;
         default:
@@ -324,6 +303,7 @@ int dtype_nbytes(DType* dtype) {
 void delete_dtype(DType* dtype) {
     if (dtype->dpointer != NULL) delete_dpointer(dtype->dpointer);
     if (dtype->darray != NULL) delete_darray(dtype->darray);
+    if (dtype->denum != NULL) delete_denum(dtype->denum);
     if (dtype->dstruct != NULL) delete_dstruct(dtype->dstruct);
     if (dtype->dfunction != NULL) delete_dfunction(dtype->dfunction);
     if (dtype->ddecoration != NULL) delete_ddecoration(dtype->ddecoration);

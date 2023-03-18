@@ -27,6 +27,8 @@ void test_resolve_member_expr(void);
 void test_resolve_tomember_expr(void);
 void test_resolve_ident_expr_local(void);
 void test_resolve_ident_expr_global(void);
+void test_resolve_enum_ident_expr_local(void);
+void test_resolve_enum_ident_expr_global(void);
 void test_resolve_iliteral_expr_int(void);
 void test_resolve_iliteral_expr_char(void);
 void test_resolve_sliteral_expr(void);
@@ -62,6 +64,8 @@ CU_Suite* add_test_suite_expr_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_tomember_expr);
     CU_ADD_TEST(suite, test_resolve_ident_expr_local);
     CU_ADD_TEST(suite, test_resolve_ident_expr_global);
+    CU_ADD_TEST(suite, test_resolve_enum_ident_expr_local);
+    CU_ADD_TEST(suite, test_resolve_enum_ident_expr_global);
     CU_ADD_TEST(suite, test_resolve_iliteral_expr_int);
     CU_ADD_TEST(suite, test_resolve_iliteral_expr_char);
     CU_ADD_TEST(suite, test_resolve_sliteral_expr);
@@ -560,8 +564,8 @@ void test_resolve_member_expr(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
     DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("test"), named_struct);
@@ -585,8 +589,8 @@ void test_resolve_tomember_expr(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
     DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("test"), new_pointer_dtype(named_struct));
@@ -623,6 +627,34 @@ void test_resolve_ident_expr_global(void) {
     symboltable_define_label(global_table, new_string("global"), new_integer_dtype(DTYPE_INT));
 
     Srt* expected = new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("global"));
+
+    run_global_expr_resolver_test(input, global_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_enum_ident_expr_local(void) {
+    Ast* input = new_identifier_ast(AST_IDENT_EXPR, new_string("LOCAL_MEMBER"));
+
+    SymbolTable* local_table = new_symboltable();
+    IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 4);
+    symboltable_define_integer(local_table, new_string("LOCAL_MEMBER"), new_integer_dtype(DTYPE_INT), iliteral);
+
+    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_enum_ident_expr_global(void) {
+    Ast* input = new_identifier_ast(AST_IDENT_EXPR, new_string("GLOBAL_MEMBER"));
+
+    SymbolTable* global_table = new_symboltable();
+    IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 1);
+    symboltable_define_integer(global_table, new_string("GLOBAL_MEMBER"), new_integer_dtype(DTYPE_INT), iliteral);
+
+    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1));
 
     run_global_expr_resolver_test(input, global_table, NULL, expected, NULL);
 

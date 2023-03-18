@@ -12,6 +12,10 @@ void test_resolve_named_struct_decl(void);
 void test_resolve_unnamed_struct_decl(void);
 void test_resolve_nameonly_struct_decl(void);
 void test_resolve_struct_name_decl(void);
+void test_resolve_named_enum_decl(void);
+void test_resolve_unnamed_enum_decl(void);
+void test_resolve_nameonly_enum_decl(void);
+void test_resolve_enum_name_decl(void);
 void test_resolve_function_decl(void);
 void test_resolve_parameter_decl(void);
 void test_resolve_typedef_decl(void);
@@ -54,6 +58,10 @@ CU_Suite* add_test_suite_decl_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_unnamed_struct_decl);
     CU_ADD_TEST(suite, test_resolve_nameonly_struct_decl);
     CU_ADD_TEST(suite, test_resolve_struct_name_decl);
+    CU_ADD_TEST(suite, test_resolve_named_enum_decl);
+    CU_ADD_TEST(suite, test_resolve_unnamed_enum_decl);
+    CU_ADD_TEST(suite, test_resolve_nameonly_enum_decl);
+    CU_ADD_TEST(suite, test_resolve_enum_name_decl);
     CU_ADD_TEST(suite, test_resolve_function_decl);
     CU_ADD_TEST(suite, test_resolve_parameter_decl);
     CU_ADD_TEST(suite, test_resolve_typedef_decl);
@@ -231,12 +239,12 @@ void test_resolve_named_struct_decl(void) {
                 new_identifier_srt(SRT_DECL, new_pointer_dtype(new_named_struct_dtype(new_string("Test"), 32, 8)),
                                    new_string("test"))));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
-    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
-    vector_push(members, new_dmember(new_string("s"), new_array_dtype(new_integer_dtype(DTYPE_CHAR), 10)));
-    vector_push(members,
-                new_dmember(new_string("next"), new_pointer_dtype(new_named_struct_dtype(new_string("Test"), 0, 0))));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("s"), new_array_dtype(new_integer_dtype(DTYPE_CHAR), 10)));
+    vector_push(members, new_dstructmember(new_string("next"),
+                                           new_pointer_dtype(new_named_struct_dtype(new_string("Test"), 0, 0))));
     DType* struct_dtype = new_unnamed_struct_dtype(members);
 
     Srt* expected_scope = new_srt(SRT_CMPD_STMT, 1, // non-terminal
@@ -266,8 +274,8 @@ void test_resolve_unnamed_struct_decl(void) {
 
     Ast* global_input = ast_copy(local_input);
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* struct_dtype = new_unnamed_struct_dtype(members);
 
     Srt* expected = new_srt(SRT_DECL_LIST, 1,         // non-terminal
@@ -294,8 +302,8 @@ void test_resolve_nameonly_struct_decl(void) {
 
     Ast* global_input = ast_copy(local_input);
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
 
     TagTable* local_tag_table = new_tagtable();
     tagtable_define_struct(local_tag_table, new_string("Test"), members);
@@ -332,8 +340,8 @@ void test_resolve_struct_name_decl(void) {
 
     Srt* expected = new_srt(SRT_DECL_LIST, 0);
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
     DType* struct_dtype = new_unnamed_struct_dtype(members);
 
     Srt* expected_scope = new_srt(SRT_CMPD_STMT, 1, // non-terminal
@@ -344,6 +352,110 @@ void test_resolve_struct_name_decl(void) {
 
     delete_srt(expected);
     delete_srt(expected_scope);
+}
+
+void test_resolve_named_enum_decl(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                                   // non-terminal
+                new_ast(AST_DECL_SPECS, 1,                     // non-terminal
+                        new_ast(AST_TYPE_ENUM, 1,              // non-terminal
+                                new_ast(AST_ENUMOR_LIST, 2,    // non-terminal
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("PLUS"))),
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("MINUS")))))),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("enumeration")))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Srt* expected =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("enumeration"))));
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_unnamed_enum_decl(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 2,                                   // non-terminal
+                new_ast(AST_DECL_SPECS, 1,                     // non-terminal
+                        new_ast(AST_TYPE_ENUM, 1,              // non-terminal
+                                new_ast(AST_ENUMOR_LIST, 3,    // non-terminal
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("FIRST"))),
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("SECOND"))),
+                                        new_ast(AST_ENUMOR, 2, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("THIRD")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)))))),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("enumeration")))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Srt* expected =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("enumeration"))));
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_nameonly_enum_decl(void) {
+    Ast* local_input = new_ast(AST_DECL, 2,                      // non-terminal
+                               new_ast(AST_DECL_SPECS, 1,        // non-terminal
+                                       new_ast(AST_TYPE_ENUM, 1, // non-terminal
+                                               new_identifier_ast(AST_ENUM_NAME, new_string("Enum")))),
+                               new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                       new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                               new_identifier_ast(AST_IDENT_DECLOR, new_string("enumeration")))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Srt* expected =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("enumeration"))));
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_enum_name_decl(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 1,                      // non-terminal
+                new_ast(AST_DECL_SPECS, 1,        // non-terminal
+                        new_ast(AST_TYPE_ENUM, 2, // non-terminal
+                                new_identifier_ast(AST_ENUM_NAME, new_string("Enum")),
+                                new_ast(AST_ENUMOR_LIST, 3,    // non-terminal
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("FIRST"))),
+                                        new_ast(AST_ENUMOR, 2, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("SECOND")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))),
+                                        new_ast(AST_ENUMOR, 1, // non-terminal
+                                                new_identifier_ast(AST_ENUM_CONST, new_string("THIRD")))))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Srt* expected = new_srt(SRT_DECL_LIST, 0);
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
 }
 
 void test_resolve_function_decl(void) {
@@ -1070,9 +1182,9 @@ void test_resolve_struct_list_init_zero(void) {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
 
     TagTable* local_tag_table = new_tagtable();
     tagtable_define_struct(local_tag_table, new_string("Struct"), members);
@@ -1111,14 +1223,14 @@ void test_resolve_struct_list_init_zero_nested(void) {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* child_members = new_vector(&t_dmember);
-    vector_push(child_members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(child_members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
-    vector_push(child_members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
+    Vector* child_members = new_vector(&t_dstructmember);
+    vector_push(child_members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(child_members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(child_members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("first"), new_named_struct_dtype(new_string("Child"), 12, 4)));
-    vector_push(members, new_dmember(new_string("second"), new_named_struct_dtype(new_string("Child"), 12, 4)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("first"), new_named_struct_dtype(new_string("Child"), 12, 4)));
+    vector_push(members, new_dstructmember(new_string("second"), new_named_struct_dtype(new_string("Child"), 12, 4)));
 
     TagTable* local_tag_table = new_tagtable();
     tagtable_define_struct(local_tag_table, new_string("Child"), child_members);
@@ -1192,10 +1304,10 @@ void test_resolve_struct_list_init(void) {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
-    vector_push(members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
 
     Srt* expected =
         new_srt(SRT_DECL_LIST, 1,         // non-terminal
@@ -1233,10 +1345,10 @@ void test_resolve_struct_list_init_lacked(void) {
                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
-    vector_push(members, new_dmember(new_string("z"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("z"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
 
     TagTable* local_tag_table = new_tagtable();
     tagtable_define_struct(local_tag_table, new_string("Struct"), members);
@@ -1294,14 +1406,14 @@ void test_resolve_struct_list_init_nested(void) {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6)))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* child_members = new_vector(&t_dmember);
-    vector_push(child_members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
-    vector_push(child_members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(child_members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_INT)));
+    Vector* child_members = new_vector(&t_dstructmember);
+    vector_push(child_members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(child_members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(child_members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_INT)));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("first"), new_named_struct_dtype(new_string("Child"), 12, 4)));
-    vector_push(members, new_dmember(new_string("second"), new_named_struct_dtype(new_string("Child"), 12, 4)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("first"), new_named_struct_dtype(new_string("Child"), 12, 4)));
+    vector_push(members, new_dstructmember(new_string("second"), new_named_struct_dtype(new_string("Child"), 12, 4)));
 
     TagTable* local_tag_table = new_tagtable();
     tagtable_define_struct(local_tag_table, new_string("Child"), child_members);
@@ -1357,14 +1469,14 @@ void test_resolve_struct_list_init_nested_lacked(void) {
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 10)))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* child_members = new_vector(&t_dmember);
-    vector_push(child_members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
-    vector_push(child_members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(child_members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_INT)));
+    Vector* child_members = new_vector(&t_dstructmember);
+    vector_push(child_members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(child_members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(child_members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_INT)));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("first"), new_named_struct_dtype(new_string("Child"), 12, 4)));
-    vector_push(members, new_dmember(new_string("second"), new_named_struct_dtype(new_string("Child"), 12, 4)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("first"), new_named_struct_dtype(new_string("Child"), 12, 4)));
+    vector_push(members, new_dstructmember(new_string("second"), new_named_struct_dtype(new_string("Child"), 12, 4)));
 
     TagTable* local_tag_table = new_tagtable();
     tagtable_define_struct(local_tag_table, new_string("Child"), child_members);
@@ -1427,14 +1539,14 @@ void test_resolve_struct_list_init_flatten(void) {
                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* child_members = new_vector(&t_dmember);
-    vector_push(child_members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
-    vector_push(child_members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(child_members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_INT)));
+    Vector* child_members = new_vector(&t_dstructmember);
+    vector_push(child_members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(child_members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(child_members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_INT)));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("first"), new_named_struct_dtype(new_string("Child"), 12, 4)));
-    vector_push(members, new_dmember(new_string("second"), new_named_struct_dtype(new_string("Child"), 12, 4)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("first"), new_named_struct_dtype(new_string("Child"), 12, 4)));
+    vector_push(members, new_dstructmember(new_string("second"), new_named_struct_dtype(new_string("Child"), 12, 4)));
 
     TagTable* local_tag_table = new_tagtable();
     tagtable_define_struct(local_tag_table, new_string("Child"), child_members);
@@ -1493,14 +1605,14 @@ void test_resolve_struct_list_init_mix(void) {
                                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))))))));
     Ast* global_input = ast_copy(local_input);
 
-    Vector* child_members = new_vector(&t_dmember);
-    vector_push(child_members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
-    vector_push(child_members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_CHAR)));
+    Vector* child_members = new_vector(&t_dstructmember);
+    vector_push(child_members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(child_members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_CHAR)));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("first"), new_named_struct_dtype(new_string("Child"), 8, 4)));
-    vector_push(members, new_dmember(new_string("second"), new_named_struct_dtype(new_string("Child"), 8, 4)));
-    vector_push(members, new_dmember(new_string("third"), new_named_struct_dtype(new_string("Child"), 8, 4)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("first"), new_named_struct_dtype(new_string("Child"), 8, 4)));
+    vector_push(members, new_dstructmember(new_string("second"), new_named_struct_dtype(new_string("Child"), 8, 4)));
+    vector_push(members, new_dstructmember(new_string("third"), new_named_struct_dtype(new_string("Child"), 8, 4)));
 
     TagTable* local_tag_table = new_tagtable();
     tagtable_define_struct(local_tag_table, new_string("Child"), child_members);

@@ -867,7 +867,7 @@ ResolverReturn* resolve_member_name_expr(Resolver* resolver) {
 
     int num_members = vector_size(member_dtype->dstruct->members);
     for (int i = 0; i < num_members; i++) {
-        DMember* member = vector_at(member_dtype->dstruct->members, i);
+        DStructMember* member = vector_at(member_dtype->dstruct->members, i);
         if (strcmp(member->name, ast->ident_name) != 0) continue;
 
         srt = new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(member->dtype), new_string(member->name));
@@ -899,6 +899,14 @@ ResolverReturn* resolve_primary_expr(Resolver* resolver) {
                 vector_push(errs, err);
                 break;
             }
+
+            if (symbol->type == SYMBOL_INT) {
+                DType* dtype = new_integer_dtype(DTYPE_INT);
+                IntegerLiteral* iliteral = iliteral_copy(symbol->iliteral);
+                srt = new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
+                break;
+            }
+
             DType* ident_dtype = dtype_copy(symbol->dtype);
             char* ident_name = new_string(symbol->name);
             srt = new_identifier_srt(SRT_IDENT_EXPR, ident_dtype, ident_name);

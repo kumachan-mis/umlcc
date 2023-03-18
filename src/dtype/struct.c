@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-BaseType t_dmember = {
-    .copy_object = (void* (*)(void*))dmember_copy,
-    .delete_object = (void (*)(void*))delete_dmember,
+BaseType t_dstructmember = {
+    .copy_object = (void* (*)(void*))dstructmember_copy,
+    .delete_object = (void (*)(void*))delete_dstructmember,
 };
 
 DStruct* new_named_dstruct(char* name, int nbytes, int alignment) {
@@ -31,7 +31,7 @@ DStruct* new_unnamed_dstruct(Vector* members) {
 
     int num_members = vector_size(members);
     for (int i = 0; i < num_members; i++) {
-        DMember* member = vector_at(members, i);
+        DStructMember* member = vector_at(members, i);
         int alignment = dtype_alignment(member->dtype);
 
         member->memory_offset = (dstruct->nbytes + alignment - 1) / alignment * alignment;
@@ -58,7 +58,7 @@ DStruct* dstruct_copy(DStruct* dstruct) {
 }
 
 DType* dstruct_at(DStruct* dstruct, int index) {
-    DMember* member = vector_at(dstruct->members, index);
+    DStructMember* member = vector_at(dstruct->members, index);
     if (member == NULL) return NULL;
     return member->dtype;
 }
@@ -78,9 +78,9 @@ int dstruct_equals(DStruct* dstruct, DStruct* other) {
 
     int num_members = vector_size(dstruct->members);
     for (int i = 0; i < num_members; i++) {
-        DMember* dstruct_dmember = vector_at(dstruct->members, i);
-        DMember* other_dmember = vector_at(other->members, i);
-        if (!dmember_equals(dstruct_dmember, other_dmember)) return 0;
+        DStructMember* dstruct_member = vector_at(dstruct->members, i);
+        DStructMember* other_member = vector_at(other->members, i);
+        if (!dstructmember_equals(dstruct_member, other_member)) return 0;
     }
     return 1;
 }
@@ -91,28 +91,28 @@ void delete_dstruct(DStruct* dstruct) {
     free(dstruct);
 }
 
-DMember* new_dmember(char* name, DType* dtype) {
-    DMember* dmember = malloc(sizeof(DMember));
-    dmember->name = name;
-    dmember->dtype = dtype;
-    dmember->memory_offset = 0;
-    return dmember;
+DStructMember* new_dstructmember(char* name, DType* dtype) {
+    DStructMember* dstructmember = malloc(sizeof(DStructMember));
+    dstructmember->name = name;
+    dstructmember->dtype = dtype;
+    dstructmember->memory_offset = 0;
+    return dstructmember;
 }
 
-DMember* dmember_copy(DMember* dmember) {
-    DMember* copied_dmember = malloc(sizeof(DMember));
-    copied_dmember->name = new_string(dmember->name);
-    copied_dmember->dtype = dtype_copy(dmember->dtype);
-    copied_dmember->memory_offset = dmember->memory_offset;
-    return copied_dmember;
+DStructMember* dstructmember_copy(DStructMember* dstructmember) {
+    DStructMember* copied_dstructmember = malloc(sizeof(DStructMember));
+    copied_dstructmember->name = new_string(dstructmember->name);
+    copied_dstructmember->dtype = dtype_copy(dstructmember->dtype);
+    copied_dstructmember->memory_offset = dstructmember->memory_offset;
+    return copied_dstructmember;
 }
 
-int dmember_equals(DMember* dmember, DMember* other) {
-    return strcmp(dmember->name, other->name) == 0 && dtype_equals(dmember->dtype, other->dtype);
+int dstructmember_equals(DStructMember* dstructmember, DStructMember* other) {
+    return strcmp(dstructmember->name, other->name) == 0 && dtype_equals(dstructmember->dtype, other->dtype);
 }
 
-void delete_dmember(DMember* dmember) {
-    free(dmember->name);
-    delete_dtype(dmember->dtype);
-    free(dmember);
+void delete_dstructmember(DStructMember* dstructmember) {
+    free(dstructmember->name);
+    delete_dtype(dstructmember->dtype);
+    free(dstructmember);
 }

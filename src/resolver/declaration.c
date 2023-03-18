@@ -103,6 +103,11 @@ ResolverDTypeReturn* resolve_type_specifier_list(Resolver* resolver) {
             resolverret_dtype_assign(&dtype, &errs, resolve_struct_specifier(resolver));
             resolver->ast = ast;
             break;
+        case AST_TYPE_ENUM:
+            resolver->ast = child;
+            resolverret_dtype_assign(&dtype, &errs, resolve_enum_specifier(resolver));
+            resolver->ast = ast;
+            break;
         case AST_TYPEDEF_NAME: {
             Symbol* symbol = symboltable_search(resolver->symbol_table, child->ident_name);
             dtype = dtype_copy(symbol->dtype->ddecoration->deco_dtype);
@@ -134,7 +139,7 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
     child = vector_at(ast->children, struct_name != NULL ? 1 : 0);
     if (child != NULL && child->type == AST_STRUCT_DECL_LIST) {
         resolver->ast = child;
-        resolverret_dmembers_assign(&members, &errs, resolve_struct_decl_list(resolver));
+        resolverret_dstructmembers_assign(&members, &errs, resolve_struct_decl_list(resolver));
         resolver->ast = ast;
     }
     if (errs != NULL) {
@@ -177,8 +182,8 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
     return new_resolverret_dtype(dtype);
 }
 
-ResolverReturnDMembers* resolve_struct_decl_list(Resolver* resolver) {
-    Vector* members = new_vector(&t_dmember);
+ResolverReturnDStructMembers* resolve_struct_decl_list(Resolver* resolver) {
+    Vector* members = new_vector(&t_dstructmember);
     Vector* errs = NULL;
     Error* err = NULL;
 
@@ -190,7 +195,7 @@ ResolverReturnDMembers* resolve_struct_decl_list(Resolver* resolver) {
         Vector* child_errs = NULL;
 
         resolver->ast = vector_at(ast->children, i);
-        resolverret_dmembers_assign(&child_members, &child_errs, resolve_struct_decl(resolver));
+        resolverret_dstructmembers_assign(&child_members, &child_errs, resolve_struct_decl(resolver));
 
         if (child_errs != NULL) {
             if (errs == NULL) errs = new_vector(&t_error);
@@ -210,13 +215,13 @@ ResolverReturnDMembers* resolve_struct_decl_list(Resolver* resolver) {
 
     if (errs != NULL) {
         delete_vector(members);
-        return new_resolverret_dmembers_errors(errs);
+        return new_resolverret_dstructmembers_errors(errs);
     }
 
     Set* member_names_set = new_set(&t_hashable_string);
     int num_members = vector_size(members);
     for (int i = 0; i < num_members; i++) {
-        DMember* member = vector_at(members, i);
+        DStructMember* member = vector_at(members, i);
         if (!set_contains(member_names_set, member->name)) {
             set_add(member_names_set, new_string(member->name));
             continue;
@@ -229,12 +234,12 @@ ResolverReturnDMembers* resolve_struct_decl_list(Resolver* resolver) {
 
     if (errs != NULL) {
         delete_vector(members);
-        return new_resolverret_dmembers_errors(errs);
+        return new_resolverret_dstructmembers_errors(errs);
     }
-    return new_resolverret_dmembers(members);
+    return new_resolverret_dstructmembers(members);
 }
 
-ResolverReturnDMembers* resolve_struct_decl(Resolver* resolver) {
+ResolverReturnDStructMembers* resolve_struct_decl(Resolver* resolver) {
     Vector* members = NULL;
     Vector* errs = NULL;
 
@@ -243,30 +248,30 @@ ResolverReturnDMembers* resolve_struct_decl(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_specifier_qualifier_list(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_dmembers_errors(errs);
+    if (errs != NULL) return new_resolverret_dstructmembers_errors(errs);
 
     resolver->ast = vector_at(ast->children, 1);
-    resolverret_dmembers_assign(&members, &errs, resolve_struct_declarator_list(resolver));
+    resolverret_dstructmembers_assign(&members, &errs, resolve_struct_declarator_list(resolver));
     resolver->ast = ast;
 
     delete_dtype(resolver->specifier_dtype);
     resolver->specifier_dtype = NULL;
 
-    if (errs != NULL) return new_resolverret_dmembers_errors(errs);
-    return new_resolverret_dmembers(members);
+    if (errs != NULL) return new_resolverret_dstructmembers_errors(errs);
+    return new_resolverret_dstructmembers(members);
 }
 
-ResolverReturnDMembers* resolve_struct_declarator_list(Resolver* resolver) {
-    Vector* members = new_vector(&t_dmember);
+ResolverReturnDStructMembers* resolve_struct_declarator_list(Resolver* resolver) {
+    Vector* members = new_vector(&t_dstructmember);
     Vector* errs = NULL;
     Ast* ast = resolver->ast;
 
     int num_children = vector_size(ast->children);
     for (int i = 0; i < num_children; i++) {
-        DMember* member = NULL;
+        DStructMember* member = NULL;
         Vector* child_errs = NULL;
         resolver->ast = vector_at(ast->children, i);
-        resolverret_dmember_assign(&member, &child_errs, resolve_struct_declarator(resolver));
+        resolverret_dstructmember_assign(&member, &child_errs, resolve_struct_declarator(resolver));
 
         if (child_errs != NULL) {
             if (errs == NULL) errs = new_vector(&t_error);
@@ -274,7 +279,7 @@ ResolverReturnDMembers* resolve_struct_declarator_list(Resolver* resolver) {
             delete_vector(child_errs);
             continue;
         } else if (errs != NULL) {
-            delete_dmember(member);
+            delete_dstructmember(member);
             continue;
         }
 
@@ -285,19 +290,19 @@ ResolverReturnDMembers* resolve_struct_declarator_list(Resolver* resolver) {
 
     if (errs != NULL) {
         delete_vector(members);
-        return new_resolverret_dmembers_errors(errs);
+        return new_resolverret_dstructmembers_errors(errs);
     }
-    return new_resolverret_dmembers(members);
+    return new_resolverret_dstructmembers(members);
 }
 
-ResolverReturnDMember* resolve_struct_declarator(Resolver* resolver) {
-    DMember* member = NULL;
+ResolverReturnDStructMember* resolve_struct_declarator(Resolver* resolver) {
+    DStructMember* member = NULL;
     Srt* srt = NULL;
     Vector* errs = NULL;
     Error* err = NULL;
 
     resolverret_assign(&srt, &errs, resolve_declarator(resolver));
-    if (errs != NULL) return new_resolverret_dmember_errors(errs);
+    if (errs != NULL) return new_resolverret_dstructmember_errors(errs);
 
     DType* specifier_dtype = dtype_copy(resolver->specifier_dtype);
     srt->dtype = dtype_connect(srt->dtype, specifier_dtype);
@@ -307,12 +312,153 @@ ResolverReturnDMember* resolve_struct_declarator(Resolver* resolver) {
         err = new_error("struct member should not have incomplete or function type\n");
         vector_push(errs, err);
         delete_srt(srt);
-        return new_resolverret_dmember_errors(errs);
+        return new_resolverret_dstructmember_errors(errs);
     }
 
-    member = new_dmember(new_string(srt->ident_name), dtype_copy(srt->dtype));
+    member = new_dstructmember(new_string(srt->ident_name), dtype_copy(srt->dtype));
     delete_srt(srt);
-    return new_resolverret_dmember(member);
+    return new_resolverret_dstructmember(member);
+}
+
+ResolverDTypeReturn* resolve_enum_specifier(Resolver* resolver) {
+    DType* dtype = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+
+    Ast* ast = resolver->ast;
+    Ast* child = NULL;
+
+    char* enum_name = NULL;
+    child = vector_at(ast->children, 0);
+    if (child != NULL && child->type == AST_ENUM_NAME) enum_name = new_string(child->ident_name);
+
+    Vector* members = NULL;
+    child = vector_at(ast->children, enum_name != NULL ? 1 : 0);
+    if (child != NULL && child->type == AST_ENUMOR_LIST) {
+        resolver->ast = child;
+        resolverret_denummembers_assign(&members, &errs, resolve_enumerator_list(resolver));
+        resolver->ast = ast;
+    }
+    if (errs != NULL) {
+        if (enum_name != NULL) free(enum_name);
+        return new_resolverret_dtype_errors(errs);
+    }
+
+    if (enum_name == NULL) {
+        delete_vector(members);
+        dtype = new_integer_dtype(DTYPE_INT);
+        return new_resolverret_dtype(dtype);
+    }
+
+    if (members == NULL) {
+        free(enum_name);
+        dtype = new_integer_dtype(DTYPE_INT);
+        return new_resolverret_dtype(dtype);
+    }
+
+    if (!tagtable_can_define_enum(resolver->tag_table, enum_name)) {
+        errs = new_vector(&t_error);
+        err = new_error("enum '%s' is already declared\n", enum_name);
+        vector_push(errs, err);
+        free(enum_name);
+        delete_vector(members);
+        return new_resolverret_dtype_errors(errs);
+    }
+
+    tagtable_define_enum(resolver->tag_table, enum_name, members);
+
+    dtype = new_integer_dtype(DTYPE_INT);
+    return new_resolverret_dtype(dtype);
+}
+
+ResolverReturnDEnumMembers* resolve_enumerator_list(Resolver* resolver) {
+    Vector* members = new_vector(&t_denummember);
+    Vector* errs = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->default_enum_value = 0;
+    int num_children = vector_size(ast->children);
+    for (int i = 0; i < num_children; i++) {
+        DEnumMember* member = NULL;
+        Vector* child_errs = NULL;
+        resolver->ast = vector_at(ast->children, i);
+        resolverret_denummember_assign(&member, &child_errs, resolve_enumerator(resolver));
+
+        if (child_errs != NULL) {
+            if (errs == NULL) errs = new_vector(&t_error);
+            vector_extend(errs, child_errs);
+            delete_vector(child_errs);
+            continue;
+        } else if (errs != NULL) {
+            delete_denummember(member);
+            continue;
+        }
+
+        vector_push(members, member);
+    }
+
+    resolver->ast = ast;
+    resolver->default_enum_value = 0;
+
+    if (errs != NULL) {
+        delete_vector(members);
+        return new_resolverret_denummembers_errors(errs);
+    }
+    return new_resolverret_denummembers(members);
+}
+
+ResolverReturnDEnumMember* resolve_enumerator(Resolver* resolver) {
+    DEnumMember* member = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+
+    Ast* ast = resolver->ast;
+
+    Ast* child = vector_at(ast->children, 0);
+    if (!symboltable_can_define(resolver->symbol_table, child->ident_name)) {
+        errs = new_vector(&t_error);
+        err = new_error("identifier '%s' is already declared\n", child->ident_name);
+        vector_push(errs, err);
+        return new_resolverret_denummember_errors(errs);
+    }
+
+    if (vector_size(ast->children) == 1) {
+        char* member_name = new_string(child->ident_name);
+        DType* member_dtype = new_integer_dtype(DTYPE_INT);
+        IntegerLiteral* member_iliteral = new_signed_iliteral(INTEGER_INT, resolver->default_enum_value);
+        symboltable_define_integer(resolver->symbol_table, member_name, member_dtype, member_iliteral);
+
+        member = new_denummember(new_string(child->ident_name), resolver->default_enum_value);
+        resolver->default_enum_value++;
+
+        return new_resolverret_denummember(member);
+    }
+
+    Srt* enum_const_srt = NULL;
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_assign(&enum_const_srt, &errs, resolve_expr(resolver));
+    if (errs != NULL) return new_resolverret_denummember_errors(errs);
+
+    if (enum_const_srt->type != SRT_INT_EXPR || enum_const_srt->iliteral->is_unsigned) {
+        errs = new_vector(&t_error);
+        err = new_error("only integer constant is supported as enumeration constant\n");
+        vector_push(errs, err);
+        delete_srt(enum_const_srt);
+        return new_resolverret_denummember_errors(errs);
+    }
+
+    int enum_value = enum_const_srt->iliteral->signed_value;
+    delete_srt(enum_const_srt);
+
+    char* member_name = new_string(child->ident_name);
+    DType* member_dtype = new_integer_dtype(DTYPE_INT);
+    IntegerLiteral* member_iliteral = new_signed_iliteral(INTEGER_INT, enum_value);
+    symboltable_define_integer(resolver->symbol_table, member_name, member_dtype, member_iliteral);
+
+    member = new_denummember(new_string(child->ident_name), enum_value);
+    resolver->default_enum_value = enum_value + 1;
+
+    return new_resolverret_denummember(member);
 }
 
 ResolverReturn* resolve_init_declarator_list(Resolver* resolver) {
@@ -452,7 +598,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
 
                 if (array_size_srt->type != SRT_INT_EXPR || array_size_srt->iliteral->is_unsigned) {
                     errs = new_vector(&t_error);
-                    err = new_error("only direct integer is supported as array size\n");
+                    err = new_error("only integer constant is supported as array size\n");
                     vector_push(errs, err);
                     delete_srt(array_size_srt);
                     break;

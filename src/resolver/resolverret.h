@@ -24,15 +24,25 @@ typedef struct ResolverReturnDParam {
     Vector* errs;
 } ResolverReturnDParam;
 
-typedef struct ResolverReturnDMembers {
-    Vector* dmembers;
+typedef struct ResolverReturnDStructMembers {
+    Vector* dstructmembers;
     Vector* errs;
-} ResolverReturnDMembers;
+} ResolverReturnDStructMembers;
 
-typedef struct ResolverReturnDMember {
-    DMember* dmember;
+typedef struct ResolverReturnDStructMember {
+    DStructMember* dstructmember;
     Vector* errs;
-} ResolverReturnDMember;
+} ResolverReturnDStructMember;
+
+typedef struct ResolverReturnDEnumMembers {
+    Vector* denummembers;
+    Vector* errs;
+} ResolverReturnDEnumMembers;
+
+typedef struct ResolverReturnDEnumMember {
+    DEnumMember* denummember;
+    Vector* errs;
+} ResolverReturnDEnumMember;
 
 ResolverReturn* new_resolverret(Srt* srt);
 ResolverReturn* new_resolverret_errors(Vector* errs);
@@ -46,12 +56,21 @@ void resolverret_dparams_assign(Vector** dparams_ptr, Vector** errs_ptr, Resolve
 ResolverReturnDParam* new_resolverret_dparam(DParam* dparam);
 ResolverReturnDParam* new_resolverret_dparam_errors(Vector* errs);
 void resolverret_dparam_assign(DParam** dparam_ptr, Vector** errs_ptr, ResolverReturnDParam* resolverret_dparam);
-ResolverReturnDMembers* new_resolverret_dmembers(Vector* dmembers);
-ResolverReturnDMembers* new_resolverret_dmembers_errors(Vector* errs);
-void resolverret_dmembers_assign(Vector** dmembers_ptr, Vector** errs_ptr,
-                                 ResolverReturnDMembers* resolverret_dmembers);
-ResolverReturnDMember* new_resolverret_dmember(DMember* dmember);
-ResolverReturnDMember* new_resolverret_dmember_errors(Vector* errs);
-void resolverret_dmember_assign(DMember** dmembers_ptr, Vector** errs_ptr, ResolverReturnDMember* resolverret_dmember);
+ResolverReturnDStructMembers* new_resolverret_dstructmembers(Vector* dstructmembers);
+ResolverReturnDStructMembers* new_resolverret_dstructmembers_errors(Vector* errs);
+void resolverret_dstructmembers_assign(Vector** dstructmember_ptr, Vector** errs_ptr,
+                                       ResolverReturnDStructMembers* resolverret_dstructmembers);
+ResolverReturnDStructMember* new_resolverret_dstructmember(DStructMember* dstructmember);
+ResolverReturnDStructMember* new_resolverret_dstructmember_errors(Vector* errs);
+void resolverret_dstructmember_assign(DStructMember** dstructmember_ptr, Vector** errs_ptr,
+                                      ResolverReturnDStructMember* resolverret_dstructmember);
+ResolverReturnDEnumMembers* new_resolverret_denummembers(Vector* denummembers);
+ResolverReturnDEnumMembers* new_resolverret_denummembers_errors(Vector* errs);
+void resolverret_denummembers_assign(Vector** denummembers_ptr, Vector** errs_ptr,
+                                     ResolverReturnDEnumMembers* resolverret_denummembers);
+ResolverReturnDEnumMember* new_resolverret_denummember(DEnumMember* denummember);
+ResolverReturnDEnumMember* new_resolverret_denummember_errors(Vector* errs);
+void resolverret_denummember_assign(DEnumMember** denummember_ptr, Vector** errs_ptr,
+                                    ResolverReturnDEnumMember* resolverret_denummember);
 
 #endif

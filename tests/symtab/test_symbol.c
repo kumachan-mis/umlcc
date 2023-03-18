@@ -3,11 +3,13 @@
 
 void test_new_memory_symbol(void);
 void test_new_label_symbol(void);
+void test_new_integer_symbol(void);
 
 CU_Suite* add_test_suite_symbol(void) {
     CU_Suite* suite = CU_add_suite("test_suite_symbol", NULL, NULL);
     CU_ADD_TEST(suite, test_new_memory_symbol);
     CU_ADD_TEST(suite, test_new_label_symbol);
+    CU_ADD_TEST(suite, test_new_integer_symbol);
     return suite;
 }
 
@@ -28,6 +30,7 @@ void test_new_memory_symbol(void) {
         CU_ASSERT_STRING_EQUAL(symbol->name, "abc");
         CU_ASSERT_PTR_EQUAL(symbol->dtype, symbol_dtype);
         CU_ASSERT_EQUAL(symbol->memory_offset, 1);
+        CU_ASSERT_PTR_NULL(symbol->iliteral);
     }
 
     delete_symbol(symbol);
@@ -50,6 +53,32 @@ void test_new_label_symbol(void) {
         CU_ASSERT_STRING_EQUAL(symbol->name, "xyz");
         CU_ASSERT_PTR_EQUAL(symbol->dtype, symbol_dtype);
         CU_ASSERT_EQUAL(symbol->memory_offset, -1);
+        CU_ASSERT_PTR_NULL(symbol->iliteral);
+    }
+
+    delete_symbol(symbol);
+}
+
+void test_new_integer_symbol(void) {
+    char* symbol_name = new_string("MEMBER");
+    DType* symbol_dtype = new_integer_dtype(DTYPE_INT);
+    IntegerLiteral* symbol_iliteral = new_signed_iliteral(INTEGER_INT, 1);
+    Symbol* symbol = new_integer_symbol(symbol_name, symbol_dtype, symbol_iliteral);
+
+    for (int i = 0; i < 2; i++) {
+        if (i > 0) {
+            Symbol* copied_symbol = symbol_copy(symbol);
+            delete_symbol(symbol);
+            symbol_name = copied_symbol->name;
+            symbol_dtype = copied_symbol->dtype;
+            symbol_iliteral = copied_symbol->iliteral;
+            symbol = copied_symbol;
+        }
+        CU_ASSERT_EQUAL(symbol->type, SYMBOL_INT);
+        CU_ASSERT_STRING_EQUAL(symbol->name, "MEMBER");
+        CU_ASSERT_PTR_EQUAL(symbol->dtype, symbol_dtype);
+        CU_ASSERT_EQUAL(symbol->memory_offset, -1);
+        CU_ASSERT_PTR_EQUAL(symbol->iliteral, symbol_iliteral);
     }
 
     delete_symbol(symbol);

@@ -14,6 +14,12 @@ void test_parse_specifier_qualifier_list_error_child(void);
 void test_parse_struct_declarator_list_error_comma(void);
 void test_parse_struct_declarator_list_error_empty(void);
 void test_parse_struct_declarator_error(void);
+void test_parse_enum_specifier_error_name(void);
+void test_parse_enumerator_list_error_braces(void);
+void test_parse_enumerator_list_error_empty(void);
+void test_parse_enumerator_list_error_comma(void);
+void test_parse_enum_constant_error(void);
+void test_parse_enum_constant_expr_error(void);
 void test_parse_arithmetic_declarator_error(void);
 void test_parse_pointer_declarator_error(void);
 void test_parse_array_declarator_error_size(void);
@@ -41,6 +47,12 @@ CU_Suite* add_test_suite_decl_parser_error(void) {
     CU_ADD_TEST(suite, test_parse_struct_declarator_list_error_comma);
     CU_ADD_TEST(suite, test_parse_struct_declarator_list_error_empty);
     CU_ADD_TEST(suite, test_parse_struct_declarator_error);
+    CU_ADD_TEST(suite, test_parse_enum_specifier_error_name);
+    CU_ADD_TEST(suite, test_parse_enumerator_list_error_braces);
+    CU_ADD_TEST(suite, test_parse_enumerator_list_error_empty);
+    CU_ADD_TEST(suite, test_parse_enumerator_list_error_comma);
+    CU_ADD_TEST(suite, test_parse_enum_constant_error);
+    CU_ADD_TEST(suite, test_parse_enum_constant_expr_error);
     CU_ADD_TEST(suite, test_parse_arithmetic_declarator_error);
     CU_ADD_TEST(suite, test_parse_pointer_declarator_error);
     CU_ADD_TEST(suite, test_parse_array_declarator_error_size);
@@ -113,7 +125,7 @@ void test_parse_struct_specifier_error_braces(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token } expected, but got identifier\n");
+    Error* expected = new_error("one of type specifiers or type qualifiers expected, but got identifier\n");
 
     run_decl_parser_error_test(input, expected);
 
@@ -253,6 +265,115 @@ void test_parse_struct_declarator_error(void) {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("unexpected token =\n");
+
+    run_decl_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_enum_specifier_error_name(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_ENUM));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 5)));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("ENUM_CONST")));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("err")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("identifier or { expected, but got integer-constant\n");
+
+    run_decl_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_enumerator_list_error_braces(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_ENUM));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Error")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_COMMA));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("err")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("identifier expected, but got ,\n");
+
+    run_decl_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_enumerator_list_error_empty(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_ENUM));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Error")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("err")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("identifier expected, but got }\n");
+
+    run_decl_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_enumerator_list_error_comma(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_ENUM));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Error")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("ENUM_CONST")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("err")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token , expected, but got ;\n");
+
+    run_decl_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_enum_constant_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_ENUM));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Error")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(new_string("ENUM_CONST"), 11)));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("err")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("identifier expected, but got string-literal\n");
+
+    run_decl_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_enum_constant_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_ENUM));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("Error")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("ENUM_CONST")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("err")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token }\n");
 
     run_decl_parser_error_test(input, expected);
 

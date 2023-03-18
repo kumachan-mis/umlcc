@@ -123,10 +123,10 @@ void test_immcgen_local_struct_decl(void) {
         new_srt(SRT_INIT_DECL, 1, // non-terminal
                 new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Test"), 12, 4), new_string("test"))));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
-    vector_push(members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
 
     TagTable* tag_table = new_tagtable();
     tagtable_define_struct(tag_table, new_string("Test"), members);
@@ -144,10 +144,10 @@ void test_immcgen_global_struct_decl(void) {
         new_srt(SRT_INIT_DECL, 1, // non-terminal
                 new_identifier_srt(SRT_DECL, new_named_struct_dtype(new_string("Test"), 12, 4), new_string("test"))));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
-    vector_push(members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
 
     TagTable* tag_table = new_tagtable();
     tagtable_define_struct(tag_table, new_string("Test"), members);
@@ -204,9 +204,9 @@ void test_immcgen_global_function_decl(void) {
 }
 
 void test_immcgen_local_struct_tag_decl(void) {
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
-    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
 
     DType* struct_dtype = new_unnamed_struct_dtype(members);
 
@@ -220,9 +220,9 @@ void test_immcgen_local_struct_tag_decl(void) {
 }
 
 void test_immcgen_global_struct_tag_decl(void) {
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
-    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
 
     DType* struct_dtype = new_unnamed_struct_dtype(members);
 
@@ -528,10 +528,10 @@ void test_immcgen_global_array_init(void) {
 }
 
 void test_immcgen_local_struct_init(void) {
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
-    vector_push(members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
 
     TagTable* tag_table = new_tagtable();
     tagtable_define_struct(tag_table, new_string("Test"), members);
@@ -576,10 +576,10 @@ void test_immcgen_local_struct_init(void) {
 }
 
 void test_immcgen_global_struct_init(void) {
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(members, new_dmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
-    vector_push(members, new_dmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("z"), new_integer_dtype(DTYPE_CHAR)));
 
     TagTable* tag_table = new_tagtable();
     tagtable_define_struct(tag_table, new_string("Test"), members);

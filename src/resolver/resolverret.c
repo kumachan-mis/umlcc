@@ -82,43 +82,86 @@ void resolverret_dparam_assign(DParam** dparam_ptr, Vector** errs_ptr, ResolverR
     free(resolverret_dparam);
 }
 
-ResolverReturnDMembers* new_resolverret_dmembers(Vector* dmembers) {
-    ResolverReturnDMembers* resolverret_dmembers = malloc(sizeof(ResolverReturnDMembers));
-    resolverret_dmembers->dmembers = dmembers;
-    resolverret_dmembers->errs = NULL;
-    return resolverret_dmembers;
+ResolverReturnDStructMembers* new_resolverret_dstructmembers(Vector* dstructmembers) {
+    ResolverReturnDStructMembers* resolverret_dstructmembers = malloc(sizeof(ResolverReturnDStructMembers));
+    resolverret_dstructmembers->dstructmembers = dstructmembers;
+    resolverret_dstructmembers->errs = NULL;
+    return resolverret_dstructmembers;
 }
 
-ResolverReturnDMembers* new_resolverret_dmembers_errors(Vector* errs) {
-    ResolverReturnDMembers* resolverret_dmembers = malloc(sizeof(ResolverReturnDMembers));
-    resolverret_dmembers->dmembers = NULL;
-    resolverret_dmembers->errs = errs;
-    return resolverret_dmembers;
+ResolverReturnDStructMembers* new_resolverret_dstructmembers_errors(Vector* errs) {
+    ResolverReturnDStructMembers* resolverret_dstructmembers = malloc(sizeof(ResolverReturnDStructMembers));
+    resolverret_dstructmembers->dstructmembers = NULL;
+    resolverret_dstructmembers->errs = errs;
+    return resolverret_dstructmembers;
 }
 
-void resolverret_dmembers_assign(Vector** dmembers_ptr, Vector** errs_ptr,
-                                 ResolverReturnDMembers* resolverret_dmembers) {
-    *dmembers_ptr = resolverret_dmembers->dmembers;
-    *errs_ptr = resolverret_dmembers->errs;
-    free(resolverret_dmembers);
+void resolverret_dstructmembers_assign(Vector** dstructmembers_ptr, Vector** errs_ptr,
+                                       ResolverReturnDStructMembers* resolverret_dstructmembers) {
+    *dstructmembers_ptr = resolverret_dstructmembers->dstructmembers;
+    *errs_ptr = resolverret_dstructmembers->errs;
+    free(resolverret_dstructmembers);
 }
 
-ResolverReturnDMember* new_resolverret_dmember(DMember* dmember) {
-    ResolverReturnDMember* resolverret_dmember = malloc(sizeof(ResolverReturnDMember));
-    resolverret_dmember->dmember = dmember;
-    resolverret_dmember->errs = NULL;
-    return resolverret_dmember;
+ResolverReturnDStructMember* new_resolverret_dstructmember(DStructMember* dstructmember) {
+    ResolverReturnDStructMember* resolverret_dstructmember = malloc(sizeof(ResolverReturnDStructMember));
+    resolverret_dstructmember->dstructmember = dstructmember;
+    resolverret_dstructmember->errs = NULL;
+    return resolverret_dstructmember;
 }
 
-ResolverReturnDMember* new_resolverret_dmember_errors(Vector* errs) {
-    ResolverReturnDMember* resolverret_dmember = malloc(sizeof(ResolverReturnDMember));
-    resolverret_dmember->dmember = NULL;
-    resolverret_dmember->errs = errs;
-    return resolverret_dmember;
+ResolverReturnDStructMember* new_resolverret_dstructmember_errors(Vector* errs) {
+    ResolverReturnDStructMember* resolverret_dstructmember = malloc(sizeof(ResolverReturnDStructMember));
+    resolverret_dstructmember->dstructmember = NULL;
+    resolverret_dstructmember->errs = errs;
+    return resolverret_dstructmember;
 }
 
-void resolverret_dmember_assign(DMember** dmember_ptr, Vector** errs_ptr, ResolverReturnDMember* resolverret_dmember) {
-    *dmember_ptr = resolverret_dmember->dmember;
-    *errs_ptr = resolverret_dmember->errs;
-    free(resolverret_dmember);
+void resolverret_dstructmember_assign(DStructMember** dstructmember_ptr, Vector** errs_ptr,
+                                      ResolverReturnDStructMember* resolverret_dstructmember) {
+    *dstructmember_ptr = resolverret_dstructmember->dstructmember;
+    *errs_ptr = resolverret_dstructmember->errs;
+    free(resolverret_dstructmember);
+}
+
+ResolverReturnDEnumMembers* new_resolverret_denummembers(Vector* denummembers) {
+    ResolverReturnDEnumMembers* resolverret_denummembers = malloc(sizeof(ResolverReturnDEnumMembers));
+    resolverret_denummembers->denummembers = denummembers;
+    resolverret_denummembers->errs = NULL;
+    return resolverret_denummembers;
+}
+
+ResolverReturnDEnumMembers* new_resolverret_denummembers_errors(Vector* errs) {
+    ResolverReturnDEnumMembers* resolverret_denummembers = malloc(sizeof(ResolverReturnDEnumMembers));
+    resolverret_denummembers->denummembers = NULL;
+    resolverret_denummembers->errs = errs;
+    return resolverret_denummembers;
+}
+
+void resolverret_denummembers_assign(Vector** denummembers_ptr, Vector** errs_ptr,
+                                     ResolverReturnDEnumMembers* resolverret_denummembers) {
+    *denummembers_ptr = resolverret_denummembers->denummembers;
+    *errs_ptr = resolverret_denummembers->errs;
+    free(resolverret_denummembers);
+}
+
+ResolverReturnDEnumMember* new_resolverret_denummember(DEnumMember* denummember) {
+    ResolverReturnDEnumMember* resolverret_denummember = malloc(sizeof(ResolverReturnDEnumMember));
+    resolverret_denummember->denummember = denummember;
+    resolverret_denummember->errs = NULL;
+    return resolverret_denummember;
+}
+
+ResolverReturnDEnumMember* new_resolverret_denummember_errors(Vector* errs) {
+    ResolverReturnDEnumMember* resolverret_denummember = malloc(sizeof(ResolverReturnDEnumMember));
+    resolverret_denummember->denummember = NULL;
+    resolverret_denummember->errs = errs;
+    return resolverret_denummember;
+}
+
+void resolverret_denummember_assign(DEnumMember** denummember_ptr, Vector** errs_ptr,
+                                    ResolverReturnDEnumMember* resolverret_denummember) {
+    *denummember_ptr = resolverret_denummember->denummember;
+    *errs_ptr = resolverret_denummember->errs;
+    free(resolverret_denummember);
 }

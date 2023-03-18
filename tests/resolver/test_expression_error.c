@@ -194,8 +194,8 @@ void test_resolve_logical_or_expr_error_non_scalar_lhs(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("structure"), new_unnamed_struct_dtype(members));
     symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
@@ -213,8 +213,8 @@ void test_resolve_logical_or_expr_error_non_scalar_rhs(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("structure")));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("structure"), new_unnamed_struct_dtype(members));
@@ -261,8 +261,8 @@ void test_resolve_logical_and_expr_error_non_scalar_lhs(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("structure")));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("structure"), new_unnamed_struct_dtype(members));
@@ -280,8 +280,8 @@ void test_resolve_logical_and_expr_error_non_scalar_rhs(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("structure"), new_unnamed_struct_dtype(members));
     symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
@@ -752,8 +752,8 @@ void test_resolve_logical_not_expr_error_non_scalar(void) {
     Ast* input = new_ast(AST_LNOT_EXPR, 1, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("structure")));
 
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("structure"), new_unnamed_struct_dtype(members));
 
@@ -964,8 +964,8 @@ void test_resolve_member_expr_error_non_struct(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
     DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("test"), new_pointer_dtype(named_struct));
@@ -1005,8 +1005,8 @@ void test_resolve_member_expr_error_unknown_member(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("unknown")));
 
     DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("test"), named_struct);
@@ -1027,8 +1027,8 @@ void test_resolve_tomember_expr_error_non_pointer_to_struct(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
 
     DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("test"), named_struct);
@@ -1068,8 +1068,8 @@ void test_resolve_tomember_expr_error_unknown_member(void) {
                          new_identifier_ast(AST_IDENT_EXPR, new_string("unknown")));
 
     DType* named_struct = new_named_struct_dtype(new_string("Test"), 4, 4);
-    Vector* members = new_vector(&t_dmember);
-    vector_push(members, new_dmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("test"), new_pointer_dtype(named_struct));
