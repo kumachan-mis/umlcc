@@ -2,7 +2,7 @@ typedef int test_int, *test_intptr;
 
 void put_int(test_int x);
 void put_str(char* s);
-void put_blank_line();
+void put_blank_line(void);
 
 int main() {
     test_int a, b;

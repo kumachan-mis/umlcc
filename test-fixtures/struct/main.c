@@ -7,7 +7,7 @@ Node* new_node(int value);
 void delete_node(Node* node);
 
 void put_int(int x);
-void put_blank_line();
+void put_blank_line(void);
 
 struct {
     char x;

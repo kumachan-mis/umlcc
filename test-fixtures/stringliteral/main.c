@@ -1,5 +1,5 @@
 void put_str(char* s);
-void put_blank_line();
+void put_blank_line(void);
 
 char global_array[20] = "global char array";
 char tricky_global_array[21] = "tricky glo\0bal array";

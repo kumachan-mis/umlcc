@@ -11,7 +11,7 @@ int addsub_8ints(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8)
 }
 
 int main() {
-    void put_blank_line();
+    void put_blank_line(void);
 
     put_7ints(1, 3, 5, 7, 9, 11, 13);
     put_blank_line();

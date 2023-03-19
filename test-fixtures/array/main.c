@@ -1,5 +1,5 @@
 void put_int(int x);
-void put_blank_line();
+void put_blank_line(void);
 
 int sum(int a[5]) {
     return a[0] + a[1] + a[2] + a[3] + a[4];

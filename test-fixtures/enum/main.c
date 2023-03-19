@@ -6,7 +6,7 @@ enum Size {
 };
 
 void put_int(int x);
-void put_blank_line();
+void put_blank_line(void);
 
 int main() {
     typedef enum Number { ZERO, ONE } Number;

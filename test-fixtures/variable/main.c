@@ -2,7 +2,7 @@ void put_int(int x);
 
 int main() {
     int first, second, third;
-    void put_blank_line();
+    void put_blank_line(void);
 
     first = 3;
     second = first - 1;

@@ -12,7 +12,7 @@ int zia[4];
 
 void put_int(int x);
 void put_str(char* x);
-void put_blank_line();
+void put_blank_line(void);
 
 int main() {
     put_int(c);
