@@ -48,6 +48,7 @@ for fixture_dir in ${FIXTURES_DIR}/*; do
 
     ${TARGET} ${input}
     if [ $? != 0 ]; then
+        exit_code=$(expr ${exit_code} + 1)
         continue
     fi
 
