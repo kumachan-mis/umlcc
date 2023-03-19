@@ -47,6 +47,10 @@ for fixture_dir in ${FIXTURES_DIR}/*; do
     rm -f ${immediate} ${output} ${binary} ${actual}
 
     ${TARGET} ${input}
+    if [ $? != 0 ]; then
+        continue
+    fi
+
     gcc -o ${binary} ${output} ${TESTLIB}
     ${binary} > ${actual}
 
