@@ -1,6 +1,6 @@
 void put_int(int x);
 
-int main() {
+int main(void) {
     int first, second, third;
     void put_blank_line(void);
 

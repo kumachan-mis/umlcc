@@ -14,7 +14,7 @@ void put_int(int x);
 void put_str(char* x);
 void put_blank_line(void);
 
-int main() {
+int main(void) {
     put_int(c);
     put_int(zc);
     put_blank_line();

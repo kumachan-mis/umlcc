@@ -5,7 +5,7 @@ int sum(int a[5]) {
     return a[0] + a[1] + a[2] + a[3] + a[4];
 }
 
-int main() {
+int main(void) {
     int a[5];
     a[0] = 3;
     a[1] = a[0] + 2;

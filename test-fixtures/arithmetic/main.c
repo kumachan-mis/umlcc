@@ -1,6 +1,6 @@
 void put_int(int x);
 
-int main() {
+int main(void) {
     put_int(1 + 2);
     put_int(3 - 8);
     put_int(4 * 2);

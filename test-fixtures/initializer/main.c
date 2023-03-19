@@ -1,7 +1,7 @@
 void put_int(int x);
 void put_blank_line(void);
 
-int main() {
+int main(void) {
     int x = 8;
     int y = {x};
 

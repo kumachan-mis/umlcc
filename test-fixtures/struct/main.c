@@ -16,7 +16,7 @@ struct {
 
 Node gnode = {5};
 
-int main() {
+int main(void) {
     struct {
         char x;
         int a[3];
