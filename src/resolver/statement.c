@@ -82,6 +82,22 @@ ResolverReturn* resolve_return_stmt(Resolver* resolver) {
     Vector* errs = NULL;
     Error* err = NULL;
 
+    int num_children = vector_size(ast->children);
+    if (resolver->return_dtype->type == DTYPE_VOID && num_children > 0) {
+        errs = new_vector(&t_error);
+        err = new_error("function returning void returns a value\n");
+        return new_resolverret_errors(errs);
+    } else if (resolver->return_dtype->type != DTYPE_VOID && num_children == 0) {
+        errs = new_vector(&t_error);
+        err = new_error("function returning non-void returns no value\n");
+        return new_resolverret_errors(errs);
+    }
+
+    if (num_children == 0) {
+        srt = new_srt(SRT_RET_STMT, 0);
+        return new_resolverret(srt);
+    }
+
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;

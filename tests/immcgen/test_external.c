@@ -14,15 +14,15 @@ CU_Suite* add_test_suite_exteral_immcgen(void) {
 
 void test_immcgen_transration_unit(void) {
     Vector* incr_params = new_vector(&t_dparam);
-    vector_push(incr_params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(incr_params, new_named_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
     DType* incr_dtype = new_function_dtype(incr_params, new_integer_dtype(DTYPE_INT));
 
     Vector* decr_params = new_vector(&t_dparam);
-    vector_push(decr_params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(decr_params, new_named_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
     DType* decr_dtype = new_function_dtype(decr_params, new_integer_dtype(DTYPE_INT));
 
     Vector* cast_params = new_vector(&t_dparam);
-    vector_push(cast_params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(cast_params, new_named_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
     DType* cast_dtype = new_function_dtype(cast_params, new_integer_dtype(DTYPE_CHAR));
 
     Srt* input =

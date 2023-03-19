@@ -23,7 +23,7 @@ Vector* gen_assignment_expr_immcode(Immcgen* immcgen) {
             exit(1);
     }
 
-    update_expr_register(immcgen, src);
+    update_non_void_expr_register(immcgen, src);
     return codes;
 }
 
@@ -65,7 +65,7 @@ Vector* gen_logical_or_expr_immcode(Immcgen* immcgen) {
 
     vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(end_label)));
 
-    update_expr_register(immcgen, reg);
+    update_non_void_expr_register(immcgen, reg);
     free(true_label);
     free(end_label);
     return codes;
@@ -109,7 +109,7 @@ Vector* gen_logical_and_expr_immcode(Immcgen* immcgen) {
 
     vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(end_label)));
 
-    update_expr_register(immcgen, reg);
+    update_non_void_expr_register(immcgen, reg);
     free(false_label);
     free(end_label);
     return codes;
@@ -136,7 +136,7 @@ Vector* gen_equality_expr_immcode(Immcgen* immcgen) {
             exit(1);
     }
 
-    update_expr_register(immcgen, dst);
+    update_non_void_expr_register(immcgen, dst);
     return codes;
 }
 
@@ -161,7 +161,7 @@ Vector* gen_additive_expr_immcode(Immcgen* immcgen) {
             exit(1);
     }
 
-    update_expr_register(immcgen, dst);
+    update_non_void_expr_register(immcgen, dst);
     return codes;
 }
 
@@ -210,7 +210,7 @@ Vector* gen_pointer_additive_expr_immcode(Immcgen* immcgen) {
             exit(1);
     }
 
-    update_expr_register(immcgen, dst);
+    update_non_void_expr_register(immcgen, dst);
     return codes;
 }
 
@@ -238,7 +238,7 @@ Vector* gen_multiplicative_expr_immcode(Immcgen* immcgen) {
             exit(1);
     }
 
-    update_expr_register(immcgen, dst);
+    update_non_void_expr_register(immcgen, dst);
     return codes;
 }
 
@@ -276,7 +276,7 @@ Vector* gen_indirection_expr_immcode(Immcgen* immcgen) {
 
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
 
-    update_expr_register(immcgen, dst);
+    update_non_void_expr_register(immcgen, dst);
     return codes;
 }
 
@@ -298,7 +298,7 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             }
             dst = create_dest_reg_immcope(immcgen);
             vector_push(codes, new_inst_immc(IMMC_INST_ADDR, dst, src, NULL));
-            update_expr_register(immcgen, dst);
+            update_non_void_expr_register(immcgen, dst);
             break;
         }
         case SRT_TOMEMBER_EXPR: {
@@ -327,7 +327,7 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             ImmcOpe* snd_src = new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, accessed_member->memory_offset);
             dst = create_dest_reg_immcope(immcgen);
             vector_push(codes, new_inst_immc(IMMC_INST_ADD, dst, src, snd_src));
-            update_expr_register(immcgen, dst);
+            update_non_void_expr_register(immcgen, dst);
             break;
         }
         case SRT_INDIR_EXPR:
@@ -363,7 +363,7 @@ Vector* gen_not_expr_immcode(Immcgen* immcgen) {
             exit(1);
     }
 
-    update_expr_register(immcgen, dst);
+    update_non_void_expr_register(immcgen, dst);
     return codes;
 }
 
@@ -410,14 +410,20 @@ Vector* gen_call_expr_immcode(Immcgen* immcgen) {
 
     ImmcOpe* fst_src = gen_child_ptr_immcope(immcgen, codes, 0);
     ImmcOpe* snd_src = new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, num_args);
-    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
+
+    ImmcOpe* dst = NULL;
+    if (srt->dtype->type != DTYPE_VOID) dst = create_dest_reg_immcope(immcgen);
 
     vector_push(codes, new_inst_immc(IMMC_INST_CALL, dst, fst_src, snd_src));
 
     ImmcOpe* clean_src = new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, num_args);
     vector_push(codes, new_inst_immc(IMMC_INST_CLEAN, NULL, clean_src, NULL));
 
-    update_expr_register(immcgen, dst);
+    if (srt->dtype->type != DTYPE_VOID) {
+        update_non_void_expr_register(immcgen, dst);
+    } else {
+        update_void_expr_register(immcgen);
+    }
     return codes;
 }
 
@@ -454,7 +460,7 @@ Vector* gen_tomember_expr_immcode(Immcgen* immcgen) {
     ImmcOpe* dst = create_dest_reg_immcope(immcgen);
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
 
-    update_expr_register(immcgen, dst);
+    update_non_void_expr_register(immcgen, dst);
     return codes;
 }
 
@@ -488,6 +494,6 @@ Vector* gen_primary_expr_immcode(Immcgen* immcgen) {
     dst = create_dest_reg_immcope(immcgen);
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
 
-    update_expr_register(immcgen, dst);
+    update_non_void_expr_register(immcgen, dst);
     return codes;
 }

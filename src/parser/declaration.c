@@ -140,6 +140,10 @@ ParserReturn* parse_type_specifier(Parser* parser) {
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
 
     switch (ctoken->type) {
+        case CTOKEN_KEYWORD_VOID:
+            parser->index++;
+            ast = new_ast(AST_TYPE_VOID, 0);
+            break;
         case CTOKEN_KEYWORD_CHAR:
             parser->index++;
             ast = new_ast(AST_TYPE_CHAR, 0);
@@ -563,7 +567,11 @@ ParserReturn* parse_parameter_list(Parser* parser) {
     int typedef_flag = parser->typedef_flag;
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
-    if (ctoken->type == CTOKEN_RPALEN) return new_parserret(ast);
+    if (ctoken->type == CTOKEN_RPALEN) {
+        err = new_error("empty list in a function is not supported\n");
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
 
     while (1) {
         parser->typedef_flag = typedef_flag;
@@ -597,10 +605,12 @@ ParserReturn* parse_parameter_decl(Parser* parser) {
 
     vector_push(ast->children, child);
 
+    int index = parser->index;
     parserret_assign(&child, &err, parse_declarator(parser));
     if (err != NULL) {
-        delete_ast(ast);
-        return new_parserret_error(err);
+        parser->index = index;
+        delete_error(err);
+        return new_parserret(ast);
     }
 
     vector_push(ast->children, child);

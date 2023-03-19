@@ -200,7 +200,7 @@ void test_immcgen_logical_and_expr(void) {
 
     Vector* params = new_vector(&t_dparam);
     DType* param_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
-    vector_push(params, new_dparam(new_string("target"), param_dtype));
+    vector_push(params, new_named_dparam(new_string("target"), param_dtype));
     DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
 
     Srt* input = new_dtyped_srt(
@@ -819,8 +819,8 @@ void test_immcgen_logical_not_expr(void) {
 
 void test_immcgen_call_expr(void) {
     Vector* params = new_vector(&t_dparam);
-    vector_push(params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
-    vector_push(params, new_dparam(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(params, new_named_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(params, new_named_dparam(new_string("y"), new_integer_dtype(DTYPE_INT)));
     DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
 
     Srt* input = new_dtyped_srt(

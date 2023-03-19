@@ -14,6 +14,7 @@ typedef struct DType DType;
 #include "./struct.h"
 
 typedef enum DTypeType {
+    DTYPE_VOID,
     DTYPE_CHAR,
     DTYPE_INT,
     DTYPE_POINTER,
@@ -36,6 +37,7 @@ struct DType {
 
 extern BaseType t_dtype;
 
+DType* new_void_dtype(void);
 DType* new_integer_dtype(DTypeType type);
 DType* new_pointer_dtype(DType* to_dtype);
 DType* new_array_dtype(DType* of_dtype, int size);

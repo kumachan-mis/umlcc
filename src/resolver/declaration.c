@@ -4,6 +4,7 @@
 #include "../set/set.h"
 #include "./conversion.h"
 #include "./expression.h"
+#include "./utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -92,6 +93,9 @@ ResolverDTypeReturn* resolve_type_specifier_list(Resolver* resolver) {
 
     Ast* child = vector_at(ast->children, 0);
     switch (child->type) {
+        case AST_TYPE_VOID:
+            dtype = new_void_dtype();
+            break;
         case AST_TYPE_INT:
             dtype = new_integer_dtype(DTYPE_INT);
             break;
@@ -496,8 +500,6 @@ ResolverReturn* resolve_init_declarator_list(Resolver* resolver) {
 }
 
 ResolverReturn* resolve_init_declarator(Resolver* resolver) {
-    // TODO: validate incomplete type declaration
-
     Srt* srt = new_srt(SRT_INIT_DECL, 0);
     Srt* child_srt = NULL;
     Vector* errs = NULL;
@@ -527,6 +529,14 @@ ResolverReturn* resolve_init_declarator(Resolver* resolver) {
     if (!symboltable_can_define(resolver->symbol_table, child_srt->ident_name)) {
         errs = new_vector(&t_error);
         err = new_error("identifier '%s' is already declared\n", child_srt->ident_name);
+        vector_push(errs, err);
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    if (dtype_isincomplete(child_srt->dtype)) {
+        errs = new_vector(&t_error);
+        err = new_error("identifier '%s' has an incomplete type\n", child_srt->ident_name);
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);
@@ -666,6 +676,9 @@ ResolverReturnDParams* resolve_parameter_list(Resolver* resolver) {
     Vector* errs = NULL;
     Error* err = NULL;
     Ast* ast = resolver->ast;
+
+    if (ast_is_void_parameter_list(ast)) return new_resolverret_dparams(dparams);
+
     Set* param_names_set = new_set(&t_hashable_string);
 
     int num_children = vector_size(ast->children);
@@ -683,9 +696,14 @@ ResolverReturnDParams* resolve_parameter_list(Resolver* resolver) {
             continue;
         }
 
+        if (dparam->name == NULL) {
+            vector_push(dparams, dparam);
+            continue;
+        }
+
         if (set_contains(param_names_set, dparam->name)) {
             if (errs == NULL) errs = new_vector(&t_error);
-            err = new_error("parameter '%s' is already declared\n", dparam->name);
+            err = new_error("function parameter '%s' is already declared\n", dparam->name);
             vector_push(errs, err);
         }
         if (errs != NULL) {
@@ -703,6 +721,7 @@ ResolverReturnDParams* resolve_parameter_list(Resolver* resolver) {
         delete_vector(dparams);
         return new_resolverret_dparams_errors(errs);
     }
+
     return new_resolverret_dparams(dparams);
 }
 
@@ -726,6 +745,19 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
         return new_resolverret_dparam_errors(errs);
     }
 
+    if (vector_size(ast->children) == 1) {
+        if (dtype_isincomplete(specifiers_dtype)) {
+            errs = new_vector(&t_error);
+            err = new_error("unnamed function parameter has an incomplete type\n");
+            vector_push(errs, err);
+            delete_dtype(specifiers_dtype);
+            return new_resolverret_dparam_errors(errs);
+        }
+
+        DParam* dparam = new_unnamed_dparam(specifiers_dtype);
+        return new_resolverret_dparam(dparam);
+    }
+
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&declarator_srt, &errs, resolve_declarator(resolver));
     resolver->ast = ast;
@@ -746,9 +778,17 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
         declarator_srt->dtype = new_pointer_dtype(function_dtype);
     }
 
+    if (dtype_isincomplete(declarator_srt->dtype)) {
+        errs = new_vector(&t_error);
+        err = new_error("function parameter '%s' has an incomplete type\n", declarator_srt->ident_name);
+        vector_push(errs, err);
+        delete_srt(declarator_srt);
+        return new_resolverret_dparam_errors(errs);
+    }
+
     char* dparam_ident_name = new_string(declarator_srt->ident_name);
     DType* dparam_dtype = dtype_copy(declarator_srt->dtype);
-    DParam* dparam = new_dparam(dparam_ident_name, dparam_dtype);
+    DParam* dparam = new_named_dparam(dparam_ident_name, dparam_dtype);
 
     delete_srt(declarator_srt);
 

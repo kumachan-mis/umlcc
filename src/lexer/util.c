@@ -14,6 +14,7 @@ Map* new_keyword_map(void) {
     ctoken_map_add(keyword_map, "return", CTOKEN_KEYWORD_RETURN);
     ctoken_map_add(keyword_map, "struct", CTOKEN_KEYWORD_STRUCT);
     ctoken_map_add(keyword_map, "typedef", CTOKEN_KEYWORD_TYPEDEF);
+    ctoken_map_add(keyword_map, "void", CTOKEN_KEYWORD_VOID);
 
     return keyword_map;
 }

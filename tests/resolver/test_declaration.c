@@ -495,12 +495,12 @@ void test_resolve_function_decl(void) {
     DType* fdtype = new_function_dtype(fparams, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
 
     Vector* gparams = new_vector(&t_dparam);
-    vector_push(gparams, new_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
+    vector_push(gparams, new_named_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
     DType* gdtype = new_function_dtype(gparams, new_integer_dtype(DTYPE_CHAR));
 
     Vector* hparams = new_vector(&t_dparam);
-    vector_push(hparams, new_dparam(new_string("b"), new_integer_dtype(DTYPE_INT)));
-    vector_push(hparams, new_dparam(new_string("c"), new_integer_dtype(DTYPE_INT)));
+    vector_push(hparams, new_named_dparam(new_string("b"), new_integer_dtype(DTYPE_INT)));
+    vector_push(hparams, new_named_dparam(new_string("c"), new_integer_dtype(DTYPE_INT)));
     DType* hdtype = new_function_dtype(hparams, new_integer_dtype(DTYPE_CHAR));
 
     Srt* expected = new_srt(SRT_DECL_LIST, 3,         // non-terminal
@@ -552,13 +552,13 @@ void test_resolve_parameter_decl(void) {
     // array parameter is converted to pointer to initial element
 
     Vector* fparams = new_vector(&t_dparam);
-    vector_push(fparams, new_dparam(new_string("p"), new_integer_dtype(DTYPE_INT)));
+    vector_push(fparams, new_named_dparam(new_string("p"), new_integer_dtype(DTYPE_INT)));
     DType* fdtype = new_pointer_dtype(new_function_dtype(fparams, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
     // function parameter is converted to pointer to function
 
     Vector* func_params = new_vector(&t_dparam);
-    vector_push(func_params, new_dparam(new_string("a"), adtype));
-    vector_push(func_params, new_dparam(new_string("f"), fdtype));
+    vector_push(func_params, new_named_dparam(new_string("a"), adtype));
+    vector_push(func_params, new_named_dparam(new_string("f"), fdtype));
     DType* func_dtype = new_function_dtype(func_params, new_integer_dtype(DTYPE_INT));
 
     Srt* expected = new_srt(SRT_DECL_LIST, 1,         // non-terminal

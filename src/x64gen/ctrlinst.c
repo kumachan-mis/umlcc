@@ -148,9 +148,11 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     if (x64gen->evacuation_count < evacuation_count) x64gen->evacuation_count = evacuation_count;
     delete_set(alive_reg_induces_set);
 
-    X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immc_dst->suffix));
-    int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
-    append_mov_code(codes, AX_REG_ID, dst_suffix, dst_id, dst_suffix);
+    if (immc_dst != NULL) {
+        X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immc_dst->suffix));
+        int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
+        append_mov_code(codes, AX_REG_ID, dst_suffix, dst_id, dst_suffix);
+    }
 
     liveseqs_next(x64gen->liveseqs);
     return codes;

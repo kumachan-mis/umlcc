@@ -111,9 +111,23 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
         DParam* dparam = vector_at(params, i);
+        if (dparam->name == NULL) {
+            if (errs == NULL) errs = new_vector(&t_error);
+            err = new_error("parameter name is required in a function definition\n");
+            vector_push(errs, err);
+            continue;
+        } else if (errs != NULL) {
+            continue;
+        }
+
         char* symbol_name = new_string(dparam->name);
         DType* symbol_dtype = dtype_copy(dparam->dtype);
         symboltable_define_memory(resolver->symbol_table, symbol_name, symbol_dtype);
+    }
+
+    if (errs != NULL) {
+        delete_srt(declarator_srt);
+        return new_resolverret_errors(errs);
     }
 
     resolver->ast = vector_at(ast->children, 2);

@@ -13,6 +13,11 @@ BaseType t_dtype = {
 
 DType* new_base_dtype(DTypeType type);
 
+DType* new_void_dtype(void) {
+    DType* dtype = new_base_dtype(DTYPE_VOID);
+    return dtype;
+}
+
 DType* new_integer_dtype(DTypeType type) {
     DType* dtype = new_base_dtype(type);
     return dtype;
@@ -127,11 +132,6 @@ DType* dtype_connect(DType* socket_dtype, DType* plug_dtype) {
     DType* tail = socket_dtype;
     while (1) {
         switch (tail->type) {
-            case DTYPE_CHAR:
-            case DTYPE_INT:
-            case DTYPE_STRUCT:
-            case DTYPE_ENUM:
-                return socket_dtype;
             case DTYPE_POINTER: {
                 DType* next = dpointer_next(tail->dpointer);
                 if (next == NULL) {
@@ -168,6 +168,8 @@ DType* dtype_connect(DType* socket_dtype, DType* plug_dtype) {
                 tail = next;
                 break;
             }
+            default:
+                return socket_dtype;
         }
     }
 }
@@ -198,9 +200,6 @@ int dtype_equals(DType* dtype, DType* other) {
     if (dtype->type != other->type) return 0;
 
     switch (dtype->type) {
-        case DTYPE_CHAR:
-        case DTYPE_INT:
-            return 1;
         case DTYPE_POINTER:
             return dpointer_equals(dtype->dpointer, other->dpointer);
         case DTYPE_ARRAY:
@@ -214,7 +213,7 @@ int dtype_equals(DType* dtype, DType* other) {
         case DTYPE_DECORATION:
             return ddecoration_equals(dtype->ddecoration, other->ddecoration);
         default:
-            return 0;
+            return 1;
     }
 }
 
@@ -254,12 +253,12 @@ int dtype_isaggregate(DType* dtype) {
 }
 
 int dtype_isobject(DType* dtype) {
-    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_ARRAY) || dtype->type == DTYPE_ENUM ||
-           (dtype->type == DTYPE_STRUCT && dtype->dstruct->nbytes > 0);
+    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_ARRAY) ||
+           (dtype->type == DTYPE_STRUCT && dtype->dstruct->nbytes > 0) || dtype->type == DTYPE_ENUM;
 }
 
 int dtype_isincomplete(DType* dtype) {
-    return dtype->type == DTYPE_STRUCT && dtype->dstruct->nbytes <= 0;
+    return dtype->type == DTYPE_VOID || (dtype->type == DTYPE_STRUCT && dtype->dstruct->nbytes <= 0);
 }
 
 int dtype_alignment(DType* dtype) {
