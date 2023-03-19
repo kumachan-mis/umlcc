@@ -11,6 +11,6 @@ struct Struct {
 
 struct Struct g = {1};
 
-int main() {
+int main(void) {
     struct Struct l = {1};
 }
