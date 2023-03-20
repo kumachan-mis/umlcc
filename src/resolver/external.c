@@ -64,7 +64,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     resolver->ast = ast;
     if (errs != NULL) return new_resolverret_errors(errs);
 
-    if (specifiers_dtype->type == DTYPE_DECORATION && specifiers_dtype->ddecoration->typedef_flag) {
+    if (specifiers_dtype->type == DTYPE_TYPEDEF) {
         errs = new_vector(&t_error);
         err = new_error("storage specifiers are invalid for a function definition\n");
         vector_push(errs, err);
