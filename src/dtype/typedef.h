@@ -16,7 +16,7 @@ struct DTypedef {
 };
 
 #ifdef UMLCC_DTYPE_H_PRIVATE
-DTypedef* new_dtypedef(DType* deco_dtype);
+DTypedef* new_dtypedef(DType* defined_dtype);
 DTypedef* new_socket_dtypedef(void);
 DTypedef* dtypedef_copy(DTypedef* dtypedef);
 DType* dtypedef_next(DTypedef* dtypedef);
