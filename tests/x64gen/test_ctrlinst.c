@@ -13,6 +13,7 @@ void test_x64gen_call_label_seven_or_more_even(void);
 void test_x64gen_call_ptr_without_evacuation(void);
 void test_x64gen_call_ptr_with_evacuation(void);
 void test_x64gen_call_caller_saved_evacuation(void);
+void test_x64gen_call_no_return_value(void);
 void test_x64gen_enter_zero(void);
 void test_x64gen_enter_non_16bytes_boundary(void);
 void test_x64gen_enter_16bytes_boundary(void);
@@ -35,6 +36,7 @@ CU_Suite* add_test_suite_ctrlinst_x64gen(void) {
     CU_ADD_TEST(suite, test_x64gen_call_ptr_without_evacuation);
     CU_ADD_TEST(suite, test_x64gen_call_ptr_with_evacuation);
     CU_ADD_TEST(suite, test_x64gen_call_caller_saved_evacuation);
+    CU_ADD_TEST(suite, test_x64gen_call_no_return_value);
     CU_ADD_TEST(suite, test_x64gen_enter_zero);
     CU_ADD_TEST(suite, test_x64gen_enter_non_16bytes_boundary);
     CU_ADD_TEST(suite, test_x64gen_enter_16bytes_boundary);
@@ -895,6 +897,71 @@ void test_x64gen_call_caller_saved_evacuation(void) {
                 new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[1]))); // dst
+
+    run_ctrlinst_x64gen_test(input_immcs, input_liveseqs, expected);
+
+    delete_vector(expected);
+}
+
+void test_x64gen_call_no_return_value(void) {
+    Vector* input_immcs = new_vector(&t_immc);
+    vector_push(input_immcs,
+                new_inst_immc(IMMC_INST_PREP,                                       // inst
+                              NULL,                                                 // dst
+                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
+                              NULL)); // snd_src                                       // snd_src
+    vector_push(input_immcs,
+                new_inst_immc(IMMC_INST_LOAD,                       // inst
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_mem_immcope(4),                   // fst_src
+                              NULL));                               // snd_src
+    vector_push(input_immcs,
+                new_inst_immc(IMMC_INST_STARG,                      // inst
+                              new_arg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
+                              NULL));                               // snd_src
+    vector_push(input_immcs,
+                new_inst_immc(IMMC_INST_CALL,                                         // inst
+                              NULL,                                                   // dst
+                              new_label_immcope(new_string("function")),              // fst_src
+                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1))); // snd_src
+    vector_push(input_immcs,
+                new_inst_immc(IMMC_INST_CLEAN,                                      // inst
+                              NULL,                                                 // dst
+                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
+                              NULL));                                               // snd_src
+
+    Vector* input_liveseqs = new_vector(&t_liveseq);
+    vector_fill(input_liveseqs, 8, new_liveseq());
+
+    Liveseq* liveseq = NULL;
+    Liveness* liveness = NULL;
+    liveseq = vector_at(input_liveseqs, 0);
+    liveness = new_liveness(1);
+    liveness->last_use_index = 2;
+    vector_push(liveseq->livenesses, liveness);
+
+    Vector* expected = new_vector(&t_x64);
+    vector_push(expected,
+                new_inst_x64(X64_INST_MOVX,                                              // inst
+                             new_mem_x64ope(4),                                          // src
+                             new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
+    vector_push(expected,
+                new_inst_x64(X64_INST_PUSHX,                                           // inst
+                             new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[0]), // src
+                             NULL));                                                   // dst
+    vector_push(expected,
+                new_inst_x64(X64_INST_POPX,                                // inst
+                             NULL,                                         // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, DI_REG_ID))); // dst
+    vector_push(expected,
+                new_inst_x64(X64_INST_MOVX,                                      // inst
+                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));       // dst
+    vector_push(expected,
+                new_inst_x64(X64_INST_CALL,                             // inst
+                             new_jlabel_x64ope(new_string("function")), // src
+                             NULL));                                    // dst
 
     run_ctrlinst_x64gen_test(input_immcs, input_liveseqs, expected);
 
