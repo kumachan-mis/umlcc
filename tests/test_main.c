@@ -130,7 +130,7 @@ int main(void) {
     add_test_suite_label_x64gen();
     add_test_suite_x64gen();
 
-    CU_basic_set_mode(CU_BRM_VERBOSE);
+    CU_basic_set_mode(CU_BRM_NORMAL);
     CU_basic_run_tests();
 
     int exit_code = CU_get_number_of_failures();
