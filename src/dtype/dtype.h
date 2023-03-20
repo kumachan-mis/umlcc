@@ -7,11 +7,11 @@
 typedef struct DType DType;
 
 #include "./array.h"
-#include "./decoration.h"
 #include "./enum.h"
 #include "./function.h"
 #include "./pointer.h"
 #include "./struct.h"
+#include "./typedef.h"
 
 typedef enum DTypeType {
     DTYPE_VOID,
@@ -22,7 +22,7 @@ typedef enum DTypeType {
     DTYPE_STRUCT,
     DTYPE_ENUM,
     DTYPE_FUNCTION,
-    DTYPE_DECORATION,
+    DTYPE_TYPEDEF,
 } DTypeType;
 
 struct DType {
@@ -32,7 +32,7 @@ struct DType {
     DStruct* dstruct;
     DEnum* denum;
     DFunction* dfunction;
-    DDecoration* ddecoration;
+    DTypedef* dtypedef;
 };
 
 extern BaseType t_dtype;
@@ -46,11 +46,11 @@ DType* new_unnamed_struct_dtype(Vector* members);
 DType* new_named_enum_dtype(char* name);
 DType* new_unnamed_enum_dtype(Vector* members);
 DType* new_function_dtype(Vector* params, DType* return_dtype);
-DType* new_decoration_dtype(DType* deco_dtype);
+DType* new_typedef_dtype(DType* defined_dtype);
 DType* new_socket_pointer_dtype(void);
 DType* new_socket_array_dtype(int size);
 DType* new_socket_function_dtype(Vector* params);
-DType* new_socket_decoration_dtype(void);
+DType* new_socket_typedef_dtype(void);
 DType* dtype_copy(DType* dtype);
 DType* dtype_connect(DType* socket_dtype, DType* plug_dtype);
 DType* dtype_aggregate_at(DType* dtype, int index);

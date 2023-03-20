@@ -583,11 +583,9 @@ void test_resolve_typedef_decl(void) {
                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("x")))));
     Ast* global_input = ast_copy(local_input);
 
-    DType* test_dtype = NULL;
-    test_dtype = new_decoration_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
-    test_dtype->ddecoration->typedef_flag = 1;
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_label(local_table, new_string("test_type"), test_dtype);
+    symboltable_define_label(local_table, new_string("test_type"),
+                             new_typedef_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
     SymbolTable* global_table = symboltable_copy(local_table);
 
     Srt* expected = new_srt(

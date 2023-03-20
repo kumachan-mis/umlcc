@@ -245,7 +245,7 @@ void testlib_assert_dtype_equal(DType* actual, DType* expected) {
     void testlib_assert_darray_equal(DArray * actual, DArray * expected);
     void testlib_assert_dstruct_equal(DStruct * actual, DStruct * expected);
     void testlib_assert_dfunction_equal(DFunction * actual, DFunction * expected);
-    void testlib_assert_ddecoration_equal(DDecoration * actual, DDecoration * expected);
+    void testlib_assert_dtypedef_equal(DTypedef * actual, DTypedef * expected);
 
     if (actual == NULL || expected == NULL) {
         CU_ASSERT_TRUE(actual == NULL && expected == NULL);
@@ -257,7 +257,7 @@ void testlib_assert_dtype_equal(DType* actual, DType* expected) {
     testlib_assert_darray_equal(actual->darray, expected->darray);
     testlib_assert_dstruct_equal(actual->dstruct, expected->dstruct);
     testlib_assert_dfunction_equal(actual->dfunction, expected->dfunction);
-    testlib_assert_ddecoration_equal(actual->ddecoration, expected->ddecoration);
+    testlib_assert_dtypedef_equal(actual->dtypedef, expected->dtypedef);
 }
 
 void testlib_assert_dpointer_equal(DPointer* actual, DPointer* expected) {
@@ -352,14 +352,13 @@ void testlib_assert_dparam_equal(DParam* actual, DParam* expected) {
     testlib_assert_dtype_equal(actual->dtype, expected->dtype);
 }
 
-void testlib_assert_ddecoration_equal(DDecoration* actual, DDecoration* expected) {
+void testlib_assert_dtypedef_equal(DTypedef* actual, DTypedef* expected) {
     if (actual == NULL || expected == NULL) {
         CU_ASSERT_TRUE(actual == NULL && expected == NULL);
         return;
     }
 
-    CU_ASSERT_EQUAL(actual->typedef_flag, expected->typedef_flag);
-    testlib_assert_dtype_equal(actual->deco_dtype, expected->deco_dtype);
+    testlib_assert_dtype_equal(actual->defined_dtype, expected->defined_dtype);
 }
 
 void testlib_assert_liveseqs_equal(Vector* actual, Vector* expected) {

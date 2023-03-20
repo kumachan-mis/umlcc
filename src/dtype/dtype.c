@@ -65,9 +65,9 @@ DType* new_function_dtype(Vector* params, DType* return_dtype) {
     return dtype;
 }
 
-DType* new_decoration_dtype(DType* deco_dtype) {
-    DType* dtype = new_base_dtype(DTYPE_DECORATION);
-    dtype->ddecoration = new_ddecoration(deco_dtype);
+DType* new_typedef_dtype(DType* defined_dtype) {
+    DType* dtype = new_base_dtype(DTYPE_TYPEDEF);
+    dtype->dtypedef = new_dtypedef(defined_dtype);
     return dtype;
 }
 
@@ -89,9 +89,9 @@ DType* new_socket_function_dtype(Vector* params) {
     return dtype;
 }
 
-DType* new_socket_decoration_dtype(void) {
-    DType* dtype = new_base_dtype(DTYPE_DECORATION);
-    dtype->ddecoration = new_socket_ddecoration();
+DType* new_socket_typedef_dtype(void) {
+    DType* dtype = new_base_dtype(DTYPE_TYPEDEF);
+    dtype->dtypedef = new_socket_dtypedef();
     return dtype;
 }
 
@@ -103,7 +103,7 @@ DType* new_base_dtype(DTypeType type) {
     dtype->dstruct = NULL;
     dtype->denum = NULL;
     dtype->dfunction = NULL;
-    dtype->ddecoration = NULL;
+    dtype->dtypedef = NULL;
     return dtype;
 }
 
@@ -121,8 +121,8 @@ DType* dtype_copy(DType* dtype) {
     if (dtype->denum != NULL) copied_dtype->denum = denum_copy(dtype->denum);
     copied_dtype->dfunction = NULL;
     if (dtype->dfunction != NULL) copied_dtype->dfunction = dfunction_copy(dtype->dfunction);
-    copied_dtype->ddecoration = NULL;
-    if (dtype->ddecoration != NULL) copied_dtype->ddecoration = ddecoration_copy(dtype->ddecoration);
+    copied_dtype->dtypedef = NULL;
+    if (dtype->dtypedef != NULL) copied_dtype->dtypedef = dtypedef_copy(dtype->dtypedef);
     return copied_dtype;
 }
 
@@ -159,10 +159,10 @@ DType* dtype_connect(DType* socket_dtype, DType* plug_dtype) {
                 tail = next;
                 break;
             }
-            case DTYPE_DECORATION: {
-                DType* next = ddecoration_next(tail->ddecoration);
+            case DTYPE_TYPEDEF: {
+                DType* next = dtypedef_next(tail->dtypedef);
                 if (next == NULL) {
-                    tail->ddecoration = ddecoration_connect(tail->ddecoration, plug_dtype);
+                    tail->dtypedef = dtypedef_connect(tail->dtypedef, plug_dtype);
                     return socket_dtype;
                 }
                 tail = next;
@@ -210,8 +210,8 @@ int dtype_equals(DType* dtype, DType* other) {
             return denum_equals(dtype->denum, other->denum);
         case DTYPE_FUNCTION:
             return dfunction_equals(dtype->dfunction, other->dfunction);
-        case DTYPE_DECORATION:
-            return ddecoration_equals(dtype->ddecoration, other->ddecoration);
+        case DTYPE_TYPEDEF:
+            return dtypedef_equals(dtype->dtypedef, other->dtypedef);
         default:
             return 1;
     }
@@ -305,6 +305,6 @@ void delete_dtype(DType* dtype) {
     if (dtype->dstruct != NULL) delete_dstruct(dtype->dstruct);
     if (dtype->denum != NULL) delete_denum(dtype->denum);
     if (dtype->dfunction != NULL) delete_dfunction(dtype->dfunction);
-    if (dtype->ddecoration != NULL) delete_ddecoration(dtype->ddecoration);
+    if (dtype->dtypedef != NULL) delete_dtypedef(dtype->dtypedef);
     free(dtype);
 }
