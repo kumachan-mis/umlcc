@@ -51,8 +51,7 @@ ResolverDTypeReturn* resolve_decl_specifiers(Resolver* resolver) {
         Ast* child = vector_at(ast->children, i);
         switch (child->type) {
             case AST_STG_TYPEDEF:
-                if (dtype == NULL) dtype = new_socket_decoration_dtype();
-                dtype->ddecoration->typedef_flag = 1;
+                if (dtype == NULL) dtype = new_socket_typedef_dtype();
                 vector_erase(ast->children, i);
                 num_children--;
                 break;
@@ -110,7 +109,7 @@ ResolverDTypeReturn* resolve_type_specifier_list(Resolver* resolver) {
             break;
         case AST_TYPEDEF_NAME: {
             Symbol* symbol = symboltable_search(resolver->symbol_table, child->ident_name);
-            dtype = dtype_copy(symbol->dtype->ddecoration->deco_dtype);
+            dtype = dtype_copy(symbol->dtype->dtypedef->defined_dtype);
             break;
         }
         default:
@@ -513,12 +512,12 @@ ResolverReturn* resolve_init_declarator(Resolver* resolver) {
     }
     vector_push(srt->children, child_srt);
 
-    if (resolver->specifier_dtype->type == DTYPE_DECORATION) {
-        DType* decoration_dtype = dtype_copy(resolver->specifier_dtype);
-        DType* specifier_dtype = decoration_dtype->ddecoration->deco_dtype;
-        decoration_dtype->ddecoration->deco_dtype = NULL;
+    if (resolver->specifier_dtype->type == DTYPE_TYPEDEF) {
+        DType* typedef_dtype = dtype_copy(resolver->specifier_dtype);
+        DType* specifier_dtype = typedef_dtype->dtypedef->defined_dtype;
+        typedef_dtype->dtypedef->defined_dtype = NULL;
         child_srt->dtype = dtype_connect(child_srt->dtype, specifier_dtype);
-        child_srt->dtype = dtype_connect(decoration_dtype, child_srt->dtype);
+        child_srt->dtype = dtype_connect(typedef_dtype, child_srt->dtype);
     } else {
         DType* specifier_dtype = dtype_copy(resolver->specifier_dtype);
         child_srt->dtype = dtype_connect(child_srt->dtype, specifier_dtype);
@@ -718,7 +717,7 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
     resolver->ast = ast;
     if (errs != NULL) return new_resolverret_dparam_errors(errs);
 
-    if (specifiers_dtype->type == DTYPE_DECORATION && specifiers_dtype->ddecoration->typedef_flag) {
+    if (specifiers_dtype->type == DTYPE_TYPEDEF) {
         errs = new_vector(&t_error);
         err = new_error("storage specifiers are invalid for a function parameter\n");
         vector_push(errs, err);
@@ -790,7 +789,7 @@ ResolverReturn* resolve_initializer(Resolver* resolver) {
             err = new_error("function cannot be initialized\n");
             vector_push(errs, err);
             break;
-        case DTYPE_DECORATION:
+        case DTYPE_TYPEDEF:
             errs = new_vector(&t_error);
             err = new_error("typedef-name cannot be initialized\n");
             vector_push(errs, err);

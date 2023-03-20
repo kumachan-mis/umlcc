@@ -122,14 +122,12 @@ void test_immcgen_compound_stmt_integer_vardef(void) {
 }
 
 void test_immcgen_compound_stmt_pointer_typedef(void) {
-    DType* pint_def_dtype = new_decoration_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
-    pint_def_dtype->ddecoration->typedef_flag = 1;
-
     Srt* input = new_srt(
         SRT_CMPD_STMT, 3,                 // non-terminal
         new_srt(SRT_DECL_LIST, 1,         // non-terminal
                 new_srt(SRT_INIT_DECL, 1, // non-terminal
-                        new_identifier_srt(SRT_DECL, pint_def_dtype, new_string("pint")))),
+                        new_identifier_srt(SRT_DECL, new_typedef_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT))),
+                                           new_string("pint")))),
         new_srt(
             SRT_DECL_LIST, 2,         // non-terminal
             new_srt(SRT_INIT_DECL, 1, // non-terminal
