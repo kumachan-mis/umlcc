@@ -566,20 +566,13 @@ ParserReturn* parse_parameter_list(Parser* parser) {
     Error* err = NULL;
     int typedef_flag = parser->typedef_flag;
 
-    CToken* ctoken = vector_at(parser->ctokens, parser->index);
-    if (ctoken->type == CTOKEN_RPALEN) {
-        err = new_error("empty list in a function is not supported\n");
-        delete_ast(ast);
-        return new_parserret_error(err);
-    }
-
     while (1) {
         parser->typedef_flag = typedef_flag;
         parserret_assign(&child, &err, parse_parameter_decl(parser));
         if (err != NULL) break;
         vector_push(ast->children, child);
 
-        ctoken = vector_at(parser->ctokens, parser->index);
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
         if (ctoken->type != CTOKEN_COMMA) break;
 
         parser->index++;
