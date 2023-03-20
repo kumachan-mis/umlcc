@@ -417,8 +417,8 @@ void test_resolve_param_list_error_duplicated(void) {
     Ast* global_input = ast_copy(local_input);
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("parameter 'x' is already declared\n"));
-    vector_push(expected, new_error("parameter 'y' is already declared\n"));
+    vector_push(expected, new_error("function parameter 'x' is already declared\n"));
+    vector_push(expected, new_error("function parameter 'y' is already declared\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
     run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
@@ -732,11 +732,18 @@ void test_resolve_init_error_scalar_struct(void) {
                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4)))));
     Ast* global_input = ast_copy(local_input);
 
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+
+    TagTable* local_tag_table = new_tagtable();
+    tagtable_define_struct(local_tag_table, new_string("Struct"), members);
+    TagTable* global_tag_table = tagtable_copy(local_tag_table);
+
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("initializer list is required\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
-    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+    run_local_decl_resolver_error_test(local_input, NULL, local_tag_table, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, global_tag_table, expected);
 
     delete_vector(expected);
 }

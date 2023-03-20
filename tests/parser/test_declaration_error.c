@@ -465,7 +465,7 @@ void test_parse_function_declarator_error_param_decl(void) {
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token EOF\n");
+    Error* expected = new_error("token ) expected, but got EOF\n");
 
     run_decl_parser_error_test(input, expected);
 

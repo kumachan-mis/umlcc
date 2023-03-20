@@ -190,6 +190,7 @@ void test_parse_function_decl(void) {
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
     vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
     vector_push(input, new_ctoken(CTOKEN_RPALEN));
     vector_push(input, new_ctoken(CTOKEN_COMMA));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("g")));
@@ -218,7 +219,10 @@ void test_parse_function_decl(void) {
                                 new_ast(AST_FUNC_DECLOR, 2,        // non-terminal
                                         new_ast(AST_PTR_DECLOR, 1, // non-terminal
                                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("f"))),
-                                        new_ast(AST_PARAM_LIST, 0))),
+                                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                new_ast(AST_PARAM_DECL, 1,         // non-terminal
+                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_VOID, 0)))))),
                         new_ast(AST_INIT_DECLOR, 1,         // non-terminal
                                 new_ast(AST_FUNC_DECLOR, 2, // non-terminal
                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("g")),

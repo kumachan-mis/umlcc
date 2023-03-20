@@ -61,10 +61,12 @@ void test_resolve_return_stmt_error_child(void) {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
+    DType* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
+
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("identifier 'y' is used before declared\n"));
 
-    run_stmt_resolver_error_test(input, local_table, NULL, expected);
+    run_stmt_resolver_error_test(input, local_table, return_dtype, expected);
 
     delete_vector(expected);
 }

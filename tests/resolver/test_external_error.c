@@ -160,7 +160,7 @@ void test_resolve_function_definition_error_declarator(void) {
                                                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")))))));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("parameter 'x' is already declared\n"));
+    vector_push(expected, new_error("function parameter 'x' is already declared\n"));
     run_resolver_error_test(input, expected);
 
     delete_vector(expected);
