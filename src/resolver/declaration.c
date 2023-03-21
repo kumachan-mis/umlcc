@@ -64,7 +64,10 @@ ResolverDTypeReturn* resolve_decl_specifiers(Resolver* resolver) {
 
     resolverret_dtype_assign(&specifiers_dtype, &errs, resolve_type_specifier_list(resolver));
 
-    if (errs != NULL) return new_resolverret_dtype_errors(errs);
+    if (errs != NULL) {
+        if (dtype != NULL) delete_dtype(dtype);
+        return new_resolverret_dtype_errors(errs);
+    }
 
     dtype = dtype_connect(dtype, specifiers_dtype);
     return new_resolverret_dtype(dtype);
