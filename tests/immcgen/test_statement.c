@@ -5,7 +5,8 @@
 void test_immcgen_compound_stmt_integer_vardef(void);
 void test_immcgen_compound_stmt_pointer_typedef(void);
 void test_immcgen_compound_stmt_empty(void);
-void test_immcgen_return_stmt(void);
+void test_immcgen_return_stmt_with_value(void);
+void test_immcgen_return_stmt_with_no_value(void);
 void test_immcgen_expression_stmt(void);
 
 void run_stmt_immcgen_test(Srt* input, SymbolTable* local_table, int return_label_id, Vector* expected);
@@ -15,7 +16,8 @@ CU_Suite* add_test_suite_stmt_immcgen(void) {
     CU_ADD_TEST(suite, test_immcgen_compound_stmt_integer_vardef);
     CU_ADD_TEST(suite, test_immcgen_compound_stmt_pointer_typedef);
     CU_ADD_TEST(suite, test_immcgen_compound_stmt_empty);
-    CU_ADD_TEST(suite, test_immcgen_return_stmt);
+    CU_ADD_TEST(suite, test_immcgen_return_stmt_with_value);
+    CU_ADD_TEST(suite, test_immcgen_return_stmt_with_no_value);
     CU_ADD_TEST(suite, test_immcgen_expression_stmt);
     return suite;
 }
@@ -195,7 +197,7 @@ void test_immcgen_compound_stmt_empty(void) {
     delete_vector(expected);
 }
 
-void test_immcgen_return_stmt(void) {
+void test_immcgen_return_stmt_with_value(void) {
     Srt* input =
         new_srt(SRT_RET_STMT, 1,
                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
@@ -206,6 +208,21 @@ void test_immcgen_return_stmt(void) {
                               NULL,                                                 // dst
                               new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
                               NULL));                                               // snd_src
+    vector_push(expected,
+                new_inst_immc(IMMC_INST_JMP,                       // inst
+                              new_label_immcope(new_string("L0")), // dst
+                              NULL,                                // fst_src
+                              NULL));                              // snd_src
+
+    run_stmt_immcgen_test(input, NULL, 0, expected);
+
+    delete_vector(expected);
+}
+
+void test_immcgen_return_stmt_with_no_value(void) {
+    Srt* input = new_srt(SRT_RET_STMT, 0);
+
+    Vector* expected = new_vector(&t_immc);
     vector_push(expected,
                 new_inst_immc(IMMC_INST_JMP,                       // inst
                               new_label_immcope(new_string("L0")), // dst
