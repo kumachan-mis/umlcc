@@ -3,6 +3,7 @@
 #include "../testlib/testlib.h"
 
 void test_resolve_assign_expr_error_unassignable(void);
+void test_resolve_assign_expr_error_void(void);
 void test_resolve_assign_expr_error_unmodifiable(void);
 void test_resolve_assign_expr_error_lhs(void);
 void test_resolve_assign_expr_error_rhs(void);
@@ -66,6 +67,7 @@ void run_expr_resolver_error_test(Ast* input, SymbolTable* symbol_table, TagTabl
 CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_expr_resolver_error", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_assign_expr_error_unassignable);
+    CU_ADD_TEST(suite, test_resolve_assign_expr_error_void);
     CU_ADD_TEST(suite, test_resolve_assign_expr_error_unmodifiable);
     CU_ADD_TEST(suite, test_resolve_assign_expr_error_lhs);
     CU_ADD_TEST(suite, test_resolve_assign_expr_error_rhs);
@@ -137,6 +139,26 @@ void test_resolve_assign_expr_error_unassignable(void) {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("y"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_assign_expr_error_void(void) {
+    Ast* input = new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_ast(AST_CALL_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("function")), new_ast(AST_ARG_LIST, 0)));
+
+    SymbolTable* local_table = new_symboltable();
+    Vector* params = new_vector(&t_dparam);
+    DType* func_dtype = new_function_dtype(params, new_void_dtype());
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("function"), func_dtype);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("expression is not assignable to lvalue\n"));
 
     run_expr_resolver_error_test(input, local_table, NULL, expected);
 

@@ -86,10 +86,12 @@ ResolverReturn* resolve_return_stmt(Resolver* resolver) {
     if (resolver->return_dtype->type == DTYPE_VOID && num_children > 0) {
         errs = new_vector(&t_error);
         err = new_error("function returning void returns a value\n");
+        vector_push(errs, err);
         return new_resolverret_errors(errs);
     } else if (resolver->return_dtype->type != DTYPE_VOID && num_children == 0) {
         errs = new_vector(&t_error);
         err = new_error("function returning non-void returns no value\n");
+        vector_push(errs, err);
         return new_resolverret_errors(errs);
     }
 

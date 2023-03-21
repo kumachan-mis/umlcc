@@ -7,6 +7,7 @@ void test_resolve_compound_stmt_pointer_typedef(void);
 void test_resolve_compound_stmt_empty(void);
 void test_resolve_return_stmt_without_cast(void);
 void test_resolve_return_stmt_with_cast(void);
+void test_resolve_return_stmt_without_value(void);
 void test_resolve_expression_stmt(void);
 
 void run_stmt_resolver_test(Ast* input, SymbolTable* local_table, DType* return_dtype, Srt* expected);
@@ -18,6 +19,7 @@ CU_Suite* add_test_suite_stmt_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_compound_stmt_empty);
     CU_ADD_TEST(suite, test_resolve_return_stmt_without_cast);
     CU_ADD_TEST(suite, test_resolve_return_stmt_with_cast);
+    CU_ADD_TEST(suite, test_resolve_return_stmt_without_value);
     CU_ADD_TEST(suite, test_resolve_expression_stmt);
     return suite;
 }
@@ -192,6 +194,18 @@ void test_resolve_return_stmt_with_cast(void) {
                             new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
                                            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                             new_signed_iliteral(INTEGER_INT, 0))));
+
+    run_stmt_resolver_test(input, NULL, return_dtype, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_return_stmt_without_value(void) {
+    Ast* input = new_ast(AST_RET_STMT, 0);
+
+    DType* return_dtype = new_void_dtype();
+
+    Srt* expected = new_srt(SRT_RET_STMT, 0);
 
     run_stmt_resolver_test(input, NULL, return_dtype, expected);
 

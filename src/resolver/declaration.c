@@ -310,9 +310,17 @@ ResolverReturnDStructMember* resolve_struct_declarator(Resolver* resolver) {
     DType* specifier_dtype = dtype_copy(resolver->specifier_dtype);
     srt->dtype = dtype_connect(srt->dtype, specifier_dtype);
 
-    if (srt->dtype->type == DTYPE_FUNCTION || dtype_isincomplete(srt->dtype)) {
+    if (dtype_isincomplete(srt->dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("struct member should not have incomplete or function type\n");
+        err = new_error("struct member '%s' has incomplete type\n", srt->ident_name);
+        vector_push(errs, err);
+        delete_srt(srt);
+        return new_resolverret_dstructmember_errors(errs);
+    }
+
+    if (srt->dtype->type == DTYPE_FUNCTION) {
+        errs = new_vector(&t_error);
+        err = new_error("struct member '%s' has function type\n", srt->ident_name);
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_dstructmember_errors(errs);
@@ -595,7 +603,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
             case AST_ARRAY_DECLOR: {
                 if (socket_dtype != NULL && socket_dtype->type == DTYPE_FUNCTION) {
                     errs = new_vector(&t_error);
-                    err = new_error("function returning array is invalid\n");
+                    err = new_error("function returning an array is invalid\n");
                     vector_push(errs, err);
                     break;
                 }
@@ -634,9 +642,11 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                     err = new_error("array of functions is invalid\n");
                     vector_push(errs, err);
                     break;
-                } else if (socket_dtype != NULL && socket_dtype->type == DTYPE_FUNCTION) {
+                }
+
+                if (socket_dtype != NULL && socket_dtype->type == DTYPE_FUNCTION) {
                     errs = new_vector(&t_error);
-                    err = new_error("function returning function is invalid\n");
+                    err = new_error("function returning a function is invalid\n");
                     vector_push(errs, err);
                     break;
                 }
@@ -653,6 +663,22 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                 break;
             }
             case AST_IDENT_DECLOR:
+                if (socket_dtype != NULL && socket_dtype->type == DTYPE_ARRAY &&
+                    dtype_isincomplete(resolver->specifier_dtype)) {
+                    errs = new_vector(&t_error);
+                    err = new_error("array of incomplete type is invalid\n");
+                    vector_push(errs, err);
+                    break;
+                }
+
+                if (socket_dtype != NULL && socket_dtype->type == DTYPE_FUNCTION &&
+                    dtype_isincomplete(resolver->specifier_dtype) && resolver->specifier_dtype->type != DTYPE_VOID) {
+                    errs = new_vector(&t_error);
+                    err = new_error("function returning incomplete type other than void is invalid\n");
+                    vector_push(errs, err);
+                    break;
+                }
+
                 srt = new_identifier_srt(SRT_DECL, dtype, new_string(ast_ptr->ident_name));
                 break;
             default:
