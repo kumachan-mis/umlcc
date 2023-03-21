@@ -4,9 +4,11 @@
 
 void test_resolve_compound_stmt_integer_vardef(void);
 void test_resolve_compound_stmt_pointer_typedef(void);
+void test_resolve_compound_stmt_void_pointer(void);
 void test_resolve_compound_stmt_empty(void);
 void test_resolve_return_stmt_without_cast(void);
 void test_resolve_return_stmt_with_cast(void);
+void test_resolve_return_stmt_without_value(void);
 void test_resolve_expression_stmt(void);
 
 void run_stmt_resolver_test(Ast* input, SymbolTable* local_table, DType* return_dtype, Srt* expected);
@@ -15,9 +17,11 @@ CU_Suite* add_test_suite_stmt_resolver(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_integer_vardef);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_pointer_typedef);
+    CU_ADD_TEST(suite, test_resolve_compound_stmt_void_pointer);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_empty);
     CU_ADD_TEST(suite, test_resolve_return_stmt_without_cast);
     CU_ADD_TEST(suite, test_resolve_return_stmt_with_cast);
+    CU_ADD_TEST(suite, test_resolve_return_stmt_without_value);
     CU_ADD_TEST(suite, test_resolve_expression_stmt);
     return suite;
 }
@@ -157,6 +161,107 @@ void test_resolve_compound_stmt_pointer_typedef(void) {
     delete_srt(expected);
 }
 
+void test_resolve_compound_stmt_void_pointer(void) {
+    Ast* input = new_ast(
+        AST_CMPD_STMT, 4,                  // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                        new_ast(AST_TYPE_VOID, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,                   // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,                // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2,        // non-terminal
+                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("malloc"))),
+                                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_INT, 0)),
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("n")))))))),
+        new_ast(
+            AST_DECL, 2,               // non-terminal
+            new_ast(AST_DECL_SPECS, 1, // non-terminal
+                    new_ast(AST_TYPE_VOID, 0)),
+            new_ast(
+                AST_INIT_DECLOR_LIST, 1,            // non-terminal
+                new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                        new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("free")),
+                                new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                        new_ast(AST_TYPE_VOID, 0)),
+                                                new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("p"))))))))),
+        new_ast(
+            AST_DECL, 2,               // non-terminal
+            new_ast(AST_DECL_SPECS, 1, // non-terminal
+                    new_ast(AST_TYPE_INT, 0)),
+            new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                    new_ast(AST_INIT_DECLOR, 2,        // non-terminal
+                            new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))),
+                            new_ast(AST_CALL_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("malloc")),
+                                    new_ast(AST_ARG_LIST, 1, // non-terminal
+                                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4))))))),
+        new_ast(AST_EXPR_STMT, 1,
+                new_ast(AST_CALL_EXPR, 2, // non-terminal
+                        new_identifier_ast(AST_IDENT_EXPR, new_string("free")),
+                        new_ast(AST_ARG_LIST, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("x")))))
+
+    );
+
+    Vector* malloc_params = new_vector(&t_dparam);
+    vector_push(malloc_params, new_named_dparam(new_string("n"), new_integer_dtype(DTYPE_INT)));
+    DType* malloc_dtype = new_function_dtype(malloc_params, new_pointer_dtype(new_void_dtype()));
+
+    Vector* free_params = new_vector(&t_dparam);
+    vector_push(free_params, new_named_dparam(new_string("p"), new_pointer_dtype(new_void_dtype())));
+    DType* free_dtype = new_function_dtype(free_params, new_void_dtype());
+
+    Srt* expected = new_srt(
+        SRT_CMPD_STMT, 4,                 // non-terminal
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, malloc_dtype, new_string("malloc")))),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, free_dtype, new_string("free")))),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("x")),
+                        new_srt(SRT_INIT, 1, // non-terminal
+                                new_dtyped_srt(
+                                    SRT_CAST_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+                                    new_dtyped_srt(
+                                        SRT_CALL_EXPR, new_pointer_dtype(new_void_dtype()), 2, // non-terminal
+                                        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(malloc_dtype)),
+                                                       1, // non-terminal
+                                                       new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(malloc_dtype),
+                                                                          new_string("malloc"))),
+                                        new_srt(SRT_ARG_LIST, 1, // non-terminal
+                                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                 new_signed_iliteral(INTEGER_INT, 4)))))))),
+        new_srt(SRT_EXPR_STMT, 1,
+                new_dtyped_srt(
+                    SRT_CALL_EXPR, new_void_dtype(), 2, // non-terminal
+                    new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(free_dtype)),
+                                   1, // non-terminal
+                                   new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(free_dtype), new_string("free"))),
+                    new_srt(SRT_ARG_LIST, 1,                                                      // non-terminal
+                            new_dtyped_srt(SRT_CAST_EXPR, new_pointer_dtype(new_void_dtype()), 1, // non-terminal
+                                           new_identifier_srt(SRT_IDENT_EXPR,
+                                                              new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                                                              new_string("x"))))))
+
+    );
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
 void test_resolve_compound_stmt_empty(void) {
     Ast* input = new_ast(AST_CMPD_STMT, 0);
 
@@ -192,6 +297,18 @@ void test_resolve_return_stmt_with_cast(void) {
                             new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
                                            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                             new_signed_iliteral(INTEGER_INT, 0))));
+
+    run_stmt_resolver_test(input, NULL, return_dtype, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_return_stmt_without_value(void) {
+    Ast* input = new_ast(AST_RET_STMT, 0);
+
+    DType* return_dtype = new_void_dtype();
+
+    Srt* expected = new_srt(SRT_RET_STMT, 0);
 
     run_stmt_resolver_test(input, NULL, return_dtype, expected);
 

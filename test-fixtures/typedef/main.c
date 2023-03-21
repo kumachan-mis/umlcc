@@ -1,10 +1,10 @@
 typedef int test_int, *test_intptr;
 
-test_int put_int(test_int x);
-test_int put_str(char* s);
-test_int put_blank_line();
+void put_int(test_int x);
+void put_str(char* s);
+void put_blank_line(void);
 
-int main() {
+int main(void) {
     test_int a, b;
     test_intptr p, q;
     a = 8;

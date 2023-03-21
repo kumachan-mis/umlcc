@@ -1,10 +1,10 @@
-int put_str(char* s);
-int put_blank_line();
+void put_str(char* s);
+void put_blank_line(void);
 
 char global_array[20] = "global char array";
 char tricky_global_array[21] = "tricky glo\0bal array";
 
-int main() {
+int main(void) {
     char local_array[19] = "local char array";
     char tricky_local_array[20] = "tricky lo\0cal array";
     char* local_pointer = "local char pointer";

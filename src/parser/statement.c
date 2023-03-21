@@ -68,6 +68,13 @@ ParserReturn* parse_return_stmt(Parser* parser) {
     err = consume_ctoken(parser, CTOKEN_KEYWORD_RETURN);
     if (err != NULL) return new_parserret_error(err);
 
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type == CTOKEN_SEMICOLON) {
+        parser->index++;
+        ast = new_ast(AST_RET_STMT, 0);
+        return new_parserret(ast);
+    }
+
     parserret_assign(&ast, &err, parse_expr(parser));
     if (err != NULL) return new_parserret_error(err);
 

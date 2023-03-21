@@ -33,9 +33,14 @@ void append_child_immcode(Immcgen* immcgen, Vector* codes, int index) {
     immcgen->srt = srt;
 }
 
-void update_expr_register(Immcgen* immcgen, ImmcOpe* dst) {
+void update_non_void_expr_register(Immcgen* immcgen, ImmcOpe* dst) {
     immcgen->expr_reg_suffix = dst->suffix;
     immcgen->expr_reg_id = dst->reg_id;
+}
+
+void update_void_expr_register(Immcgen* immcgen) {
+    immcgen->expr_reg_suffix = IMMC_SUFFIX_NONE;
+    immcgen->expr_reg_id = -1;
 }
 
 ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {

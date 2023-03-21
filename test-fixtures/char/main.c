@@ -1,8 +1,8 @@
-char put_char(char c);
-int put_int(int x);
-int put_str(char* x);
+void put_char(char c);
+void put_int(int x);
+void put_str(char* x);
 
-int main() {
+int main(void) {
     char x = 30, y = 40, z = 10;
     char w = (x * y) / z;
     put_int(w);

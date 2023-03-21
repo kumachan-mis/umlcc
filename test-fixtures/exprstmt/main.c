@@ -1,6 +1,6 @@
-int put_int(int x);
+void put_int(int x);
 
-int main() {
+int main(void) {
     int x, y;
     x = 1 + 3;
     y = x - 2;

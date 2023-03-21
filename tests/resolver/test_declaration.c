@@ -17,7 +17,8 @@ void test_resolve_unnamed_enum_decl(void);
 void test_resolve_nameonly_enum_decl(void);
 void test_resolve_enum_name_decl(void);
 void test_resolve_function_decl(void);
-void test_resolve_parameter_decl(void);
+void test_resolve_non_scalar_parameter_decl(void);
+void test_resolve_unnamed_parameter_decl(void);
 void test_resolve_typedef_decl(void);
 void test_resolve_scalar_init(void);
 void test_resolve_scalar_init_enclosed(void);
@@ -63,7 +64,8 @@ CU_Suite* add_test_suite_decl_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_nameonly_enum_decl);
     CU_ADD_TEST(suite, test_resolve_enum_name_decl);
     CU_ADD_TEST(suite, test_resolve_function_decl);
-    CU_ADD_TEST(suite, test_resolve_parameter_decl);
+    CU_ADD_TEST(suite, test_resolve_non_scalar_parameter_decl);
+    CU_ADD_TEST(suite, test_resolve_unnamed_parameter_decl);
     CU_ADD_TEST(suite, test_resolve_typedef_decl);
     CU_ADD_TEST(suite, test_resolve_scalar_init);
     CU_ADD_TEST(suite, test_resolve_scalar_init_enclosed);
@@ -468,7 +470,10 @@ void test_resolve_function_decl(void) {
                                 new_ast(AST_FUNC_DECLOR, 2,        // non-terminal
                                         new_ast(AST_PTR_DECLOR, 1, // non-terminal
                                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("f"))),
-                                        new_ast(AST_PARAM_LIST, 0))),
+                                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                new_ast(AST_PARAM_DECL, 1,         // non-terminal
+                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_VOID, 0)))))),
                         new_ast(AST_INIT_DECLOR, 1,         // non-terminal
                                 new_ast(AST_FUNC_DECLOR, 2, // non-terminal
                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("g")),
@@ -495,12 +500,12 @@ void test_resolve_function_decl(void) {
     DType* fdtype = new_function_dtype(fparams, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
 
     Vector* gparams = new_vector(&t_dparam);
-    vector_push(gparams, new_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
+    vector_push(gparams, new_named_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
     DType* gdtype = new_function_dtype(gparams, new_integer_dtype(DTYPE_CHAR));
 
     Vector* hparams = new_vector(&t_dparam);
-    vector_push(hparams, new_dparam(new_string("b"), new_integer_dtype(DTYPE_INT)));
-    vector_push(hparams, new_dparam(new_string("c"), new_integer_dtype(DTYPE_INT)));
+    vector_push(hparams, new_named_dparam(new_string("b"), new_integer_dtype(DTYPE_INT)));
+    vector_push(hparams, new_named_dparam(new_string("c"), new_integer_dtype(DTYPE_INT)));
     DType* hdtype = new_function_dtype(hparams, new_integer_dtype(DTYPE_CHAR));
 
     Srt* expected = new_srt(SRT_DECL_LIST, 3,         // non-terminal
@@ -517,7 +522,7 @@ void test_resolve_function_decl(void) {
     delete_srt(expected);
 }
 
-void test_resolve_parameter_decl(void) {
+void test_resolve_non_scalar_parameter_decl(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,               // non-terminal
         new_ast(AST_DECL_SPECS, 1, // non-terminal
@@ -552,18 +557,77 @@ void test_resolve_parameter_decl(void) {
     // array parameter is converted to pointer to initial element
 
     Vector* fparams = new_vector(&t_dparam);
-    vector_push(fparams, new_dparam(new_string("p"), new_integer_dtype(DTYPE_INT)));
+    vector_push(fparams, new_named_dparam(new_string("p"), new_integer_dtype(DTYPE_INT)));
     DType* fdtype = new_pointer_dtype(new_function_dtype(fparams, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
     // function parameter is converted to pointer to function
 
     Vector* func_params = new_vector(&t_dparam);
-    vector_push(func_params, new_dparam(new_string("a"), adtype));
-    vector_push(func_params, new_dparam(new_string("f"), fdtype));
+    vector_push(func_params, new_named_dparam(new_string("a"), adtype));
+    vector_push(func_params, new_named_dparam(new_string("f"), fdtype));
     DType* func_dtype = new_function_dtype(func_params, new_integer_dtype(DTYPE_INT));
 
     Srt* expected = new_srt(SRT_DECL_LIST, 1,         // non-terminal
                             new_srt(SRT_INIT_DECL, 1, // non-terminal
                                     new_identifier_srt(SRT_DECL, func_dtype, new_string("func"))));
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_unnamed_parameter_decl(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                        new_ast(AST_TYPE_VOID, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 3,            // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("f")),
+                                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                new_ast(AST_PARAM_DECL, 1,         // non-terminal
+                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_VOID, 0)))))),
+                        new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("g")),
+                                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                new_ast(AST_PARAM_DECL, 1,         // non-terminal
+                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_CHAR, 0)))))),
+                        new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("h")),
+                                        new_ast(AST_PARAM_LIST, 2,                 // non-terminal
+                                                new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_INT, 0)),
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))),
+                                                new_ast(AST_PARAM_DECL, 1,         // non-terminal
+                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_INT, 0))))))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* fparams = new_vector(&t_dparam);
+    DType* fdtype = new_function_dtype(fparams, new_void_dtype());
+
+    Vector* gparams = new_vector(&t_dparam);
+    vector_push(gparams, new_unnamed_dparam(new_integer_dtype(DTYPE_CHAR)));
+    DType* gdtype = new_function_dtype(gparams, new_void_dtype());
+
+    Vector* hparams = new_vector(&t_dparam);
+    vector_push(hparams, new_named_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(hparams, new_unnamed_dparam(new_integer_dtype(DTYPE_INT)));
+    DType* hdtype = new_function_dtype(hparams, new_void_dtype());
+
+    Srt* expected = new_srt(SRT_DECL_LIST, 3,         // non-terminal
+                            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                    new_identifier_srt(SRT_DECL, fdtype, new_string("f"))),
+                            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                    new_identifier_srt(SRT_DECL, gdtype, new_string("g"))),
+                            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                    new_identifier_srt(SRT_DECL, hdtype, new_string("h"))));
 
     run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
     run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);

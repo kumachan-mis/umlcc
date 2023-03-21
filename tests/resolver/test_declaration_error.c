@@ -6,18 +6,27 @@
 
 void test_resolve_decl_specifiers_error(void);
 void test_resolve_declarator_list_error_duplicated(void);
-void test_resolve_declarator_error(void);
+void test_resolve_declarator_error_incomplete(void);
+void test_resolve_array_error_functions(void);
+void test_resolve_array_error_incomplete(void);
 void test_resolve_array_error_size_non_positive(void);
 void test_resolve_array_error_size_limit(void);
 void test_resolve_struct_error_duplicated(void);
 void test_resolve_struct_member_error_duplicated(void);
-void test_resolve_struct_member_error(void);
+void test_resolve_struct_member_error_invalid(void);
 void test_resolve_enum_error_duplicated(void);
 void test_resolve_enum_member_error_duplicated(void);
 void test_resolve_enum_error_const_limit(void);
+void test_resolve_function_error_array(void);
+void test_resolve_function_error_function(void);
+void test_resolve_function_error_non_void_incomplete(void);
 void test_resolve_param_list_error_duplicated(void);
 void test_resolve_param_error_storage_specifier(void);
-void test_resolve_param_error_declarator(void);
+void test_resolve_param_error_invalid_dtype(void);
+void test_resolve_param_error_incomplete(void);
+void test_resolve_typedef_error_array(void);
+void test_resolve_typedef_error_struct(void);
+void test_resolve_typedef_error_function(void);
 void test_resolve_init_error_unassignable(void);
 void test_resolve_init_error_function(void);
 void test_resolve_init_error_typedef_name(void);
@@ -40,18 +49,27 @@ CU_Suite* add_test_suite_decl_resolver_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_decl_resolver_error", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_decl_specifiers_error);
     CU_ADD_TEST(suite, test_resolve_declarator_list_error_duplicated);
-    CU_ADD_TEST(suite, test_resolve_declarator_error);
+    CU_ADD_TEST(suite, test_resolve_declarator_error_incomplete);
+    CU_ADD_TEST(suite, test_resolve_array_error_functions);
+    CU_ADD_TEST(suite, test_resolve_array_error_incomplete);
     CU_ADD_TEST(suite, test_resolve_array_error_size_non_positive);
     CU_ADD_TEST(suite, test_resolve_array_error_size_limit);
     CU_ADD_TEST(suite, test_resolve_struct_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_struct_member_error_duplicated);
-    CU_ADD_TEST(suite, test_resolve_struct_member_error);
+    CU_ADD_TEST(suite, test_resolve_struct_member_error_invalid);
     CU_ADD_TEST(suite, test_resolve_enum_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_enum_member_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_enum_error_const_limit);
+    CU_ADD_TEST(suite, test_resolve_function_error_array);
+    CU_ADD_TEST(suite, test_resolve_function_error_function);
+    CU_ADD_TEST(suite, test_resolve_function_error_non_void_incomplete);
     CU_ADD_TEST(suite, test_resolve_param_list_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_param_error_storage_specifier);
-    CU_ADD_TEST(suite, test_resolve_param_error_declarator);
+    CU_ADD_TEST(suite, test_resolve_param_error_invalid_dtype);
+    CU_ADD_TEST(suite, test_resolve_param_error_incomplete);
+    CU_ADD_TEST(suite, test_resolve_typedef_error_array);
+    CU_ADD_TEST(suite, test_resolve_typedef_error_struct);
+    CU_ADD_TEST(suite, test_resolve_typedef_error_function);
     CU_ADD_TEST(suite, test_resolve_init_error_unassignable);
     CU_ADD_TEST(suite, test_resolve_init_error_function);
     CU_ADD_TEST(suite, test_resolve_init_error_typedef_name);
@@ -114,34 +132,60 @@ void test_resolve_declarator_list_error_duplicated(void) {
     delete_vector(expected);
 }
 
-void test_resolve_declarator_error(void) {
+void test_resolve_declarator_error_incomplete(void) {
+    Ast* local_input = new_ast(AST_DECL, 2,               // non-terminal
+                               new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                       new_ast(AST_TYPE_VOID, 0)),
+                               new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                       new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                               new_identifier_ast(AST_IDENT_DECLOR, new_string("x")))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'x' has an incomplete type\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_array_error_functions(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,               // non-terminal
         new_ast(AST_DECL_SPECS, 1, // non-terminal
                 new_ast(AST_TYPE_INT, 0)),
-        new_ast(AST_INIT_DECLOR_LIST, 3,             // non-terminal
+        new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
                 new_ast(AST_INIT_DECLOR, 1,          // non-terminal
                         new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                                new_ast(AST_FUNC_DECLOR, 2, new_identifier_ast(AST_IDENT_DECLOR, new_string("a")),
+                                new_ast(AST_FUNC_DECLOR, 2, new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
                                         new_ast(AST_PARAM_LIST, 0)),
-                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)))),
-                new_ast(AST_INIT_DECLOR, 1,         // non-terminal
-                        new_ast(AST_FUNC_DECLOR, 2, // non-terminal
-                                new_ast(AST_FUNC_DECLOR, 2, new_identifier_ast(AST_IDENT_DECLOR, new_string("b")),
-                                        new_ast(AST_PARAM_LIST, 0)),
-                                new_ast(AST_PARAM_LIST, 0))),
-                new_ast(AST_INIT_DECLOR, 1,                  // non-terminal
-                        new_ast(AST_FUNC_DECLOR, 2,          // non-terminal
-                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("c")),
-                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6))),
-                                new_ast(AST_PARAM_LIST, 0)))));
+                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))))));
     Ast* global_input = ast_copy(local_input);
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("array of functions is invalid\n"));
-    vector_push(expected, new_error("function returning function is invalid\n"));
-    vector_push(expected, new_error("function returning array is invalid\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_array_error_incomplete(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                        new_ast(AST_TYPE_VOID, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("array of incomplete type is invalid\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
     run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
@@ -261,7 +305,7 @@ void test_resolve_struct_member_error_duplicated(void) {
     delete_vector(expected);
 }
 
-void test_resolve_struct_member_error(void) {
+void test_resolve_struct_member_error_invalid(void) {
     Ast* local_input = new_ast(
         AST_DECL, 1,                                                   // non-terminal
         new_ast(AST_DECL_SPECS, 1,                                     // non-terminal
@@ -284,8 +328,8 @@ void test_resolve_struct_member_error(void) {
     Ast* global_input = ast_copy(local_input);
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("struct member should not have incomplete or function type\n"));
-    vector_push(expected, new_error("struct member should not have incomplete or function type\n"));
+    vector_push(expected, new_error("struct member 'f' has function type\n"));
+    vector_push(expected, new_error("struct member 'structure' has incomplete type\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
     run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
@@ -383,6 +427,73 @@ void test_resolve_enum_error_const_limit(void) {
     delete_vector(expected);
 }
 
+void test_resolve_function_error_array(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,                     // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,                  // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2,          // non-terminal
+                                        new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("function")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6))),
+                                        new_ast(AST_PARAM_LIST, 0)))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("function returning an array is invalid\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_function_error_function(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,                    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,                 // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2,         // non-terminal
+                                        new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("function")),
+                                                new_ast(AST_PARAM_LIST, 0)),
+                                        new_ast(AST_PARAM_LIST, 0)))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("function returning a function is invalid\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_function_error_non_void_incomplete(void) {
+    Ast* local_input = new_ast(AST_DECL, 2,                        // non-terminal
+                               new_ast(AST_DECL_SPECS, 1,          // non-terminal
+                                       new_ast(AST_TYPE_STRUCT, 1, // non-terminal
+                                               new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")))),
+                               new_ast(AST_INIT_DECLOR_LIST, 1,            // non-terminal
+                                       new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                                               new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                                       new_identifier_ast(AST_IDENT_DECLOR, new_string("function")),
+                                                       new_ast(AST_PARAM_LIST, 0)))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("function returning incomplete type other than void is invalid\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
 void test_resolve_param_list_error_duplicated(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,               // non-terminal
@@ -417,8 +528,8 @@ void test_resolve_param_list_error_duplicated(void) {
     Ast* global_input = ast_copy(local_input);
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("parameter 'x' is already declared\n"));
-    vector_push(expected, new_error("parameter 'y' is already declared\n"));
+    vector_push(expected, new_error("function parameter 'x' is already declared\n"));
+    vector_push(expected, new_error("function parameter 'y' is already declared\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
     run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
@@ -451,7 +562,7 @@ void test_resolve_param_error_storage_specifier(void) {
     delete_vector(expected);
 }
 
-void test_resolve_param_error_declarator(void) {
+void test_resolve_param_error_invalid_dtype(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,               // non-terminal
         new_ast(AST_DECL_SPECS, 1, // non-terminal
@@ -474,6 +585,107 @@ void test_resolve_param_error_declarator(void) {
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("array of functions is invalid\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_param_error_incomplete(void) {
+    Ast* local_input = new_ast(
+        AST_DECL, 2,               // non-terminal
+        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                new_ast(AST_TYPE_CHAR, 0)),
+        new_ast(AST_INIT_DECLOR_LIST, 1,            // non-terminal
+                new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                        new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("f")),
+                                new_ast(AST_PARAM_LIST, 2,                 // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                        new_ast(AST_TYPE_VOID, 0)),
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))),
+                                        new_ast(AST_PARAM_DECL, 1,                  // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1,          // non-terminal
+                                                        new_ast(AST_TYPE_STRUCT, 1, // non-terminal
+                                                                new_identifier_ast(AST_STRUCT_NAME,
+                                                                                   new_string("Struct"))))))))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("function parameter 'x' has an incomplete type\n"));
+    vector_push(expected, new_error("unnamed function parameter has an incomplete type\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_typedef_error_array(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 2, // non-terminal
+                        new_ast(AST_STG_TYPEDEF, 0), new_ast(AST_TYPE_VOID, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,             // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,          // non-terminal
+                                new_ast(AST_ARRAY_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("array_type")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5))))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("array of incomplete type is invalid\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_typedef_error_struct(void) {
+    Ast* local_input =
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 2, // non-terminal
+                        new_ast(AST_STG_TYPEDEF, 0),
+                        new_ast(AST_TYPE_STRUCT, 1,                            // non-terminal
+                                new_ast(AST_STRUCT_DECL_LIST, 1,               // non-terminal
+                                        new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                                new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                        new_ast(AST_TYPE_VOID, 0)),
+                                                new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("member"))))))),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("struct_type")))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("struct member 'member' has incomplete type\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_typedef_error_function(void) {
+    Ast* local_input = new_ast(AST_DECL, 2,                        // non-terminal
+                               new_ast(AST_DECL_SPECS, 2,          // non-terminal
+                                       new_ast(AST_TYPE_STRUCT, 1, // non-terminal
+                                               new_identifier_ast(AST_STRUCT_NAME, new_string("Struct"))),
+                                       new_ast(AST_STG_TYPEDEF, 0)),
+                               new_ast(AST_INIT_DECLOR_LIST, 1,            // non-terminal
+                                       new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                                               new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                                       new_identifier_ast(AST_IDENT_DECLOR, new_string("func_type")),
+                                                       new_ast(AST_PARAM_LIST, 0)))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("function returning incomplete type other than void is invalid\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
     run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
@@ -732,11 +944,18 @@ void test_resolve_init_error_scalar_struct(void) {
                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4)))));
     Ast* global_input = ast_copy(local_input);
 
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+
+    TagTable* local_tag_table = new_tagtable();
+    tagtable_define_struct(local_tag_table, new_string("Struct"), members);
+    TagTable* global_tag_table = tagtable_copy(local_tag_table);
+
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("initializer list is required\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
-    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+    run_local_decl_resolver_error_test(local_input, NULL, local_tag_table, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, global_tag_table, expected);
 
     delete_vector(expected);
 }

@@ -140,6 +140,10 @@ ParserReturn* parse_type_specifier(Parser* parser) {
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
 
     switch (ctoken->type) {
+        case CTOKEN_KEYWORD_VOID:
+            parser->index++;
+            ast = new_ast(AST_TYPE_VOID, 0);
+            break;
         case CTOKEN_KEYWORD_CHAR:
             parser->index++;
             ast = new_ast(AST_TYPE_CHAR, 0);
@@ -562,16 +566,13 @@ ParserReturn* parse_parameter_list(Parser* parser) {
     Error* err = NULL;
     int typedef_flag = parser->typedef_flag;
 
-    CToken* ctoken = vector_at(parser->ctokens, parser->index);
-    if (ctoken->type == CTOKEN_RPALEN) return new_parserret(ast);
-
     while (1) {
         parser->typedef_flag = typedef_flag;
         parserret_assign(&child, &err, parse_parameter_decl(parser));
         if (err != NULL) break;
         vector_push(ast->children, child);
 
-        ctoken = vector_at(parser->ctokens, parser->index);
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
         if (ctoken->type != CTOKEN_COMMA) break;
 
         parser->index++;
@@ -597,10 +598,12 @@ ParserReturn* parse_parameter_decl(Parser* parser) {
 
     vector_push(ast->children, child);
 
+    int index = parser->index;
     parserret_assign(&child, &err, parse_declarator(parser));
     if (err != NULL) {
-        delete_ast(ast);
-        return new_parserret_error(err);
+        parser->index = index;
+        delete_error(err);
+        return new_parserret(ast);
     }
 
     vector_push(ast->children, child);

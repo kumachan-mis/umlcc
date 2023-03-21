@@ -1,4 +1,4 @@
-int put_int(int x);
+void put_int(int x);
 
 int bin_operator(int operator(int x, int y), int x, int y) {
     return operator(x, y);
@@ -20,7 +20,7 @@ int div(int x, int y) {
     return x / y;
 }
 
-int main() {
+int main(void) {
     put_int(bin_operator(add, 3, 4));
     put_int(bin_operator(sub, 1, 2));
     put_int(bin_operator(mul, 3, 5));

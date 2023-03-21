@@ -51,7 +51,6 @@ ResolverReturn* resolve_transration_unit(Resolver* resolver) {
 
 ResolverReturn* resolve_function_definition(Resolver* resolver) {
     Srt* srt = NULL;
-    DType* specifiers_dtype = NULL;
     Srt* declarator_srt = NULL;
     Srt* body_srt = NULL;
     Vector* errs = NULL;
@@ -60,15 +59,16 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    resolverret_dtype_assign(&specifiers_dtype, &errs, resolve_decl_specifiers(resolver));
+    resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_decl_specifiers(resolver));
     resolver->ast = ast;
     if (errs != NULL) return new_resolverret_errors(errs);
 
-    if (specifiers_dtype->type == DTYPE_TYPEDEF) {
+    if (resolver->specifier_dtype->type == DTYPE_TYPEDEF) {
         errs = new_vector(&t_error);
         err = new_error("storage specifiers are invalid for a function definition\n");
         vector_push(errs, err);
-        delete_dtype(specifiers_dtype);
+        delete_dtype(resolver->specifier_dtype);
+        resolver->specifier_dtype = NULL;
         return new_resolverret_errors(errs);
     }
 
@@ -76,15 +76,17 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     resolverret_assign(&declarator_srt, &errs, resolve_declarator(resolver));
     resolver->ast = ast;
     if (errs != NULL) {
-        delete_dtype(specifiers_dtype);
+        delete_dtype(resolver->specifier_dtype);
+        resolver->specifier_dtype = NULL;
         return new_resolverret_errors(errs);
     }
 
-    declarator_srt->dtype = dtype_connect(declarator_srt->dtype, specifiers_dtype);
+    declarator_srt->dtype = dtype_connect(declarator_srt->dtype, resolver->specifier_dtype);
+    resolver->specifier_dtype = NULL;
 
     if (declarator_srt->dtype->type != DTYPE_FUNCTION) {
         errs = new_vector(&t_error);
-        err = new_error("non-function declaration should not have body\n");
+        err = new_error("non-function declaration has a function body\n");
         vector_push(errs, err);
         delete_srt(declarator_srt);
         return new_resolverret_errors(errs);
@@ -98,6 +100,21 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
+    Vector* params = declarator_srt->dtype->dfunction->params;
+    int num_params = vector_size(params);
+    for (int i = 0; i < num_params; i++) {
+        DParam* dparam = vector_at(params, i);
+        if (dparam->name != NULL) continue;
+        if (errs == NULL) errs = new_vector(&t_error);
+        err = new_error("parameter name is required in a function definition\n");
+        vector_push(errs, err);
+    }
+
+    if (errs != NULL) {
+        delete_srt(declarator_srt);
+        return new_resolverret_errors(errs);
+    }
+
     char* symbol_name = new_string(declarator_srt->ident_name);
     DType* symbol_dtype = dtype_copy(declarator_srt->dtype);
     symboltable_define_label(resolver->symbol_table, symbol_name, symbol_dtype);
@@ -107,8 +124,6 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     resolver->tag_table = tagtable_enter_scope(resolver->tag_table);
     resolver->return_dtype = symbol_dtype->dfunction->return_dtype;
 
-    Vector* params = declarator_srt->dtype->dfunction->params;
-    int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
         DParam* dparam = vector_at(params, i);
         char* symbol_name = new_string(dparam->name);

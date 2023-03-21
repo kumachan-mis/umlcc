@@ -1,6 +1,6 @@
-int put_int(int x);
+void put_int(int x);
 
-int main() {
+int main(void) {
     put_int(5 == 5);
     put_int(5 == 4);
     put_int(5 != 5);

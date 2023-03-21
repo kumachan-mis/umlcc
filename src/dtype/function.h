@@ -37,7 +37,8 @@ int dfunction_equals(DFunction* dfunction, DFunction* other);
 void delete_dfunction(DFunction* dfunction);
 #endif
 
-DParam* new_dparam(char* name, DType* dtype);
+DParam* new_named_dparam(char* name, DType* dtype);
+DParam* new_unnamed_dparam(DType* dtype);
 DParam* dparam_copy(DParam* dparam);
 int dparam_equals(DParam* dparam, DParam* other);
 void delete_dparam(DParam* dparam);

@@ -5,10 +5,10 @@ enum Size {
     EXTRA_LARGE,
 };
 
-int put_int(int x);
-int put_blank_line();
+void put_int(int x);
+void put_blank_line(void);
 
-int main() {
+int main(void) {
     typedef enum Number { ZERO, ONE } Number;
 
     put_int(ZERO);

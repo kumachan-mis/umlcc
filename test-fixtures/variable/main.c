@@ -1,8 +1,8 @@
-int put_int(int x);
+void put_int(int x);
 
-int main() {
+int main(void) {
     int first, second, third;
-    int put_blank_line();
+    void put_blank_line(void);
 
     first = 3;
     second = first - 1;

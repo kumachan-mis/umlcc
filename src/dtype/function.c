@@ -59,16 +59,24 @@ void delete_dfunction(DFunction* dfunction) {
     free(dfunction);
 }
 
-DParam* new_dparam(char* name, DType* dtype) {
+DParam* new_named_dparam(char* name, DType* dtype) {
     DParam* dparam = malloc(sizeof(DParam));
     dparam->name = name;
     dparam->dtype = dtype;
     return dparam;
 }
 
+DParam* new_unnamed_dparam(DType* dtype) {
+    DParam* dparam = malloc(sizeof(DParam));
+    dparam->name = NULL;
+    dparam->dtype = dtype;
+    return dparam;
+}
+
 DParam* dparam_copy(DParam* dparam) {
     DParam* copied_dparam = malloc(sizeof(DParam));
-    copied_dparam->name = new_string(dparam->name);
+    copied_dparam->name = NULL;
+    if (dparam->name != NULL) copied_dparam->name = new_string(dparam->name);
     copied_dparam->dtype = dtype_copy(dparam->dtype);
     return copied_dparam;
 }
@@ -78,7 +86,7 @@ int dparam_equals(DParam* dparam, DParam* other) {
 }
 
 void delete_dparam(DParam* dparam) {
-    free(dparam->name);
+    if (dparam->name != NULL) free(dparam->name);
     delete_dtype(dparam->dtype);
     free(dparam);
 }

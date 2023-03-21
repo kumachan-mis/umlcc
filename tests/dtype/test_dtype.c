@@ -322,7 +322,7 @@ void test_new_unnamed_enum_dtype(void) {
 void test_new_function_dtype(void) {
     char* param_name = new_string("param");
     DType* param_dtype = new_integer_dtype(DTYPE_CHAR);
-    DParam* dparam = new_dparam(param_name, param_dtype);
+    DParam* dparam = new_named_dparam(param_name, param_dtype);
     Vector* params = new_vector(&t_dparam);
     vector_push(params, dparam);
     DType* return_dtype = new_integer_dtype(DTYPE_INT);
@@ -433,7 +433,7 @@ void test_socket_array_dtype(void) {
 void test_socket_function_dtype(void) {
     char* param_name = new_string("param");
     DType* param_dtype = new_integer_dtype(DTYPE_CHAR);
-    DParam* dparam = new_dparam(param_name, param_dtype);
+    DParam* dparam = new_named_dparam(param_name, param_dtype);
     Vector* params = new_vector(&t_dparam);
     vector_push(params, dparam);
     DType* return_dtype = new_integer_dtype(DTYPE_INT);
@@ -617,12 +617,12 @@ void test_dtype_equals_unnamed_enum(void) {
 
 void test_dtype_equals_function(void) {
     Vector* dtype_params = new_vector(&t_dparam);
-    vector_push(dtype_params, new_dparam(new_string("param"), new_integer_dtype(DTYPE_INT)));
+    vector_push(dtype_params, new_named_dparam(new_string("param"), new_integer_dtype(DTYPE_INT)));
     DType* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     DType* dtype = new_function_dtype(dtype_params, return_dtype);
 
     Vector* other_params = new_vector(&t_dparam);
-    vector_push(other_params, new_dparam(new_string("param"), new_integer_dtype(DTYPE_INT)));
+    vector_push(other_params, new_named_dparam(new_string("param"), new_integer_dtype(DTYPE_INT)));
     DType* return_other = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     DType* other = new_function_dtype(other_params, return_other);
 
@@ -865,12 +865,12 @@ void test_dtype_equals_enum_diff_member_order(void) {
 
 void test_dtype_equals_function_diff_return_dtype(void) {
     Vector* dtype_params = new_vector(&t_dparam);
-    vector_push(dtype_params, new_dparam(new_string("param"), new_integer_dtype(DTYPE_INT)));
+    vector_push(dtype_params, new_named_dparam(new_string("param"), new_integer_dtype(DTYPE_INT)));
     DType* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     DType* dtype = new_function_dtype(dtype_params, return_dtype);
 
     Vector* other_params = new_vector(&t_dparam);
-    vector_push(dtype_params, new_dparam(new_string("param"), new_integer_dtype(DTYPE_INT)));
+    vector_push(dtype_params, new_named_dparam(new_string("param"), new_integer_dtype(DTYPE_INT)));
     DType* return_other = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     DType* other = new_function_dtype(other_params, return_other);
 
@@ -882,7 +882,7 @@ void test_dtype_equals_function_diff_return_dtype(void) {
 
 void test_dtype_equals_function_diff_num_params(void) {
     Vector* dtype_params = new_vector(&t_dparam);
-    vector_push(dtype_params, new_dparam(new_string("param"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(dtype_params, new_named_dparam(new_string("param"), new_integer_dtype(DTYPE_CHAR)));
     DType* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     DType* dtype = new_function_dtype(dtype_params, return_dtype);
 
@@ -898,12 +898,12 @@ void test_dtype_equals_function_diff_num_params(void) {
 
 void test_dtype_equals_function_diff_param_dtype(void) {
     Vector* dtype_params = new_vector(&t_dparam);
-    vector_push(dtype_params, new_dparam(new_string("param"), new_integer_dtype(DTYPE_INT)));
+    vector_push(dtype_params, new_named_dparam(new_string("param"), new_integer_dtype(DTYPE_INT)));
     DType* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     DType* dtype = new_function_dtype(dtype_params, return_dtype);
 
     Vector* other_params = new_vector(&t_dparam);
-    vector_push(other_params, new_dparam(new_string("param"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(other_params, new_named_dparam(new_string("param"), new_integer_dtype(DTYPE_CHAR)));
     DType* return_other = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     DType* other = new_function_dtype(other_params, return_other);
 
@@ -915,14 +915,14 @@ void test_dtype_equals_function_diff_param_dtype(void) {
 
 void test_dtype_equals_function_diff_param_name(void) {
     Vector* dtype_params = new_vector(&t_dparam);
-    vector_push(dtype_params, new_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
-    vector_push(dtype_params, new_dparam(new_string("b"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(dtype_params, new_named_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
+    vector_push(dtype_params, new_named_dparam(new_string("b"), new_integer_dtype(DTYPE_CHAR)));
     DType* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     DType* dtype = new_function_dtype(dtype_params, return_dtype);
 
     Vector* other_params = new_vector(&t_dparam);
-    vector_push(other_params, new_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
-    vector_push(other_params, new_dparam(new_string("y"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(other_params, new_named_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(other_params, new_named_dparam(new_string("y"), new_integer_dtype(DTYPE_CHAR)));
     DType* return_other = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     DType* other = new_function_dtype(other_params, return_other);
 
@@ -935,14 +935,14 @@ void test_dtype_equals_function_diff_param_name(void) {
 
 void test_dtype_equals_function_diff_param_order(void) {
     Vector* dtype_params = new_vector(&t_dparam);
-    vector_push(dtype_params, new_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
-    vector_push(dtype_params, new_dparam(new_string("b"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(dtype_params, new_named_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
+    vector_push(dtype_params, new_named_dparam(new_string("b"), new_integer_dtype(DTYPE_CHAR)));
     DType* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     DType* dtype = new_function_dtype(dtype_params, return_dtype);
 
     Vector* other_params = new_vector(&t_dparam);
-    vector_push(other_params, new_dparam(new_string("b"), new_integer_dtype(DTYPE_CHAR)));
-    vector_push(other_params, new_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
+    vector_push(other_params, new_named_dparam(new_string("b"), new_integer_dtype(DTYPE_CHAR)));
+    vector_push(other_params, new_named_dparam(new_string("a"), new_integer_dtype(DTYPE_INT)));
     DType* return_other = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     DType* other = new_function_dtype(other_params, return_other);
 
