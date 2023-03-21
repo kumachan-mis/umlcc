@@ -663,16 +663,18 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                 break;
             }
             case AST_IDENT_DECLOR:
-                if (socket_dtype != NULL && socket_dtype->type == DTYPE_ARRAY &&
-                    dtype_isincomplete(resolver->specifier_dtype)) {
+                plug_dtype = resolver->specifier_dtype;
+                if (plug_dtype->type == DTYPE_TYPEDEF) plug_dtype = plug_dtype->dtypedef->defined_dtype;
+
+                if (socket_dtype != NULL && socket_dtype->type == DTYPE_ARRAY && dtype_isincomplete(plug_dtype)) {
                     errs = new_vector(&t_error);
                     err = new_error("array of incomplete type is invalid\n");
                     vector_push(errs, err);
                     break;
                 }
 
-                if (socket_dtype != NULL && socket_dtype->type == DTYPE_FUNCTION &&
-                    dtype_isincomplete(resolver->specifier_dtype) && resolver->specifier_dtype->type != DTYPE_VOID) {
+                if (socket_dtype != NULL && socket_dtype->type == DTYPE_FUNCTION && dtype_isincomplete(plug_dtype) &&
+                    resolver->specifier_dtype->type != DTYPE_VOID) {
                     errs = new_vector(&t_error);
                     err = new_error("function returning incomplete type other than void is invalid\n");
                     vector_push(errs, err);

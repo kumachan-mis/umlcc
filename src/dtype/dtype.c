@@ -232,6 +232,11 @@ int dtype_isassignable(DType* dtype, DType* other) {
         return 1;
     }
 
+    if (dtype->type == DTYPE_POINTER && other->type == DTYPE_POINTER &&
+        (dtype->dpointer->to_dtype->type == DTYPE_VOID || other->dpointer->to_dtype->type == DTYPE_VOID)) {
+        return 1;
+    }
+
     // TODO: more rules may be added
     return 0;
 }
