@@ -8,7 +8,7 @@
 
 ParserReturn* parse_translation_unit(Parser* parser) {
     Ast* ast = new_ast(AST_TRAS_UNIT, 0);
-    Ast* child = NULL;
+    Ast* child_ast = NULL;
     Error* err = NULL;
 
     while (1) {
@@ -17,13 +17,13 @@ ParserReturn* parse_translation_unit(Parser* parser) {
         if (err != NULL) break;
 
         if (may_func_def) {
-            parserret_assign(&child, &err, parse_function_definition(parser));
+            parserret_assign(&child_ast, &err, parse_function_definition(parser));
         } else {
-            parserret_assign(&child, &err, parse_decl(parser));
+            parserret_assign(&child_ast, &err, parse_decl(parser));
         }
 
         if (err != NULL) break;
-        vector_push(ast->children, child);
+        vector_push(ast->children, child_ast);
 
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
         if (ctoken->type == CTOKEN_EOF) break;
@@ -38,30 +38,30 @@ ParserReturn* parse_translation_unit(Parser* parser) {
 
 ParserReturn* parse_function_definition(Parser* parser) {
     Ast* ast = new_ast(AST_FUNC_DEF, 0);
-    Ast* child = NULL;
+    Ast* child_ast = NULL;
     Error* err = NULL;
 
-    parserret_assign(&child, &err, parse_decl_specifiers(parser));
+    parserret_assign(&child_ast, &err, parse_decl_specifiers(parser));
     if (err != NULL) {
         delete_ast(ast);
         return new_parserret_error(err);
     }
-    vector_push(ast->children, child);
+    vector_push(ast->children, child_ast);
 
-    parserret_assign(&child, &err, parse_declarator(parser));
+    parserret_assign(&child_ast, &err, parse_declarator(parser));
     if (err != NULL) {
         delete_ast(ast);
         return new_parserret_error(err);
     }
 
-    vector_push(ast->children, child);
+    vector_push(ast->children, child_ast);
 
-    parserret_assign(&child, &err, parse_compound_stmt(parser));
+    parserret_assign(&child_ast, &err, parse_compound_stmt(parser));
     if (err != NULL) {
         delete_ast(ast);
         return new_parserret_error(err);
     }
-    vector_push(ast->children, child);
+    vector_push(ast->children, child_ast);
 
     return new_parserret(ast);
 }

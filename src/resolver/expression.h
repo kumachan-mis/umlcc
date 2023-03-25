@@ -9,6 +9,7 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver);
 ResolverReturn* resolve_equality_expr(Resolver* resolver);
 ResolverReturn* resolve_additive_expr(Resolver* resolver);
 ResolverReturn* resolve_multiplicative_expr(Resolver* resolver);
+ResolverReturn* resolve_cast_expr(Resolver* resolver);
 ResolverReturn* resolve_unary_expr(Resolver* resolver);
 ResolverReturn* resolve_postfix_expr(Resolver* resolver);
 ResolverReturn* resolve_argument_expr_list(Resolver* resolver);

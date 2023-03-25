@@ -23,7 +23,7 @@ CU_Suite* add_test_suite_ast(void) {
 
 void test_new_ast(void) {
     Ast* ast = new_ast(AST_TRAS_UNIT, 2, new_ast(AST_DECL, 0), new_ast(AST_FUNC_DEF, 0));
-    Ast* child = NULL;
+    Ast* child_ast = NULL;
 
     for (int i = 0; i < 2; i++) {
         if (i > 0) {
@@ -37,19 +37,19 @@ void test_new_ast(void) {
         CU_ASSERT_PTR_NULL(ast->sliteral);
         CU_ASSERT_EQUAL(vector_size(ast->children), 2);
 
-        child = vector_at(ast->children, 0);
-        CU_ASSERT_EQUAL(child->type, AST_DECL);
-        CU_ASSERT_PTR_NULL(child->ident_name);
-        CU_ASSERT_PTR_NULL(child->iliteral);
-        CU_ASSERT_PTR_NULL(child->sliteral);
-        CU_ASSERT_EQUAL(vector_size(child->children), 0);
+        child_ast = vector_at(ast->children, 0);
+        CU_ASSERT_EQUAL(child_ast->type, AST_DECL);
+        CU_ASSERT_PTR_NULL(child_ast->ident_name);
+        CU_ASSERT_PTR_NULL(child_ast->iliteral);
+        CU_ASSERT_PTR_NULL(child_ast->sliteral);
+        CU_ASSERT_EQUAL(vector_size(child_ast->children), 0);
 
-        child = vector_at(ast->children, 1);
-        CU_ASSERT_EQUAL(child->type, AST_FUNC_DEF);
-        CU_ASSERT_PTR_NULL(child->ident_name);
-        CU_ASSERT_PTR_NULL(child->iliteral);
-        CU_ASSERT_PTR_NULL(child->sliteral);
-        CU_ASSERT_EQUAL(vector_size(child->children), 0);
+        child_ast = vector_at(ast->children, 1);
+        CU_ASSERT_EQUAL(child_ast->type, AST_FUNC_DEF);
+        CU_ASSERT_PTR_NULL(child_ast->ident_name);
+        CU_ASSERT_PTR_NULL(child_ast->iliteral);
+        CU_ASSERT_PTR_NULL(child_ast->sliteral);
+        CU_ASSERT_EQUAL(vector_size(child_ast->children), 0);
     }
 
     delete_ast(ast);

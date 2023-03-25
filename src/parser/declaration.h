@@ -22,6 +22,9 @@ ParserReturn* parse_pointer(Parser* parser);
 ParserReturn* parse_direct_declarator(Parser* parser);
 ParserReturn* parse_parameter_list(Parser* parser);
 ParserReturn* parse_parameter_decl(Parser* parser);
+ParserReturn* parse_type_name(Parser* parser);
+ParserReturn* parse_abstract_declarator(Parser* parser);
+ParserReturn* parse_direct_abstract_declarator(Parser* parser);
 ParserReturn* parse_initializer(Parser* parser);
 ParserReturn* parse_initializer_list(Parser* parser);
 

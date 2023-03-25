@@ -19,6 +19,7 @@ ResolverReturn* resolve_init_declarator(Resolver* resolver);
 ResolverReturn* resolve_declarator(Resolver* resolver);
 ResolverReturnDParams* resolve_parameter_list(Resolver* resolver);
 ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver);
+ResolverDTypeReturn* resolve_type_name(Resolver* resolver);
 ResolverReturn* resolve_initializer(Resolver* resolver);
 
 #endif
