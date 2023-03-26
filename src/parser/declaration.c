@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+ParserReturn* parse_declarator_common(Parser* parser, int abstract);
+ParserReturn* parse_direct_declarator_common(Parser* parser, int abstract);
+
 ParserReturn* parse_decl(Parser* parser) {
     Ast* ast = new_ast(AST_DECL, 0);
     Ast* child_ast = NULL;
@@ -39,6 +42,32 @@ ParserReturn* parse_decl(Parser* parser) {
         delete_ast(ast);
         return new_parserret_error(err);
     }
+
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_type_name(Parser* parser) {
+    Ast* ast = new_ast(AST_TYPE_NAME, 0);
+    Ast* child_ast = NULL;
+    Error* err = NULL;
+
+    parserret_assign(&child_ast, &err, parse_specifier_qualifier_list(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    vector_push(ast->children, child_ast);
+
+    int index = parser->index;
+    parserret_assign(&child_ast, &err, parse_abstract_declarator(parser));
+    if (err != NULL) {
+        parser->index = index;
+        delete_error(err);
+        return new_parserret(ast);
+    }
+
+    vector_push(ast->children, child_ast);
 
     return new_parserret(ast);
 }
@@ -447,9 +476,19 @@ ParserReturn* parse_init_declarator(Parser* parser) {
 }
 
 ParserReturn* parse_declarator(Parser* parser) {
+    return parse_declarator_common(parser, 0);
+}
+
+ParserReturn* parse_abstract_declarator(Parser* parser) {
+    return parse_declarator_common(parser, 1);
+}
+
+ParserReturn* parse_declarator_common(Parser* parser, int abstract) {
     Ast* pointer_ast = NULL;
     Ast* direct_declarator_ast = NULL;
     Error* err = NULL;
+
+    AstType terminal_ast_type = abstract ? AST_ABS_DECLOR : AST_IDENT_DECLOR;
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     if (ctoken->type == CTOKEN_ASTERISK) {
@@ -457,7 +496,12 @@ ParserReturn* parse_declarator(Parser* parser) {
         if (err != NULL) return new_parserret_error(err);
     }
 
-    parserret_assign(&direct_declarator_ast, &err, parse_direct_declarator(parser));
+    if (abstract) {
+        parserret_assign(&direct_declarator_ast, &err, parse_direct_abstract_declarator(parser));
+    } else {
+        parserret_assign(&direct_declarator_ast, &err, parse_direct_declarator(parser));
+    }
+
     if (err != NULL) {
         if (pointer_ast != NULL) delete_ast(pointer_ast);
         return new_parserret_error(err);
@@ -470,7 +514,7 @@ ParserReturn* parse_declarator(Parser* parser) {
         pointer_tail_ast = vector_at(pointer_tail_ast->children, 0);
     }
 
-    if (direct_declarator_ast->type == AST_IDENT_DECLOR) {
+    if (direct_declarator_ast->type == terminal_ast_type) {
         vector_push(pointer_tail_ast->children, direct_declarator_ast);
         return new_parserret(pointer_ast);
     }
@@ -478,13 +522,13 @@ ParserReturn* parse_declarator(Parser* parser) {
     Ast* direct_declarator_tail_ast = direct_declarator_ast;
     while (1) {
         Ast* child_ast = vector_at(direct_declarator_tail_ast->children, 0);
-        if (child_ast->type == AST_IDENT_DECLOR) break;
+        if (child_ast->type == terminal_ast_type) break;
         direct_declarator_tail_ast = child_ast;
     }
 
-    Ast* ident_ast = ast_copy(vector_at(direct_declarator_tail_ast->children, 0));
+    Ast* terminal_ast = ast_copy(vector_at(direct_declarator_tail_ast->children, 0));
     vector_set(direct_declarator_tail_ast->children, 0, pointer_ast);
-    vector_push(pointer_tail_ast->children, ident_ast);
+    vector_push(pointer_tail_ast->children, terminal_ast);
     return new_parserret(direct_declarator_ast);
 }
 
@@ -509,6 +553,14 @@ ParserReturn* parse_pointer(Parser* parser) {
 }
 
 ParserReturn* parse_direct_declarator(Parser* parser) {
+    return parse_direct_declarator_common(parser, 0);
+}
+
+ParserReturn* parse_direct_abstract_declarator(Parser* parser) {
+    return parse_direct_declarator_common(parser, 1);
+}
+
+ParserReturn* parse_direct_declarator_common(Parser* parser, int abstract) {
     Ast* ast = NULL;
     Error* err = NULL;
 
@@ -516,27 +568,25 @@ ParserReturn* parse_direct_declarator(Parser* parser) {
     Ast* tail_ast = NULL;
     Ast* enclosed_head_ast = NULL;
     Ast* enclosed_tail_ast = NULL;
-    Ast* ident_ast = NULL;
+    Ast* terminal_ast = NULL;
+
+    AstType terminal_ast_type = abstract ? AST_ABS_DECLOR : AST_IDENT_DECLOR;
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     switch (ctoken->type) {
-        case CTOKEN_IDENT:
-            parser->index++;
-            ident_ast = new_identifier_ast(AST_IDENT_DECLOR, new_string(ctoken->ident_name));
-            if (parser->typedef_flag) {
-                set_add(parser->typedef_names_set, new_string(ident_ast->ident_name));
-                parser->typedef_flag = 0;
-            }
-            break;
         case CTOKEN_LPALEN:
             parser->index++;
-            parserret_assign(&enclosed_head_ast, &err, parse_declarator(parser));
+            if (abstract) {
+                parserret_assign(&enclosed_head_ast, &err, parse_abstract_declarator(parser));
+            } else {
+                parserret_assign(&enclosed_head_ast, &err, parse_declarator(parser));
+            }
             if (err != NULL) return new_parserret_error(err);
             err = consume_ctoken(parser, CTOKEN_RPALEN);
             if (err != NULL) return new_parserret_error(err);
 
-            if (enclosed_head_ast->type == AST_IDENT_DECLOR) {
-                ident_ast = enclosed_head_ast;
+            if (enclosed_head_ast->type == terminal_ast_type) {
+                terminal_ast = enclosed_head_ast;
                 enclosed_head_ast = NULL;
                 break;
             }
@@ -544,15 +594,33 @@ ParserReturn* parse_direct_declarator(Parser* parser) {
             enclosed_tail_ast = enclosed_head_ast;
             while (1) {
                 Ast* child_ast = vector_at(enclosed_tail_ast->children, 0);
-                if (child_ast->type == AST_IDENT_DECLOR) {
-                    ident_ast = ast_copy(child_ast);
+                if (child_ast->type == terminal_ast_type) {
+                    terminal_ast = ast_copy(child_ast);
                     vector_erase(enclosed_tail_ast->children, 0);
                     break;
                 }
                 enclosed_tail_ast = child_ast;
             }
             break;
+        case CTOKEN_IDENT:
+            if (abstract) {
+                err = new_error("unexpected token indentifier\n");
+                return new_parserret_error(err);
+            }
+
+            parser->index++;
+            terminal_ast = new_identifier_ast(AST_IDENT_DECLOR, new_string(ctoken->ident_name));
+            if (parser->typedef_flag) {
+                set_add(parser->typedef_names_set, new_string(terminal_ast->ident_name));
+                parser->typedef_flag = 0;
+            }
+            break;
         default:
+            if (abstract) {
+                terminal_ast = new_ast(AST_ABS_DECLOR, 0);
+                break;
+            }
+
             err = new_error("unexpected token %s\n", ctoken_types[ctoken->type]);
             return new_parserret_error(err);
     }
@@ -590,21 +658,21 @@ ParserReturn* parse_direct_declarator(Parser* parser) {
                 if (enclosed_head_ast != NULL && head_ast != NULL) {
                     ast = enclosed_head_ast;
                     vector_insert(enclosed_tail_ast->children, 0, head_ast);
-                    vector_insert(tail_ast->children, 0, ident_ast);
+                    vector_insert(tail_ast->children, 0, terminal_ast);
                 } else if (enclosed_head_ast != NULL) {
                     ast = enclosed_head_ast;
-                    vector_insert(enclosed_tail_ast->children, 0, ident_ast);
+                    vector_insert(enclosed_tail_ast->children, 0, terminal_ast);
                 } else if (head_ast != NULL) {
                     ast = head_ast;
-                    vector_insert(tail_ast->children, 0, ident_ast);
+                    vector_insert(tail_ast->children, 0, terminal_ast);
                 } else {
-                    ast = ident_ast;
+                    ast = terminal_ast;
                 }
                 return new_parserret(ast);
         }
     }
 
-    delete_ast(ident_ast);
+    delete_ast(terminal_ast);
     if (head_ast != NULL) delete_ast(head_ast);
     if (enclosed_head_ast != NULL) delete_ast(enclosed_head_ast);
     return new_parserret_error(err);
@@ -659,162 +727,6 @@ ParserReturn* parse_parameter_decl(Parser* parser) {
     vector_push(ast->children, child_ast);
 
     return new_parserret(ast);
-}
-
-ParserReturn* parse_type_name(Parser* parser) {
-    Ast* ast = new_ast(AST_TYPE_NAME, 0);
-    Ast* child_ast = NULL;
-    Error* err = NULL;
-
-    parserret_assign(&child_ast, &err, parse_specifier_qualifier_list(parser));
-    if (err != NULL) {
-        delete_ast(ast);
-        return new_parserret_error(err);
-    }
-
-    vector_push(ast->children, child_ast);
-
-    int index = parser->index;
-    parserret_assign(&child_ast, &err, parse_abstract_declarator(parser));
-    if (err != NULL) {
-        parser->index = index;
-        delete_error(err);
-        return new_parserret(ast);
-    }
-
-    vector_push(ast->children, child_ast);
-
-    return new_parserret(ast);
-}
-
-ParserReturn* parse_abstract_declarator(Parser* parser) {
-    Ast* pointer_ast = NULL;
-    Ast* direct_declarator_ast = NULL;
-    Error* err = NULL;
-
-    CToken* ctoken = NULL;
-
-    ctoken = vector_at(parser->ctokens, parser->index);
-    if (ctoken->type == CTOKEN_ASTERISK) {
-        parserret_assign(&pointer_ast, &err, parse_pointer(parser));
-        if (err != NULL) return new_parserret_error(err);
-    }
-
-    ctoken = vector_at(parser->ctokens, parser->index);
-    parserret_assign(&direct_declarator_ast, &err, parse_direct_abstract_declarator(parser));
-    if (err != NULL) return new_parserret_error(err);
-
-    if (pointer_ast == NULL) return new_parserret(direct_declarator_ast);
-
-    Ast* pointer_tail_ast = pointer_ast;
-    while (vector_size(pointer_tail_ast->children) > 0) {
-        pointer_tail_ast = vector_at(pointer_tail_ast->children, 0);
-    }
-
-    if (direct_declarator_ast->type == AST_ABS_DECLOR) {
-        vector_push(pointer_tail_ast->children, direct_declarator_ast);
-        return new_parserret(pointer_ast);
-    }
-
-    Ast* direct_declarator_tail_ast = direct_declarator_ast;
-    while (1) {
-        Ast* child_ast = vector_at(direct_declarator_tail_ast->children, 0);
-        if (child_ast->type == AST_ABS_DECLOR) break;
-        direct_declarator_tail_ast = child_ast;
-    }
-
-    Ast* abstract_ast = ast_copy(vector_at(direct_declarator_tail_ast->children, 0));
-    vector_set(direct_declarator_tail_ast->children, 0, pointer_ast);
-    vector_push(pointer_tail_ast->children, abstract_ast);
-    return new_parserret(direct_declarator_ast);
-}
-
-ParserReturn* parse_direct_abstract_declarator(Parser* parser) {
-    Ast* ast = NULL;
-    Error* err = NULL;
-
-    Ast* head_ast = NULL;
-    Ast* tail_ast = NULL;
-    Ast* enclosed_head_ast = NULL;
-    Ast* enclosed_tail_ast = NULL;
-    Ast* abstract_ast = NULL;
-
-    CToken* ctoken = vector_at(parser->ctokens, parser->index);
-
-    if (ctoken->type == CTOKEN_LPALEN) {
-        parser->index++;
-
-        parserret_assign(&enclosed_head_ast, &err, parse_abstract_declarator(parser));
-        if (err != NULL) return new_parserret_error(err);
-
-        err = consume_ctoken(parser, CTOKEN_RPALEN);
-        if (err != NULL) return new_parserret_error(err);
-
-        enclosed_tail_ast = enclosed_head_ast;
-        while (1) {
-            Ast* child_ast = vector_at(enclosed_tail_ast->children, 0);
-            if (child_ast->type == AST_ABS_DECLOR) {
-                abstract_ast = ast_copy(child_ast);
-                vector_erase(enclosed_tail_ast->children, 0);
-                break;
-            }
-            enclosed_tail_ast = child_ast;
-        }
-    } else {
-        abstract_ast = new_ast(AST_ABS_DECLOR, 0);
-    }
-
-    while (err == NULL) {
-        CToken* ctoken = vector_at(parser->ctokens, parser->index);
-        switch (ctoken->type) {
-            case CTOKEN_LBRACKET: {
-                Ast* child_ast = NULL;
-                parser->index++;
-                parserret_assign(&child_ast, &err, parse_constant_expr(parser));
-                if (err != NULL) break;
-
-                Ast* declarator_ast = new_ast(AST_ARRAY_DECLOR, 1, child_ast);
-                if (head_ast == NULL) head_ast = declarator_ast;
-                if (tail_ast != NULL) vector_insert(tail_ast->children, 0, declarator_ast);
-                tail_ast = declarator_ast;
-                err = consume_ctoken(parser, CTOKEN_RBRACKET);
-                break;
-            }
-            case CTOKEN_LPALEN: {
-                Ast* child_ast = NULL;
-                parser->index++;
-                parserret_assign(&child_ast, &err, parse_parameter_list(parser));
-                if (err != NULL) break;
-
-                Ast* declarator_ast = new_ast(AST_FUNC_DECLOR, 1, child_ast);
-                if (head_ast == NULL) head_ast = declarator_ast;
-                if (tail_ast != NULL) vector_insert(tail_ast->children, 0, declarator_ast);
-                tail_ast = declarator_ast;
-                err = consume_ctoken(parser, CTOKEN_RPALEN);
-                break;
-            }
-            default:
-                if (enclosed_head_ast != NULL && head_ast != NULL) {
-                    ast = enclosed_head_ast;
-                    vector_insert(enclosed_tail_ast->children, 0, head_ast);
-                    vector_insert(tail_ast->children, 0, abstract_ast);
-                } else if (enclosed_head_ast != NULL) {
-                    ast = enclosed_head_ast;
-                    vector_insert(enclosed_tail_ast->children, 0, abstract_ast);
-                } else if (head_ast != NULL) {
-                    ast = head_ast;
-                    vector_insert(tail_ast->children, 0, abstract_ast);
-                } else {
-                    ast = abstract_ast;
-                }
-                return new_parserret(ast);
-        }
-    }
-
-    delete_ast(abstract_ast);
-    if (head_ast != NULL) delete_ast(head_ast);
-    if (enclosed_head_ast != NULL) delete_ast(enclosed_head_ast);
-    return new_parserret_error(err);
 }
 
 ParserReturn* parse_initializer(Parser* parser) {

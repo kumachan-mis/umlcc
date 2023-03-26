@@ -4,6 +4,7 @@
 #include "./parser.h"
 
 ParserReturn* parse_decl(Parser* parser);
+ParserReturn* parse_type_name(Parser* parser);
 ParserReturn* parse_decl_specifiers(Parser* parser);
 ParserReturn* parse_specifier_qualifier_list(Parser* parser);
 ParserReturn* parse_storage_class_specifier(Parser* parser);
@@ -18,13 +19,12 @@ ParserReturn* parse_enumerator(Parser* parser);
 ParserReturn* parse_init_declarator_list(Parser* parser);
 ParserReturn* parse_init_declarator(Parser* parser);
 ParserReturn* parse_declarator(Parser* parser);
+ParserReturn* parse_abstract_declarator(Parser* parser);
 ParserReturn* parse_pointer(Parser* parser);
 ParserReturn* parse_direct_declarator(Parser* parser);
+ParserReturn* parse_direct_abstract_declarator(Parser* parser);
 ParserReturn* parse_parameter_list(Parser* parser);
 ParserReturn* parse_parameter_decl(Parser* parser);
-ParserReturn* parse_type_name(Parser* parser);
-ParserReturn* parse_abstract_declarator(Parser* parser);
-ParserReturn* parse_direct_abstract_declarator(Parser* parser);
 ParserReturn* parse_initializer(Parser* parser);
 ParserReturn* parse_initializer_list(Parser* parser);
 
