@@ -716,16 +716,23 @@ ParserReturn* parse_parameter_decl(Parser* parser) {
 
     vector_push(ast->children, child_ast);
 
-    int index = parser->index;
+    int index = index = parser->index;
     parserret_assign(&child_ast, &err, parse_declarator(parser));
-    if (err != NULL) {
-        parser->index = index;
-        delete_error(err);
+    if (err == NULL) {
+        vector_push(ast->children, child_ast);
         return new_parserret(ast);
     }
 
-    vector_push(ast->children, child_ast);
+    delete_error(err);
 
+    parser->index = index;
+    parserret_assign(&child_ast, &err, parse_abstract_declarator(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    vector_push(ast->children, child_ast);
     return new_parserret(ast);
 }
 

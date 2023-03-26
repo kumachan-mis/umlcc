@@ -787,21 +787,6 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
         return new_resolverret_dparam_errors(errs);
     }
 
-    if (vector_size(ast->children) == 1) {
-        if (dtype_isincomplete(resolver->specifier_dtype)) {
-            errs = new_vector(&t_error);
-            err = new_error("unnamed function parameter has an incomplete type\n");
-            vector_push(errs, err);
-            delete_dtype(resolver->specifier_dtype);
-            resolver->specifier_dtype = original_specifier_dtype;
-            return new_resolverret_dparam_errors(errs);
-        }
-
-        DParam* dparam = new_unnamed_dparam(resolver->specifier_dtype);
-        resolver->specifier_dtype = original_specifier_dtype;
-        return new_resolverret_dparam(dparam);
-    }
-
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&declarator_srt, &errs, resolve_declarator(resolver));
     resolver->ast = ast;
@@ -827,18 +812,25 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
 
     if (dtype_isincomplete(declarator_srt->dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("function parameter '%s' has an incomplete type\n", declarator_srt->ident_name);
+        if (declarator_srt->ident_name == NULL) {
+            err = new_error("unnamed function parameter has an incomplete type\n");
+        } else {
+            err = new_error("function parameter '%s' has an incomplete type\n", declarator_srt->ident_name);
+        }
         vector_push(errs, err);
         delete_srt(declarator_srt);
         return new_resolverret_dparam_errors(errs);
     }
 
-    char* dparam_ident_name = new_string(declarator_srt->ident_name);
     DType* dparam_dtype = dtype_copy(declarator_srt->dtype);
-    DParam* dparam = new_named_dparam(dparam_ident_name, dparam_dtype);
+    DParam* dparam = NULL;
+    if (declarator_srt->ident_name == NULL) {
+        dparam = new_unnamed_dparam(dparam_dtype);
+    } else {
+        dparam = new_named_dparam(new_string(declarator_srt->ident_name), dparam_dtype);
+    }
 
     delete_srt(declarator_srt);
-
     return new_resolverret_dparam(dparam);
 }
 
