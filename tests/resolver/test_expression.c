@@ -17,6 +17,7 @@ void test_resolve_pointer_difference_expr(void);
 void test_resolve_multiply_expr(void);
 void test_resolve_division_expr(void);
 void test_resolve_modulo_expr(void);
+void test_resolve_cast_expr(void);
 void test_resolve_address_expr(void);
 void test_resolve_indirection_expr(void);
 void test_resolve_logical_not_expr(void);
@@ -54,6 +55,7 @@ CU_Suite* add_test_suite_expr_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_multiply_expr);
     CU_ADD_TEST(suite, test_resolve_division_expr);
     CU_ADD_TEST(suite, test_resolve_modulo_expr);
+    CU_ADD_TEST(suite, test_resolve_cast_expr);
     CU_ADD_TEST(suite, test_resolve_address_expr);
     CU_ADD_TEST(suite, test_resolve_indirection_expr);
     CU_ADD_TEST(suite, test_resolve_logical_not_expr);
@@ -417,6 +419,41 @@ void test_resolve_modulo_expr(void) {
                            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("value"))),
             new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 9))),
         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 5)));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_cast_expr(void) {
+    Ast* input = new_ast(AST_CAST_EXPR, 2,                      // non-terminal
+                         new_ast(AST_TYPE_NAME, 2,              // non-terminal
+                                 new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                         new_ast(AST_TYPE_VOID, 0)),
+                                 new_ast(AST_PTR_DECLOR, 1,          // non-terminal
+                                         new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                                 new_ast(AST_ABS_DECLOR, 0),
+                                                 new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                         new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                                 new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                         new_ast(AST_TYPE_VOID, 0)),
+                                                                 new_ast(AST_ABS_DECLOR, 0)))))),
+                         new_ast(AST_CAST_EXPR, 2,                      // non-terminal
+                                 new_ast(AST_TYPE_NAME, 2,              // non-terminal
+                                         new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                 new_ast(AST_TYPE_INT, 0)),
+                                         new_ast(AST_ABS_DECLOR, 0)),
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("f"))));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("f"), new_integer_dtype(DTYPE_CHAR));
+
+    DType* cast_dtype = new_pointer_dtype(new_function_dtype(new_vector(&t_dparam), new_void_dtype()));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_CAST_EXPR, cast_dtype, 1,                                  // non-terminal,
+        new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("f"))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 

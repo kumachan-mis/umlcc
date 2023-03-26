@@ -20,6 +20,7 @@ void test_resolve_function_decl(void);
 void test_resolve_non_scalar_parameter_decl(void);
 void test_resolve_unnamed_parameter_decl(void);
 void test_resolve_typedef_decl(void);
+void test_resolve_enclosed_decl_array(void);
 void test_resolve_enclosed_decl_function(void);
 void test_resolve_enclosed_decl_abstract_params(void);
 void test_resolve_scalar_init(void);
@@ -69,6 +70,7 @@ CU_Suite* add_test_suite_decl_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_non_scalar_parameter_decl);
     CU_ADD_TEST(suite, test_resolve_unnamed_parameter_decl);
     CU_ADD_TEST(suite, test_resolve_typedef_decl);
+    CU_ADD_TEST(suite, test_resolve_enclosed_decl_array);
     CU_ADD_TEST(suite, test_resolve_enclosed_decl_function);
     CU_ADD_TEST(suite, test_resolve_enclosed_decl_abstract_params);
     CU_ADD_TEST(suite, test_resolve_scalar_init);
@@ -664,6 +666,54 @@ void test_resolve_typedef_decl(void) {
 
     run_local_decl_resolver_test(local_input, local_table, NULL, expected, NULL);
     run_global_decl_resolver_test(global_input, global_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_enclosed_decl_array(void) {
+    Ast* local_input = new_ast(
+        AST_DECL, 2,               // non-terminal
+        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                new_ast(AST_TYPE_INT, 0)),
+        new_ast(
+            AST_INIT_DECLOR_LIST, 1, // non-terminal
+            new_ast(
+                AST_INIT_DECLOR, 1, // non-terminal
+                new_ast(
+                    AST_ARRAY_DECLOR, 2,                // non-terminal
+                    new_ast(AST_PTR_DECLOR, 1,          // non-terminal
+                            new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_DECLOR, new_string("apfi")),
+                                    new_ast(AST_PARAM_LIST, 2,                 // non-terminal
+                                            new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                    new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                            new_ast(AST_TYPE_INT, 0)),
+                                                    new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("x")))),
+                                            new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                    new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                            new_ast(AST_TYPE_INT, 0)),
+                                                    new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("y"))))))),
+                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3))))));
+
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* of_params = new_vector(&t_dparam);
+    vector_push(of_params, new_named_dparam(new_string("x"), new_pointer_dtype(new_integer_dtype(DTYPE_INT))));
+    vector_push(of_params, new_named_dparam(new_string("y"), new_pointer_dtype(new_integer_dtype(DTYPE_INT))));
+
+    DType* of_return_dtype = new_integer_dtype(DTYPE_INT);
+
+    DType* of_dtype = new_pointer_dtype(new_function_dtype(of_params, of_return_dtype));
+    DType* expected_dtype = new_array_dtype(of_dtype, 3);
+
+    Srt* expected = new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                    new_identifier_srt(SRT_DECL, expected_dtype, new_string("apfi"))));
+
+    run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }

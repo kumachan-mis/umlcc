@@ -856,7 +856,8 @@ ResolverDTypeReturn* resolve_type_name(Resolver* resolver) {
         return new_resolverret_dtype_errors(errs);
     }
 
-    dtype = dtype_connect(dtype_copy(child_srt->dtype), resolver->specifier_dtype);
+    child_srt->dtype = dtype_connect(child_srt->dtype, resolver->specifier_dtype);
+    dtype = dtype_copy(child_srt->dtype);
     delete_srt(child_srt);
     resolver->specifier_dtype = original_specifier_dtype;
 

@@ -13,6 +13,7 @@ void test_parse_subtract_expr(void);
 void test_parse_multiply_expr(void);
 void test_parse_division_expr(void);
 void test_parse_modulo_expr(void);
+void test_parse_cast_expr(void);
 void test_parse_address_expr(void);
 void test_parse_indirection_expr(void);
 void test_parse_logical_not_expr(void);
@@ -40,6 +41,7 @@ CU_Suite* add_test_suite_expr_parser(void) {
     CU_ADD_TEST(suite, test_parse_multiply_expr);
     CU_ADD_TEST(suite, test_parse_division_expr);
     CU_ADD_TEST(suite, test_parse_modulo_expr);
+    CU_ADD_TEST(suite, test_parse_cast_expr);
     CU_ADD_TEST(suite, test_parse_address_expr);
     CU_ADD_TEST(suite, test_parse_indirection_expr);
     CU_ADD_TEST(suite, test_parse_logical_not_expr);
@@ -289,6 +291,47 @@ void test_parse_modulo_expr(void) {
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("value")),
                                     new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 9))),
                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_cast_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
+    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_CAST_EXPR, 2,                      // non-terminal
+                            new_ast(AST_TYPE_NAME, 2,              // non-terminal
+                                    new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                            new_ast(AST_TYPE_VOID, 0)),
+                                    new_ast(AST_PTR_DECLOR, 1,          // non-terminal
+                                            new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                                    new_ast(AST_ABS_DECLOR, 0),
+                                                    new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                            new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                                    new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                            new_ast(AST_TYPE_VOID, 0)),
+                                                                    new_ast(AST_ABS_DECLOR, 0)))))),
+                            new_ast(AST_CAST_EXPR, 2,                      // non-terminal
+                                    new_ast(AST_TYPE_NAME, 2,              // non-terminal
+                                            new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                    new_ast(AST_TYPE_INT, 0)),
+                                            new_ast(AST_ABS_DECLOR, 0)),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("f"))));
 
     run_expr_parser_test(input, expected);
 
