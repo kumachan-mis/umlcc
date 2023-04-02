@@ -28,6 +28,7 @@ typedef enum AstType {
     AST_TYPE_STRUCT,
     AST_TYPE_ENUM,
     AST_TYPEDEF_NAME,
+    AST_TYPE_NAME,
     //   struct-declaration
     AST_STRUCT_NAME,
     AST_STRUCT_DECL_LIST,
@@ -40,6 +41,7 @@ typedef enum AstType {
     AST_ENUM_CONST,
     //   declarators
     AST_IDENT_DECLOR,
+    AST_ABS_DECLOR,
     AST_PTR_DECLOR,
     AST_ARRAY_DECLOR,
     AST_FUNC_DECLOR,
@@ -70,6 +72,8 @@ typedef enum AstType {
     AST_MUL_EXPR,
     AST_DIV_EXPR,
     AST_MOD_EXPR,
+    //   casr-expression
+    AST_CAST_EXPR,
     //   unary-expression
     AST_ADDR_EXPR,
     AST_INDIR_EXPR,

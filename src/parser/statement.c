@@ -19,7 +19,7 @@ ParserReturn* parse_stmt(Parser* parser) {
 
 ParserReturn* parse_compound_stmt(Parser* parser) {
     Ast* ast = new_ast(AST_CMPD_STMT, 0);
-    Ast* child = NULL;
+    Ast* child_ast = NULL;
     Error* err = NULL;
 
     err = consume_ctoken(parser, CTOKEN_LBRACE);
@@ -42,13 +42,13 @@ ParserReturn* parse_compound_stmt(Parser* parser) {
         if (err != NULL) break;
 
         if (may_decl) {
-            parserret_assign(&child, &err, parse_decl(parser));
+            parserret_assign(&child_ast, &err, parse_decl(parser));
         } else {
-            parserret_assign(&child, &err, parse_stmt(parser));
+            parserret_assign(&child_ast, &err, parse_stmt(parser));
         }
 
         if (err != NULL) break;
-        vector_push(ast->children, child);
+        vector_push(ast->children, child_ast);
     }
 
     delete_set(parser->typedef_names_set);

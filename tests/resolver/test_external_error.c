@@ -214,12 +214,14 @@ void test_resolve_function_definition_error_no_param_name(void) {
                                  new_ast(AST_FUNC_DECLOR, 2, // non-terminal
                                          new_identifier_ast(AST_IDENT_DECLOR, new_string("error")),
                                          new_ast(AST_PARAM_LIST, 2,
-                                                 new_ast(AST_PARAM_DECL, 1,         // non-terminal
+                                                 new_ast(AST_PARAM_DECL, 2,         // non-terminal
                                                          new_ast(AST_DECL_SPECS, 1, // non-terminal
-                                                                 new_ast(AST_TYPE_INT, 0))),
-                                                 new_ast(AST_PARAM_DECL, 1,         // non-terminal
+                                                                 new_ast(AST_TYPE_INT, 0)),
+                                                         new_ast(AST_ABS_DECLOR, 0)),
+                                                 new_ast(AST_PARAM_DECL, 2,         // non-terminal
                                                          new_ast(AST_DECL_SPECS, 1, // non-terminal
-                                                                 new_ast(AST_TYPE_CHAR, 0))))),
+                                                                 new_ast(AST_TYPE_CHAR, 0)),
+                                                         new_ast(AST_ABS_DECLOR, 0)))),
                                  new_ast(AST_CMPD_STMT, 0)));
 
     Vector* expected = new_vector(&t_error);

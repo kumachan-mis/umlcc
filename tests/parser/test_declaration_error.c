@@ -28,6 +28,8 @@ void test_parse_function_declarator_error_return_type(void);
 void test_parse_function_declarator_error_param_decl(void);
 void test_parse_function_declarator_error_param_list(void);
 void test_parse_function_declarator_error_empty_list(void);
+void test_parse_enclosed_decl_error_child(void);
+void test_parse_enclosed_decl_error_paren(void);
 void test_parse_init_expr_error(void);
 void test_parse_init_list_error_braces(void);
 void test_parse_init_list_error_empty(void);
@@ -62,6 +64,8 @@ CU_Suite* add_test_suite_decl_parser_error(void) {
     CU_ADD_TEST(suite, test_parse_function_declarator_error_param_decl);
     CU_ADD_TEST(suite, test_parse_function_declarator_error_param_list);
     CU_ADD_TEST(suite, test_parse_function_declarator_error_empty_list);
+    CU_ADD_TEST(suite, test_parse_enclosed_decl_error_child);
+    CU_ADD_TEST(suite, test_parse_enclosed_decl_error_paren);
     CU_ADD_TEST(suite, test_parse_init_expr_error);
     CU_ADD_TEST(suite, test_parse_init_list_error_braces);
     CU_ADD_TEST(suite, test_parse_init_list_error_empty);
@@ -499,6 +503,42 @@ void test_parse_function_declarator_error_empty_list(void) {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("one of declaration specifiers expected, but got )\n");
+
+    run_decl_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_enclosed_decl_error_child(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LBRACKET));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
+    vector_push(input, new_ctoken(CTOKEN_RBRACKET));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token )\n");
+
+    run_decl_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_enclosed_decl_error_paren(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACKET));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
+    vector_push(input, new_ctoken(CTOKEN_RBRACKET));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token ) expected, but got EOF\n");
 
     run_decl_parser_error_test(input, expected);
 

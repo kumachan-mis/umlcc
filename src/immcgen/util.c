@@ -45,20 +45,20 @@ void update_void_expr_register(Immcgen* immcgen) {
 
 ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
     Srt* srt = immcgen->srt;
-    Srt* child = vector_at(srt->children, index);
+    Srt* child_srt = vector_at(srt->children, index);
 
     ImmcSuffix suffix = IMMC_SUFFIX_NONE;
-    if (child->type == SRT_CAST_EXPR) suffix = immcsuffix_get(dtype_nbytes(child->dtype));
-    while (child->type == SRT_CAST_EXPR) {
-        immcgen->srt = child;
+    if (child_srt->type == SRT_CAST_EXPR) suffix = immcsuffix_get(dtype_nbytes(child_srt->dtype));
+    while (child_srt->type == SRT_CAST_EXPR) {
+        immcgen->srt = child_srt;
         index = 0;
-        child = vector_at(child->children, index);
+        child_srt = vector_at(child_srt->children, index);
     }
 
-    if (child->type == SRT_INT_EXPR || child->type == SRT_CHAR_EXPR) {
+    if (child_srt->type == SRT_INT_EXPR || child_srt->type == SRT_CHAR_EXPR) {
         immcgen->srt = srt;
-        if (suffix == IMMC_SUFFIX_NONE) suffix = immcsuffix_get(dtype_nbytes(child->dtype));
-        return new_int_immcope(suffix, iliteral_copy(child->iliteral));
+        if (suffix == IMMC_SUFFIX_NONE) suffix = immcsuffix_get(dtype_nbytes(child_srt->dtype));
+        return new_int_immcope(suffix, iliteral_copy(child_srt->iliteral));
     }
 
     append_child_immcode(immcgen, codes, index);
@@ -84,16 +84,16 @@ ImmcOpe* gen_child_reg_immcope(Immcgen* immcgen, Vector* codes, int index) {
 }
 
 ImmcOpe* gen_child_ptr_immcope(Immcgen* immcgen, Vector* codes, int index) {
-    Srt* child = vector_at(immcgen->srt->children, index);
+    Srt* child_srt = vector_at(immcgen->srt->children, index);
 
     int memory_or_label = 0;
-    if (child->type == SRT_ADDR_EXPR) {
-        child = vector_at(child->children, 0);
-        if (child->type == SRT_IDENT_EXPR) memory_or_label = 1;
+    if (child_srt->type == SRT_ADDR_EXPR) {
+        child_srt = vector_at(child_srt->children, 0);
+        if (child_srt->type == SRT_IDENT_EXPR) memory_or_label = 1;
     }
 
     if (memory_or_label) {
-        Symbol* symbol = symboltable_search(immcgen->symbol_table, child->ident_name);
+        Symbol* symbol = symboltable_search(immcgen->symbol_table, child_srt->ident_name);
         if (symbol->type == SYMBOL_LABEL) return new_label_immcope(new_string(symbol->name));
         return new_mem_immcope(symbol->memory_offset);
     }

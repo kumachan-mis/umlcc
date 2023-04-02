@@ -283,14 +283,14 @@ Vector* gen_indirection_expr_immcode(Immcgen* immcgen) {
 Vector* gen_address_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = immcgen->srt;
-    Srt* child = vector_at(srt->children, 0);
+    Srt* child_srt = vector_at(srt->children, 0);
 
     ImmcOpe* dst = NULL;
     ImmcOpe* src = NULL;
 
-    switch (child->type) {
+    switch (child_srt->type) {
         case SRT_IDENT_EXPR: {
-            Symbol* symbol = symboltable_search(immcgen->symbol_table, child->ident_name);
+            Symbol* symbol = symboltable_search(immcgen->symbol_table, child_srt->ident_name);
             if (symbol->type == SYMBOL_LABEL) {
                 src = new_label_immcope(new_string(symbol->name));
             } else {
@@ -302,12 +302,12 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             break;
         }
         case SRT_TOMEMBER_EXPR: {
-            immcgen->srt = child;
+            immcgen->srt = child_srt;
             src = gen_child_reg_immcope(immcgen, codes, 0);
             immcgen->srt = srt;
 
-            Srt* struct_srt = vector_at(child->children, 0);
-            Srt* member_srt = vector_at(child->children, 1);
+            Srt* struct_srt = vector_at(child_srt->children, 0);
+            Srt* member_srt = vector_at(child_srt->children, 1);
 
             DType* struct_dtype = struct_srt->dtype->dpointer->to_dtype;
             if (struct_dtype->dstruct->members == NULL) {
@@ -331,7 +331,7 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             break;
         }
         case SRT_INDIR_EXPR:
-            immcgen->srt = child;
+            immcgen->srt = child_srt;
             append_child_immcode(immcgen, codes, 0);
             immcgen->srt = srt;
             break;

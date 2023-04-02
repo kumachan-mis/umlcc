@@ -14,6 +14,7 @@ ResolverReturn* resolve_decl(Resolver* resolver) {
     Vector* errs = NULL;
 
     Ast* ast = resolver->ast;
+    DType* original_specifier_dtype = resolver->specifier_dtype;
 
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_decl_specifiers(resolver));
@@ -23,7 +24,7 @@ ResolverReturn* resolve_decl(Resolver* resolver) {
     if (vector_size(ast->children) == 1) {
         srt = new_srt(SRT_DECL_LIST, 0);
         delete_dtype(resolver->specifier_dtype);
-        resolver->specifier_dtype = NULL;
+        resolver->specifier_dtype = original_specifier_dtype;
         return new_resolverret(srt);
     }
 
@@ -32,7 +33,7 @@ ResolverReturn* resolve_decl(Resolver* resolver) {
     resolver->ast = ast;
 
     delete_dtype(resolver->specifier_dtype);
-    resolver->specifier_dtype = NULL;
+    resolver->specifier_dtype = original_specifier_dtype;
 
     if (errs != NULL) return new_resolverret_errors(errs);
     return new_resolverret(srt);
@@ -49,8 +50,8 @@ ResolverDTypeReturn* resolve_decl_specifiers(Resolver* resolver) {
 
     int i = 0, num_children = vector_size(ast->children);
     while (i < num_children) {
-        Ast* child = vector_at(ast->children, i);
-        switch (child->type) {
+        Ast* child_ast = vector_at(ast->children, i);
+        switch (child_ast->type) {
             case AST_STG_TYPEDEF:
                 if (dtype == NULL) dtype = new_socket_typedef_dtype();
                 vector_erase(ast->children, i);
@@ -93,8 +94,8 @@ ResolverDTypeReturn* resolve_type_specifier_list(Resolver* resolver) {
         return new_resolverret_dtype_errors(errs);
     }
 
-    Ast* child = vector_at(ast->children, 0);
-    switch (child->type) {
+    Ast* child_ast = vector_at(ast->children, 0);
+    switch (child_ast->type) {
         case AST_TYPE_VOID:
             dtype = new_void_dtype();
             break;
@@ -105,17 +106,17 @@ ResolverDTypeReturn* resolve_type_specifier_list(Resolver* resolver) {
             dtype = new_integer_dtype(DTYPE_CHAR);
             break;
         case AST_TYPE_STRUCT:
-            resolver->ast = child;
+            resolver->ast = child_ast;
             resolverret_dtype_assign(&dtype, &errs, resolve_struct_specifier(resolver));
             resolver->ast = ast;
             break;
         case AST_TYPE_ENUM:
-            resolver->ast = child;
+            resolver->ast = child_ast;
             resolverret_dtype_assign(&dtype, &errs, resolve_enum_specifier(resolver));
             resolver->ast = ast;
             break;
         case AST_TYPEDEF_NAME: {
-            Symbol* symbol = symboltable_search(resolver->symbol_table, child->ident_name);
+            Symbol* symbol = symboltable_search(resolver->symbol_table, child_ast->ident_name);
             dtype = dtype_copy(symbol->dtype->dtypedef->defined_dtype);
             break;
         }
@@ -135,16 +136,16 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
     Error* err = NULL;
 
     Ast* ast = resolver->ast;
-    Ast* child = NULL;
+    Ast* child_ast = NULL;
 
     char* struct_name = NULL;
-    child = vector_at(ast->children, 0);
-    if (child != NULL && child->type == AST_STRUCT_NAME) struct_name = new_string(child->ident_name);
+    child_ast = vector_at(ast->children, 0);
+    if (child_ast != NULL && child_ast->type == AST_STRUCT_NAME) struct_name = new_string(child_ast->ident_name);
 
     Vector* members = NULL;
-    child = vector_at(ast->children, struct_name != NULL ? 1 : 0);
-    if (child != NULL && child->type == AST_STRUCT_DECL_LIST) {
-        resolver->ast = child;
+    child_ast = vector_at(ast->children, struct_name != NULL ? 1 : 0);
+    if (child_ast != NULL && child_ast->type == AST_STRUCT_DECL_LIST) {
+        resolver->ast = child_ast;
         resolverret_dstructmembers_assign(&members, &errs, resolve_struct_decl_list(resolver));
         resolver->ast = ast;
     }
@@ -250,6 +251,7 @@ ResolverReturnDStructMembers* resolve_struct_decl(Resolver* resolver) {
     Vector* errs = NULL;
 
     Ast* ast = resolver->ast;
+    DType* original_specifier_dtype = resolver->specifier_dtype;
 
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_specifier_qualifier_list(resolver));
@@ -261,7 +263,7 @@ ResolverReturnDStructMembers* resolve_struct_decl(Resolver* resolver) {
     resolver->ast = ast;
 
     delete_dtype(resolver->specifier_dtype);
-    resolver->specifier_dtype = NULL;
+    resolver->specifier_dtype = original_specifier_dtype;
 
     if (errs != NULL) return new_resolverret_dstructmembers_errors(errs);
     return new_resolverret_dstructmembers(members);
@@ -340,16 +342,16 @@ ResolverDTypeReturn* resolve_enum_specifier(Resolver* resolver) {
     Error* err = NULL;
 
     Ast* ast = resolver->ast;
-    Ast* child = NULL;
+    Ast* child_ast = NULL;
 
     char* enum_name = NULL;
-    child = vector_at(ast->children, 0);
-    if (child != NULL && child->type == AST_ENUM_NAME) enum_name = new_string(child->ident_name);
+    child_ast = vector_at(ast->children, 0);
+    if (child_ast != NULL && child_ast->type == AST_ENUM_NAME) enum_name = new_string(child_ast->ident_name);
 
     Vector* members = NULL;
-    child = vector_at(ast->children, enum_name != NULL ? 1 : 0);
-    if (child != NULL && child->type == AST_ENUMOR_LIST) {
-        resolver->ast = child;
+    child_ast = vector_at(ast->children, enum_name != NULL ? 1 : 0);
+    if (child_ast != NULL && child_ast->type == AST_ENUMOR_LIST) {
+        resolver->ast = child_ast;
         resolverret_denummembers_assign(&members, &errs, resolve_enumerator_list(resolver));
         resolver->ast = ast;
     }
@@ -428,21 +430,21 @@ ResolverReturnDEnumMember* resolve_enumerator(Resolver* resolver) {
 
     Ast* ast = resolver->ast;
 
-    Ast* child = vector_at(ast->children, 0);
-    if (!symboltable_can_define(resolver->symbol_table, child->ident_name)) {
+    Ast* child_ast = vector_at(ast->children, 0);
+    if (!symboltable_can_define(resolver->symbol_table, child_ast->ident_name)) {
         errs = new_vector(&t_error);
-        err = new_error("identifier '%s' is already declared\n", child->ident_name);
+        err = new_error("identifier '%s' is already declared\n", child_ast->ident_name);
         vector_push(errs, err);
         return new_resolverret_denummember_errors(errs);
     }
 
     if (vector_size(ast->children) == 1) {
-        char* member_name = new_string(child->ident_name);
+        char* member_name = new_string(child_ast->ident_name);
         DType* member_dtype = new_integer_dtype(DTYPE_INT);
         IntegerLiteral* member_iliteral = new_signed_iliteral(INTEGER_INT, resolver->default_enum_value);
         symboltable_define_integer(resolver->symbol_table, member_name, member_dtype, member_iliteral);
 
-        member = new_denummember(new_string(child->ident_name), resolver->default_enum_value);
+        member = new_denummember(new_string(child_ast->ident_name), resolver->default_enum_value);
         resolver->default_enum_value++;
 
         return new_resolverret_denummember(member);
@@ -464,12 +466,12 @@ ResolverReturnDEnumMember* resolve_enumerator(Resolver* resolver) {
     int enum_value = enum_const_srt->iliteral->signed_value;
     delete_srt(enum_const_srt);
 
-    char* member_name = new_string(child->ident_name);
+    char* member_name = new_string(child_ast->ident_name);
     DType* member_dtype = new_integer_dtype(DTYPE_INT);
     IntegerLiteral* member_iliteral = new_signed_iliteral(INTEGER_INT, enum_value);
     symboltable_define_integer(resolver->symbol_table, member_name, member_dtype, member_iliteral);
 
-    member = new_denummember(new_string(child->ident_name), enum_value);
+    member = new_denummember(new_string(child_ast->ident_name), enum_value);
     resolver->default_enum_value = enum_value + 1;
 
     return new_resolverret_denummember(member);
@@ -590,15 +592,15 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
     Error* err = NULL;
 
     DType* socket_dtype = NULL;
-    DType* plug_dtype = NULL;
     Ast* ast = resolver->ast;
     Ast* ast_ptr = ast;
 
     while (srt == NULL && errs == NULL) {
         switch (ast_ptr->type) {
             case AST_PTR_DECLOR: {
-                plug_dtype = new_socket_pointer_dtype();
-                dtype = dtype_connect(socket_dtype, plug_dtype);
+                DType* plug_dtype = new_socket_pointer_dtype();
+                if (dtype == NULL) dtype = plug_dtype;
+                dtype_connect(socket_dtype, plug_dtype);
                 socket_dtype = plug_dtype;
                 ast_ptr = vector_at(ast_ptr->children, 0);
                 break;
@@ -632,9 +634,10 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                     break;
                 }
 
-                plug_dtype = new_socket_array_dtype(array_size_srt->iliteral->signed_value);
+                DType* plug_dtype = new_socket_array_dtype(array_size_srt->iliteral->signed_value);
                 delete_srt(array_size_srt);
-                dtype = dtype_connect(socket_dtype, plug_dtype);
+                if (dtype == NULL) dtype = plug_dtype;
+                dtype_connect(socket_dtype, plug_dtype);
                 socket_dtype = plug_dtype;
                 ast_ptr = vector_at(ast_ptr->children, 0);
                 break;
@@ -659,14 +662,16 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                 resolverret_dparams_assign(&func_dparams, &errs, resolve_parameter_list(resolver));
                 if (errs != NULL) break;
 
-                plug_dtype = new_socket_function_dtype(func_dparams);
-                dtype = dtype_connect(socket_dtype, plug_dtype);
+                DType* plug_dtype = new_socket_function_dtype(func_dparams);
+                if (socket_dtype == NULL) dtype = plug_dtype;
+                dtype_connect(socket_dtype, plug_dtype);
                 socket_dtype = plug_dtype;
                 ast_ptr = vector_at(ast_ptr->children, 0);
                 break;
             }
             case AST_IDENT_DECLOR:
-                plug_dtype = resolver->specifier_dtype;
+            case AST_ABS_DECLOR: {
+                DType* plug_dtype = resolver->specifier_dtype;
                 if (plug_dtype->type == DTYPE_TYPEDEF) plug_dtype = plug_dtype->dtypedef->defined_dtype;
 
                 if (socket_dtype != NULL && socket_dtype->type == DTYPE_ARRAY && dtype_isincomplete(plug_dtype)) {
@@ -684,8 +689,13 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                     break;
                 }
 
-                srt = new_identifier_srt(SRT_DECL, dtype, new_string(ast_ptr->ident_name));
+                if (ast_ptr->type == AST_IDENT_DECLOR) {
+                    srt = new_identifier_srt(SRT_DECL, dtype, new_string(ast_ptr->ident_name));
+                } else {
+                    srt = new_dtyped_srt(SRT_DECL, dtype, 0);
+                }
                 break;
+            }
             default:
                 fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: unreachable statement"
                                 " (in resolve_declarator)\n");
@@ -756,47 +766,39 @@ ResolverReturnDParams* resolve_parameter_list(Resolver* resolver) {
 }
 
 ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
-    DType* specifiers_dtype = NULL;
     Srt* declarator_srt = NULL;
     Vector* errs = NULL;
     Error* err = NULL;
+
     Ast* ast = resolver->ast;
+    DType* original_specifier_dtype = resolver->specifier_dtype;
 
     resolver->ast = vector_at(ast->children, 0);
-    resolverret_dtype_assign(&specifiers_dtype, &errs, resolve_decl_specifiers(resolver));
+    resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_decl_specifiers(resolver));
     resolver->ast = ast;
     if (errs != NULL) return new_resolverret_dparam_errors(errs);
 
-    if (specifiers_dtype->type == DTYPE_TYPEDEF) {
+    if (resolver->specifier_dtype->type == DTYPE_TYPEDEF) {
         errs = new_vector(&t_error);
         err = new_error("storage specifiers are invalid for a function parameter\n");
         vector_push(errs, err);
-        delete_dtype(specifiers_dtype);
+        delete_dtype(resolver->specifier_dtype);
+        resolver->specifier_dtype = original_specifier_dtype;
         return new_resolverret_dparam_errors(errs);
-    }
-
-    if (vector_size(ast->children) == 1) {
-        if (dtype_isincomplete(specifiers_dtype)) {
-            errs = new_vector(&t_error);
-            err = new_error("unnamed function parameter has an incomplete type\n");
-            vector_push(errs, err);
-            delete_dtype(specifiers_dtype);
-            return new_resolverret_dparam_errors(errs);
-        }
-
-        DParam* dparam = new_unnamed_dparam(specifiers_dtype);
-        return new_resolverret_dparam(dparam);
     }
 
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&declarator_srt, &errs, resolve_declarator(resolver));
     resolver->ast = ast;
     if (errs != NULL) {
-        delete_dtype(specifiers_dtype);
+        delete_dtype(resolver->specifier_dtype);
+        resolver->specifier_dtype = original_specifier_dtype;
         return new_resolverret_dparam_errors(errs);
     }
 
-    declarator_srt->dtype = dtype_connect(declarator_srt->dtype, specifiers_dtype);
+    declarator_srt->dtype = dtype_connect(declarator_srt->dtype, resolver->specifier_dtype);
+    resolver->specifier_dtype = original_specifier_dtype;
+
     if (declarator_srt->dtype->type == DTYPE_ARRAY) {
         DType* array_of_dtype = dtype_copy(declarator_srt->dtype->darray->of_dtype);
         delete_dtype(declarator_srt->dtype);
@@ -810,19 +812,56 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
 
     if (dtype_isincomplete(declarator_srt->dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("function parameter '%s' has an incomplete type\n", declarator_srt->ident_name);
+        if (declarator_srt->ident_name == NULL) {
+            err = new_error("unnamed function parameter has an incomplete type\n");
+        } else {
+            err = new_error("function parameter '%s' has an incomplete type\n", declarator_srt->ident_name);
+        }
         vector_push(errs, err);
         delete_srt(declarator_srt);
         return new_resolverret_dparam_errors(errs);
     }
 
-    char* dparam_ident_name = new_string(declarator_srt->ident_name);
     DType* dparam_dtype = dtype_copy(declarator_srt->dtype);
-    DParam* dparam = new_named_dparam(dparam_ident_name, dparam_dtype);
+    DParam* dparam = NULL;
+    if (declarator_srt->ident_name == NULL) {
+        dparam = new_unnamed_dparam(dparam_dtype);
+    } else {
+        dparam = new_named_dparam(new_string(declarator_srt->ident_name), dparam_dtype);
+    }
 
     delete_srt(declarator_srt);
-
     return new_resolverret_dparam(dparam);
+}
+
+ResolverDTypeReturn* resolve_type_name(Resolver* resolver) {
+    DType* dtype = NULL;
+    Vector* errs = NULL;
+
+    Ast* ast = resolver->ast;
+    DType* original_specifier_dtype = resolver->specifier_dtype;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_specifier_qualifier_list(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) return new_resolverret_dtype_errors(errs);
+
+    Srt* child_srt = NULL;
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_assign(&child_srt, &errs, resolve_declarator(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_dtype(resolver->specifier_dtype);
+        resolver->specifier_dtype = original_specifier_dtype;
+        return new_resolverret_dtype_errors(errs);
+    }
+
+    child_srt->dtype = dtype_connect(child_srt->dtype, resolver->specifier_dtype);
+    dtype = dtype_copy(child_srt->dtype);
+    delete_srt(child_srt);
+    resolver->specifier_dtype = original_specifier_dtype;
+
+    return new_resolverret_dtype(dtype);
 }
 
 ResolverReturn* resolve_initializer(Resolver* resolver) {

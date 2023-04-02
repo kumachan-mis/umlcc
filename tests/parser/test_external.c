@@ -64,9 +64,10 @@ void test_parse_transration_unit(void) {
                                         new_ast(AST_FUNC_DECLOR, 2, // non-terminal
                                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("incriment")),
                                                 new_ast(AST_PARAM_LIST, 1,                 // non-terminal
-                                                        new_ast(AST_PARAM_DECL, 1,         // non-terminal
+                                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
                                                                 new_ast(AST_DECL_SPECS, 1, // non-terminal
-                                                                        new_ast(AST_TYPE_INT, 0)))))))),
+                                                                        new_ast(AST_TYPE_INT, 0)),
+                                                                new_ast(AST_ABS_DECLOR, 0))))))),
                 new_ast(AST_FUNC_DEF, 3,           // non-terminal
                         new_ast(AST_DECL_SPECS, 1, // non-terminal
                                 new_ast(AST_TYPE_INT, 0)),
@@ -101,9 +102,10 @@ void test_parse_transration_unit(void) {
                         new_ast(AST_FUNC_DECLOR, 2, // non-terminal
                                 new_identifier_ast(AST_IDENT_DECLOR, new_string("null")),
                                 new_ast(AST_PARAM_LIST, 1,                 // non-terminal
-                                        new_ast(AST_PARAM_DECL, 1,         // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
                                                 new_ast(AST_DECL_SPECS, 1, // non-terminal
-                                                        new_ast(AST_TYPE_VOID, 0))))),
+                                                        new_ast(AST_TYPE_VOID, 0)),
+                                                new_ast(AST_ABS_DECLOR, 0)))),
                         new_ast(AST_CMPD_STMT, 0))
 
         );

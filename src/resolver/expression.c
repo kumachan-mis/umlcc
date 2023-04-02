@@ -1,6 +1,7 @@
 #include "./expression.h"
 #include "../common/type.h"
 #include "./conversion.h"
+#include "./declaration.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,6 +32,9 @@ ResolverReturn* resolve_expr(Resolver* resolver) {
         case AST_DIV_EXPR:
         case AST_MOD_EXPR:
             resolverret_assign(&srt, &errs, resolve_multiplicative_expr(resolver));
+            break;
+        case AST_CAST_EXPR:
+            resolverret_assign(&srt, &errs, resolve_cast_expr(resolver));
             break;
         case AST_ADDR_EXPR:
         case AST_INDIR_EXPR:
@@ -478,6 +482,40 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
         delete_srt(rhs_srt);
         return new_resolverret_errors(errs);
     }
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_cast_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    DType* dtype = NULL;
+    Srt* child_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_dtype_assign(&dtype, &errs, resolve_type_name(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) return new_resolverret_errors(errs);
+
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_dtype(dtype);
+        return new_resolverret_errors(errs);
+    }
+
+    if (dtype->type != DTYPE_VOID && (!dtype_isscalar(dtype) || !dtype_isscalar(child_srt->dtype))) {
+        errs = new_vector(&t_error);
+        err = new_error("cast should be from an any type to void or from a scalar type to scalar type\n");
+        vector_push(errs, err);
+        delete_dtype(dtype);
+        delete_srt(child_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    srt = new_dtyped_srt(SRT_CAST_EXPR, dtype, 1, child_srt);
     return new_resolverret(srt);
 }
 
