@@ -13,6 +13,8 @@ void test_parse_subtract_expr_error(void);
 void test_parse_multiply_expr_error(void);
 void test_parse_division_expr_error(void);
 void test_parse_modulo_expr_error(void);
+void test_parse_cast_expr_error_paren(void);
+void test_parse_cast_expr_error_type_name(void);
 void test_parse_address_expr_error(void);
 void test_parse_indirection_expr_error(void);
 void test_parse_logical_not_expr_error(void);
@@ -39,6 +41,8 @@ CU_Suite* add_test_suite_expr_parser_error(void) {
     CU_ADD_TEST(suite, test_parse_multiply_expr_error);
     CU_ADD_TEST(suite, test_parse_division_expr_error);
     CU_ADD_TEST(suite, test_parse_modulo_expr_error);
+    CU_ADD_TEST(suite, test_parse_cast_expr_error_paren);
+    CU_ADD_TEST(suite, test_parse_cast_expr_error_type_name);
     CU_ADD_TEST(suite, test_parse_address_expr_error);
     CU_ADD_TEST(suite, test_parse_indirection_expr_error);
     CU_ADD_TEST(suite, test_parse_logical_not_expr_error);
@@ -191,6 +195,41 @@ void test_parse_modulo_expr_error(void) {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("unexpected token %%\n");
+
+    run_expr_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_cast_expr_error_paren(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token ) expected, but got integer-constant\n");
+
+    run_expr_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_cast_expr_error_type_name(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("type")));
+    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("variable")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    // given "(int(*type))variable", parsing fails at "(int(*type", then goes back to "(int", expects ")", but got "("
+    Error* expected = new_error("token ) expected, but got (\n");
 
     run_expr_parser_error_test(input, expected);
 

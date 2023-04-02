@@ -490,6 +490,7 @@ ResolverReturn* resolve_cast_expr(Resolver* resolver) {
     DType* dtype = NULL;
     Srt* child_srt = NULL;
     Vector* errs = NULL;
+    Error* err = NULL;
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
@@ -502,6 +503,15 @@ ResolverReturn* resolve_cast_expr(Resolver* resolver) {
     resolver->ast = ast;
     if (errs != NULL) {
         delete_dtype(dtype);
+        return new_resolverret_errors(errs);
+    }
+
+    if (dtype->type != DTYPE_VOID && (!dtype_isscalar(dtype) || !dtype_isscalar(child_srt->dtype))) {
+        errs = new_vector(&t_error);
+        err = new_error("cast should be from an any type to void or from a scalar type to scalar type\n");
+        vector_push(errs, err);
+        delete_dtype(dtype);
+        delete_srt(child_srt);
         return new_resolverret_errors(errs);
     }
 

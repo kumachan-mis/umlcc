@@ -572,23 +572,45 @@ ParserReturn* parse_direct_declarator_common(Parser* parser, int abstract) {
 
     AstType terminal_ast_type = abstract ? AST_ABS_DECLOR : AST_IDENT_DECLOR;
 
+    int index = parser->index;
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     switch (ctoken->type) {
         case CTOKEN_LPALEN:
             parser->index++;
             if (abstract) {
                 parserret_assign(&enclosed_head_ast, &err, parse_abstract_declarator(parser));
+                if (err != NULL) return new_parserret_error(err);
+
+                // parse_abstract_declarator returns new_ast(AST_IDENT_DECLOR, 0) when it parses "nothing".
+                // if "( xxx )" cannot be parsed as a enclosed abstract-declarator,
+                // the parser should go back to "(" and should try to parse "( xxx )" as a parameter list.
+                if (enclosed_head_ast->type == terminal_ast_type) {
+                    terminal_ast = enclosed_head_ast;
+                    enclosed_head_ast = NULL;
+                    parser->index = index;
+                    break;
+                }
+
+                err = consume_ctoken(parser, CTOKEN_RPALEN);
+                if (err != NULL) {
+                    delete_ast(enclosed_head_ast);
+                    return new_parserret_error(err);
+                }
             } else {
                 parserret_assign(&enclosed_head_ast, &err, parse_declarator(parser));
-            }
-            if (err != NULL) return new_parserret_error(err);
-            err = consume_ctoken(parser, CTOKEN_RPALEN);
-            if (err != NULL) return new_parserret_error(err);
+                if (err != NULL) return new_parserret_error(err);
 
-            if (enclosed_head_ast->type == terminal_ast_type) {
-                terminal_ast = enclosed_head_ast;
-                enclosed_head_ast = NULL;
-                break;
+                err = consume_ctoken(parser, CTOKEN_RPALEN);
+                if (err != NULL) {
+                    delete_ast(enclosed_head_ast);
+                    return new_parserret_error(err);
+                }
+
+                if (enclosed_head_ast->type == terminal_ast_type) {
+                    terminal_ast = enclosed_head_ast;
+                    enclosed_head_ast = NULL;
+                    break;
+                }
             }
 
             enclosed_tail_ast = enclosed_head_ast;

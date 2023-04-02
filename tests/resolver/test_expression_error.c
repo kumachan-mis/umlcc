@@ -39,6 +39,9 @@ void test_resolve_division_expr_error_rhs(void);
 void test_resolve_modulo_expr_error_non_integer(void);
 void test_resolve_modulo_expr_error_lhs(void);
 void test_resolve_modulo_expr_error_rhs(void);
+void test_resolve_cast_expr_error_type_name(void);
+void test_resolve_cast_expr_error_child(void);
+void test_resolve_cast_expr_error_non_scalar(void);
 void test_resolve_address_expr_error_operand_dtype(void);
 void test_resolve_address_expr_error_child(void);
 void test_resolve_indirection_expr_error_non_pointer(void);
@@ -103,6 +106,9 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_modulo_expr_error_non_integer);
     CU_ADD_TEST(suite, test_resolve_modulo_expr_error_lhs);
     CU_ADD_TEST(suite, test_resolve_modulo_expr_error_rhs);
+    CU_ADD_TEST(suite, test_resolve_cast_expr_error_type_name);
+    CU_ADD_TEST(suite, test_resolve_cast_expr_error_child);
+    CU_ADD_TEST(suite, test_resolve_cast_expr_error_non_scalar);
     CU_ADD_TEST(suite, test_resolve_address_expr_error_operand_dtype);
     CU_ADD_TEST(suite, test_resolve_address_expr_error_child);
     CU_ADD_TEST(suite, test_resolve_indirection_expr_error_non_pointer);
@@ -712,6 +718,74 @@ void test_resolve_modulo_expr_error_rhs(void) {
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("identifier 'y' is used before declared\n"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_cast_expr_error_type_name(void) {
+    Ast* input =
+        new_ast(AST_CAST_EXPR, 2,                      // non-terminal
+                new_ast(AST_TYPE_NAME, 2,              // non-terminal
+                        new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                new_ast(AST_TYPE_INT, 0)),
+                        new_ast(AST_PTR_DECLOR, 1,          // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                        new_ast(AST_ABS_DECLOR, 0),
+                                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_VOID, 0)),
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))))))),
+                new_identifier_ast(AST_IDENT_EXPR, new_string("f")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("f"), new_integer_dtype(DTYPE_CHAR));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("function parameter 'x' has an incomplete type\n"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_cast_expr_error_child(void) {
+    Ast* input = new_ast(AST_CAST_EXPR, 2,                      // non-terminal
+                         new_ast(AST_TYPE_NAME, 2,              // non-terminal
+                                 new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                         new_ast(AST_TYPE_INT, 0)),
+                                 new_ast(AST_ABS_DECLOR, 0)),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'x' is used before declared\n"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_cast_expr_error_non_scalar(void) {
+    Ast* input = new_ast(AST_CAST_EXPR, 2,                      // non-terminal
+                         new_ast(AST_TYPE_NAME, 2,              // non-terminal
+                                 new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                         new_ast(AST_TYPE_INT, 0)),
+                                 new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                         new_ast(AST_ABS_DECLOR, 0),
+                                         new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                 new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                         new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                 new_ast(AST_TYPE_VOID, 0)),
+                                                         new_ast(AST_ABS_DECLOR, 0))))),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("f")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("f"), new_integer_dtype(DTYPE_CHAR));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("cast should be from an any type to void or from a scalar type to scalar type\n"));
 
     run_expr_resolver_error_test(input, local_table, NULL, expected);
 

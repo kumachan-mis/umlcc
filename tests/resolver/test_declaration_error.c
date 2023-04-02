@@ -310,20 +310,26 @@ void test_resolve_struct_member_error_invalid(void) {
         AST_DECL, 1,                                                   // non-terminal
         new_ast(AST_DECL_SPECS, 1,                                     // non-terminal
                 new_ast(AST_TYPE_STRUCT, 1,                            // non-terminal
-                        new_ast(AST_STRUCT_DECL_LIST, 2,               // non-terminal
+                        new_ast(AST_STRUCT_DECL_LIST, 3,               // non-terminal
                                 new_ast(AST_STRUCT_DECL, 2,            // non-terminal
                                         new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
                                                 new_ast(AST_TYPE_INT, 0)),
-                                        new_ast(AST_STRUCT_DECLOR_LIST, 1,  // non-terminal
+                                        new_ast(AST_STRUCT_DECLOR_LIST, 2,  // non-terminal
                                                 new_ast(AST_FUNC_DECLOR, 2, // non-terminal
                                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("f")),
-                                                        new_ast(AST_PARAM_LIST, 0)))),
+                                                        new_ast(AST_PARAM_LIST, 0)),
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("i")))),
                                 new_ast(AST_STRUCT_DECL, 2,                 // non-terminal
                                         new_ast(AST_SPEC_QUAL_LIST, 1,      // non-terminal
                                                 new_ast(AST_TYPE_STRUCT, 1, // non-terminal
                                                         new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")))),
                                         new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
-                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("structure"))))))));
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("structure")))),
+                                new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                        new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                new_ast(AST_TYPE_CHAR, 0)),
+                                        new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("c"))))))));
 
     Ast* global_input = ast_copy(local_input);
 
@@ -397,32 +403,26 @@ void test_resolve_enum_member_error_duplicated(void) {
 
 void test_resolve_enum_error_const_limit(void) {
     Ast* local_input = new_ast(
-        AST_DECL, 1, // non-terminal
-        new_ast(
-            AST_DECL_SPECS, 1,        // non-terminal
-            new_ast(AST_TYPE_ENUM, 2, // non-terminal
-                    new_identifier_ast(AST_ENUM_NAME, new_string("Enum")),
-                    new_ast(AST_ENUMOR_LIST, 1,    // non-terminal
-                            new_ast(AST_ENUMOR, 2, // non-terminal
-                                    new_identifier_ast(AST_ENUM_CONST, new_string("MEMBER")),
-                                    new_ast(AST_ADD_EXPR, 2,
-                                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)),
-                                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))))));
+        AST_DECL, 1,                      // non-terminal
+        new_ast(AST_DECL_SPECS, 1,        // non-terminal
+                new_ast(AST_TYPE_ENUM, 2, // non-terminal
+                        new_identifier_ast(AST_ENUM_NAME, new_string("Enum")),
+                        new_ast(AST_ENUMOR_LIST, 2,    // non-terminal
+                                new_ast(AST_ENUMOR, 2, // non-terminal
+                                        new_identifier_ast(AST_ENUM_CONST, new_string("ERROR")),
+                                        new_ast(AST_ADD_EXPR, 2,
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 5)),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)))),
+                                new_ast(AST_ENUMOR, 1, // non-terminal
+                                        new_identifier_ast(AST_ENUM_CONST, new_string("MEMBER")))))));
 
     Ast* global_input = ast_copy(local_input);
-
-    Vector* members = new_vector(&t_denummember);
-    vector_push(members, new_denummember(new_string("MEMBER"), 0));
-
-    TagTable* local_tag_table = new_tagtable();
-    tagtable_define_enum(local_tag_table, new_string("Enum"), members);
-    TagTable* global_tag_table = tagtable_copy(local_tag_table);
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("only integer constant is supported as enumeration constant\n"));
 
-    run_local_decl_resolver_error_test(local_input, NULL, local_tag_table, expected);
-    run_global_decl_resolver_error_test(global_input, NULL, global_tag_table, expected);
+    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
