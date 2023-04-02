@@ -584,46 +584,61 @@ void test_resolve_non_scalar_parameter_decl(void) {
 }
 
 void test_resolve_unnamed_parameter_decl(void) {
-    Ast* local_input =
-        new_ast(AST_DECL, 2,               // non-terminal
-                new_ast(AST_DECL_SPECS, 1, // non-terminal
-                        new_ast(AST_TYPE_VOID, 0)),
-                new_ast(AST_INIT_DECLOR_LIST, 3,            // non-terminal
-                        new_ast(AST_INIT_DECLOR, 1,         // non-terminal
-                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("f")),
-                                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
-                                                new_ast(AST_PARAM_DECL, 2,         // non-terminal
-                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
-                                                                new_ast(AST_TYPE_VOID, 0)),
-                                                        new_ast(AST_ABS_DECLOR, 0))))),
-                        new_ast(AST_INIT_DECLOR, 1,         // non-terminal
-                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("g")),
-                                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
-                                                new_ast(AST_PARAM_DECL, 2,         // non-terminal
-                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
-                                                                new_ast(AST_TYPE_CHAR, 0)),
-                                                        new_ast(AST_ABS_DECLOR, 0))))),
-                        new_ast(AST_INIT_DECLOR, 1,         // non-terminal
-                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("h")),
-                                        new_ast(AST_PARAM_LIST, 2,                 // non-terminal
-                                                new_ast(AST_PARAM_DECL, 2,         // non-terminal
-                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
-                                                                new_ast(AST_TYPE_INT, 0)),
-                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))),
-                                                new_ast(AST_PARAM_DECL, 2,         // non-terminal
-                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
-                                                                new_ast(AST_TYPE_INT, 0)),
-                                                        new_ast(AST_ABS_DECLOR, 0)))))));
+    Ast* local_input = new_ast(
+        AST_DECL, 2,               // non-terminal
+        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                new_ast(AST_TYPE_VOID, 0)),
+        new_ast(AST_INIT_DECLOR_LIST, 3,            // non-terminal
+                new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                        new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("f")),
+                                new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                        new_ast(AST_TYPE_VOID, 0)),
+                                                new_ast(AST_ABS_DECLOR, 0))))),
+                new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                        new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("g")),
+                                new_ast(AST_PARAM_LIST, 2,                 // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                        new_ast(AST_TYPE_CHAR, 0)),
+                                                new_ast(AST_ABS_DECLOR, 0)),
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                        new_ast(AST_TYPE_INT, 0)),
+                                                new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                                        new_ast(AST_ABS_DECLOR, 0),
+                                                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                                new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                                new_ast(AST_TYPE_INT, 0)),
+                                                                        new_ast(AST_ABS_DECLOR, 0)))))))),
+                new_ast(AST_INIT_DECLOR, 1,         // non-terminal
+                        new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("h")),
+                                new_ast(AST_PARAM_LIST, 2,                 // non-terminal
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                        new_ast(AST_TYPE_INT, 0)),
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("x"))),
+                                        new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                        new_ast(AST_TYPE_INT, 0)),
+                                                new_ast(AST_ABS_DECLOR, 0)))))));
     Ast* global_input = ast_copy(local_input);
 
     Vector* fparams = new_vector(&t_dparam);
     DType* fdtype = new_function_dtype(fparams, new_void_dtype());
 
+    Vector* gfunc_params = new_vector(&t_dparam);
+    vector_push(gfunc_params, new_unnamed_dparam(new_integer_dtype(DTYPE_INT)));
+    DType* gfunc_dtype = new_pointer_dtype(new_function_dtype(gfunc_params, new_integer_dtype(DTYPE_INT)));
+
     Vector* gparams = new_vector(&t_dparam);
     vector_push(gparams, new_unnamed_dparam(new_integer_dtype(DTYPE_CHAR)));
+    vector_push(gparams, new_unnamed_dparam(gfunc_dtype));
     DType* gdtype = new_function_dtype(gparams, new_void_dtype());
 
     Vector* hparams = new_vector(&t_dparam);
