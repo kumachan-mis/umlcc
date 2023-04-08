@@ -41,14 +41,17 @@ ParserReturn* parse_function_definition(Parser* parser) {
     Ast* child_ast = NULL;
     Error* err = NULL;
 
+    int original_typedef_flag = parser->typedef_flag;
     parserret_assign(&child_ast, &err, parse_decl_specifiers(parser));
     if (err != NULL) {
+        parser->typedef_flag = original_typedef_flag;
         delete_ast(ast);
         return new_parserret_error(err);
     }
     vector_push(ast->children, child_ast);
 
     parserret_assign(&child_ast, &err, parse_declarator(parser));
+    parser->typedef_flag = original_typedef_flag;
     if (err != NULL) {
         delete_ast(ast);
         return new_parserret_error(err);

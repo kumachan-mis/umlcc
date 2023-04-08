@@ -4,7 +4,7 @@ void free(void*);
 
 typedef struct LinkedList LinkedList;
 
-struct LinkedList {
+typedef struct LinkedList {
     int value;
     LinkedList* next;
 };

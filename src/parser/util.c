@@ -9,33 +9,35 @@ ErrorableInt* external_may_function_definition(Parser* parser) {
 
     int index = parser->index;
     Set* original_typedef_names_set = parser->typedef_names_set;
-    parser->typedef_names_set = set_copy(parser->typedef_names_set);
+    int original_typedef_flag = parser->typedef_flag;
 
+    parser->typedef_names_set = set_copy(parser->typedef_names_set);
     parserret_assign(&ast, &err, parse_decl_specifiers(parser));
+
     if (err != NULL) {
         delete_set(parser->typedef_names_set);
         parser->index = index;
         parser->typedef_names_set = original_typedef_names_set;
+        parser->typedef_flag = original_typedef_flag;
         return new_errint_error(err);
     }
     delete_ast(ast);
 
     parserret_assign(&ast, &err, parse_declarator(parser));
+
+    delete_set(parser->typedef_names_set);
+    parser->typedef_names_set = original_typedef_names_set;
+    parser->typedef_flag = original_typedef_flag;
+
     if (err != NULL) {
-        delete_set(parser->typedef_names_set);
         parser->index = index;
-        parser->typedef_names_set = original_typedef_names_set;
         delete_error(err);
         return new_errint(0);
     }
     delete_ast(ast);
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
-
-    delete_set(parser->typedef_names_set);
     parser->index = index;
-    parser->typedef_names_set = original_typedef_names_set;
-
     return new_errint(ctoken->type == CTOKEN_LBRACE);
 }
 
