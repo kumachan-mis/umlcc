@@ -852,7 +852,7 @@ ResolverReturn* resolve_member_like_expr(Resolver* resolver) {
     DType* original_member_dtype = resolver->expr_dtype;
     resolver->expr_dtype = lhs_srt->dtype->dpointer->to_dtype;
     if (resolver->expr_dtype->dstruct->members == NULL) {
-        resolver->expr_dtype = tagtable_search_struct(resolver->tag_table, resolver->expr_dtype->dstruct->name);
+        resolver->expr_dtype = tagtable_search(resolver->tag_table, resolver->expr_dtype->dstruct->name);
     }
 
     if (resolver->expr_dtype == NULL) {

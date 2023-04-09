@@ -30,7 +30,7 @@ for fixture_dir in ${FIXTURES_DIR}/*; do
     fi
 
     testcase=$(basename ${fixture_dir})
-    printf "Test: ${testcase} ..."
+    printf "Test: ${testcase} ... "
 
     if [ ! -f ${fixture_dir}/${INPUT} ] || [ ! -f ${fixture_dir}/${EXPECTED} ]; then
         echo "skipped"

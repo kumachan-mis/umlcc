@@ -160,7 +160,7 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
     }
 
     if (members == NULL) {
-        DType* unnamed_dtype = tagtable_search_struct(resolver->tag_table, struct_name);
+        DType* unnamed_dtype = tagtable_search(resolver->tag_table, struct_name);
         int nbytes = 0, alignment = 0;
         if (unnamed_dtype != NULL) {
             nbytes = unnamed_dtype->dstruct->nbytes;
@@ -170,9 +170,9 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
         return new_resolverret_dtype(dtype);
     }
 
-    if (!tagtable_can_define_struct(resolver->tag_table, struct_name)) {
+    if (!tagtable_can_define(resolver->tag_table, struct_name)) {
         errs = new_vector(&t_error);
-        err = new_error("struct '%s' is already declared\n", struct_name);
+        err = new_error("tag '%s' is already declared\n", struct_name);
         vector_push(errs, err);
         free(struct_name);
         delete_vector(members);
@@ -181,7 +181,7 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
 
     tagtable_define_struct(resolver->tag_table, new_string(struct_name), members);
 
-    DType* unnamed_dtype = tagtable_search_struct(resolver->tag_table, struct_name);
+    DType* unnamed_dtype = tagtable_search(resolver->tag_table, struct_name);
     Srt* tag_decl_srt = new_identifier_srt(SRT_TAG_DECL, dtype_copy(unnamed_dtype), new_string(struct_name));
     vector_push(resolver->scope_srt->children, tag_decl_srt);
 
@@ -372,9 +372,9 @@ ResolverDTypeReturn* resolve_enum_specifier(Resolver* resolver) {
         return new_resolverret_dtype(dtype);
     }
 
-    if (!tagtable_can_define_enum(resolver->tag_table, enum_name)) {
+    if (!tagtable_can_define(resolver->tag_table, enum_name)) {
         errs = new_vector(&t_error);
-        err = new_error("enum '%s' is already declared\n", enum_name);
+        err = new_error("tag '%s' is already declared\n", enum_name);
         vector_push(errs, err);
         free(enum_name);
         delete_vector(members);
@@ -890,7 +890,7 @@ ResolverReturn* resolve_initializer(Resolver* resolver) {
             break;
         case DTYPE_STRUCT:
             if (dtype->dstruct->members == NULL) {
-                resolver->initialized_dtype = tagtable_search_struct(resolver->tag_table, dtype->dstruct->name);
+                resolver->initialized_dtype = tagtable_search(resolver->tag_table, dtype->dstruct->name);
             }
             resolverret_assign(&srt, &errs, resolve_aggregate_initializer(resolver));
             break;
@@ -936,7 +936,7 @@ ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
             break;
         case DTYPE_STRUCT:
             if (dtype->dstruct->members == NULL) {
-                resolver->initialized_dtype = tagtable_search_struct(resolver->tag_table, dtype->dstruct->name);
+                resolver->initialized_dtype = tagtable_search(resolver->tag_table, dtype->dstruct->name);
             }
             // resolve_zero_aggregate_initializer does not return an error
             resolverret_assign(&srt, &errs, resolve_zero_aggregate_initializer(resolver));

@@ -311,7 +311,7 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
 
             DType* struct_dtype = struct_srt->dtype->dpointer->to_dtype;
             if (struct_dtype->dstruct->members == NULL) {
-                struct_dtype = tagtable_search_struct(immcgen->tag_table, struct_dtype->dstruct->name);
+                struct_dtype = tagtable_search(immcgen->tag_table, struct_dtype->dstruct->name);
             }
 
             DStructMember* accessed_member = NULL;
@@ -438,7 +438,7 @@ Vector* gen_tomember_expr_immcode(Immcgen* immcgen) {
 
     DType* struct_dtype = struct_srt->dtype->dpointer->to_dtype;
     if (struct_dtype->dstruct->members == NULL) {
-        struct_dtype = tagtable_search_struct(immcgen->tag_table, struct_dtype->dstruct->name);
+        struct_dtype = tagtable_search(immcgen->tag_table, struct_dtype->dstruct->name);
     }
 
     DStructMember* accessed_member = NULL;
