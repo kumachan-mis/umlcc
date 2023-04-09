@@ -62,7 +62,10 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_decl_specifiers(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        resolver->specifier_dtype = original_specifier_dtype;
+        return new_resolverret_errors(errs);
+    }
 
     if (resolver->specifier_dtype->type == DTYPE_TYPEDEF) {
         errs = new_vector(&t_error);

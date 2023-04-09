@@ -2,8 +2,9 @@
 #include "../../src/resolver/statement.h"
 #include "../testlib/testlib.h"
 
-void test_resolve_compound_stmt_integer_vardef(void);
-void test_resolve_compound_stmt_pointer_typedef(void);
+void test_resolve_compound_stmt_completed_typedef(void);
+void test_resolve_compound_stmt_incompleted_typedef(void);
+void test_resolve_compound_stmt_integer(void);
 void test_resolve_compound_stmt_void_pointer(void);
 void test_resolve_compound_stmt_empty(void);
 void test_resolve_return_stmt_without_cast(void);
@@ -15,8 +16,9 @@ void run_stmt_resolver_test(Ast* input, SymbolTable* local_table, DType* return_
 
 CU_Suite* add_test_suite_stmt_resolver(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver", NULL, NULL);
-    CU_ADD_TEST(suite, test_resolve_compound_stmt_integer_vardef);
-    CU_ADD_TEST(suite, test_resolve_compound_stmt_pointer_typedef);
+    CU_ADD_TEST(suite, test_resolve_compound_stmt_completed_typedef);
+    CU_ADD_TEST(suite, test_resolve_compound_stmt_incompleted_typedef);
+    CU_ADD_TEST(suite, test_resolve_compound_stmt_integer);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_void_pointer);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_empty);
     CU_ADD_TEST(suite, test_resolve_return_stmt_without_cast);
@@ -26,7 +28,176 @@ CU_Suite* add_test_suite_stmt_resolver(void) {
     return suite;
 }
 
-void test_resolve_compound_stmt_integer_vardef(void) {
+void test_resolve_compound_stmt_completed_typedef(void) {
+    Ast* input =
+        new_ast(AST_CMPD_STMT, 3,                  // non-terminal
+                new_ast(AST_DECL, 2,               // non-terminal
+                        new_ast(AST_DECL_SPECS, 2, // non-terminal
+                                new_ast(AST_STG_TYPEDEF, 0), new_ast(AST_TYPE_INT, 0)),
+                        new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                                new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("pint")))))),
+                new_ast(AST_DECL, 2,               // non-terminal
+                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                new_identifier_ast(AST_TYPEDEF_NAME, new_string("pint"))),
+                        new_ast(AST_INIT_DECLOR_LIST, 2,    // non-terminal
+                                new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("p"))),
+                                new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("q"))))),
+                new_ast(AST_EXPR_STMT, 1,                  // non-terminal
+                        new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
+                                new_ast(AST_INDIR_EXPR, 1, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("p"))),
+                                new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
+                                        new_ast(AST_INDIR_EXPR, 1, // non-terminal
+                                                new_identifier_ast(AST_IDENT_EXPR, new_string("q"))),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 7))))));
+
+    Srt* expected = new_srt(
+        SRT_CMPD_STMT, 3,                 // non-terminal
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_typedef_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT))),
+                                           new_string("pint")))),
+        new_srt(
+            SRT_DECL_LIST, 2,         // non-terminal
+            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                    new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("p"))),
+            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                    new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("q")))),
+        new_srt(
+            SRT_EXPR_STMT, 1, // non-terminal
+            new_dtyped_srt(
+                SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                new_dtyped_srt(
+                    SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+                    new_dtyped_srt(SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1,    // non-terminal
+                                   new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                                                      new_string("p")))),
+                new_dtyped_srt(
+                    SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2,                                 // non-terminal
+                    new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+                                   new_dtyped_srt(SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1,    // non-terminal
+                                                  new_identifier_srt(SRT_IDENT_EXPR,
+                                                                     new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                                                                     new_string("q")))),
+                    new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                     new_signed_iliteral(INTEGER_INT, 7))))));
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_compound_stmt_incompleted_typedef(void) {
+    Ast* input = new_ast(
+        AST_CMPD_STMT, 4,                  // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                        new_ast(AST_TYPE_VOID, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,                   // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,                // non-terminal
+                                new_ast(AST_FUNC_DECLOR, 2,        // non-terminal
+                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("malloc"))),
+                                        new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                new_ast(AST_TYPE_INT, 0)),
+                                                        new_ast(AST_ABS_DECLOR, 0))))))),
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 2, // non-terminal
+                        new_ast(AST_STG_TYPEDEF, 0),
+                        new_ast(AST_TYPE_STRUCT, 1, // non-terminal
+                                new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")))),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("Struct"))))),
+        new_ast(AST_DECL, 1,                        // non-terminal
+                new_ast(AST_DECL_SPECS, 1,          // non-terminal
+                        new_ast(AST_TYPE_STRUCT, 2, // non-terminal
+                                new_identifier_ast(AST_STRUCT_NAME, new_string("Struct")),
+                                new_ast(AST_STRUCT_DECL_LIST, 2,               // non-terminal
+                                        new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                                new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                        new_ast(AST_TYPE_INT, 0)),
+                                                new_ast(AST_STRUCT_DECLOR_LIST, 2, // non-terminal
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("x")),
+                                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("y")))),
+                                        new_ast(AST_STRUCT_DECL, 2,            // non-terminal
+                                                new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                        new_identifier_ast(AST_TYPEDEF_NAME, new_string("Struct"))),
+                                                new_ast(AST_STRUCT_DECLOR_LIST, 1, // non-terminal
+                                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                                new_identifier_ast(AST_IDENT_DECLOR,
+                                                                                   new_string("next"))))))))),
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                        new_identifier_ast(AST_TYPEDEF_NAME, new_string("Struct"))),
+                new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2,        // non-terminal
+                                new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("s"))),
+                                new_ast(AST_CALL_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("malloc")),
+                                        new_ast(AST_ARG_LIST, 1,                               // non-terminal
+                                                new_ast(AST_SIZEOF_EXPR, 1,                    // non-terminal
+                                                        new_ast(AST_TYPE_NAME, 2,              // non-terminal
+                                                                new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                                                        new_identifier_ast(AST_TYPEDEF_NAME,
+                                                                                           new_string("Struct"))),
+                                                                new_ast(AST_ABS_DECLOR, 0)))))))));
+    Vector* malloc_params = new_vector(&t_dparam);
+    vector_push(malloc_params, new_unnamed_dparam(new_integer_dtype(DTYPE_INT)));
+    DType* malloc_dtype = new_function_dtype(malloc_params, new_pointer_dtype(new_void_dtype()));
+
+    DType* incomplete_unnamed_struct_dtype = new_named_struct_dtype(new_string("Struct"), 0, 0);
+
+    Vector* struct_members = new_vector(&t_dstructmember);
+    vector_push(struct_members, new_dstructmember(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    vector_push(struct_members, new_dstructmember(new_string("y"), new_integer_dtype(DTYPE_INT)));
+    vector_push(
+        struct_members,
+        new_dstructmember(new_string("next"), new_pointer_dtype(new_named_struct_dtype(new_string("Struct"), 0, 0))));
+    DType* unnamed_struct_dtype = new_unnamed_struct_dtype(struct_members);
+
+    DType* complete_unnamed_struct_dtype = new_named_struct_dtype(new_string("Struct"), 16, 8);
+
+    Srt* expected = new_srt(
+        SRT_CMPD_STMT, 5,                 // non-terminal
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, malloc_dtype, new_string("malloc")))),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_typedef_dtype(incomplete_unnamed_struct_dtype),
+                                           new_string("Struct")))),
+        new_identifier_srt(SRT_TAG_DECL, unnamed_struct_dtype, new_string("Struct")), new_srt(SRT_DECL_LIST, 0),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_pointer_dtype(complete_unnamed_struct_dtype), new_string("s")),
+                        new_srt(SRT_INIT, 1, // non-terminal
+                                new_dtyped_srt(
+                                    SRT_CAST_EXPR, new_pointer_dtype(dtype_copy(complete_unnamed_struct_dtype)),
+                                    1, // non-terminal
+                                    new_dtyped_srt(
+                                        SRT_CALL_EXPR, new_pointer_dtype(new_void_dtype()), 2, // non-terminal
+                                        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(malloc_dtype)),
+                                                       1, // non-terminal
+                                                       new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(malloc_dtype),
+                                                                          new_string("malloc"))),
+                                        new_srt(SRT_ARG_LIST, 1, // non-terminal
+                                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                 new_signed_iliteral(INTEGER_INT, 16)))))))));
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_compound_stmt_integer(void) {
     Ast* input = new_ast(AST_CMPD_STMT, 3,                  // non-terminal
                          new_ast(AST_DECL, 2,               // non-terminal
                                  new_ast(AST_DECL_SPECS, 1, // non-terminal
@@ -92,69 +263,6 @@ void test_resolve_compound_stmt_integer_vardef(void) {
                     SRT_MUL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
                     new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)),
                     new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))))));
-
-    run_stmt_resolver_test(input, NULL, NULL, expected);
-
-    delete_srt(expected);
-}
-
-void test_resolve_compound_stmt_pointer_typedef(void) {
-    Ast* input =
-        new_ast(AST_CMPD_STMT, 3,                  // non-terminal
-                new_ast(AST_DECL, 2,               // non-terminal
-                        new_ast(AST_DECL_SPECS, 2, // non-terminal
-                                new_ast(AST_STG_TYPEDEF, 0), new_ast(AST_TYPE_INT, 0)),
-                        new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
-                                new_ast(AST_INIT_DECLOR, 1,        // non-terminal
-                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
-                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("pint")))))),
-                new_ast(AST_DECL, 2,               // non-terminal
-                        new_ast(AST_DECL_SPECS, 1, // non-terminal
-                                new_identifier_ast(AST_TYPEDEF_NAME, new_string("pint"))),
-                        new_ast(AST_INIT_DECLOR_LIST, 2,    // non-terminal
-                                new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("p"))),
-                                new_ast(AST_INIT_DECLOR, 1, // non-terminal
-                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("q"))))),
-                new_ast(AST_EXPR_STMT, 1,                  // non-terminal
-                        new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
-                                new_ast(AST_INDIR_EXPR, 1, // non-terminal
-                                        new_identifier_ast(AST_IDENT_EXPR, new_string("p"))),
-                                new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
-                                        new_ast(AST_INDIR_EXPR, 1, // non-terminal
-                                                new_identifier_ast(AST_IDENT_EXPR, new_string("q"))),
-                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 7))))));
-
-    Srt* expected = new_srt(
-        SRT_CMPD_STMT, 3,                 // non-terminal
-        new_srt(SRT_DECL_LIST, 1,         // non-terminal
-                new_srt(SRT_INIT_DECL, 1, // non-terminal
-                        new_identifier_srt(SRT_DECL, new_typedef_dtype(new_pointer_dtype(new_integer_dtype(DTYPE_INT))),
-                                           new_string("pint")))),
-        new_srt(
-            SRT_DECL_LIST, 2,         // non-terminal
-            new_srt(SRT_INIT_DECL, 1, // non-terminal
-                    new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("p"))),
-            new_srt(SRT_INIT_DECL, 1, // non-terminal
-                    new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("q")))),
-        new_srt(
-            SRT_EXPR_STMT, 1, // non-terminal
-            new_dtyped_srt(
-                SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                new_dtyped_srt(
-                    SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
-                    new_dtyped_srt(SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1,    // non-terminal
-                                   new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
-                                                      new_string("p")))),
-                new_dtyped_srt(
-                    SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2,                                 // non-terminal
-                    new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
-                                   new_dtyped_srt(SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1,    // non-terminal
-                                                  new_identifier_srt(SRT_IDENT_EXPR,
-                                                                     new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
-                                                                     new_string("q")))),
-                    new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                     new_signed_iliteral(INTEGER_INT, 7))))));
 
     run_stmt_resolver_test(input, NULL, NULL, expected);
 

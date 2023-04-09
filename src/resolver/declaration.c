@@ -19,7 +19,10 @@ ResolverReturn* resolve_decl(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_decl_specifiers(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        resolver->specifier_dtype = original_specifier_dtype;
+        return new_resolverret_errors(errs);
+    }
 
     if (vector_size(ast->children) == 1) {
         srt = new_srt(SRT_DECL_LIST, 0);
@@ -118,6 +121,13 @@ ResolverDTypeReturn* resolve_type_specifier_list(Resolver* resolver) {
         case AST_TYPEDEF_NAME: {
             Symbol* symbol = symboltable_search(resolver->symbol_table, child_ast->ident_name);
             dtype = dtype_copy(symbol->dtype->dtypedef->defined_dtype);
+            if (!dtype_isincomplete(dtype) || dtype->type != DTYPE_STRUCT) break;
+
+            DType* complete_dtype = tagtable_search(resolver->tag_table, dtype->dstruct->name);
+            if (complete_dtype == NULL || complete_dtype->type != DTYPE_STRUCT) break;
+
+            dtype->dstruct->nbytes = complete_dtype->dstruct->nbytes;
+            dtype->dstruct->alignment = complete_dtype->dstruct->alignment;
             break;
         }
         default:
@@ -256,7 +266,10 @@ ResolverReturnDStructMembers* resolve_struct_decl(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_specifier_qualifier_list(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_dstructmembers_errors(errs);
+    if (errs != NULL) {
+        resolver->specifier_dtype = original_specifier_dtype;
+        return new_resolverret_dstructmembers_errors(errs);
+    }
 
     resolver->ast = vector_at(ast->children, 1);
     resolverret_dstructmembers_assign(&members, &errs, resolve_struct_declarator_list(resolver));
@@ -776,7 +789,10 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_decl_specifiers(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_dparam_errors(errs);
+    if (errs != NULL) {
+        resolver->specifier_dtype = original_specifier_dtype;
+        return new_resolverret_dparam_errors(errs);
+    }
 
     if (resolver->specifier_dtype->type == DTYPE_TYPEDEF) {
         errs = new_vector(&t_error);
@@ -844,7 +860,10 @@ ResolverDTypeReturn* resolve_type_name(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_specifier_qualifier_list(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_dtype_errors(errs);
+    if (errs != NULL) {
+        resolver->specifier_dtype = original_specifier_dtype;
+        return new_resolverret_dtype_errors(errs);
+    }
 
     Srt* child_srt = NULL;
     resolver->ast = vector_at(ast->children, 1);

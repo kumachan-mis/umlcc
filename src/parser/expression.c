@@ -411,6 +411,10 @@ ParserReturn* parse_primary_expr(Parser* parser) {
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     switch (ctoken->type) {
         case CTOKEN_IDENT:
+            if (set_contains(parser->typedef_names_set, ctoken->ident_name)) {
+                err = new_error("unexpected typedef name '%s'\n", ctoken->ident_name);
+                break;
+            }
             parser->index++;
             ast = new_identifier_ast(AST_IDENT_EXPR, new_string(ctoken->ident_name));
             break;

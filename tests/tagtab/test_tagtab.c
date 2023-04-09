@@ -87,7 +87,7 @@ void test_tagtable_scoped_struct(void) {
     TagTable* table = new_tagtable();
     DType* struct_dtype = NULL;
 
-    char* outer_name = new_string("OuterStructure");
+    char* outer_name = new_string("OuterStruct");
     Vector* outer_members = new_vector(&t_dstructmember);
     vector_push(outer_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* expected_outer_dtype = new_unnamed_struct_dtype(vector_copy(outer_members));
@@ -95,7 +95,7 @@ void test_tagtable_scoped_struct(void) {
     CU_ASSERT_TRUE(tagtable_can_define(table, outer_name));
     tagtable_define_struct(table, outer_name, outer_members);
 
-    char* outer_both_name = new_string("BothStructure");
+    char* outer_both_name = new_string("BothStruct");
     Vector* outer_both_members = new_vector(&t_dstructmember);
     vector_push(outer_both_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* expected_outer_both_dtype = new_unnamed_struct_dtype(vector_copy(outer_both_members));
@@ -105,7 +105,7 @@ void test_tagtable_scoped_struct(void) {
 
     table = tagtable_enter_scope(table);
 
-    char* inner_name = new_string("InnerStructure");
+    char* inner_name = new_string("InnerStruct");
     Vector* inner_members = new_vector(&t_dstructmember);
     vector_push(inner_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_CHAR)));
     DType* expected_inner_dtype = new_unnamed_struct_dtype(vector_copy(inner_members));
@@ -113,7 +113,7 @@ void test_tagtable_scoped_struct(void) {
     CU_ASSERT_TRUE(tagtable_can_define(table, inner_name));
     tagtable_define_struct(table, inner_name, inner_members);
 
-    char* inner_both_name = new_string("BothStructure");
+    char* inner_both_name = new_string("BothStruct");
     Vector* inner_both_members = new_vector(&t_dstructmember);
     vector_push(inner_both_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_CHAR)));
     DType* expected_inner_both_dtype = new_unnamed_struct_dtype(vector_copy(inner_both_members));
@@ -135,7 +135,7 @@ void test_tagtable_scoped_struct(void) {
     struct_dtype = tagtable_search(table, outer_name);
     CU_ASSERT_TRUE(dtype_equals(struct_dtype, expected_outer_dtype));
 
-    struct_dtype = tagtable_search(table, "InnerStructure");
+    struct_dtype = tagtable_search(table, "InnerStruct");
     CU_ASSERT_PTR_NULL(struct_dtype);
 
     struct_dtype = tagtable_search(table, outer_both_name);
@@ -196,7 +196,7 @@ void test_tagtable_copy_with_outer(void) {
 
     tagtable_define_enum(table, outer_enum_name, outer_enum_members);
 
-    char* outer_struct_name = new_string("OuterStructure");
+    char* outer_struct_name = new_string("OuterStruct");
     Vector* outer_struct_members = new_vector(&t_dstructmember);
     vector_push(outer_struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
     DType* expected_outer_struct_dtype = new_unnamed_struct_dtype(vector_copy(outer_struct_members));
@@ -212,7 +212,7 @@ void test_tagtable_copy_with_outer(void) {
 
     tagtable_define_enum(table, inner_enum_name, inner_enum_members);
 
-    char* inner_struct_name = new_string("InnerStructure");
+    char* inner_struct_name = new_string("InnerStruct");
     Vector* inner_struct_members = new_vector(&t_dstructmember);
     vector_push(inner_struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_CHAR)));
     DType* expected_inner_struct_dtype = new_unnamed_struct_dtype(vector_copy(inner_struct_members));
@@ -228,7 +228,7 @@ void test_tagtable_copy_with_outer(void) {
     CU_ASSERT_TRUE(dtype_equals(copied_dtype, expected_outer_enum_dtype));
     free(outer_enum_name);
 
-    outer_struct_name = new_string("OuterStructure");
+    outer_struct_name = new_string("OuterStruct");
     copied_dtype = tagtable_search(copied_table, outer_struct_name);
     CU_ASSERT_TRUE(dtype_equals(copied_dtype, expected_outer_struct_dtype));
     free(outer_struct_name);
@@ -238,7 +238,7 @@ void test_tagtable_copy_with_outer(void) {
     CU_ASSERT_TRUE(dtype_equals(copied_dtype, expected_inner_enum_dtype));
     free(inner_enum_name);
 
-    inner_struct_name = new_string("InnerStructure");
+    inner_struct_name = new_string("InnerStruct");
     copied_dtype = tagtable_search(copied_table, inner_struct_name);
     CU_ASSERT_TRUE(dtype_equals(copied_dtype, expected_inner_struct_dtype));
     free(inner_struct_name);
@@ -250,7 +250,7 @@ void test_tagtable_copy_with_outer(void) {
     CU_ASSERT_TRUE(dtype_equals(copied_dtype, expected_outer_enum_dtype));
     free(outer_enum_name);
 
-    outer_struct_name = new_string("OuterStructure");
+    outer_struct_name = new_string("OuterStruct");
     copied_dtype = tagtable_search(copied_table, outer_struct_name);
     CU_ASSERT_TRUE(dtype_equals(copied_dtype, expected_outer_struct_dtype));
     free(outer_struct_name);
@@ -260,7 +260,7 @@ void test_tagtable_copy_with_outer(void) {
     CU_ASSERT_PTR_NULL(copied_dtype);
     free(inner_enum_name);
 
-    inner_struct_name = new_string("InnerStructure");
+    inner_struct_name = new_string("InnerStruct");
     copied_dtype = tagtable_search(copied_table, inner_struct_name);
     CU_ASSERT_PTR_NULL(copied_dtype);
     free(inner_struct_name);
