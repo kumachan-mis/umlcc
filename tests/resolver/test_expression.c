@@ -21,6 +21,8 @@ void test_resolve_cast_expr(void);
 void test_resolve_address_expr(void);
 void test_resolve_indirection_expr(void);
 void test_resolve_logical_not_expr(void);
+void test_resolve_sizeof_expr_typename(void);
+void test_resolve_sizeof_expr_expr(void);
 void test_resolve_call_expr(void);
 void test_resolve_subscription_expr(void);
 void test_resolve_reversed_subscription_expr(void);
@@ -59,6 +61,8 @@ CU_Suite* add_test_suite_expr_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_address_expr);
     CU_ADD_TEST(suite, test_resolve_indirection_expr);
     CU_ADD_TEST(suite, test_resolve_logical_not_expr);
+    CU_ADD_TEST(suite, test_resolve_sizeof_expr_typename);
+    CU_ADD_TEST(suite, test_resolve_sizeof_expr_expr);
     CU_ADD_TEST(suite, test_resolve_call_expr);
     CU_ADD_TEST(suite, test_resolve_subscription_expr);
     CU_ADD_TEST(suite, test_resolve_reversed_subscription_expr);
@@ -516,6 +520,32 @@ void test_resolve_logical_not_expr(void) {
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("flag"))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_sizeof_expr_typename(void) {
+    Ast* input = new_ast(AST_SIZEOF_EXPR, 1,                    // non-terminal
+                         new_ast(AST_TYPE_NAME, 2,              // non-terminal
+                                 new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                         new_ast(AST_TYPE_INT, 0)),
+                                 new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                         new_ast(AST_ABS_DECLOR, 0))));
+
+    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 8));
+
+    run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_sizeof_expr_expr(void) {
+    Ast* input = new_ast(AST_SIZEOF_EXPR, 1, // non-terminal
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)));
+
+    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4));
+
+    run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }
