@@ -19,7 +19,10 @@ ResolverReturn* resolve_decl(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_decl_specifiers(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        resolver->specifier_dtype = original_specifier_dtype;
+        return new_resolverret_errors(errs);
+    }
 
     if (vector_size(ast->children) == 1) {
         srt = new_srt(SRT_DECL_LIST, 0);
@@ -118,6 +121,13 @@ ResolverDTypeReturn* resolve_type_specifier_list(Resolver* resolver) {
         case AST_TYPEDEF_NAME: {
             Symbol* symbol = symboltable_search(resolver->symbol_table, child_ast->ident_name);
             dtype = dtype_copy(symbol->dtype->dtypedef->defined_dtype);
+            if (!dtype_isincomplete(dtype) || dtype->type != DTYPE_STRUCT) break;
+
+            DType* complete_dtype = tagtable_search(resolver->tag_table, dtype->dstruct->name);
+            if (complete_dtype == NULL || complete_dtype->type != DTYPE_STRUCT) break;
+
+            dtype->dstruct->nbytes = complete_dtype->dstruct->nbytes;
+            dtype->dstruct->alignment = complete_dtype->dstruct->alignment;
             break;
         }
         default:
@@ -160,7 +170,7 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
     }
 
     if (members == NULL) {
-        DType* unnamed_dtype = tagtable_search_struct(resolver->tag_table, struct_name);
+        DType* unnamed_dtype = tagtable_search(resolver->tag_table, struct_name);
         int nbytes = 0, alignment = 0;
         if (unnamed_dtype != NULL) {
             nbytes = unnamed_dtype->dstruct->nbytes;
@@ -170,9 +180,9 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
         return new_resolverret_dtype(dtype);
     }
 
-    if (!tagtable_can_define_struct(resolver->tag_table, struct_name)) {
+    if (!tagtable_can_define(resolver->tag_table, struct_name)) {
         errs = new_vector(&t_error);
-        err = new_error("struct '%s' is already declared\n", struct_name);
+        err = new_error("tag '%s' is already declared\n", struct_name);
         vector_push(errs, err);
         free(struct_name);
         delete_vector(members);
@@ -181,7 +191,7 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
 
     tagtable_define_struct(resolver->tag_table, new_string(struct_name), members);
 
-    DType* unnamed_dtype = tagtable_search_struct(resolver->tag_table, struct_name);
+    DType* unnamed_dtype = tagtable_search(resolver->tag_table, struct_name);
     Srt* tag_decl_srt = new_identifier_srt(SRT_TAG_DECL, dtype_copy(unnamed_dtype), new_string(struct_name));
     vector_push(resolver->scope_srt->children, tag_decl_srt);
 
@@ -256,7 +266,10 @@ ResolverReturnDStructMembers* resolve_struct_decl(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_specifier_qualifier_list(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_dstructmembers_errors(errs);
+    if (errs != NULL) {
+        resolver->specifier_dtype = original_specifier_dtype;
+        return new_resolverret_dstructmembers_errors(errs);
+    }
 
     resolver->ast = vector_at(ast->children, 1);
     resolverret_dstructmembers_assign(&members, &errs, resolve_struct_declarator_list(resolver));
@@ -372,9 +385,9 @@ ResolverDTypeReturn* resolve_enum_specifier(Resolver* resolver) {
         return new_resolverret_dtype(dtype);
     }
 
-    if (!tagtable_can_define_enum(resolver->tag_table, enum_name)) {
+    if (!tagtable_can_define(resolver->tag_table, enum_name)) {
         errs = new_vector(&t_error);
-        err = new_error("enum '%s' is already declared\n", enum_name);
+        err = new_error("tag '%s' is already declared\n", enum_name);
         vector_push(errs, err);
         free(enum_name);
         delete_vector(members);
@@ -776,7 +789,10 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_decl_specifiers(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_dparam_errors(errs);
+    if (errs != NULL) {
+        resolver->specifier_dtype = original_specifier_dtype;
+        return new_resolverret_dparam_errors(errs);
+    }
 
     if (resolver->specifier_dtype->type == DTYPE_TYPEDEF) {
         errs = new_vector(&t_error);
@@ -844,7 +860,10 @@ ResolverDTypeReturn* resolve_type_name(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&resolver->specifier_dtype, &errs, resolve_specifier_qualifier_list(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_dtype_errors(errs);
+    if (errs != NULL) {
+        resolver->specifier_dtype = original_specifier_dtype;
+        return new_resolverret_dtype_errors(errs);
+    }
 
     Srt* child_srt = NULL;
     resolver->ast = vector_at(ast->children, 1);
@@ -890,7 +909,7 @@ ResolverReturn* resolve_initializer(Resolver* resolver) {
             break;
         case DTYPE_STRUCT:
             if (dtype->dstruct->members == NULL) {
-                resolver->initialized_dtype = tagtable_search_struct(resolver->tag_table, dtype->dstruct->name);
+                resolver->initialized_dtype = tagtable_search(resolver->tag_table, dtype->dstruct->name);
             }
             resolverret_assign(&srt, &errs, resolve_aggregate_initializer(resolver));
             break;
@@ -936,7 +955,7 @@ ResolverReturn* resolve_zero_initializer(Resolver* resolver) {
             break;
         case DTYPE_STRUCT:
             if (dtype->dstruct->members == NULL) {
-                resolver->initialized_dtype = tagtable_search_struct(resolver->tag_table, dtype->dstruct->name);
+                resolver->initialized_dtype = tagtable_search(resolver->tag_table, dtype->dstruct->name);
             }
             // resolve_zero_aggregate_initializer does not return an error
             resolverret_assign(&srt, &errs, resolve_zero_aggregate_initializer(resolver));

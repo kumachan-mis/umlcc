@@ -48,6 +48,10 @@ void test_resolve_indirection_expr_error_non_pointer(void);
 void test_resolve_indirection_expr_error_child(void);
 void test_resolve_logical_not_expr_error_non_scalar(void);
 void test_resolve_logical_not_expr_error_child(void);
+void test_resolve_sizeof_expr_error_typename(void);
+void test_resolve_sizeof_expr_error_expr(void);
+void test_resolve_sizeof_expr_error_incomplete(void);
+void test_resolve_sizeof_expr_error_function(void);
 void test_resolve_call_expr_error_non_func(void);
 void test_resolve_call_expr_error_num_params(void);
 void test_resolve_call_expr_error_param_dtype(void);
@@ -115,6 +119,10 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_indirection_expr_error_child);
     CU_ADD_TEST(suite, test_resolve_logical_not_expr_error_non_scalar);
     CU_ADD_TEST(suite, test_resolve_logical_not_expr_error_child);
+    CU_ADD_TEST(suite, test_resolve_sizeof_expr_error_typename);
+    CU_ADD_TEST(suite, test_resolve_sizeof_expr_error_expr);
+    CU_ADD_TEST(suite, test_resolve_sizeof_expr_error_incomplete);
+    CU_ADD_TEST(suite, test_resolve_sizeof_expr_error_function);
     CU_ADD_TEST(suite, test_resolve_call_expr_error_non_func);
     CU_ADD_TEST(suite, test_resolve_call_expr_error_num_params);
     CU_ADD_TEST(suite, test_resolve_call_expr_error_param_dtype);
@@ -868,6 +876,69 @@ void test_resolve_logical_not_expr_error_child(void) {
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("identifier 'flag' is used before declared\n"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_sizeof_expr_error_typename(void) {
+    Ast* input = new_ast(AST_SIZEOF_EXPR, 1,                    // non-terminal
+                         new_ast(AST_TYPE_NAME, 2,              // non-terminal
+                                 new_ast(AST_SPEC_QUAL_LIST, 2, // non-terminal
+                                         new_ast(AST_TYPE_CHAR, 0), new_ast(AST_TYPE_INT, 0)),
+                                 new_ast(AST_ABS_DECLOR, 0)));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("combination of type specifiers is invalid\n"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_sizeof_expr_error_expr(void) {
+    Ast* input = new_ast(AST_SIZEOF_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'x' is used before declared\n"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_sizeof_expr_error_incomplete(void) {
+    Ast* input = new_ast(AST_SIZEOF_EXPR, 1,                    // non-terminal
+                         new_ast(AST_TYPE_NAME, 2,              // non-terminal
+                                 new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                         new_ast(AST_TYPE_VOID, 0)),
+                                 new_ast(AST_ABS_DECLOR, 0)));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operand of sizeof has neither function type nor an incomplete type\n"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_sizeof_expr_error_function(void) {
+    Ast* input = new_ast(AST_SIZEOF_EXPR, 1,                    // non-terminal
+                         new_ast(AST_TYPE_NAME, 2,              // non-terminal
+                                 new_ast(AST_SPEC_QUAL_LIST, 1, // non-terminal
+                                         new_ast(AST_TYPE_INT, 0)),
+                                 new_ast(AST_FUNC_DECLOR, 2, // non-terminal
+                                         new_ast(AST_ABS_DECLOR, 0),
+                                         new_ast(AST_PARAM_LIST, 1,                 // non-terminal
+                                                 new_ast(AST_PARAM_DECL, 2,         // non-terminal
+                                                         new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                                                 new_ast(AST_TYPE_VOID, 0)),
+                                                         new_ast(AST_ABS_DECLOR, 0))))));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operand of sizeof has neither function type nor an incomplete type\n"));
 
     run_expr_resolver_error_test(input, NULL, NULL, expected);
 

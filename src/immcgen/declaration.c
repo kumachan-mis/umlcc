@@ -109,7 +109,7 @@ Vector* gen_initializer_immcode(Immcgen* immcgen) {
             return gen_array_initializer_immcode(immcgen);
         case DTYPE_STRUCT:
             if (dtype->dstruct->members == NULL) {
-                immcgen->initialized_dtype = tagtable_search_struct(immcgen->tag_table, dtype->dstruct->name);
+                immcgen->initialized_dtype = tagtable_search(immcgen->tag_table, dtype->dstruct->name);
             }
             return gen_struct_initializer_immcode(immcgen);
         default:

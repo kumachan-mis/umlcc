@@ -15,8 +15,10 @@ ParserReturn* parse_decl(Parser* parser) {
     Ast* child_ast = NULL;
     Error* err = NULL;
 
+    int original_typedef_flag = parser->typedef_flag;
     parserret_assign(&child_ast, &err, parse_decl_specifiers(parser));
     if (err != NULL) {
+        parser->typedef_flag = original_typedef_flag;
         delete_ast(ast);
         return new_parserret_error(err);
     }
@@ -25,11 +27,13 @@ ParserReturn* parse_decl(Parser* parser) {
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     if (ctoken->type == CTOKEN_SEMICOLON) {
+        parser->typedef_flag = original_typedef_flag;
         parser->index++;
         return new_parserret(ast);
     }
 
     parserret_assign(&child_ast, &err, parse_init_declarator_list(parser));
+    parser->typedef_flag = original_typedef_flag;
     if (err != NULL) {
         delete_ast(ast);
         return new_parserret_error(err);
@@ -51,8 +55,10 @@ ParserReturn* parse_type_name(Parser* parser) {
     Ast* child_ast = NULL;
     Error* err = NULL;
 
+    int original_typedef_flag = parser->typedef_flag;
     parserret_assign(&child_ast, &err, parse_specifier_qualifier_list(parser));
     if (err != NULL) {
+        parser->typedef_flag = original_typedef_flag;
         delete_ast(ast);
         return new_parserret_error(err);
     }
@@ -61,6 +67,7 @@ ParserReturn* parse_type_name(Parser* parser) {
 
     int index = parser->index;
     parserret_assign(&child_ast, &err, parse_abstract_declarator(parser));
+    parser->typedef_flag = original_typedef_flag;
     if (err != NULL) {
         parser->index = index;
         delete_error(err);
@@ -142,6 +149,7 @@ ParserReturn* parse_specifier_qualifier_list(Parser* parser) {
         return new_parserret_error(err);
     }
 
+    parser->typedef_flag = 0;
     return new_parserret(ast);
 }
 
@@ -276,8 +284,10 @@ ParserReturn* parse_struct_decl(Parser* parser) {
     Ast* child_ast = NULL;
     Error* err = NULL;
 
+    int original_typedef_flag = parser->typedef_flag;
     parserret_assign(&child_ast, &err, parse_specifier_qualifier_list(parser));
     if (err != NULL) {
+        parser->typedef_flag = original_typedef_flag;
         delete_ast(ast);
         return new_parserret_error(err);
     }
@@ -285,6 +295,7 @@ ParserReturn* parse_struct_decl(Parser* parser) {
     vector_push(ast->children, child_ast);
 
     parserret_assign(&child_ast, &err, parse_struct_declarator_list(parser));
+    parser->typedef_flag = original_typedef_flag;
     if (err != NULL) {
         delete_ast(ast);
         return new_parserret_error(err);
@@ -428,10 +439,8 @@ ParserReturn* parse_init_declarator_list(Parser* parser) {
     Ast* ast = new_ast(AST_INIT_DECLOR_LIST, 0);
     Ast* child_ast = NULL;
     Error* err = NULL;
-    int typedef_flag = parser->typedef_flag;
 
     while (1) {
-        parser->typedef_flag = typedef_flag;
         parserret_assign(&child_ast, &err, parse_init_declarator(parser));
         if (err != NULL) break;
 
@@ -632,10 +641,7 @@ ParserReturn* parse_direct_declarator_common(Parser* parser, int abstract) {
 
             parser->index++;
             terminal_ast = new_identifier_ast(AST_IDENT_DECLOR, new_string(ctoken->ident_name));
-            if (parser->typedef_flag) {
-                set_add(parser->typedef_names_set, new_string(terminal_ast->ident_name));
-                parser->typedef_flag = 0;
-            }
+            if (parser->typedef_flag) set_add(parser->typedef_names_set, new_string(terminal_ast->ident_name));
             break;
         default:
             if (abstract) {
@@ -704,10 +710,8 @@ ParserReturn* parse_parameter_list(Parser* parser) {
     Ast* ast = new_ast(AST_PARAM_LIST, 0);
     Ast* child_ast = NULL;
     Error* err = NULL;
-    int typedef_flag = parser->typedef_flag;
 
     while (1) {
-        parser->typedef_flag = typedef_flag;
         parserret_assign(&child_ast, &err, parse_parameter_decl(parser));
         if (err != NULL) break;
         vector_push(ast->children, child_ast);
@@ -730,8 +734,10 @@ ParserReturn* parse_parameter_decl(Parser* parser) {
     Ast* child_ast = NULL;
     Error* err = NULL;
 
+    int original_typedef_flag = parser->typedef_flag;
     parserret_assign(&child_ast, &err, parse_decl_specifiers(parser));
     if (err != NULL) {
+        parser->typedef_flag = original_typedef_flag;
         delete_ast(ast);
         return new_parserret_error(err);
     }
@@ -741,6 +747,7 @@ ParserReturn* parse_parameter_decl(Parser* parser) {
     int index = index = parser->index;
     parserret_assign(&child_ast, &err, parse_declarator(parser));
     if (err == NULL) {
+        parser->typedef_flag = original_typedef_flag;
         vector_push(ast->children, child_ast);
         return new_parserret(ast);
     }
@@ -750,11 +757,13 @@ ParserReturn* parse_parameter_decl(Parser* parser) {
     parser->index = index;
     parserret_assign(&child_ast, &err, parse_abstract_declarator(parser));
     if (err != NULL) {
+        parser->typedef_flag = original_typedef_flag;
         delete_ast(ast);
         return new_parserret_error(err);
     }
 
     vector_push(ast->children, child_ast);
+    parser->typedef_flag = original_typedef_flag;
     return new_parserret(ast);
 }
 

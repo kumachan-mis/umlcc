@@ -39,6 +39,7 @@ ResolverReturn* resolve_expr(Resolver* resolver) {
         case AST_ADDR_EXPR:
         case AST_INDIR_EXPR:
         case AST_LNOT_EXPR:
+        case AST_SIZEOF_EXPR:
             resolverret_assign(&srt, &errs, resolve_unary_expr(resolver));
             break;
         case AST_SUBSC_EXPR:
@@ -523,6 +524,7 @@ ResolverReturn* resolve_unary_expr(Resolver* resolver) {
     ResolverReturn* resolve_address_expr(Resolver * resolver);
     ResolverReturn* resolve_indirection_expr(Resolver * resolver);
     ResolverReturn* resolve_logical_not_expr(Resolver * resolver);
+    ResolverReturn* resolve_sizeof_expr(Resolver * resolver);
 
     Srt* srt = NULL;
     Vector* errs = NULL;
@@ -537,6 +539,9 @@ ResolverReturn* resolve_unary_expr(Resolver* resolver) {
             break;
         case AST_LNOT_EXPR:
             resolverret_assign(&srt, &errs, resolve_logical_not_expr(resolver));
+            break;
+        case AST_SIZEOF_EXPR:
+            resolverret_assign(&srt, &errs, resolve_sizeof_expr(resolver));
             break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
@@ -631,6 +636,45 @@ ResolverReturn* resolve_logical_not_expr(Resolver* resolver) {
 
     dtype = new_integer_dtype(DTYPE_INT);
     srt = new_dtyped_srt(SRT_LNOT_EXPR, dtype, 1, child_srt);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_sizeof_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    Srt* child_srt = NULL;
+    DType* child_dtype = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    if (resolver->ast->type == AST_TYPE_NAME) {
+        resolverret_dtype_assign(&child_dtype, &errs, resolve_type_name(resolver));
+    } else {
+        resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
+    }
+    resolver->ast = ast;
+
+    if (errs != NULL) return new_resolverret_errors(errs);
+
+    if (child_dtype == NULL) {
+        child_dtype = dtype_copy(child_srt->dtype);
+        delete_srt(child_srt);
+    }
+
+    if (child_dtype->type == DTYPE_FUNCTION || dtype_isincomplete(child_dtype)) {
+        errs = new_vector(&t_error);
+        err = new_error("operand of sizeof has neither function type nor an incomplete type\n");
+        vector_push(errs, err);
+        delete_dtype(child_dtype);
+        return new_resolverret_errors(errs);
+    }
+
+    DType* dtype = new_integer_dtype(DTYPE_INT);
+    IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, dtype_nbytes(child_dtype));
+    delete_dtype(child_dtype);
+
+    srt = new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
     return new_resolverret(srt);
 }
 
@@ -808,7 +852,7 @@ ResolverReturn* resolve_member_like_expr(Resolver* resolver) {
     DType* original_member_dtype = resolver->expr_dtype;
     resolver->expr_dtype = lhs_srt->dtype->dpointer->to_dtype;
     if (resolver->expr_dtype->dstruct->members == NULL) {
-        resolver->expr_dtype = tagtable_search_struct(resolver->tag_table, resolver->expr_dtype->dstruct->name);
+        resolver->expr_dtype = tagtable_search(resolver->tag_table, resolver->expr_dtype->dstruct->name);
     }
 
     if (resolver->expr_dtype == NULL) {

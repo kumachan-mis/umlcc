@@ -12,6 +12,7 @@ Map* new_keyword_map(void) {
     ctoken_map_add(keyword_map, "enum", CTOKEN_KEYWORD_ENUM);
     ctoken_map_add(keyword_map, "int", CTOKEN_KEYWORD_INT);
     ctoken_map_add(keyword_map, "return", CTOKEN_KEYWORD_RETURN);
+    ctoken_map_add(keyword_map, "sizeof", CTOKEN_KEYWORD_SIZEOF);
     ctoken_map_add(keyword_map, "struct", CTOKEN_KEYWORD_STRUCT);
     ctoken_map_add(keyword_map, "typedef", CTOKEN_KEYWORD_TYPEDEF);
     ctoken_map_add(keyword_map, "void", CTOKEN_KEYWORD_VOID);

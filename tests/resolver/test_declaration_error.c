@@ -263,7 +263,7 @@ void test_resolve_struct_error_duplicated(void) {
     TagTable* global_tag_table = tagtable_copy(local_tag_table);
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("struct 'Struct' is already declared\n"));
+    vector_push(expected, new_error("tag 'Struct' is already declared\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, local_tag_table, expected);
     run_global_decl_resolver_error_test(global_input, NULL, global_tag_table, expected);
@@ -363,7 +363,7 @@ void test_resolve_enum_error_duplicated(void) {
     TagTable* global_tag_table = tagtable_copy(local_tag_table);
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("enum 'Enum' is already declared\n"));
+    vector_push(expected, new_error("tag 'Enum' is already declared\n"));
 
     run_local_decl_resolver_error_test(local_input, NULL, local_tag_table, expected);
     run_global_decl_resolver_error_test(global_input, NULL, global_tag_table, expected);

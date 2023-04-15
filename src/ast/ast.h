@@ -78,6 +78,7 @@ typedef enum AstType {
     AST_ADDR_EXPR,
     AST_INDIR_EXPR,
     AST_LNOT_EXPR,
+    AST_SIZEOF_EXPR,
     //   postfix-expression
     AST_SUBSC_EXPR,
     AST_CALL_EXPR,
