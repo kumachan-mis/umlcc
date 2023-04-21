@@ -74,10 +74,15 @@ void test_read_function_definition(void) {
 }
 
 void test_read_declaration_without_init(void) {
-    char* input = "typedef int* ptr2int; char* input; typedef struct X { int m; } X; typedef enum Y { PLUS, MINUS } Y;"
+    char* input = "unsigned int uint; typedef int* ptr2int; char* input;"
+                  "typedef struct X { int m; } X; typedef enum Y { PLUS, MINUS } Y;"
                   "void put_int(int);";
 
     Vector* expected = new_vector(&t_ctoken);
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_UNSIGNED));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("uint")));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_TYPEDEF));
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(expected, new_ctoken(CTOKEN_ASTERISK));
