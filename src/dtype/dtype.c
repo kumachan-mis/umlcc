@@ -242,11 +242,11 @@ int dtype_isassignable(DType* dtype, DType* other) {
 }
 
 int dtype_isinteger(DType* dtype) {
-    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_INT) || dtype->type == DTYPE_ENUM;
+    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_UNSIGNED_LONGLONG) || dtype->type == DTYPE_ENUM;
 }
 
 int dtype_isarithmetic(DType* dtype) {
-    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_INT) || dtype->type == DTYPE_ENUM;
+    return (DTYPE_CHAR <= dtype->type && dtype->type <= DTYPE_UNSIGNED_LONGLONG) || dtype->type == DTYPE_ENUM;
 }
 
 int dtype_isscalar(DType* dtype) {
@@ -271,7 +271,14 @@ int dtype_alignment(DType* dtype) {
         case DTYPE_CHAR:
             return 1;
         case DTYPE_INT:
+        case DTYPE_UNSIGNED_INT:
             return 4;
+        case DTYPE_LONG:
+        case DTYPE_UNSIGNED_LONG:
+            return 4;
+        case DTYPE_LONGLONG:
+        case DTYPE_UNSIGNED_LONGLONG:
+            return 8;
         case DTYPE_POINTER:
             return 8;
         case DTYPE_ARRAY:
@@ -290,7 +297,14 @@ int dtype_nbytes(DType* dtype) {
         case DTYPE_CHAR:
             return 1;
         case DTYPE_INT:
+        case DTYPE_UNSIGNED_INT:
             return 4;
+        case DTYPE_LONG:
+        case DTYPE_UNSIGNED_LONG:
+            return 4;
+        case DTYPE_LONGLONG:
+        case DTYPE_UNSIGNED_LONGLONG:
+            return 8;
         case DTYPE_POINTER:
             return 8;
         case DTYPE_ARRAY:
