@@ -99,11 +99,19 @@ Map* new_integer_suffix_map(void) {
     integer_suffix_map_add(integer_suffix_map, "Ul", INTEGER_UNSIGNED_LONG);
     integer_suffix_map_add(integer_suffix_map, "uL", INTEGER_UNSIGNED_LONG);
     integer_suffix_map_add(integer_suffix_map, "UL", INTEGER_UNSIGNED_LONG);
+    integer_suffix_map_add(integer_suffix_map, "lu", INTEGER_UNSIGNED_LONG);
+    integer_suffix_map_add(integer_suffix_map, "Lu", INTEGER_UNSIGNED_LONG);
+    integer_suffix_map_add(integer_suffix_map, "lU", INTEGER_UNSIGNED_LONG);
+    integer_suffix_map_add(integer_suffix_map, "LU", INTEGER_UNSIGNED_LONG);
 
     integer_suffix_map_add(integer_suffix_map, "ull", INTEGER_UNSIGNED_LONGLONG);
     integer_suffix_map_add(integer_suffix_map, "Ull", INTEGER_UNSIGNED_LONGLONG);
     integer_suffix_map_add(integer_suffix_map, "uLL", INTEGER_UNSIGNED_LONGLONG);
     integer_suffix_map_add(integer_suffix_map, "ULL", INTEGER_UNSIGNED_LONGLONG);
+    integer_suffix_map_add(integer_suffix_map, "llu", INTEGER_UNSIGNED_LONGLONG);
+    integer_suffix_map_add(integer_suffix_map, "LLu", INTEGER_UNSIGNED_LONGLONG);
+    integer_suffix_map_add(integer_suffix_map, "llU", INTEGER_UNSIGNED_LONGLONG);
+    integer_suffix_map_add(integer_suffix_map, "LLU", INTEGER_UNSIGNED_LONGLONG);
 
     return integer_suffix_map;
 }
