@@ -5,13 +5,15 @@
 
 typedef enum IntegerLiteralType {
     INTEGER_INT,
+    INTEGER_UNSIGNED_INT,
     INTEGER_LONG,
+    INTEGER_UNSIGNED_LONG,
     INTEGER_LONGLONG,
+    INTEGER_UNSIGNED_LONGLONG,
 } IntegerLiteralType;
 
 typedef struct IntegerLiteral {
     IntegerLiteralType type;
-    int is_unsigned;
     long long signed_value;
     unsigned long long unsigned_value;
 } IntegerLiteral;
@@ -23,5 +25,7 @@ IntegerLiteral* new_unsigned_iliteral(IntegerLiteralType type, unsigned long lon
 IntegerLiteral* iliteral_copy(IntegerLiteral* iliteral);
 char* iliteral_display_string(IntegerLiteral* iliteral);
 void delete_iliteral(IntegerLiteral* iliteral);
+
+int iliteral_type_isunsigned(IntegerLiteralType type);
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 
+void integer_suffix_map_add(Map* integer_suffix_map, char* suffix_str, IntegerLiteralType type);
 void ctoken_map_add(Map* ctoken_map, char* ctoken_str, CTokenType type);
 
 Map* new_keyword_map(void) {
@@ -82,6 +83,31 @@ Map* new_hexdigit_map(void) {
     return hexdigit_map;
 }
 
+Map* new_integer_suffix_map(void) {
+    Map* integer_suffix_map = new_map(&t_hashable_string, &t_integer);
+
+    integer_suffix_map_add(integer_suffix_map, "l", INTEGER_LONG);
+    integer_suffix_map_add(integer_suffix_map, "L", INTEGER_LONG);
+
+    integer_suffix_map_add(integer_suffix_map, "ll", INTEGER_LONGLONG);
+    integer_suffix_map_add(integer_suffix_map, "LL", INTEGER_LONGLONG);
+
+    integer_suffix_map_add(integer_suffix_map, "u", INTEGER_UNSIGNED_INT);
+    integer_suffix_map_add(integer_suffix_map, "U", INTEGER_UNSIGNED_INT);
+
+    integer_suffix_map_add(integer_suffix_map, "ul", INTEGER_UNSIGNED_LONG);
+    integer_suffix_map_add(integer_suffix_map, "Ul", INTEGER_UNSIGNED_LONG);
+    integer_suffix_map_add(integer_suffix_map, "uL", INTEGER_UNSIGNED_LONG);
+    integer_suffix_map_add(integer_suffix_map, "UL", INTEGER_UNSIGNED_LONG);
+
+    integer_suffix_map_add(integer_suffix_map, "ull", INTEGER_UNSIGNED_LONGLONG);
+    integer_suffix_map_add(integer_suffix_map, "Ull", INTEGER_UNSIGNED_LONGLONG);
+    integer_suffix_map_add(integer_suffix_map, "uLL", INTEGER_UNSIGNED_LONGLONG);
+    integer_suffix_map_add(integer_suffix_map, "ULL", INTEGER_UNSIGNED_LONGLONG);
+
+    return integer_suffix_map;
+}
+
 Map* new_punctuator_map(void) {
     Map* punctuator_map = new_map(&t_hashable_string, &t_integer);
 
@@ -124,11 +150,14 @@ Set* new_white_space_set(void) {
     return white_space_set;
 }
 
-void ctoken_map_add(Map* ctoken_map, char* ctoken_str, CTokenType type) {
-    char* key = new_string(ctoken_str);
-    CTokenType* value = malloc(sizeof(CTokenType));
-    *value = type;
-    map_add(ctoken_map, key, value);
+IntegerLiteral* create_iliteral(char* value, int base, IntegerLiteralType type) {
+    if (iliteral_type_isunsigned(type)) {
+        unsigned long long unsigned_value = strtoull(value, NULL, base);
+        return new_unsigned_iliteral(type, unsigned_value);
+    } else {
+        long long signed_value = strtoll(value, NULL, base);
+        return new_signed_iliteral(type, signed_value);
+    }
 }
 
 void skip_white_spaces(Lexer* lexer) {
@@ -137,4 +166,18 @@ void skip_white_spaces(Lexer* lexer) {
         c = fgetc(lexer->file_ptr);
     }
     ungetc(c, lexer->file_ptr);
+}
+
+void integer_suffix_map_add(Map* integer_suffix_map, char* suffix_str, IntegerLiteralType type) {
+    char* key = new_string(suffix_str);
+    IntegerLiteralType* value = malloc(sizeof(IntegerLiteralType));
+    *value = type;
+    map_add(integer_suffix_map, key, value);
+}
+
+void ctoken_map_add(Map* ctoken_map, char* ctoken_str, CTokenType type) {
+    char* key = new_string(ctoken_str);
+    CTokenType* value = malloc(sizeof(CTokenType));
+    *value = type;
+    map_add(ctoken_map, key, value);
 }

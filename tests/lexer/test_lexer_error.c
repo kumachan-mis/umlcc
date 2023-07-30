@@ -3,6 +3,7 @@
 #include "../testlib/testlib.h"
 
 void test_read_error_character(void);
+void test_read_integer_constant_error_empty(void);
 void test_read_character_constant_error_empty(void);
 void test_read_character_constant_error_newline(void);
 void test_read_character_constant_error_escape_sequence(void);
@@ -14,6 +15,7 @@ void run_lexer_error_test(char* input, Error* expected);
 CU_Suite* add_test_suite_lexer_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_lexer_error", NULL, NULL);
     CU_ADD_TEST(suite, test_read_error_character);
+    CU_ADD_TEST(suite, test_read_integer_constant_error_empty);
     CU_ADD_TEST(suite, test_read_character_constant_error_empty);
     CU_ADD_TEST(suite, test_read_character_constant_error_newline);
     CU_ADD_TEST(suite, test_read_character_constant_error_escape_sequence);
@@ -25,6 +27,15 @@ CU_Suite* add_test_suite_lexer_error(void) {
 void test_read_error_character(void) {
     char* input = "@variable = 1;\n";
     Error* expected = new_error("unexpected character '@'\n");
+
+    run_lexer_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_read_integer_constant_error_empty(void) {
+    char* input = "num = 0x";
+    Error* expected = new_error("integer constant digits are empty\n");
 
     run_lexer_error_test(input, expected);
 

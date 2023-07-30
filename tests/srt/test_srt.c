@@ -95,7 +95,7 @@ void test_new_dtyped_srt(void) {
         CU_ASSERT_PTR_EQUAL(child_srt->dtype, lhs_dtype);
         CU_ASSERT_PTR_NULL(child_srt->ident_name);
         CU_ASSERT_EQUAL(child_srt->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(child_srt->iliteral->is_unsigned);
+        CU_ASSERT_FALSE(iliteral_type_isunsigned(child_srt->iliteral->type));
         CU_ASSERT_EQUAL(child_srt->iliteral->signed_value, 6);
         CU_ASSERT_EQUAL(child_srt->iliteral->unsigned_value, 0ULL);
         CU_ASSERT_PTR_NULL(child_srt->sliteral);
@@ -106,7 +106,7 @@ void test_new_dtyped_srt(void) {
         CU_ASSERT_PTR_EQUAL(child_srt->dtype, rhs_dtype);
         CU_ASSERT_PTR_NULL(child_srt->ident_name);
         CU_ASSERT_EQUAL(child_srt->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(child_srt->iliteral->is_unsigned);
+        CU_ASSERT_FALSE(iliteral_type_isunsigned(child_srt->iliteral->type));
         CU_ASSERT_EQUAL(child_srt->iliteral->signed_value, 3);
         CU_ASSERT_EQUAL(child_srt->iliteral->unsigned_value, 0ULL);
         CU_ASSERT_PTR_NULL(child_srt->sliteral);
@@ -154,7 +154,7 @@ void test_new_iliteral_srt_int(void) {
         CU_ASSERT_PTR_EQUAL(srt->dtype, dtype);
         CU_ASSERT_PTR_NULL(srt->ident_name);
         CU_ASSERT_EQUAL(srt->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(srt->iliteral->is_unsigned);
+        CU_ASSERT_FALSE(iliteral_type_isunsigned(srt->iliteral->type));
         CU_ASSERT_EQUAL(srt->iliteral->signed_value, 6);
         CU_ASSERT_EQUAL(srt->iliteral->unsigned_value, 0ULL);
         CU_ASSERT_PTR_NULL(srt->sliteral);
@@ -181,7 +181,7 @@ void test_new_iliteral_srt_char(void) {
         CU_ASSERT_PTR_EQUAL(srt->dtype, dtype);
         CU_ASSERT_PTR_NULL(srt->ident_name);
         CU_ASSERT_EQUAL(srt->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(srt->iliteral->is_unsigned);
+        CU_ASSERT_FALSE(iliteral_type_isunsigned(srt->iliteral->type));
         CU_ASSERT_EQUAL(srt->iliteral->signed_value, 89);
         CU_ASSERT_EQUAL(srt->iliteral->unsigned_value, 0ULL);
         CU_ASSERT_PTR_NULL(srt->sliteral);

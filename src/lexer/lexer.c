@@ -12,6 +12,7 @@ Lexer* new_lexer(FILE* file_ptr) {
     lexer->octdigit_map = new_octdigit_map();
     lexer->digit_map = new_digit_map();
     lexer->hexdigit_map = new_hexdigit_map();
+    lexer->integer_suffix_map = new_integer_suffix_map();
     lexer->punctuator_map = new_punctuator_map();
     lexer->white_space_set = new_white_space_set();
     return lexer;
@@ -63,6 +64,7 @@ void delete_lexer(Lexer* lexer) {
     delete_map(lexer->octdigit_map);
     delete_map(lexer->digit_map);
     delete_map(lexer->hexdigit_map);
+    delete_map(lexer->integer_suffix_map);
     delete_map(lexer->punctuator_map);
     delete_set(lexer->white_space_set);
     free(lexer);

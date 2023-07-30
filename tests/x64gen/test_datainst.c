@@ -282,9 +282,9 @@ void test_x64gen_str_byte(void) {
 
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                             // inst
-                             new_unsigned_x64ope(X64_SUFFIX_BYTE, INTEGER_LONGLONG, 0), // src
-                             new_mem_x64ope(1)));                                       // dst
+                new_inst_x64(X64_INST_MOVX,                                                      // inst
+                             new_unsigned_x64ope(X64_SUFFIX_BYTE, INTEGER_UNSIGNED_LONGLONG, 0), // src
+                             new_mem_x64ope(1)));                                                // dst
 
     run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -312,7 +312,7 @@ void test_x64gen_str_word(void) {
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVABSX, // inst
-                             new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_LONGLONG,
+                             new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_UNSIGNED_LONGLONG,
                                                  0x3837363534333231U),      // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID))); // dst
     vector_push(expected,
@@ -320,9 +320,9 @@ void test_x64gen_str_word(void) {
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID), // src
                              new_mem_x64ope(10)));                        // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                                 // inst
-                             new_unsigned_x64ope(X64_SUFFIX_WORD, INTEGER_LONGLONG, 0x39U), // src
-                             new_mem_x64ope(2)));                                           // dst
+                new_inst_x64(X64_INST_MOVX,                                                          // inst
+                             new_unsigned_x64ope(X64_SUFFIX_WORD, INTEGER_UNSIGNED_LONGLONG, 0x39U), // src
+                             new_mem_x64ope(2)));                                                    // dst
 
     run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -350,7 +350,7 @@ void test_x64gen_str_long(void) {
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVABSX, // inst
-                             new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_LONGLONG,
+                             new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_UNSIGNED_LONGLONG,
                                                  0x4847464544434241U),      // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID))); // dst
     vector_push(expected,
@@ -358,9 +358,9 @@ void test_x64gen_str_long(void) {
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID), // src
                              new_mem_x64ope(12)));                        // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                                     // inst
-                             new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_LONGLONG, 0x4B4A49U), // src
-                             new_mem_x64ope(4)));                                               // dst
+                new_inst_x64(X64_INST_MOVX,                                                              // inst
+                             new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_UNSIGNED_LONGLONG, 0x4B4A49U), // src
+                             new_mem_x64ope(4)));                                                        // dst
 
     run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -388,7 +388,7 @@ void test_x64gen_str_quad(void) {
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVABSX, // inst
-                             new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_LONGLONG,
+                             new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_UNSIGNED_LONGLONG,
                                                  0x4847464544434241U),      // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID))); // dst
     vector_push(expected,
@@ -397,7 +397,7 @@ void test_x64gen_str_quad(void) {
                              new_mem_x64ope(16)));                        // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVABSX, // inst
-                             new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_LONGLONG,
+                             new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_UNSIGNED_LONGLONG,
                                                  0x4F4E4D4C4B4A49U),        // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID))); // dst
     vector_push(expected,
@@ -431,7 +431,7 @@ void test_x64gen_str_other(void) {
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVABSX, // inst
-                             new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_LONGLONG,
+                             new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_UNSIGNED_LONGLONG,
                                                  0x4847464544434241U),      // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID))); // dst
     vector_push(expected,
@@ -440,7 +440,7 @@ void test_x64gen_str_other(void) {
                              new_mem_x64ope(11)));                        // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVABSX, // inst
-                             new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_LONGLONG,
+                             new_unsigned_x64ope(X64_SUFFIX_QUAD, INTEGER_UNSIGNED_LONGLONG,
                                                  0x4A494847464544U),        // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID))); // dst
     vector_push(expected,

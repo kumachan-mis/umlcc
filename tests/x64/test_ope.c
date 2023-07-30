@@ -206,7 +206,7 @@ void test_new_int_x64ope(void) {
         CU_ASSERT_EQUAL(ope->mem_offset, -1);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(ope->iliteral->is_unsigned);
+        CU_ASSERT_FALSE(iliteral_type_isunsigned(ope->iliteral->type));
         CU_ASSERT_EQUAL(ope->iliteral->signed_value, 56);
         CU_ASSERT_EQUAL(ope->iliteral->unsigned_value, 0ULL);
     }
@@ -229,7 +229,7 @@ void test_new_signed_x64ope(void) {
         CU_ASSERT_EQUAL(ope->mem_offset, -1);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(ope->iliteral->is_unsigned);
+        CU_ASSERT_FALSE(iliteral_type_isunsigned(ope->iliteral->type));
         CU_ASSERT_EQUAL(ope->iliteral->signed_value, 14);
         CU_ASSERT_EQUAL(ope->iliteral->unsigned_value, 0ULL);
     }
@@ -238,7 +238,7 @@ void test_new_signed_x64ope(void) {
 }
 
 void test_new_unsigned_x64ope(void) {
-    X64Ope* ope = new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 2147483648U);
+    X64Ope* ope = new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_UNSIGNED_INT, 2147483648U);
 
     for (int i = 0; i < 2; i++) {
         if (i > 0) {
@@ -251,8 +251,8 @@ void test_new_unsigned_x64ope(void) {
         CU_ASSERT_EQUAL(ope->reg_id, -1);
         CU_ASSERT_EQUAL(ope->mem_offset, -1);
         CU_ASSERT_PTR_NULL(ope->label_name);
-        CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_INT);
-        CU_ASSERT_TRUE(ope->iliteral->is_unsigned);
+        CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_UNSIGNED_INT);
+        CU_ASSERT_TRUE(iliteral_type_isunsigned(ope->iliteral->type));
         CU_ASSERT_EQUAL(ope->iliteral->signed_value, -1LL);
         CU_ASSERT_EQUAL(ope->iliteral->unsigned_value, 2147483648U);
     }
@@ -351,7 +351,7 @@ void test_x64ope_tostring_signed(void) {
 }
 
 void test_x64ope_tostring_unsigned(void) {
-    X64Ope* ope = new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 2147483648U);
+    X64Ope* ope = new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_UNSIGNED_INT, 2147483648U);
     char* ope_str = x64ope_tostring(ope);
 
     CU_ASSERT_STRING_EQUAL(ope_str, "$2147483648");

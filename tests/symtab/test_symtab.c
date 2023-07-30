@@ -44,7 +44,7 @@ void test_symboltable_define_integer(void) {
         CU_ASSERT_STRING_EQUAL(symbol->name, ident_name);
         CU_ASSERT_EQUAL(symbol->memory_offset, -1);
         CU_ASSERT_TRUE(dtype_equals(symbol->dtype, ident_dtype));
-        CU_ASSERT_FALSE(symbol->iliteral->is_unsigned);
+        CU_ASSERT_FALSE(iliteral_type_isunsigned(symbol->iliteral->type));
         CU_ASSERT_EQUAL(symbol->iliteral->signed_value, 0);
         CU_ASSERT_EQUAL(symbol->iliteral->unsigned_value, 0ULL);
     }
@@ -64,7 +64,7 @@ void test_symboltable_define_integer(void) {
         CU_ASSERT_STRING_EQUAL(symbol->name, symbol_name);
         CU_ASSERT_EQUAL(symbol->memory_offset, -1);
         CU_ASSERT_TRUE(dtype_equals(symbol->dtype, symbol_dtype));
-        CU_ASSERT_FALSE(symbol->iliteral->is_unsigned);
+        CU_ASSERT_FALSE(iliteral_type_isunsigned(symbol->iliteral->type));
         CU_ASSERT_EQUAL(symbol->iliteral->signed_value, 2);
         CU_ASSERT_EQUAL(symbol->iliteral->unsigned_value, 0ULL);
     }

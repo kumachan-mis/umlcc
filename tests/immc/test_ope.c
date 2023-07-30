@@ -165,7 +165,7 @@ void test_new_int_immcope(void) {
         CU_ASSERT_EQUAL(ope->mem_offset, -1);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(ope->iliteral->is_unsigned);
+        CU_ASSERT_FALSE(iliteral_type_isunsigned(ope->iliteral->type));
         CU_ASSERT_EQUAL(ope->iliteral->signed_value, 10);
         CU_ASSERT_EQUAL(ope->iliteral->unsigned_value, 0ULL);
         CU_ASSERT_PTR_NULL(ope->sliteral);
@@ -189,7 +189,7 @@ void test_new_signed_immcope(void) {
         CU_ASSERT_EQUAL(ope->mem_offset, -1);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(ope->iliteral->is_unsigned);
+        CU_ASSERT_FALSE(iliteral_type_isunsigned(ope->iliteral->type));
         CU_ASSERT_EQUAL(ope->iliteral->signed_value, 32);
         CU_ASSERT_EQUAL(ope->iliteral->unsigned_value, 0ULL);
         CU_ASSERT_PTR_NULL(ope->sliteral);
@@ -199,7 +199,7 @@ void test_new_signed_immcope(void) {
 }
 
 void test_new_unsigned_immcope(void) {
-    ImmcOpe* ope = new_unsigned_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2147483648U);
+    ImmcOpe* ope = new_unsigned_immcope(IMMC_SUFFIX_LONG, INTEGER_UNSIGNED_INT, 2147483648U);
 
     for (int i = 0; i < 2; i++) {
         if (i > 0) {
@@ -212,8 +212,8 @@ void test_new_unsigned_immcope(void) {
         CU_ASSERT_EQUAL(ope->reg_id, -1);
         CU_ASSERT_EQUAL(ope->mem_offset, -1);
         CU_ASSERT_PTR_NULL(ope->label_name);
-        CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_INT);
-        CU_ASSERT_TRUE(ope->iliteral->is_unsigned);
+        CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_UNSIGNED_INT);
+        CU_ASSERT_TRUE(iliteral_type_isunsigned(ope->iliteral->type));
         CU_ASSERT_EQUAL(ope->iliteral->signed_value, -1LL);
         CU_ASSERT_EQUAL(ope->iliteral->unsigned_value, 2147483648U);
         CU_ASSERT_PTR_NULL(ope->sliteral);
@@ -322,7 +322,7 @@ void test_immcope_tostring_signed(void) {
 }
 
 void test_immcope_tostring_unsigned(void) {
-    ImmcOpe* ope = new_unsigned_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2147483648U);
+    ImmcOpe* ope = new_unsigned_immcope(IMMC_SUFFIX_LONG, INTEGER_UNSIGNED_INT, 2147483648U);
     char* ope_str = immcope_tostring(ope);
 
     CU_ASSERT_STRING_EQUAL(ope_str, "2147483648");

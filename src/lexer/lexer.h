@@ -15,6 +15,7 @@ typedef struct Lexer {
     Map* octdigit_map;
     Map* digit_map;
     Map* hexdigit_map;
+    Map* integer_suffix_map;
     Map* punctuator_map;
     Set* white_space_set;
 } Lexer;
