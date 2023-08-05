@@ -54,7 +54,8 @@ int ctoken_is_storage_class_specifier(CToken* ctoken) {
 
 int ctoken_is_type_specifier(CToken* ctoken, Set* typedef_names_set) {
     return ctoken->type == CTOKEN_KEYWORD_VOID || ctoken->type == CTOKEN_KEYWORD_CHAR ||
-           ctoken->type == CTOKEN_KEYWORD_INT || ctoken->type == CTOKEN_KEYWORD_STRUCT ||
+           ctoken->type == CTOKEN_KEYWORD_INT || ctoken->type == CTOKEN_KEYWORD_LONG ||
+           ctoken->type == CTOKEN_KEYWORD_UNSIGNED || ctoken->type == CTOKEN_KEYWORD_STRUCT ||
            ctoken->type == CTOKEN_KEYWORD_ENUM ||
            (ctoken->type == CTOKEN_IDENT && set_contains(typedef_names_set, ctoken->ident_name));
 }

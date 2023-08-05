@@ -355,9 +355,8 @@ void test_resolve_pointer_difference_expr(void) {
     symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
     symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
 
-    // In current implementation, ptrdiff_t is int
     Srt* expected = new_dtyped_srt(
-        SRT_PDIFF_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+        SRT_PDIFF_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), 2, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("p")),
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("q")));
 

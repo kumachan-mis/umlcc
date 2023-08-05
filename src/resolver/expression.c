@@ -393,7 +393,7 @@ ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
         return new_resolverret(srt);
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER &&
                dtype_iscompatible(lhs_srt->dtype, rhs_srt->dtype)) {
-        dtype = new_integer_dtype(DTYPE_INT);
+        dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
         srt = new_dtyped_srt(SRT_PDIFF_EXPR, dtype, 2, lhs_srt, rhs_srt);
         return new_resolverret(srt);
     }

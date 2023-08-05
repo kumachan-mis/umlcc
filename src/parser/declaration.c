@@ -189,6 +189,14 @@ ParserReturn* parse_type_specifier(Parser* parser) {
             parser->index++;
             ast = new_ast(AST_TYPE_INT, 0);
             break;
+        case CTOKEN_KEYWORD_LONG:
+            parser->index++;
+            ast = new_ast(AST_TYPE_LONG, 0);
+            break;
+        case CTOKEN_KEYWORD_UNSIGNED:
+            parser->index++;
+            ast = new_ast(AST_TYPE_UNSIGNED, 0);
+            break;
         case CTOKEN_KEYWORD_STRUCT:
             parserret_assign(&ast, &err, parse_struct_specifier(parser));
             break;

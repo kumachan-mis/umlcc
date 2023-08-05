@@ -1,5 +1,6 @@
 #include "./declaration.h"
 #include "../common/type.h"
+#include "../error/errint.h"
 #include "../literal/iliteral.h"
 #include "../set/set.h"
 #include "./conversion.h"
@@ -90,52 +91,93 @@ ResolverDTypeReturn* resolve_type_specifier_list(Resolver* resolver) {
 
     Ast* ast = resolver->ast;
 
-    if (vector_size(ast->children) != 1) {
+    int num_type_specifiers = vector_size(ast->children);
+    if (num_type_specifiers < 1 || num_type_specifiers > 4) {
+        // The longest type specifiers are "signed long long int" and "unsigned long long int"
         errs = new_vector(&t_error);
         err = new_error("combination of type specifiers is invalid\n");
         vector_push(errs, err);
         return new_resolverret_dtype_errors(errs);
     }
 
-    Ast* child_ast = vector_at(ast->children, 0);
-    switch (child_ast->type) {
-        case AST_TYPE_VOID:
-            dtype = new_void_dtype();
-            break;
-        case AST_TYPE_INT:
-            dtype = new_integer_dtype(DTYPE_INT);
-            break;
-        case AST_TYPE_CHAR:
-            dtype = new_integer_dtype(DTYPE_CHAR);
-            break;
-        case AST_TYPE_STRUCT:
-            resolver->ast = child_ast;
-            resolverret_dtype_assign(&dtype, &errs, resolve_struct_specifier(resolver));
-            resolver->ast = ast;
-            break;
-        case AST_TYPE_ENUM:
-            resolver->ast = child_ast;
-            resolverret_dtype_assign(&dtype, &errs, resolve_enum_specifier(resolver));
-            resolver->ast = ast;
-            break;
-        case AST_TYPEDEF_NAME: {
-            Symbol* symbol = symboltable_search(resolver->symbol_table, child_ast->ident_name);
-            dtype = dtype_copy(symbol->dtype->dtypedef->defined_dtype);
-            if (!dtype_isincomplete(dtype) || dtype->type != DTYPE_STRUCT) break;
+    AstType* type_specifiers = malloc(sizeof(AstType) * num_type_specifiers);
+    for (int i = 0; i < num_type_specifiers; i++) {
+        Ast* child = vector_at(ast->children, i);
+        type_specifiers[i] = child->type;
+    }
+    sort_ast_type(type_specifiers, 0, num_type_specifiers - 1);
 
-            DType* complete_dtype = tagtable_search(resolver->tag_table, dtype->dstruct->name);
-            if (complete_dtype == NULL || complete_dtype->type != DTYPE_STRUCT) break;
-
-            dtype->dstruct->nbytes = complete_dtype->dstruct->nbytes;
-            dtype->dstruct->alignment = complete_dtype->dstruct->alignment;
-            break;
-        }
-        default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
-                            "unreachable statement (in resolve_type_specifier_list)\n");
-            exit(1);
+    if (
+        // void
+        num_type_specifiers == 1 && type_specifiers[0] == AST_TYPE_VOID) {
+        dtype = new_void_dtype();
+    } else if (
+        // char
+        num_type_specifiers == 1 && type_specifiers[0] == AST_TYPE_CHAR) {
+        dtype = new_integer_dtype(DTYPE_CHAR);
+    } else if (
+        // int
+        num_type_specifiers == 1 && type_specifiers[0] == AST_TYPE_INT) {
+        dtype = new_integer_dtype(DTYPE_INT);
+    } else if (
+        // long
+        (num_type_specifiers == 1 && type_specifiers[0] == AST_TYPE_LONG) ||
+        // long int
+        (num_type_specifiers == 2 && type_specifiers[0] == AST_TYPE_INT && type_specifiers[1] == AST_TYPE_LONG)) {
+        dtype = new_integer_dtype(DTYPE_LONG);
+    } else if (
+        // long long
+        (num_type_specifiers == 2 && type_specifiers[0] == AST_TYPE_LONG && type_specifiers[1] == AST_TYPE_LONG) ||
+        // long long int
+        (num_type_specifiers == 3 && type_specifiers[0] == AST_TYPE_INT && type_specifiers[1] == AST_TYPE_LONG &&
+         type_specifiers[2] == AST_TYPE_LONG)) {
+        dtype = new_integer_dtype(DTYPE_LONGLONG);
+    } else if (
+        // unsigned
+        (num_type_specifiers == 1 && type_specifiers[0] == AST_TYPE_UNSIGNED) ||
+        // unsigned int
+        (num_type_specifiers == 2 && type_specifiers[0] == AST_TYPE_INT && type_specifiers[1] == AST_TYPE_UNSIGNED)) {
+        dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
+    } else if (
+        // unsigned long
+        (num_type_specifiers == 2 && type_specifiers[0] == AST_TYPE_LONG && type_specifiers[1] == AST_TYPE_UNSIGNED) ||
+        // unsigned long int
+        (num_type_specifiers == 3 && type_specifiers[0] == AST_TYPE_INT && type_specifiers[1] == AST_TYPE_LONG &&
+         type_specifiers[2] == AST_TYPE_UNSIGNED)) {
+        dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+    } else if (
+        // unsigned long long
+        (num_type_specifiers == 3 && type_specifiers[0] == AST_TYPE_LONG && type_specifiers[1] == AST_TYPE_LONG &&
+         type_specifiers[2] == AST_TYPE_UNSIGNED) ||
+        // unsigned long long int
+        (num_type_specifiers == 4 && type_specifiers[0] == AST_TYPE_INT && type_specifiers[1] == AST_TYPE_LONG &&
+         type_specifiers[2] == AST_TYPE_LONG && type_specifiers[3] == AST_TYPE_UNSIGNED)) {
+        dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+    } else if (
+        // struct
+        num_type_specifiers == 1 && type_specifiers[0] == AST_TYPE_STRUCT) {
+        resolver->ast = vector_at(ast->children, 0);
+        resolverret_dtype_assign(&dtype, &errs, resolve_struct_specifier(resolver));
+        resolver->ast = ast;
+    } else if (
+        // enum
+        num_type_specifiers == 1 && type_specifiers[0] == AST_TYPE_ENUM) {
+        resolver->ast = vector_at(ast->children, 0);
+        resolverret_dtype_assign(&dtype, &errs, resolve_enum_specifier(resolver));
+        resolver->ast = ast;
+    } else if (
+        // typedef-name
+        num_type_specifiers == 1 && type_specifiers[0] == AST_TYPEDEF_NAME) {
+        resolver->ast = vector_at(ast->children, 0);
+        resolverret_dtype_assign(&dtype, &errs, resolve_typedef_name_specifier(resolver));
+        resolver->ast = ast;
+    } else {
+        errs = new_vector(&t_error);
+        err = new_error("combination of type specifiers is invalid\n");
+        vector_push(errs, err);
     }
 
+    free(type_specifiers);
     if (errs != NULL) return new_resolverret_dtype_errors(errs);
     return new_resolverret_dtype(dtype);
 }
@@ -488,6 +530,36 @@ ResolverReturnDEnumMember* resolve_enumerator(Resolver* resolver) {
     resolver->default_enum_value = enum_value + 1;
 
     return new_resolverret_denummember(member);
+}
+
+ResolverDTypeReturn* resolve_typedef_name_specifier(Resolver* resolver) {
+    DType* dtype = NULL;
+
+    Ast* ast = resolver->ast;
+    Symbol* symbol = symboltable_search(resolver->symbol_table, ast->ident_name);
+
+    dtype = dtype_copy(symbol->dtype->dtypedef->defined_dtype);
+    if (!dtype_isincomplete(dtype)) return new_resolverret_dtype(dtype);
+
+    DType* complete_dtype = NULL;
+    switch (dtype->type) {
+        case DTYPE_STRUCT:
+            complete_dtype = tagtable_search(resolver->tag_table, dtype->dstruct->name);
+            if (complete_dtype == NULL) break;
+
+            if (complete_dtype->type == DTYPE_STRUCT) {
+                dtype->dstruct->nbytes = complete_dtype->dstruct->nbytes;
+                dtype->dstruct->alignment = complete_dtype->dstruct->alignment;
+                break;
+            }
+            // fall through
+        default:
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_typedef_name_specifier)\n");
+            exit(1);
+    }
+
+    return new_resolverret_dtype(dtype);
 }
 
 ResolverReturn* resolve_init_declarator_list(Resolver* resolver) {
