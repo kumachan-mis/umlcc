@@ -11,6 +11,7 @@ typedef enum X64InstType {
     X64_INST_LEAX,
     X64_INST_CXTX,
     X64_INST_CXTD,
+    X64_INST_CQTO,
     X64_INST_PUSHX,
     X64_INST_POPX,
 

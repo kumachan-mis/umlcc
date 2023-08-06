@@ -9,9 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* x64_inst_formats[] = {"mov%c", "movs%c%c", "movabs%c", "lea%c",  "c%ct%c", "c%ctd", "push%c", "pop%c",
-                            "add%c", "sub%c",    "imul%c",   "idiv%c", "sal%c",  "sar%c", "cmp%c",  "sete",
-                            "setne", "jmp",      "je",       "jne",    "call",   "ret"};
+char* x64_inst_formats[] = {"mov%c", "movs%c%c", "movabs%c", "lea%c",  "c%ct%c", "c%ctd", "cqto",  "push%c",
+                            "pop%c", "add%c",    "sub%c",    "imul%c", "idiv%c", "sal%c", "sar%c", "cmp%c",
+                            "sete",  "setne",    "jmp",      "je",     "jne",    "call",  "ret"};
 
 X64Inst* new_x64inst(X64InstType type, X64Ope* src, X64Ope* dst) {
     X64Inst* x64inst = malloc(sizeof(X64Inst));

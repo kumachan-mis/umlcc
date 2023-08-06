@@ -169,7 +169,11 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
         append_mov_code(codes, DX_REG_ID, X64_SUFFIX_QUAD, evacuation_id, X64_SUFFIX_QUAD);
     }
 
-    vector_push(codes, new_inst_x64(X64_INST_CXTD, new_suffix_x64ope(suffix), NULL));
+    if (suffix != X64_SUFFIX_QUAD) {
+        vector_push(codes, new_inst_x64(X64_INST_CXTD, new_suffix_x64ope(suffix), NULL));
+    } else {
+        vector_push(codes, new_inst_x64(X64_INST_CQTO, NULL, NULL));
+    }
 
     X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
     vector_push(codes, new_inst_x64(X64_INST_IDIVX, snd_src, NULL));
