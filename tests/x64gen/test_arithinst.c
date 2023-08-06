@@ -453,9 +453,9 @@ void test_x64gen_div_reg_reg(void) {
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[3]),   // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_CXTD,                      // inst
-                             new_suffix_x64ope(X64_SUFFIX_QUAD), // src
-                             NULL));                             // dst
+                new_inst_x64(X64_INST_CQTO, // inst
+                             NULL,          // src
+                             NULL));        // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_IDIVX,                                           // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]), // src
@@ -728,9 +728,9 @@ void test_x64gen_mod_reg_reg(void) {
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[3]),   // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_CXTD,                      // inst
-                             new_suffix_x64ope(X64_SUFFIX_QUAD), // src
-                             NULL));                             // dst
+                new_inst_x64(X64_INST_CQTO, // inst
+                             NULL,          // src
+                             NULL));        // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_IDIVX,                                           // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]), // src
@@ -880,9 +880,9 @@ void test_x64gen_mod_rdx_inuse(void) {
                              new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_CXTD,                      // inst
-                             new_suffix_x64ope(X64_SUFFIX_QUAD), // src
-                             NULL));                             // dst
+                new_inst_x64(X64_INST_CQTO, // inst
+                             NULL,          // src
+                             NULL));        // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_IDIVX,                                           // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]), // src
