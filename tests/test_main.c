@@ -16,6 +16,7 @@
 #include "./liveseq/test_liveness.h"
 #include "./liveseq/test_liveseq.h"
 #include "./map/test_map.h"
+#include "./pair/test_pair.h"
 #include "./parser/test_declaration.h"
 #include "./parser/test_declaration_error.h"
 #include "./parser/test_expression.h"
@@ -58,6 +59,7 @@ int main(void) {
     CU_initialize_registry();
 
     // container tests
+    add_test_suite_pair();
     add_test_suite_vector();
     add_test_suite_map();
     add_test_suite_set();
