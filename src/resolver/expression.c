@@ -222,13 +222,9 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
-        Vector* srt_pair = new_vector(&t_srt);
-        vector_push(srt_pair, lhs_srt);
-        vector_push(srt_pair, rhs_srt);
-        srt_pair = perform_usual_arithmetic_conversion(srt_pair);
-        rhs_srt = vector_pop(srt_pair);
-        lhs_srt = vector_pop(srt_pair);
-        delete_vector(srt_pair);
+        Pair* srt_pair = new_pair(&t_srt, &t_srt);
+        pair_set(srt_pair, lhs_srt, rhs_srt);
+        pair_assign((void**)&lhs_srt, (void**)&rhs_srt, perform_usual_arithmetic_conversion(srt_pair));
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER &&
                dtype_iscompatible(lhs_srt->dtype, rhs_srt->dtype)) {
         // do nothing
@@ -333,13 +329,9 @@ ResolverReturn* resolve_add_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
-        Vector* srt_pair = new_vector(&t_srt);
-        vector_push(srt_pair, lhs_srt);
-        vector_push(srt_pair, rhs_srt);
-        srt_pair = perform_usual_arithmetic_conversion(srt_pair);
-        rhs_srt = vector_pop(srt_pair);
-        lhs_srt = vector_pop(srt_pair);
-        delete_vector(srt_pair);
+        Pair* srt_pair = new_pair(&t_srt, &t_srt);
+        pair_set(srt_pair, lhs_srt, rhs_srt);
+        pair_assign((void**)&lhs_srt, (void**)&rhs_srt, perform_usual_arithmetic_conversion(srt_pair));
         dtype = new_integer_dtype(DTYPE_INT);
         srt = new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
         return new_resolverret(srt);
@@ -392,13 +384,9 @@ ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
-        Vector* srt_pair = new_vector(&t_srt);
-        vector_push(srt_pair, lhs_srt);
-        vector_push(srt_pair, rhs_srt);
-        srt_pair = perform_usual_arithmetic_conversion(srt_pair);
-        rhs_srt = vector_pop(srt_pair);
-        lhs_srt = vector_pop(srt_pair);
-        delete_vector(srt_pair);
+        Pair* srt_pair = new_pair(&t_srt, &t_srt);
+        pair_set(srt_pair, lhs_srt, rhs_srt);
+        pair_assign((void**)&lhs_srt, (void**)&rhs_srt, perform_usual_arithmetic_conversion(srt_pair));
         dtype = new_integer_dtype(DTYPE_INT);
         srt = new_dtyped_srt(SRT_SUB_EXPR, dtype, 2, lhs_srt, rhs_srt);
         return new_resolverret(srt);
@@ -455,13 +443,9 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_array(rhs_srt);
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
-    Vector* srt_pair = new_vector(&t_srt);
-    vector_push(srt_pair, lhs_srt);
-    vector_push(srt_pair, rhs_srt);
-    srt_pair = perform_usual_arithmetic_conversion(srt_pair);
-    rhs_srt = vector_pop(srt_pair);
-    lhs_srt = vector_pop(srt_pair);
-    delete_vector(srt_pair);
+    Pair* srt_pair = new_pair(&t_srt, &t_srt);
+    pair_set(srt_pair, lhs_srt, rhs_srt);
+    pair_assign((void**)&lhs_srt, (void**)&rhs_srt, perform_usual_arithmetic_conversion(srt_pair));
 
     switch (ast->type) {
         case AST_MUL_EXPR:
