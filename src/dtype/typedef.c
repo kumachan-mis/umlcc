@@ -36,6 +36,8 @@ int dtypedef_equals(DTypedef* dtypedef, DTypedef* other) {
 }
 
 void delete_dtypedef(DTypedef* dtypedef) {
-    if (dtypedef->defined_dtype != NULL) delete_dtype(dtypedef->defined_dtype);
+    if (dtypedef->defined_dtype != NULL) {
+        delete_dtype(dtypedef->defined_dtype);
+    }
     free(dtypedef);
 }

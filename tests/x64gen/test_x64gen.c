@@ -288,6 +288,8 @@ void run_x64gen_test(Vector* input_immcs, Vector* input_liveseqs, Vector* expect
 
     testlib_assert_x64codes_equal(actual, expected);
 
-    if (actual != NULL) delete_vector(actual);
+    if (actual != NULL) {
+        delete_vector(actual);
+    }
     delete_x64gen(x64gen);
 }

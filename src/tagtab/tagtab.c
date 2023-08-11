@@ -13,7 +13,9 @@ TagTable* tagtable_copy(TagTable* table) {
     TagTable* copied_table = malloc(sizeof(TagTable));
     copied_table->map = map_copy(table->map);
     copied_table->outer_scope = NULL;
-    if (table->outer_scope != NULL) copied_table->outer_scope = tagtable_copy(table->outer_scope);
+    if (table->outer_scope != NULL) {
+        copied_table->outer_scope = tagtable_copy(table->outer_scope);
+    }
     return copied_table;
 }
 
@@ -25,21 +27,27 @@ DType* tagtable_search(TagTable* table, char* name) {
     DType* dtype = NULL;
     while (table != NULL) {
         dtype = map_get(table->map, name);
-        if (dtype != NULL) break;
+        if (dtype != NULL) {
+            break;
+        }
         table = table->outer_scope;
     }
     return dtype;
 }
 
 DType* tagtable_define_struct(TagTable* table, char* name, Vector* members) {
-    if (!tagtable_can_define(table, name)) return NULL;
+    if (!tagtable_can_define(table, name)) {
+        return NULL;
+    }
     DType* dtype = new_unnamed_struct_dtype(members);
     map_add(table->map, name, dtype);
     return dtype;
 }
 
 DType* tagtable_define_enum(TagTable* table, char* name, Vector* members) {
-    if (!tagtable_can_define(table, name)) return NULL;
+    if (!tagtable_can_define(table, name)) {
+        return NULL;
+    }
     DType* dtype = new_unnamed_enum_dtype(members);
     map_add(table->map, name, dtype);
     return dtype;
@@ -59,7 +67,9 @@ TagTable* tagtable_exit_scope(TagTable* table) {
 }
 
 void delete_tagtable(TagTable* table) {
-    if (table->outer_scope != NULL) delete_tagtable(table->outer_scope);
+    if (table->outer_scope != NULL) {
+        delete_tagtable(table->outer_scope);
+    }
     delete_map(table->map);
     free(table);
 }

@@ -20,7 +20,9 @@ DArray* new_socket_darray(int size) {
 DArray* darray_copy(DArray* darray) {
     DArray* copied_darray = malloc(sizeof(DArray));
     copied_darray->of_dtype = NULL;
-    if (darray->of_dtype != NULL) copied_darray->of_dtype = dtype_copy(darray->of_dtype);
+    if (darray->of_dtype != NULL) {
+        copied_darray->of_dtype = dtype_copy(darray->of_dtype);
+    }
     copied_darray->size = darray->size;
     return copied_darray;
 }
@@ -35,7 +37,9 @@ DArray* darray_connect(DArray* socket, DType* plug) {
 }
 
 DType* darray_at(DArray* darray, int index) {
-    if (index < 0 || index >= darray->size) return NULL;
+    if (index < 0 || index >= darray->size) {
+        return NULL;
+    }
     return darray->of_dtype;
 }
 
@@ -48,6 +52,8 @@ int darray_equals(DArray* darray, DArray* other) {
 }
 
 void delete_darray(DArray* darray) {
-    if (darray->of_dtype != NULL) delete_dtype(darray->of_dtype);
+    if (darray->of_dtype != NULL) {
+        delete_dtype(darray->of_dtype);
+    }
     free(darray);
 }

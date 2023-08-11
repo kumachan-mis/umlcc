@@ -50,7 +50,9 @@ LexerReturn* lexer_read_ctokens(Lexer* lexer) {
         }
         vector_push(ctokens, ctoken);
 
-        if (ctoken->type == CTOKEN_EOF) break;
+        if (ctoken->type == CTOKEN_EOF) {
+            break;
+        }
         skip_white_spaces(lexer);
     }
 

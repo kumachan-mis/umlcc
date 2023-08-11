@@ -24,11 +24,17 @@ ImmcInst* immcinst_copy(ImmcInst* immcinst) {
     ImmcInst* copied_immcinst = malloc(sizeof(ImmcInst));
     copied_immcinst->type = immcinst->type;
     copied_immcinst->dst = NULL;
-    if (immcinst->dst != NULL) copied_immcinst->dst = immcope_copy(immcinst->dst);
+    if (immcinst->dst != NULL) {
+        copied_immcinst->dst = immcope_copy(immcinst->dst);
+    }
     copied_immcinst->fst_src = NULL;
-    if (immcinst->fst_src != NULL) copied_immcinst->fst_src = immcope_copy(immcinst->fst_src);
+    if (immcinst->fst_src != NULL) {
+        copied_immcinst->fst_src = immcope_copy(immcinst->fst_src);
+    }
     copied_immcinst->snd_src = NULL;
-    if (immcinst->snd_src != NULL) copied_immcinst->snd_src = immcope_copy(immcinst->snd_src);
+    if (immcinst->snd_src != NULL) {
+        copied_immcinst->snd_src = immcope_copy(immcinst->snd_src);
+    }
     return copied_immcinst;
 }
 
@@ -71,8 +77,14 @@ char* immcinst_tostring(ImmcInst* immcinst) {
 }
 
 void delete_immcinst(ImmcInst* immcinst) {
-    if (immcinst->dst != NULL) delete_immcope(immcinst->dst);
-    if (immcinst->fst_src != NULL) delete_immcope(immcinst->fst_src);
-    if (immcinst->snd_src != NULL) delete_immcope(immcinst->snd_src);
+    if (immcinst->dst != NULL) {
+        delete_immcope(immcinst->dst);
+    }
+    if (immcinst->fst_src != NULL) {
+        delete_immcope(immcinst->fst_src);
+    }
+    if (immcinst->snd_src != NULL) {
+        delete_immcope(immcinst->snd_src);
+    }
     free(immcinst);
 }

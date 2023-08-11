@@ -156,6 +156,8 @@ void run_stmt_resolver_error_test(Ast* input, SymbolTable* local_table, DType* r
     CU_ASSERT_PTR_NULL(ret);
     testlib_assert_errors_equal(actual, expected);
 
-    if (actual != NULL) delete_vector(actual);
+    if (actual != NULL) {
+        delete_vector(actual);
+    }
     delete_resolver(resolver);
 }

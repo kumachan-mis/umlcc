@@ -93,7 +93,9 @@ LexerReturnItem* read_character_constant(Lexer* lexer) {
 
     while (err == NULL) {
         int rest = fgetc(lexer->file_ptr);
-        if (rest == '\'') break;
+        if (rest == '\'') {
+            break;
+        }
 
         switch (rest) {
             case '\\':
@@ -107,7 +109,9 @@ LexerReturnItem* read_character_constant(Lexer* lexer) {
         }
     }
 
-    if (err != NULL) return new_lexerret_item_error(err);
+    if (err != NULL) {
+        return new_lexerret_item_error(err);
+    }
 
     CToken* ctoken = new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, c));
     return new_lexerret_item(ctoken);
@@ -125,7 +129,9 @@ LexerReturnItem* read_string_literal(Lexer* lexer) {
 
     while (1) {
         int c = fgetc(lexer->file_ptr);
-        if (c == '\"') break;
+        if (c == '\"') {
+            break;
+        }
 
         switch (c) {
             case '\\':
@@ -137,7 +143,9 @@ LexerReturnItem* read_string_literal(Lexer* lexer) {
             default:
                 break;
         }
-        if (err != NULL) break;
+        if (err != NULL) {
+            break;
+        }
 
         value[length] = c;
         length++;
@@ -189,7 +197,9 @@ LexerReturnItem* read_punctuator(Lexer* lexer) {
     CTokenType* ctoken_type_ref = NULL;
     while (length > 0) {
         ctoken_type_ref = map_get(lexer->punctuator_map, ctoken_str);
-        if (ctoken_type_ref != NULL) break;
+        if (ctoken_type_ref != NULL) {
+            break;
+        }
 
         length--;
         c = ctoken_str[length];
@@ -270,11 +280,14 @@ ErrorableInt* read_escape_seqence(Lexer* lexer) {
     ErrorableInt* read_simple_escape_seqence(Lexer * lexer);
 
     int c = fgetc(lexer->file_ptr);
-    if (c == 'x') return read_hexadecimal_escape_seqence(lexer);
+    if (c == 'x') {
+        return read_hexadecimal_escape_seqence(lexer);
+    }
 
     ungetc(c, lexer->file_ptr);
-    if (map_contains(lexer->octdigit_map, &c)) return read_octal_escape_seqence(lexer);
-
+    if (map_contains(lexer->octdigit_map, &c)) {
+        return read_octal_escape_seqence(lexer);
+    }
     return read_simple_escape_seqence(lexer);
 }
 

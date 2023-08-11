@@ -789,9 +789,13 @@ void run_global_expr_resolver_test(Ast* input, SymbolTable* symbol_table, TagTab
 
     testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
-    if (expected_trans_unit != NULL) testlib_assert_srt_equal(resolver->trans_unit_srt, expected_trans_unit);
+    if (expected_trans_unit != NULL) {
+        testlib_assert_srt_equal(resolver->trans_unit_srt, expected_trans_unit);
+    }
 
-    if (actual != NULL) delete_srt(actual);
+    if (actual != NULL) {
+        delete_srt(actual);
+    }
     delete_resolver(resolver);
 }
 
@@ -814,8 +818,12 @@ void run_local_expr_resolver_test(Ast* input, SymbolTable* symbol_table, TagTabl
 
     testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
-    if (expected_trans_unit != NULL) testlib_assert_srt_equal(resolver->trans_unit_srt, expected_trans_unit);
+    if (expected_trans_unit != NULL) {
+        testlib_assert_srt_equal(resolver->trans_unit_srt, expected_trans_unit);
+    }
 
-    if (actual != NULL) delete_srt(actual);
+    if (actual != NULL) {
+        delete_srt(actual);
+    }
     delete_resolver(resolver);
 }

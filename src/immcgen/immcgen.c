@@ -115,6 +115,8 @@ void delete_immcgen(Immcgen* immcgen) {
     delete_srt(immcgen->srt);
     delete_symboltable(immcgen->symbol_table);
     delete_tagtable(immcgen->tag_table);
-    if (immcgen->initialized_dtype != NULL) delete_dtype(immcgen->initialized_dtype);
+    if (immcgen->initialized_dtype != NULL) {
+        delete_dtype(immcgen->initialized_dtype);
+    }
     free(immcgen);
 }

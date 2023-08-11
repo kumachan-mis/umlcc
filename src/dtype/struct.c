@@ -38,7 +38,9 @@ DStruct* new_unnamed_dstruct(Vector* members) {
         dstruct->nbytes = member->memory_offset;
         dstruct->nbytes += dtype_nbytes(member->dtype);
 
-        if (alignment > dstruct->alignment) dstruct->alignment = alignment;
+        if (alignment > dstruct->alignment) {
+            dstruct->alignment = alignment;
+        }
     }
 
     int nbytes = dstruct->nbytes, alignment = dstruct->alignment;
@@ -49,9 +51,13 @@ DStruct* new_unnamed_dstruct(Vector* members) {
 DStruct* dstruct_copy(DStruct* dstruct) {
     DStruct* copied_dstruct = malloc(sizeof(DStruct));
     copied_dstruct->name = NULL;
-    if (dstruct->name != NULL) copied_dstruct->name = new_string(dstruct->name);
+    if (dstruct->name != NULL) {
+        copied_dstruct->name = new_string(dstruct->name);
+    }
     copied_dstruct->members = NULL;
-    if (dstruct->members != NULL) copied_dstruct->members = vector_copy(dstruct->members);
+    if (dstruct->members != NULL) {
+        copied_dstruct->members = vector_copy(dstruct->members);
+    }
     copied_dstruct->nbytes = dstruct->nbytes;
     copied_dstruct->alignment = dstruct->alignment;
     return copied_dstruct;
@@ -59,7 +65,9 @@ DStruct* dstruct_copy(DStruct* dstruct) {
 
 DType* dstruct_at(DStruct* dstruct, int index) {
     DStructMember* member = vector_at(dstruct->members, index);
-    if (member == NULL) return NULL;
+    if (member == NULL) {
+        return NULL;
+    }
     return member->dtype;
 }
 
@@ -68,26 +76,36 @@ int dstruct_size(DStruct* dstruct) {
 }
 
 int dstruct_equals(DStruct* dstruct, DStruct* other) {
-    if ((dstruct->name == NULL && other->name != NULL) || (dstruct->name != NULL && other->name == NULL)) return 0;
+    if ((dstruct->name == NULL && other->name != NULL) || (dstruct->name != NULL && other->name == NULL)) {
+        return 0;
+    }
 
     // named struct
-    if (dstruct->name != NULL) return strcmp(dstruct->name, other->name) == 0;
-
+    if (dstruct->name != NULL) {
+        return strcmp(dstruct->name, other->name) == 0;
+    }
     // unnamed struct
-    if (vector_size(dstruct->members) != vector_size(other->members)) return 0;
-
+    if (vector_size(dstruct->members) != vector_size(other->members)) {
+        return 0;
+    }
     int num_members = vector_size(dstruct->members);
     for (int i = 0; i < num_members; i++) {
         DStructMember* dstruct_member = vector_at(dstruct->members, i);
         DStructMember* other_member = vector_at(other->members, i);
-        if (!dstructmember_equals(dstruct_member, other_member)) return 0;
+        if (!dstructmember_equals(dstruct_member, other_member)) {
+            return 0;
+        }
     }
     return 1;
 }
 
 void delete_dstruct(DStruct* dstruct) {
-    if (dstruct->name != NULL) free(dstruct->name);
-    if (dstruct->members != NULL) delete_vector(dstruct->members);
+    if (dstruct->name != NULL) {
+        free(dstruct->name);
+    }
+    if (dstruct->members != NULL) {
+        delete_vector(dstruct->members);
+    }
     free(dstruct);
 }
 

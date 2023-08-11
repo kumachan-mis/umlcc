@@ -29,33 +29,49 @@ DEnum* new_unnamed_denum(Vector* members) {
 DEnum* denum_copy(DEnum* denum) {
     DEnum* copied_denum = malloc(sizeof(DEnum));
     copied_denum->name = NULL;
-    if (denum->name != NULL) copied_denum->name = new_string(denum->name);
+    if (denum->name != NULL) {
+        copied_denum->name = new_string(denum->name);
+    }
     copied_denum->members = NULL;
-    if (denum->members != NULL) copied_denum->members = vector_copy(denum->members);
+    if (denum->members != NULL) {
+        copied_denum->members = vector_copy(denum->members);
+    }
     return copied_denum;
 }
 
 int denum_equals(DEnum* denum, DEnum* other) {
-    if ((denum->name == NULL && other->name != NULL) || (denum->name != NULL && other->name == NULL)) return 0;
+    if ((denum->name == NULL && other->name != NULL) || (denum->name != NULL && other->name == NULL)) {
+        return 0;
+    }
 
     // named enum
-    if (denum->name != NULL) return strcmp(denum->name, other->name) == 0;
+    if (denum->name != NULL) {
+        return strcmp(denum->name, other->name) == 0;
+    }
 
     // unnamed enum
-    if (vector_size(denum->members) != vector_size(other->members)) return 0;
+    if (vector_size(denum->members) != vector_size(other->members)) {
+        return 0;
+    }
 
     int num_members = vector_size(denum->members);
     for (int i = 0; i < num_members; i++) {
         DEnumMember* denum_member = vector_at(denum->members, i);
         DEnumMember* other_member = vector_at(other->members, i);
-        if (!denummember_equals(denum_member, other_member)) return 0;
+        if (!denummember_equals(denum_member, other_member)) {
+            return 0;
+        }
     }
     return 1;
 }
 
 void delete_denum(DEnum* denum) {
-    if (denum->name != NULL) free(denum->name);
-    if (denum->members != NULL) delete_vector(denum->members);
+    if (denum->name != NULL) {
+        free(denum->name);
+    }
+    if (denum->members != NULL) {
+        delete_vector(denum->members);
+    }
     free(denum);
 }
 

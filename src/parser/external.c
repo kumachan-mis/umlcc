@@ -14,7 +14,9 @@ ParserReturn* parse_translation_unit(Parser* parser) {
     while (1) {
         int may_func_def = -1;
         errint_assign(&may_func_def, &err, external_may_function_definition(parser));
-        if (err != NULL) break;
+        if (err != NULL) {
+            break;
+        }
 
         if (may_func_def) {
             parserret_assign(&child_ast, &err, parse_function_definition(parser));
@@ -22,11 +24,15 @@ ParserReturn* parse_translation_unit(Parser* parser) {
             parserret_assign(&child_ast, &err, parse_decl(parser));
         }
 
-        if (err != NULL) break;
+        if (err != NULL) {
+            break;
+        }
         vector_push(ast->children, child_ast);
 
         CToken* ctoken = vector_at(parser->ctokens, parser->index);
-        if (ctoken->type == CTOKEN_EOF) break;
+        if (ctoken->type == CTOKEN_EOF) {
+            break;
+        }
     }
 
     if (err != NULL) {

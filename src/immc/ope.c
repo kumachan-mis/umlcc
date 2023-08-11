@@ -103,11 +103,17 @@ ImmcOpe* immcope_copy(ImmcOpe* immcope) {
     copied_immcope->reg_id = immcope->reg_id;
     copied_immcope->mem_offset = immcope->mem_offset;
     copied_immcope->label_name = NULL;
-    if (immcope->label_name != NULL) copied_immcope->label_name = new_string(immcope->label_name);
+    if (immcope->label_name != NULL) {
+        copied_immcope->label_name = new_string(immcope->label_name);
+    }
     copied_immcope->iliteral = NULL;
-    if (immcope->iliteral != NULL) copied_immcope->iliteral = iliteral_copy(immcope->iliteral);
+    if (immcope->iliteral != NULL) {
+        copied_immcope->iliteral = iliteral_copy(immcope->iliteral);
+    }
     copied_immcope->sliteral = NULL;
-    if (immcope->sliteral != NULL) copied_immcope->sliteral = sliteral_copy(immcope->sliteral);
+    if (immcope->sliteral != NULL) {
+        copied_immcope->sliteral = sliteral_copy(immcope->sliteral);
+    }
     return copied_immcope;
 }
 
@@ -149,8 +155,14 @@ char* immcope_tostring(ImmcOpe* immcope) {
 }
 
 void delete_immcope(ImmcOpe* immcope) {
-    if (immcope->label_name != NULL) free(immcope->label_name);
-    if (immcope->iliteral != NULL) delete_iliteral(immcope->iliteral);
-    if (immcope->sliteral != NULL) delete_sliteral(immcope->sliteral);
+    if (immcope->label_name != NULL) {
+        free(immcope->label_name);
+    }
+    if (immcope->iliteral != NULL) {
+        delete_iliteral(immcope->iliteral);
+    }
+    if (immcope->sliteral != NULL) {
+        delete_sliteral(immcope->sliteral);
+    }
     free(immcope);
 }

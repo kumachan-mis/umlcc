@@ -345,6 +345,8 @@ void run_resolver_error_test(Ast* input, Vector* expected) {
     CU_ASSERT_PTR_NULL(ret);
     testlib_assert_errors_equal(actual, expected);
 
-    if (actual != NULL) delete_vector(actual);
+    if (actual != NULL) {
+        delete_vector(actual);
+    }
     delete_resolver(resolver);
 }

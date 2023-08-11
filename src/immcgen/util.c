@@ -48,7 +48,9 @@ ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
     Srt* child_srt = vector_at(srt->children, index);
 
     ImmcSuffix suffix = IMMC_SUFFIX_NONE;
-    if (child_srt->type == SRT_CAST_EXPR) suffix = immcsuffix_get(dtype_nbytes(child_srt->dtype));
+    if (child_srt->type == SRT_CAST_EXPR) {
+        suffix = immcsuffix_get(dtype_nbytes(child_srt->dtype));
+    }
     while (child_srt->type == SRT_CAST_EXPR) {
         immcgen->srt = child_srt;
         index = 0;
@@ -57,14 +59,18 @@ ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
 
     if (child_srt->type == SRT_INT_EXPR || child_srt->type == SRT_CHAR_EXPR) {
         immcgen->srt = srt;
-        if (suffix == IMMC_SUFFIX_NONE) suffix = immcsuffix_get(dtype_nbytes(child_srt->dtype));
+        if (suffix == IMMC_SUFFIX_NONE) {
+            suffix = immcsuffix_get(dtype_nbytes(child_srt->dtype));
+        }
         return new_int_immcope(suffix, iliteral_copy(child_srt->iliteral));
     }
 
     append_child_immcode(immcgen, codes, index);
     immcgen->srt = srt;
 
-    if (suffix == IMMC_SUFFIX_NONE) return new_reg_immcope(immcgen->expr_reg_suffix, immcgen->expr_reg_id);
+    if (suffix == IMMC_SUFFIX_NONE) {
+        return new_reg_immcope(immcgen->expr_reg_suffix, immcgen->expr_reg_id);
+    }
 
     ImmcOpe* src = new_reg_immcope(immcgen->expr_reg_suffix, immcgen->expr_reg_id);
     immcgen->next_reg_id++;
@@ -75,7 +81,9 @@ ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
 
 ImmcOpe* gen_child_reg_immcope(Immcgen* immcgen, Vector* codes, int index) {
     ImmcOpe* src = gen_child_int_immcope(immcgen, codes, index);
-    if (src->type == IMMC_OPERAND_REG) return src;
+    if (src->type == IMMC_OPERAND_REG) {
+        return src;
+    }
 
     immcgen->next_reg_id++;
     ImmcOpe* dst = new_reg_immcope(src->suffix, immcgen->next_reg_id);
@@ -89,12 +97,16 @@ ImmcOpe* gen_child_ptr_immcope(Immcgen* immcgen, Vector* codes, int index) {
     int memory_or_label = 0;
     if (child_srt->type == SRT_ADDR_EXPR) {
         child_srt = vector_at(child_srt->children, 0);
-        if (child_srt->type == SRT_IDENT_EXPR) memory_or_label = 1;
+        if (child_srt->type == SRT_IDENT_EXPR) {
+            memory_or_label = 1;
+        }
     }
 
     if (memory_or_label) {
         Symbol* symbol = symboltable_search(immcgen->symbol_table, child_srt->ident_name);
-        if (symbol->type == SYMBOL_LABEL) return new_label_immcope(new_string(symbol->name));
+        if (symbol->type == SYMBOL_LABEL) {
+            return new_label_immcope(new_string(symbol->name));
+        }
         return new_mem_immcope(symbol->memory_offset);
     }
 

@@ -112,22 +112,36 @@ DType* dtype_copy(DType* dtype) {
     copied_dtype->type = dtype->type;
 
     copied_dtype->dpointer = NULL;
-    if (dtype->dpointer != NULL) copied_dtype->dpointer = dpointer_copy(dtype->dpointer);
+    if (dtype->dpointer != NULL) {
+        copied_dtype->dpointer = dpointer_copy(dtype->dpointer);
+    }
     copied_dtype->darray = NULL;
-    if (dtype->darray != NULL) copied_dtype->darray = darray_copy(dtype->darray);
+    if (dtype->darray != NULL) {
+        copied_dtype->darray = darray_copy(dtype->darray);
+    }
     copied_dtype->dstruct = NULL;
-    if (dtype->dstruct != NULL) copied_dtype->dstruct = dstruct_copy(dtype->dstruct);
+    if (dtype->dstruct != NULL) {
+        copied_dtype->dstruct = dstruct_copy(dtype->dstruct);
+    }
     copied_dtype->denum = NULL;
-    if (dtype->denum != NULL) copied_dtype->denum = denum_copy(dtype->denum);
+    if (dtype->denum != NULL) {
+        copied_dtype->denum = denum_copy(dtype->denum);
+    }
     copied_dtype->dfunction = NULL;
-    if (dtype->dfunction != NULL) copied_dtype->dfunction = dfunction_copy(dtype->dfunction);
+    if (dtype->dfunction != NULL) {
+        copied_dtype->dfunction = dfunction_copy(dtype->dfunction);
+    }
     copied_dtype->dtypedef = NULL;
-    if (dtype->dtypedef != NULL) copied_dtype->dtypedef = dtypedef_copy(dtype->dtypedef);
+    if (dtype->dtypedef != NULL) {
+        copied_dtype->dtypedef = dtypedef_copy(dtype->dtypedef);
+    }
     return copied_dtype;
 }
 
 DType* dtype_connect(DType* socket_dtype, DType* plug_dtype) {
-    if (socket_dtype == NULL) return plug_dtype;
+    if (socket_dtype == NULL) {
+        return plug_dtype;
+    }
 
     DType* tail = socket_dtype;
     while (1) {
@@ -197,7 +211,9 @@ int dtype_aggregate_size(DType* dtype) {
 }
 
 int dtype_equals(DType* dtype, DType* other) {
-    if (dtype->type != other->type) return 0;
+    if (dtype->type != other->type) {
+        return 0;
+    }
 
     switch (dtype->type) {
         case DTYPE_POINTER:
@@ -218,14 +234,18 @@ int dtype_equals(DType* dtype, DType* other) {
 }
 
 int dtype_iscompatible(DType* dtype, DType* other) {
-    if (dtype_equals(dtype, other)) return 1;
+    if (dtype_equals(dtype, other)) {
+        return 1;
+    }
 
     // TODO: more rules may be added
     return 0;
 }
 
 int dtype_isassignable(DType* dtype, DType* other) {
-    if (dtype_isarithmetic(dtype) && dtype_isarithmetic(other)) return 1;
+    if (dtype_isarithmetic(dtype) && dtype_isarithmetic(other)) {
+        return 1;
+    }
 
     if (dtype->type == DTYPE_POINTER && other->type == DTYPE_POINTER &&
         dtype_iscompatible(dtype->dpointer->to_dtype, other->dpointer->to_dtype)) {
@@ -305,11 +325,23 @@ int dtype_nbytes(DType* dtype) {
 }
 
 void delete_dtype(DType* dtype) {
-    if (dtype->dpointer != NULL) delete_dpointer(dtype->dpointer);
-    if (dtype->darray != NULL) delete_darray(dtype->darray);
-    if (dtype->dstruct != NULL) delete_dstruct(dtype->dstruct);
-    if (dtype->denum != NULL) delete_denum(dtype->denum);
-    if (dtype->dfunction != NULL) delete_dfunction(dtype->dfunction);
-    if (dtype->dtypedef != NULL) delete_dtypedef(dtype->dtypedef);
+    if (dtype->dpointer != NULL) {
+        delete_dpointer(dtype->dpointer);
+    }
+    if (dtype->darray != NULL) {
+        delete_darray(dtype->darray);
+    }
+    if (dtype->dstruct != NULL) {
+        delete_dstruct(dtype->dstruct);
+    }
+    if (dtype->denum != NULL) {
+        delete_denum(dtype->denum);
+    }
+    if (dtype->dfunction != NULL) {
+        delete_dfunction(dtype->dfunction);
+    }
+    if (dtype->dtypedef != NULL) {
+        delete_dtypedef(dtype->dtypedef);
+    }
     free(dtype);
 }

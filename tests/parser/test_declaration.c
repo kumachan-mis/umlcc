@@ -1068,6 +1068,8 @@ void run_decl_parser_test(Vector* input, Set* typedef_names_set, Ast* expected) 
     testlib_assert_ast_equal(actual, expected);
     CU_ASSERT_PTR_NULL(err);
 
-    if (actual != NULL) delete_ast(actual);
+    if (actual != NULL) {
+        delete_ast(actual);
+    }
     delete_parser(parser);
 }

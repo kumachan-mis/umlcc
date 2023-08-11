@@ -121,6 +121,8 @@ void run_resolver_test(Ast* input, Srt* expected) {
     testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
 
-    if (actual != NULL) delete_srt(actual);
+    if (actual != NULL) {
+        delete_srt(actual);
+    }
     delete_resolver(resolver);
 }
