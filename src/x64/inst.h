@@ -19,6 +19,7 @@ typedef enum X64InstType {
     X64_INST_ADDX,
     X64_INST_SUBX,
     X64_INST_IMULX,
+    X64_INST_DIVX,
     X64_INST_IDIVX,
 
     // shift/rotate instructions

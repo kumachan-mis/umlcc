@@ -347,7 +347,7 @@ ResolverReturn* resolve_add_expr(Resolver* resolver) {
         Pair* srt_pair = new_pair(&t_srt, &t_srt);
         pair_set(srt_pair, lhs_srt, rhs_srt);
         pair_assign((void**)&lhs_srt, (void**)&rhs_srt, perform_usual_arithmetic_conversion(srt_pair));
-        dtype = new_integer_dtype(DTYPE_INT);
+        dtype = dtype_copy(lhs_srt->dtype);
         srt = new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
         return new_resolverret(srt);
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && dtype_isinteger(rhs_srt->dtype)) {
@@ -403,7 +403,7 @@ ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
         Pair* srt_pair = new_pair(&t_srt, &t_srt);
         pair_set(srt_pair, lhs_srt, rhs_srt);
         pair_assign((void**)&lhs_srt, (void**)&rhs_srt, perform_usual_arithmetic_conversion(srt_pair));
-        dtype = new_integer_dtype(DTYPE_INT);
+        dtype = dtype_copy(lhs_srt->dtype);
         srt = new_dtyped_srt(SRT_SUB_EXPR, dtype, 2, lhs_srt, rhs_srt);
         return new_resolverret(srt);
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && dtype_isinteger(rhs_srt->dtype)) {
@@ -472,7 +472,7 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
                 vector_push(errs, err);
                 break;
             }
-            dtype = new_integer_dtype(DTYPE_INT);
+            dtype = dtype_copy(lhs_srt->dtype);
             srt = new_dtyped_srt(SRT_MUL_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         case AST_DIV_EXPR:
@@ -482,7 +482,7 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
                 vector_push(errs, err);
                 break;
             }
-            dtype = new_integer_dtype(DTYPE_INT);
+            dtype = dtype_copy(lhs_srt->dtype);
             srt = new_dtyped_srt(SRT_DIV_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         case AST_MOD_EXPR:
@@ -492,7 +492,7 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
                 vector_push(errs, err);
                 break;
             }
-            dtype = new_integer_dtype(DTYPE_INT);
+            dtype = dtype_copy(lhs_srt->dtype);
             srt = new_dtyped_srt(SRT_MOD_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         default:

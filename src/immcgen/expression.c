@@ -222,16 +222,37 @@ Vector* gen_multiplicative_expr_immcode(Immcgen* immcgen) {
     ImmcOpe* snd_src = gen_child_int_immcope(immcgen, codes, 1);
     ImmcOpe* dst = create_dest_reg_immcope(immcgen);
 
+    int is_signed_integer = dtype_issignedinteger(srt->dtype);
+    int is_unsigned_integer = dtype_isunsignedinteger(srt->dtype);
+
     switch (srt->type) {
         case SRT_MUL_EXPR:
-            vector_push(codes, new_inst_immc(IMMC_INST_MUL, dst, fst_src, snd_src));
-            break;
+            if (is_signed_integer) {
+                vector_push(codes, new_inst_immc(IMMC_INST_MUL, dst, fst_src, snd_src));
+                break;
+            } else if (is_unsigned_integer) {
+                vector_push(codes, new_inst_immc(IMMC_INST_UMUL, dst, fst_src, snd_src));
+                break;
+            }
+            // fall through
         case SRT_DIV_EXPR:
-            vector_push(codes, new_inst_immc(IMMC_INST_DIV, dst, fst_src, snd_src));
-            break;
+            if (is_signed_integer) {
+                vector_push(codes, new_inst_immc(IMMC_INST_DIV, dst, fst_src, snd_src));
+                break;
+            } else if (is_unsigned_integer) {
+                vector_push(codes, new_inst_immc(IMMC_INST_UDIV, dst, fst_src, snd_src));
+                break;
+            }
+            // fall through
         case SRT_MOD_EXPR:
-            vector_push(codes, new_inst_immc(IMMC_INST_MOD, dst, fst_src, snd_src));
-            break;
+            if (is_signed_integer) {
+                vector_push(codes, new_inst_immc(IMMC_INST_MOD, dst, fst_src, snd_src));
+                break;
+            } else if (is_unsigned_integer) {
+                vector_push(codes, new_inst_immc(IMMC_INST_UMOD, dst, fst_src, snd_src));
+                break;
+            }
+            // fall through
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
                             "unreachable statement (in gen_multiplicative_expr_immcode)\n");
