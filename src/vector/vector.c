@@ -73,14 +73,18 @@ void vector_fill(Vector* vector, int size, void* item) {
 }
 
 int vector_set(Vector* vector, int index, void* item) {
-    if (0 > index || index >= vector->size) return 0;
+    if (0 > index || index >= vector->size) {
+        return 0;
+    }
     vector->t_item->delete_object(vector->container[index]);
     vector->container[index] = item;
     return 1;
 }
 
 void vector_insert(Vector* vector, int index, void* item) {
-    if (0 > index || index > vector->size) return;
+    if (0 > index || index > vector->size) {
+        return;
+    }
 
     if (vector->size >= vector->capacity) {
         vector->container = realloc(vector->container, 2 * vector->capacity * sizeof(void*));
@@ -95,7 +99,9 @@ void vector_insert(Vector* vector, int index, void* item) {
 }
 
 void vector_erase(Vector* vector, int index) {
-    if (0 > index || index >= vector->size) return;
+    if (0 > index || index >= vector->size) {
+        return;
+    }
 
     vector->t_item->delete_object(vector->container[index]);
     for (int i = index + 1; i < vector->size; i++) {
@@ -105,7 +111,9 @@ void vector_erase(Vector* vector, int index) {
 }
 
 void* vector_at(Vector* vector, int index) {
-    if (0 > index || index >= vector->size) return NULL;
+    if (0 > index || index >= vector->size) {
+        return NULL;
+    }
     return vector->container[index];
 }
 

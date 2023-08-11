@@ -45,7 +45,9 @@ Map* map_copy(Map* map) {
     for (int i = 0; i < map->capacity; i++) {
         MapCell* cell = map->container[i];
         MapCell* copied_cell = NULL;
-        if (cell != NULL) copied_cell = mapcell_copy(cell, map->t_key->copy_object, map->t_value->copy_object);
+        if (cell != NULL) {
+            copied_cell = mapcell_copy(cell, map->t_key->copy_object, map->t_value->copy_object);
+        }
         copied_map->container[i] = copied_cell;
     }
 
@@ -68,7 +70,9 @@ void* map_get_with_default(Map* map, void* key, void* default_value) {
             break;
         }
         hash = (hash + 1) % map->capacity;
-        if (hash == original_hash) break;
+        if (hash == original_hash) {
+            break;
+        }
 
         cell = map->container[hash];
     }
@@ -81,17 +85,23 @@ void map_add(Map* map, void* key, void* value) {
     MapCell* cell = map->container[hash];
 
     while (cell != NULL && !cell->deleted) {
-        if (map->t_key->compare_object(cell->key, key) == 0) break;
+        if (map->t_key->compare_object(cell->key, key) == 0) {
+            break;
+        }
         hash = (hash + 1) % map->capacity;
         cell = map->container[hash];
     }
 
-    if (cell != NULL) delete_mapcell(cell, map->t_key->delete_object, map->t_value->delete_object);
+    if (cell != NULL) {
+        delete_mapcell(cell, map->t_key->delete_object, map->t_value->delete_object);
+    }
     map->container[hash] = new_mapcell(key, value);
     map->size++;
 
     int std_capacity = 2 * (map->size + 1) - 1;
-    if (std_capacity >= map->capacity) update_capacity(map, 2 * (map->capacity + 1) - 1);
+    if (std_capacity >= map->capacity) {
+        update_capacity(map, 2 * (map->capacity + 1) - 1);
+    }
 }
 
 void map_remove(Map* map, void* key) {
@@ -106,18 +116,24 @@ void map_remove(Map* map, void* key) {
             break;
         }
         hash = (hash + 1) % map->capacity;
-        if (hash == original_hash) break;
+        if (hash == original_hash) {
+            break;
+        }
 
         cell = map->container[hash];
     }
 
-    if (!found) return;
+    if (!found) {
+        return;
+    }
 
     cell->deleted = 1;
     map->size--;
 
     int std_capacity = 2 * (map->size + 1) - 1;
-    if (2 * std_capacity < map->capacity) update_capacity(map, std_capacity);
+    if (2 * std_capacity < map->capacity) {
+        update_capacity(map, std_capacity);
+    }
 }
 
 int map_contains(Map* map, void* key) {
@@ -129,19 +145,25 @@ MapIter* map_iter_begin(Map* map) {
     iter->index = 0;
     while (iter->index < map->capacity) {
         MapCell* cell = map->container[iter->index];
-        if (cell != NULL && !cell->deleted) break;
+        if (cell != NULL && !cell->deleted) {
+            break;
+        }
         iter->index++;
     }
     return iter;
 }
 
 MapIter* map_iter_next(MapIter* iter, Map* map) {
-    if (iter->index >= map->capacity) return iter;
+    if (iter->index >= map->capacity) {
+        return iter;
+    }
 
     iter->index++;
     while (iter->index < map->capacity) {
         MapCell* cell = map->container[iter->index];
-        if (cell != NULL && !cell->deleted) break;
+        if (cell != NULL && !cell->deleted) {
+            break;
+        }
         iter->index++;
     }
     return iter;
@@ -149,7 +171,9 @@ MapIter* map_iter_next(MapIter* iter, Map* map) {
 
 int map_iter_end(MapIter* iter, Map* map) {
     int end = iter->index >= map->capacity;
-    if (end) free(iter);
+    if (end) {
+        free(iter);
+    }
     return end;
 }
 
@@ -158,28 +182,39 @@ void map_iter_exit(MapIter* iter) {
 }
 
 void* map_iter_key(MapIter* iter, Map* map) {
-    if (iter->index >= map->capacity) return NULL;
+    if (iter->index >= map->capacity) {
+        return NULL;
+    }
     MapCell* cell = map->container[iter->index];
-    if (cell == NULL) return NULL;
+    if (cell == NULL) {
+        return NULL;
+    }
     return cell->key;
 }
 
 void* map_iter_value(MapIter* iter, Map* map) {
-    if (iter->index >= map->capacity) return NULL;
+    if (iter->index >= map->capacity) {
+        return NULL;
+    }
     MapCell* cell = map->container[iter->index];
-    if (cell == NULL) return NULL;
+    if (cell == NULL) {
+        return NULL;
+    }
     return cell->value;
 }
 
 void update_capacity(Map* map, int new_capacity) {
     MapCell** new_container = malloc(new_capacity * sizeof(MapCell*));
-    for (int i = 0; i < new_capacity; i++)
+    for (int i = 0; i < new_capacity; i++) {
         new_container[i] = NULL;
+    }
 
     for (int i = 0; i < map->capacity; i++) {
         MapCell* cell = map->container[i];
         if (cell == NULL || cell->deleted) {
-            if (cell == NULL) continue;
+            if (cell == NULL) {
+                continue;
+            }
             delete_mapcell(cell, map->t_key->delete_object, map->t_value->delete_object);
             continue;
         }
@@ -199,7 +234,9 @@ void update_capacity(Map* map, int new_capacity) {
 void delete_map(Map* map) {
     for (int i = 0; i < map->capacity; i++) {
         MapCell* cell = map->container[i];
-        if (cell == NULL) continue;
+        if (cell == NULL) {
+            continue;
+        }
         delete_mapcell(cell, map->t_key->delete_object, map->t_value->delete_object);
     }
     free(map->container);

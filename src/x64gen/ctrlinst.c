@@ -89,7 +89,9 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     for (SetIter* iter = set_iter_begin(alive_reg_induces_set); !set_iter_end(iter, alive_reg_induces_set);
          iter = set_iter_next(iter, alive_reg_induces_set)) {
         int* caller_ref = set_iter_item(iter, alive_reg_induces_set);
-        if (*caller_ref == immc->inst->dst->reg_id) continue;
+        if (*caller_ref == immc->inst->dst->reg_id) {
+            continue;
+        }
         int caller_id = CALLER_SAVED_REG_IDS[*caller_ref];
         int callee_id = CALLEE_SAVED_REG_IDS[evacuation_count];
         append_mov_code(codes, caller_id, X64_SUFFIX_QUAD, callee_id, X64_SUFFIX_QUAD);
@@ -139,13 +141,17 @@ Vector* gen_call_x64code(X64gen* x64gen) {
     for (SetIter* iter = set_iter_begin(alive_reg_induces_set); !set_iter_end(iter, alive_reg_induces_set);
          iter = set_iter_next(iter, alive_reg_induces_set)) {
         int* caller_ref = set_iter_item(iter, alive_reg_induces_set);
-        if (*caller_ref == immc->inst->dst->reg_id) continue;
+        if (*caller_ref == immc->inst->dst->reg_id) {
+            continue;
+        }
         int caller_id = CALLER_SAVED_REG_IDS[*caller_ref];
         int callee_id = CALLEE_SAVED_REG_IDS[evacuation_count];
         append_mov_code(codes, callee_id, X64_SUFFIX_QUAD, caller_id, X64_SUFFIX_QUAD);
         evacuation_count++;
     }
-    if (x64gen->evacuation_count < evacuation_count) x64gen->evacuation_count = evacuation_count;
+    if (x64gen->evacuation_count < evacuation_count) {
+        x64gen->evacuation_count = evacuation_count;
+    }
     delete_set(alive_reg_induces_set);
 
     if (immc_dst != NULL) {

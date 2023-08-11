@@ -454,6 +454,8 @@ void run_expr_parser_error_test(Vector* input, Set* typedef_names_set, Error* ex
     CU_ASSERT_PTR_NULL(ret);
     testlib_assert_error_equal(actual, expected);
 
-    if (actual != NULL) delete_error(actual);
+    if (actual != NULL) {
+        delete_error(actual);
+    }
     delete_parser(parser);
 }

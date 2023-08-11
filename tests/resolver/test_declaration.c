@@ -1973,10 +1973,14 @@ void run_local_decl_resolver_test(Ast* input, SymbolTable* symbol_table, TagTabl
 
     testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
-    if (expected_scope != NULL) testlib_assert_srt_equal(resolver->scope_srt, expected_scope);
+    if (expected_scope != NULL) {
+        testlib_assert_srt_equal(resolver->scope_srt, expected_scope);
+    }
 
     resolver->scope_srt = NULL;
-    if (actual != NULL) delete_srt(actual);
+    if (actual != NULL) {
+        delete_srt(actual);
+    }
     delete_resolver(resolver);
 }
 
@@ -2000,9 +2004,13 @@ void run_global_decl_resolver_test(Ast* input, SymbolTable* symbol_table, TagTab
 
     testlib_assert_srt_equal(actual, expected);
     CU_ASSERT_PTR_NULL(errs);
-    if (expected_scope != NULL) testlib_assert_srt_equal(resolver->scope_srt, expected_scope);
+    if (expected_scope != NULL) {
+        testlib_assert_srt_equal(resolver->scope_srt, expected_scope);
+    }
 
     resolver->scope_srt = NULL;
-    if (actual != NULL) delete_srt(actual);
+    if (actual != NULL) {
+        delete_srt(actual);
+    }
     delete_resolver(resolver);
 }

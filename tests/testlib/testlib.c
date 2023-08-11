@@ -11,7 +11,9 @@ void testlib_assert_ctokens_equal(Vector* actual, Vector* expected) {
     }
 
     CU_ASSERT_EQUAL(vector_size(actual), vector_size(expected));
-    if (vector_size(actual) != vector_size(expected)) return;
+    if (vector_size(actual) != vector_size(expected)) {
+        return;
+    }
 
     int num_tokens = vector_size(expected);
     for (int i = 0; i < num_tokens; i++) {
@@ -45,7 +47,9 @@ void testlib_assert_ast_equal(Ast* actual, Ast* expected) {
     testlib_assert_sliteral_equal(actual->sliteral, expected->sliteral);
 
     CU_ASSERT_EQUAL(vector_size(actual->children), vector_size(expected->children));
-    if (vector_size(actual->children) != vector_size(expected->children)) return;
+    if (vector_size(actual->children) != vector_size(expected->children)) {
+        return;
+    }
 
     int num_children = vector_size(expected->children);
     for (int i = 0; i < num_children; i++) {
@@ -68,7 +72,9 @@ void testlib_assert_srt_equal(Srt* actual, Srt* expected) {
     testlib_assert_sliteral_equal(actual->sliteral, expected->sliteral);
 
     CU_ASSERT_EQUAL(vector_size(actual->children), vector_size(expected->children));
-    if (vector_size(actual->children) != vector_size(expected->children)) return;
+    if (vector_size(actual->children) != vector_size(expected->children)) {
+        return;
+    }
 
     int num_children = vector_size(expected->children);
     for (int i = 0; i < num_children; i++) {
@@ -85,7 +91,9 @@ void testlib_assert_immcs_equal(Vector* actual, Vector* expected) {
     }
 
     CU_ASSERT_EQUAL(vector_size(actual), vector_size(expected));
-    if (vector_size(actual) != vector_size(expected)) return;
+    if (vector_size(actual) != vector_size(expected)) {
+        return;
+    }
 
     int num_immcs = vector_size(expected);
     for (int i = 0; i < num_immcs; i++) {
@@ -167,7 +175,9 @@ void testlib_assert_x64codes_equal(Vector* actual, Vector* expected) {
     }
 
     CU_ASSERT_EQUAL(vector_size(actual), vector_size(expected));
-    if (vector_size(actual) != vector_size(expected)) return;
+    if (vector_size(actual) != vector_size(expected)) {
+        return;
+    }
 
     int num_x64codes = vector_size(expected);
     for (int i = 0; i < num_x64codes; i++) {
@@ -302,7 +312,9 @@ void testlib_assert_dstructmembers_equal(Vector* actual, Vector* expected) {
     }
 
     CU_ASSERT_EQUAL(vector_size(actual), vector_size(expected));
-    if (vector_size(actual) != vector_size(expected)) return;
+    if (vector_size(actual) != vector_size(expected)) {
+        return;
+    }
 
     int num_members = vector_size(expected);
     for (int i = 0; i < num_members; i++) {
@@ -332,7 +344,9 @@ void testlib_assert_dfunction_equal(DFunction* actual, DFunction* expected) {
 
     testlib_assert_dtype_equal(actual->return_dtype, expected->return_dtype);
     CU_ASSERT_EQUAL(vector_size(actual->params), vector_size(expected->params));
-    if (vector_size(actual->params) != vector_size(expected->params)) return;
+    if (vector_size(actual->params) != vector_size(expected->params)) {
+        return;
+    }
 
     int num_params = vector_size(expected->params);
     for (int i = 0; i < num_params; i++) {
@@ -368,7 +382,9 @@ void testlib_assert_liveseqs_equal(Vector* actual, Vector* expected) {
     }
 
     CU_ASSERT_EQUAL(vector_size(actual), vector_size(expected));
-    if (vector_size(actual) != vector_size(expected)) return;
+    if (vector_size(actual) != vector_size(expected)) {
+        return;
+    }
 
     int num_liveseqs = vector_size(expected);
     for (int i = 0; i < num_liveseqs; i++) {
@@ -388,7 +404,9 @@ void testlib_assert_liveseq_equal(Liveseq* actual, Liveseq* expected) {
     CU_ASSERT_EQUAL(actual->index, expected->index);
 
     CU_ASSERT_EQUAL(vector_size(actual->livenesses), vector_size(expected->livenesses));
-    if (vector_size(actual->livenesses) != vector_size(expected->livenesses)) return;
+    if (vector_size(actual->livenesses) != vector_size(expected->livenesses)) {
+        return;
+    }
 
     int num_livenesses = vector_size(expected->livenesses);
     for (int i = 0; i < num_livenesses; i++) {
@@ -426,7 +444,9 @@ void testlib_assert_sliteral_equal(StringLiteral* actual, StringLiteral* expecte
     }
 
     CU_ASSERT_EQUAL(actual->size, expected->size);
-    if (actual->size != expected->size) return;
+    if (actual->size != expected->size) {
+        return;
+    }
 
     CU_ASSERT_EQUAL(memcmp(actual->value, expected->value, expected->size), 0);
 }
@@ -438,7 +458,9 @@ void testlib_assert_errors_equal(Vector* actual, Vector* expected) {
     }
 
     CU_ASSERT_EQUAL(vector_size(actual), vector_size(expected));
-    if (vector_size(actual) != vector_size(expected)) return;
+    if (vector_size(actual) != vector_size(expected)) {
+        return;
+    }
 
     int num_tokens = vector_size(expected);
     for (int i = 0; i < num_tokens; i++) {

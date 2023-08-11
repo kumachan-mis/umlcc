@@ -23,9 +23,13 @@ Pair* pair_copy(Pair* pair) {
     copied_pair->t_first = pair->t_first;
     copied_pair->t_second = pair->t_second;
     copied_pair->first = NULL;
-    if (pair->first != NULL) copied_pair->first = pair->t_first->copy_object(pair->first);
+    if (pair->first != NULL) {
+        copied_pair->first = pair->t_first->copy_object(pair->first);
+    }
     copied_pair->second = NULL;
-    if (pair->second != NULL) copied_pair->second = pair->t_second->copy_object(pair->second);
+    if (pair->second != NULL) {
+        copied_pair->second = pair->t_second->copy_object(pair->second);
+    }
     return copied_pair;
 }
 
@@ -43,12 +47,16 @@ void pair_set(Pair* pair, void* first, void* second) {
 }
 
 void pair_set_first(Pair* pair, void* first) {
-    if (pair->first != NULL) pair->t_first->delete_object(pair->first);
+    if (pair->first != NULL) {
+        pair->t_first->delete_object(pair->first);
+    }
     pair->first = first;
 }
 
 void pair_set_second(Pair* pair, void* second) {
-    if (pair->second != NULL) pair->t_second->delete_object(pair->second);
+    if (pair->second != NULL) {
+        pair->t_second->delete_object(pair->second);
+    }
     pair->second = second;
 }
 
@@ -59,7 +67,11 @@ void pair_assign(void** first_ptr, void** second_ptr, Pair* pair) {
 }
 
 void delete_pair(Pair* pair) {
-    if (pair->first != NULL) pair->t_first->delete_object(pair->first);
-    if (pair->second != NULL) pair->t_second->delete_object(pair->second);
+    if (pair->first != NULL) {
+        pair->t_first->delete_object(pair->first);
+    }
+    if (pair->second != NULL) {
+        pair->t_second->delete_object(pair->second);
+    }
     free(pair);
 }

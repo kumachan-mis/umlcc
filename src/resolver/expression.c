@@ -60,7 +60,9 @@ ResolverReturn* resolve_expr(Resolver* resolver) {
             exit(1);
     }
 
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
     return new_resolverret(srt);
 }
 
@@ -76,7 +78,9 @@ ResolverReturn* resolve_assignment_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
 
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&rhs_srt, &errs, resolve_expr(resolver));
@@ -130,7 +134,9 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
 
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
     lhs_srt = convert_to_ptr_if_function(lhs_srt);
@@ -154,7 +160,9 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver) {
                 vector_push(errs, err);
             }
             if (!dtype_isscalar(rhs_srt->dtype)) {
-                if (errs == NULL) errs = new_vector(&t_error);
+                if (errs == NULL) {
+                    errs = new_vector(&t_error);
+                }
                 err = new_error("each of operands of || should have scalar type\n");
                 vector_push(errs, err);
             }
@@ -170,7 +178,9 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver) {
                 vector_push(errs, err);
             }
             if (!dtype_isscalar(rhs_srt->dtype)) {
-                if (errs == NULL) errs = new_vector(&t_error);
+                if (errs == NULL) {
+                    errs = new_vector(&t_error);
+                }
                 err = new_error("each of operands of && should have scalar type\n");
                 vector_push(errs, err);
             }
@@ -205,7 +215,9 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
 
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
     lhs_srt = convert_to_ptr_if_function(lhs_srt);
@@ -296,7 +308,9 @@ ResolverReturn* resolve_additive_expr(Resolver* resolver) {
             exit(1);
     }
 
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
     return new_resolverret(srt);
 }
 
@@ -312,8 +326,9 @@ ResolverReturn* resolve_add_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
-
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
     lhs_srt = convert_to_ptr_if_function(lhs_srt);
 
@@ -367,8 +382,9 @@ ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
-
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
     lhs_srt = convert_to_ptr_if_function(lhs_srt);
 
@@ -427,8 +443,9 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
-
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
     lhs_srt = convert_to_ptr_if_function(lhs_srt);
 
@@ -503,7 +520,9 @@ ResolverReturn* resolve_cast_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_dtype_assign(&dtype, &errs, resolve_type_name(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
 
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
@@ -555,7 +574,9 @@ ResolverReturn* resolve_unary_expr(Resolver* resolver) {
             exit(1);
     }
 
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
     return new_resolverret(srt);
 }
 
@@ -570,7 +591,9 @@ ResolverReturn* resolve_address_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
 
     if (child_srt->dtype->type != DTYPE_FUNCTION && child_srt->type != SRT_INDIR_EXPR &&
         (child_srt->type != SRT_IDENT_EXPR || !dtype_isobject(child_srt->dtype))) {
@@ -598,7 +621,9 @@ ResolverReturn* resolve_indirection_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
 
     child_srt = convert_to_ptr_if_array(child_srt);
     child_srt = convert_to_ptr_if_function(child_srt);
@@ -627,7 +652,9 @@ ResolverReturn* resolve_logical_not_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
 
     child_srt = convert_to_ptr_if_array(child_srt);
     child_srt = convert_to_ptr_if_function(child_srt);
@@ -661,8 +688,9 @@ ResolverReturn* resolve_sizeof_expr(Resolver* resolver) {
     }
     resolver->ast = ast;
 
-    if (errs != NULL) return new_resolverret_errors(errs);
-
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
     if (child_dtype == NULL) {
         child_dtype = dtype_copy(child_srt->dtype);
         delete_srt(child_srt);
@@ -711,7 +739,9 @@ ResolverReturn* resolve_postfix_expr(Resolver* resolver) {
             exit(1);
     }
 
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
     return new_resolverret(srt);
 }
 
@@ -727,7 +757,9 @@ ResolverReturn* resolve_subscription_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
 
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
     lhs_srt = convert_to_ptr_if_function(lhs_srt);
@@ -786,7 +818,9 @@ ResolverReturn* resolve_call_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
 
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
     lhs_srt = convert_to_ptr_if_function(lhs_srt);
@@ -831,7 +865,9 @@ ResolverReturn* resolve_member_like_expr(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
 
     if (ast->type == AST_MEMBER_EXPR && lhs_srt->dtype->type != DTYPE_STRUCT) {
         errs = new_vector(&t_error);
@@ -912,7 +948,9 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
         resolverret_assign(&child_srt, &child_errs, resolve_expr(resolver));
 
         if (child_errs != NULL) {
-            if (errs == NULL) errs = new_vector(&t_error);
+            if (errs == NULL) {
+                errs = new_vector(&t_error);
+            }
             vector_extend(errs, child_errs);
             delete_vector(child_errs);
             continue;
@@ -922,7 +960,9 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
         child_srt = convert_to_ptr_if_function(child_srt);
 
         if (!dtype_isassignable(dparam->dtype, child_srt->dtype)) {
-            if (errs == NULL) errs = new_vector(&t_error);
+            if (errs == NULL) {
+                errs = new_vector(&t_error);
+            }
             err = new_error("argument is not assignable to parameter\n");
             vector_push(errs, err);
         }
@@ -956,7 +996,9 @@ ResolverReturn* resolve_member_name_expr(Resolver* resolver) {
     int num_members = vector_size(member_dtype->dstruct->members);
     for (int i = 0; i < num_members; i++) {
         DStructMember* member = vector_at(member_dtype->dstruct->members, i);
-        if (strcmp(member->name, ast->ident_name) != 0) continue;
+        if (strcmp(member->name, ast->ident_name) != 0) {
+            continue;
+        }
 
         srt = new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(member->dtype), new_string(member->name));
         break;
@@ -1001,7 +1043,9 @@ ResolverReturn* resolve_primary_expr(Resolver* resolver) {
             exit(1);
     }
 
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
     return new_resolverret(srt);
 }
 

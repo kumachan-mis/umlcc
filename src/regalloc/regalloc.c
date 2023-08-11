@@ -73,7 +73,9 @@ Vector* dequeue_external_immcs(RegAlloc* regalloc) {
     int immcs_len = vector_size(regalloc->immcs);
     while (regalloc->immc_offset + index < immcs_len) {
         Immc* immc = vector_at(regalloc->immcs, regalloc->immc_offset + index);
-        if (immc->type == IMMC_LABEL && immc->label->type != IMMC_LABEL_NORMAL) break;
+        if (immc->type == IMMC_LABEL && immc->label->type != IMMC_LABEL_NORMAL) {
+            break;
+        }
         index++;
         vector_push(sequence, immc_copy(immc));
     }
@@ -139,7 +141,9 @@ Vector* connect_basic_blocks(Vector* basic_blocks) {
     for (int block_id = 0; block_id < blocks_len; block_id++) {
         BasicBlock* basic_block = vector_at(basic_blocks, block_id);
         Immc* head_immc = vector_at(basic_block->immcs, 0);
-        if (head_immc->type != IMMC_LABEL) continue;
+        if (head_immc->type != IMMC_LABEL) {
+            continue;
+        }
 
         char* label_name = new_string(head_immc->label->name);
         int* block_id_ref = new_integer(block_id);
@@ -196,7 +200,9 @@ int update_register_flow(Vector* control_flow_graph, BasicBlock* basic_block) {
     int immcs_len = vector_size(basic_block->immcs);
     for (int index = immcs_len - 1; index >= 0; index--) {
         Immc* immc = vector_at(basic_block->immcs, index);
-        if (immc->type != IMMC_INST) continue;
+        if (immc->type != IMMC_INST) {
+            continue;
+        }
 
         ImmcOpe* dst = immc->inst->dst;
         if (dst != NULL && dst->type == IMMC_OPERAND_REG) {
@@ -249,7 +255,9 @@ void update_register_liveness(RegAlloc* regalloc, Vector* livenesses, BasicBlock
     int immcs_len = vector_size(basic_block->immcs);
     for (int index = 0; index < immcs_len; index++) {
         Immc* immc = vector_at(basic_block->immcs, index);
-        if (immc->type != IMMC_INST) continue;
+        if (immc->type != IMMC_INST) {
+            continue;
+        }
 
         ImmcOpe* fst_src = immc->inst->fst_src;
         if (fst_src != NULL && (fst_src->type == IMMC_OPERAND_REG || fst_src->type == IMMC_OPERAND_PTR)) {
@@ -299,7 +307,9 @@ Vector* determine_allocation(Vector* livenesses, int num_real_regs) {
     for (int virtual_reg_id = 0; virtual_reg_id < num_virtual_regs; virtual_reg_id++) {
         free_unused_register(statuses, livenesses, virtual_reg_id);
         int success = allocate_real_register(allocations, statuses, virtual_reg_id);
-        if (!success) spil_register(allocations, statuses, livenesses, virtual_reg_id);
+        if (!success) {
+            spil_register(allocations, statuses, livenesses, virtual_reg_id);
+        }
     }
 
     delete_vector(statuses);
@@ -312,7 +322,9 @@ void free_unused_register(Vector* statuses, Vector* livenesses, int virtual_reg_
 
     for (int real_reg_id = 0; real_reg_id < num_real_regs; real_reg_id++) {
         int* alloc_virtual_reg_id_ref = vector_at(statuses, real_reg_id);
-        if (*alloc_virtual_reg_id_ref == -1) continue;
+        if (*alloc_virtual_reg_id_ref == -1) {
+            continue;
+        }
 
         Liveness* alloc_liveness = vector_at(livenesses, *alloc_virtual_reg_id_ref);
         if (alloc_liveness->last_use_index <= liveness->first_def_index) {
@@ -327,7 +339,9 @@ int allocate_real_register(Vector* allocations, Vector* statuses, int virtual_re
 
     for (int real_reg_id = 0; real_reg_id < num_real_regs; real_reg_id++) {
         int* alloc_virtual_reg_id_ref = vector_at(statuses, real_reg_id);
-        if (*alloc_virtual_reg_id_ref != -1) continue;
+        if (*alloc_virtual_reg_id_ref != -1) {
+            continue;
+        }
 
         vector_set(statuses, real_reg_id, new_integer(virtual_reg_id));
         vector_set(allocations, virtual_reg_id, new_integer(real_reg_id));
@@ -350,7 +364,9 @@ void spil_register(Vector* allocations, Vector* statuses, Vector* livenesses, in
         int* alloc_virtual_reg_id_ref = vector_at(statuses, real_reg_id);
         Liveness* alloc_liveness = vector_at(livenesses, *alloc_virtual_reg_id_ref);
         int alloc_range_len = alloc_liveness->last_use_index - alloc_liveness->first_def_index;
-        if (max_range_len >= alloc_range_len) continue;
+        if (max_range_len >= alloc_range_len) {
+            continue;
+        }
 
         spilled_real_reg_id = real_reg_id;
         spilled_virtual_reg_id = *alloc_virtual_reg_id_ref;

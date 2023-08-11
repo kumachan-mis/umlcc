@@ -39,7 +39,9 @@ void test_symboltable_define_integer(void) {
 
     symbol = symboltable_define_integer(table, ident_name, ident_dtype, ident_iliteral);
     for (int i = 0; i < 2; i++) {
-        if (i > 0) symbol = symboltable_search(table, ident_name);
+        if (i > 0) {
+            symbol = symboltable_search(table, ident_name);
+        }
         CU_ASSERT_EQUAL(symbol->type, SYMBOL_INT);
         CU_ASSERT_STRING_EQUAL(symbol->name, ident_name);
         CU_ASSERT_EQUAL(symbol->memory_offset, -1);
@@ -59,7 +61,9 @@ void test_symboltable_define_integer(void) {
 
     symbol = symboltable_define_integer(table, symbol_name, symbol_dtype, symbol_iliteral);
     for (int i = 0; i < 2; i++) {
-        if (i > 0) symbol = symboltable_search(table, symbol_name);
+        if (i > 0) {
+            symbol = symboltable_search(table, symbol_name);
+        }
         CU_ASSERT_EQUAL(symbol->type, SYMBOL_INT);
         CU_ASSERT_STRING_EQUAL(symbol->name, symbol_name);
         CU_ASSERT_EQUAL(symbol->memory_offset, -1);
@@ -89,7 +93,9 @@ void test_symboltable_define_label(void) {
 
     symbol = symboltable_define_label(table, ident_name, ident_dtype);
     for (int i = 0; i < 2; i++) {
-        if (i > 0) symbol = symboltable_search(table, ident_name);
+        if (i > 0) {
+            symbol = symboltable_search(table, ident_name);
+        }
         CU_ASSERT_EQUAL(symbol->type, SYMBOL_LABEL);
         CU_ASSERT_STRING_EQUAL(symbol->name, ident_name);
         CU_ASSERT_EQUAL(symbol->memory_offset, -1);
@@ -106,7 +112,9 @@ void test_symboltable_define_label(void) {
 
     symbol = symboltable_define_label(table, symbol_name, symbol_dtype);
     for (int i = 0; i < 2; i++) {
-        if (i > 0) symbol = symboltable_search(table, symbol_name);
+        if (i > 0) {
+            symbol = symboltable_search(table, symbol_name);
+        }
         CU_ASSERT_EQUAL(symbol->type, SYMBOL_LABEL);
         CU_ASSERT_STRING_EQUAL(symbol->name, symbol_name);
         CU_ASSERT_EQUAL(symbol->memory_offset, -1);
@@ -135,7 +143,9 @@ void test_symboltable_define_memory(void) {
 
     symbol = symboltable_define_memory(table, ident_name, ident_dtype);
     for (int i = 0; i < 2; i++) {
-        if (i > 0) symbol = symboltable_search(table, ident_name);
+        if (i > 0) {
+            symbol = symboltable_search(table, ident_name);
+        }
         CU_ASSERT_EQUAL(symbol->type, SYMBOL_MEM);
         CU_ASSERT_STRING_EQUAL(symbol->name, ident_name);
         CU_ASSERT_EQUAL(symbol->memory_offset, ident_dtype_nbytes);
@@ -153,7 +163,9 @@ void test_symboltable_define_memory(void) {
 
     symbol = symboltable_define_memory(table, symbol_name, symbol_dtype);
     for (int i = 0; i < 2; i++) {
-        if (i > 0) symbol = symboltable_search(table, symbol_name);
+        if (i > 0) {
+            symbol = symboltable_search(table, symbol_name);
+        }
         CU_ASSERT_EQUAL(symbol->type, SYMBOL_MEM);
         CU_ASSERT_STRING_EQUAL(symbol->name, symbol_name);
         CU_ASSERT_EQUAL(symbol->memory_offset, ident_dtype_nbytes + symbol_dtype_nbytes);
@@ -178,7 +190,9 @@ void test_symboltable_duplicated(void) {
 
     symbol = symboltable_define_memory(table, ident_name, ident_dtype);
     for (int i = 0; i < 2; i++) {
-        if (i > 0) symbol = symboltable_search(table, ident_name);
+        if (i > 0) {
+            symbol = symboltable_search(table, ident_name);
+        }
         CU_ASSERT_EQUAL(symbol->type, SYMBOL_MEM);
         CU_ASSERT_STRING_EQUAL(symbol->name, ident_name);
         CU_ASSERT_EQUAL(symbol->memory_offset, ident_dtype_nbytes);

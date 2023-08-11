@@ -108,7 +108,9 @@ void run_lexer_error_test(char* input, Error* expected) {
     CU_ASSERT_PTR_NULL(ret);
     testlib_assert_error_equal(actual, expected);
 
-    if (actual != NULL) delete_error(actual);
+    if (actual != NULL) {
+        delete_error(actual);
+    }
     delete_lexer(lexer);
 
     fclose(file_ptr);

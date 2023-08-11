@@ -27,7 +27,9 @@ ResolverReturn* resolve_transration_unit(Resolver* resolver) {
         }
 
         if (child_errs != NULL) {
-            if (errs == NULL) errs = new_vector(&t_error);
+            if (errs == NULL) {
+                errs = new_vector(&t_error);
+            }
             vector_extend(errs, child_errs);
             delete_vector(child_errs);
             continue;
@@ -108,8 +110,12 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
     int num_params = vector_size(params);
     for (int i = 0; i < num_params; i++) {
         DParam* dparam = vector_at(params, i);
-        if (dparam->name != NULL) continue;
-        if (errs == NULL) errs = new_vector(&t_error);
+        if (dparam->name != NULL) {
+            continue;
+        }
+        if (errs == NULL) {
+            errs = new_vector(&t_error);
+        }
         err = new_error("parameter name is required in a function definition\n");
         vector_push(errs, err);
     }

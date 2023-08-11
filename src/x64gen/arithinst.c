@@ -184,7 +184,9 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
     if (dx_needs_evacuation) {
         int evacuation_id = CALLEE_SAVED_REG_IDS[0];
         append_mov_code(codes, evacuation_id, X64_SUFFIX_QUAD, DX_REG_ID, X64_SUFFIX_QUAD);
-        if (x64gen->evacuation_count < 1) x64gen->evacuation_count = 1;
+        if (x64gen->evacuation_count < 1) {
+            x64gen->evacuation_count = 1;
+        }
     }
 
     liveseqs_next(x64gen->liveseqs);
