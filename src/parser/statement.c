@@ -39,7 +39,9 @@ ParserReturn* parse_compound_stmt(Parser* parser) {
 
         int may_decl = -1;
         errint_assign(&may_decl, &err, blockitem_may_decl(parser));
-        if (err != NULL) break;
+        if (err != NULL) {
+            break;
+        }
 
         if (may_decl) {
             parserret_assign(&child_ast, &err, parse_decl(parser));
@@ -47,7 +49,9 @@ ParserReturn* parse_compound_stmt(Parser* parser) {
             parserret_assign(&child_ast, &err, parse_stmt(parser));
         }
 
-        if (err != NULL) break;
+        if (err != NULL) {
+            break;
+        }
         vector_push(ast->children, child_ast);
     }
 
@@ -66,8 +70,9 @@ ParserReturn* parse_return_stmt(Parser* parser) {
     Error* err = NULL;
 
     err = consume_ctoken(parser, CTOKEN_KEYWORD_RETURN);
-    if (err != NULL) return new_parserret_error(err);
-
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     if (ctoken->type == CTOKEN_SEMICOLON) {
         parser->index++;
@@ -76,7 +81,9 @@ ParserReturn* parse_return_stmt(Parser* parser) {
     }
 
     parserret_assign(&ast, &err, parse_expr(parser));
-    if (err != NULL) return new_parserret_error(err);
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
 
     err = consume_ctoken(parser, CTOKEN_SEMICOLON);
     if (err != NULL) {
@@ -93,8 +100,9 @@ ParserReturn* parse_expression_stmt(Parser* parser) {
     Error* err = NULL;
 
     parserret_assign(&ast, &err, parse_expr(parser));
-    if (err != NULL) return new_parserret_error(err);
-
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
     err = consume_ctoken(parser, CTOKEN_SEMICOLON);
     if (err != NULL) {
         delete_ast(ast);

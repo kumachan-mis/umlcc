@@ -84,27 +84,45 @@ Srt* srt_copy(Srt* srt) {
     Srt* copied_srt = malloc(sizeof(Srt));
     copied_srt->type = srt->type;
     copied_srt->dtype = NULL;
-    if (srt->dtype != NULL) copied_srt->dtype = dtype_copy(srt->dtype);
+    if (srt->dtype != NULL) {
+        copied_srt->dtype = dtype_copy(srt->dtype);
+    }
     copied_srt->ident_name = NULL;
-    if (srt->ident_name != NULL) copied_srt->ident_name = new_string(srt->ident_name);
+    if (srt->ident_name != NULL) {
+        copied_srt->ident_name = new_string(srt->ident_name);
+    }
     copied_srt->iliteral = NULL;
-    if (srt->iliteral != NULL) copied_srt->iliteral = iliteral_copy(srt->iliteral);
+    if (srt->iliteral != NULL) {
+        copied_srt->iliteral = iliteral_copy(srt->iliteral);
+    }
     copied_srt->sliteral = NULL;
-    if (srt->sliteral != NULL) copied_srt->sliteral = sliteral_copy(srt->sliteral);
+    if (srt->sliteral != NULL) {
+        copied_srt->sliteral = sliteral_copy(srt->sliteral);
+    }
     copied_srt->children = vector_copy(srt->children);
     return copied_srt;
 }
 
 int srt_ismodifiable(Srt* srt) {
-    if (srt->dtype == NULL || !dtype_isobject(srt->dtype) || srt->dtype->type == DTYPE_ARRAY) return 0;
+    if (srt->dtype == NULL || !dtype_isobject(srt->dtype) || srt->dtype->type == DTYPE_ARRAY) {
+        return 0;
+    }
     return srt->type == SRT_IDENT_EXPR || srt->type == SRT_INDIR_EXPR || srt->type == SRT_TOMEMBER_EXPR;
 }
 
 void delete_srt(Srt* srt) {
-    if (srt->dtype != NULL) delete_dtype(srt->dtype);
-    if (srt->ident_name != NULL) free(srt->ident_name);
-    if (srt->iliteral != NULL) delete_iliteral(srt->iliteral);
-    if (srt->sliteral != NULL) delete_sliteral(srt->sliteral);
+    if (srt->dtype != NULL) {
+        delete_dtype(srt->dtype);
+    }
+    if (srt->ident_name != NULL) {
+        free(srt->ident_name);
+    }
+    if (srt->iliteral != NULL) {
+        delete_iliteral(srt->iliteral);
+    }
+    if (srt->sliteral != NULL) {
+        delete_sliteral(srt->sliteral);
+    }
     delete_vector(srt->children);
     free(srt);
 }

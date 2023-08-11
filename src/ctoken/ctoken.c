@@ -55,17 +55,29 @@ CToken* ctoken_copy(CToken* ctoken) {
     CToken* copied_ctoken = malloc(sizeof(CToken));
     copied_ctoken->type = ctoken->type;
     copied_ctoken->ident_name = NULL;
-    if (ctoken->ident_name != NULL) copied_ctoken->ident_name = new_string(ctoken->ident_name);
+    if (ctoken->ident_name != NULL) {
+        copied_ctoken->ident_name = new_string(ctoken->ident_name);
+    }
     copied_ctoken->iliteral = NULL;
-    if (ctoken->iliteral != NULL) copied_ctoken->iliteral = iliteral_copy(ctoken->iliteral);
+    if (ctoken->iliteral != NULL) {
+        copied_ctoken->iliteral = iliteral_copy(ctoken->iliteral);
+    }
     copied_ctoken->sliteral = NULL;
-    if (ctoken->sliteral != NULL) copied_ctoken->sliteral = sliteral_copy(ctoken->sliteral);
+    if (ctoken->sliteral != NULL) {
+        copied_ctoken->sliteral = sliteral_copy(ctoken->sliteral);
+    }
     return copied_ctoken;
 }
 
 void delete_ctoken(CToken* ctoken) {
-    if (ctoken->ident_name != NULL) free(ctoken->ident_name);
-    if (ctoken->iliteral != NULL) delete_iliteral(ctoken->iliteral);
-    if (ctoken->sliteral != NULL) delete_sliteral(ctoken->sliteral);
+    if (ctoken->ident_name != NULL) {
+        free(ctoken->ident_name);
+    }
+    if (ctoken->iliteral != NULL) {
+        delete_iliteral(ctoken->iliteral);
+    }
+    if (ctoken->sliteral != NULL) {
+        delete_sliteral(ctoken->sliteral);
+    }
     free(ctoken);
 }

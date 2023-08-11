@@ -56,6 +56,8 @@ Node* new_node(int value) {
 }
 
 void delete_node(Node* node) {
-    if (node->next != NULL) delete_node(node->next);
+    if (node->next != NULL) {
+        delete_node(node->next);
+    }
     free(node);
 }

@@ -109,9 +109,13 @@ X64Ope* x64ope_copy(X64Ope* x64ope) {
     copied_x64ope->reg_id = x64ope->reg_id;
     copied_x64ope->mem_offset = x64ope->mem_offset;
     copied_x64ope->label_name = NULL;
-    if (x64ope->label_name != NULL) copied_x64ope->label_name = new_string(x64ope->label_name);
+    if (x64ope->label_name != NULL) {
+        copied_x64ope->label_name = new_string(x64ope->label_name);
+    }
     copied_x64ope->iliteral = NULL;
-    if (x64ope->iliteral != NULL) copied_x64ope->iliteral = iliteral_copy(x64ope->iliteral);
+    if (x64ope->iliteral != NULL) {
+        copied_x64ope->iliteral = iliteral_copy(x64ope->iliteral);
+    }
     return copied_x64ope;
 }
 
@@ -153,7 +157,11 @@ char* x64ope_tostring(X64Ope* x64ope) {
 }
 
 void delete_x64ope(X64Ope* x64ope) {
-    if (x64ope->label_name != NULL) free(x64ope->label_name);
-    if (x64ope->iliteral != NULL) delete_iliteral(x64ope->iliteral);
+    if (x64ope->label_name != NULL) {
+        free(x64ope->label_name);
+    }
+    if (x64ope->iliteral != NULL) {
+        delete_iliteral(x64ope->iliteral);
+    }
     free(x64ope);
 }

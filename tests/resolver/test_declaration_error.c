@@ -1098,7 +1098,9 @@ void run_local_decl_resolver_error_test(Ast* input, SymbolTable* symbol_table, T
     testlib_assert_errors_equal(actual, expected);
 
     resolver->scope_srt = NULL;
-    if (actual != NULL) delete_vector(actual);
+    if (actual != NULL) {
+        delete_vector(actual);
+    }
     delete_resolver(resolver);
 }
 
@@ -1123,6 +1125,8 @@ void run_global_decl_resolver_error_test(Ast* input, SymbolTable* symbol_table, 
     testlib_assert_errors_equal(actual, expected);
 
     resolver->scope_srt = NULL;
-    if (actual != NULL) delete_vector(actual);
+    if (actual != NULL) {
+        delete_vector(actual);
+    }
     delete_resolver(resolver);
 }

@@ -301,6 +301,8 @@ void run_stmt_parser_test(Vector* input, Ast* expected) {
     testlib_assert_ast_equal(actual, expected);
     CU_ASSERT_PTR_NULL(err);
 
-    if (actual != NULL) delete_ast(actual);
+    if (actual != NULL) {
+        delete_ast(actual);
+    }
     delete_parser(parser);
 }

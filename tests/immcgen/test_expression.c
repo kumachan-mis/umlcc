@@ -1048,7 +1048,9 @@ void run_global_expr_immcgen_test(Srt* input, SymbolTable* symbol_table, TagTabl
 
     testlib_assert_immcs_equal(actual, expected);
 
-    if (actual != NULL) delete_vector(actual);
+    if (actual != NULL) {
+        delete_vector(actual);
+    }
     delete_immcgen(immcgen);
 }
 
@@ -1067,6 +1069,8 @@ void run_local_expr_immcgen_test(Srt* input, SymbolTable* symbol_table, TagTable
 
     testlib_assert_immcs_equal(actual, expected);
 
-    if (actual != NULL) delete_vector(actual);
+    if (actual != NULL) {
+        delete_vector(actual);
+    }
     delete_immcgen(immcgen);
 }

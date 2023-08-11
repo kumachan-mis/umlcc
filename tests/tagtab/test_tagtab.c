@@ -39,7 +39,9 @@ void test_tagtable_define_struct(void) {
     struct_dtype = tagtable_define_struct(table, struct_name, struct_members);
 
     for (int i = 0; i < 2; i++) {
-        if (i > 0) struct_dtype = tagtable_search(table, struct_name);
+        if (i > 0) {
+            struct_dtype = tagtable_search(table, struct_name);
+        }
         CU_ASSERT_TRUE(dtype_equals(struct_dtype, expected_struct_dtype));
     }
 
@@ -61,7 +63,9 @@ void test_tagtable_duplicated_struct(void) {
     struct_dtype = tagtable_define_struct(table, struct_name, struct_members);
 
     for (int i = 0; i < 2; i++) {
-        if (i > 0) struct_dtype = tagtable_search(table, struct_name);
+        if (i > 0) {
+            struct_dtype = tagtable_search(table, struct_name);
+        }
         CU_ASSERT_TRUE(dtype_equals(struct_dtype, expected_struct_dtype));
     }
 
@@ -286,7 +290,9 @@ void test_tagtable_define_enum(void) {
     enum_dtype = tagtable_define_enum(table, enum_name, enum_members);
 
     for (int i = 0; i < 2; i++) {
-        if (i > 0) enum_dtype = tagtable_search(table, enum_name);
+        if (i > 0) {
+            enum_dtype = tagtable_search(table, enum_name);
+        }
         CU_ASSERT_TRUE(dtype_equals(enum_dtype, expected_enum_dtype));
     }
 
@@ -308,7 +314,9 @@ void test_tagtable_duplicated_enum(void) {
     enum_dtype = tagtable_define_enum(table, enum_name, enum_members);
 
     for (int i = 0; i < 2; i++) {
-        if (i > 0) enum_dtype = tagtable_search(table, enum_name);
+        if (i > 0) {
+            enum_dtype = tagtable_search(table, enum_name);
+        }
         CU_ASSERT_TRUE(dtype_equals(enum_dtype, expected_enum_dtype));
     }
 

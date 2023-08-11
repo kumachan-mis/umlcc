@@ -44,13 +44,17 @@ Symbol* symbol_copy(Symbol* symbol) {
     copied_symbol->dtype = dtype_copy(symbol->dtype);
     copied_symbol->memory_offset = symbol->memory_offset;
     copied_symbol->iliteral = NULL;
-    if (symbol->iliteral != NULL) copied_symbol->iliteral = iliteral_copy(symbol->iliteral);
+    if (symbol->iliteral != NULL) {
+        copied_symbol->iliteral = iliteral_copy(symbol->iliteral);
+    }
     return copied_symbol;
 }
 
 void delete_symbol(Symbol* symbol) {
     free(symbol->name);
     delete_dtype(symbol->dtype);
-    if (symbol->iliteral != NULL) delete_iliteral(symbol->iliteral);
+    if (symbol->iliteral != NULL) {
+        delete_iliteral(symbol->iliteral);
+    }
     free(symbol);
 }

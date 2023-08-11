@@ -412,7 +412,9 @@ Vector* gen_call_expr_immcode(Immcgen* immcgen) {
     ImmcOpe* snd_src = new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, num_args);
 
     ImmcOpe* dst = NULL;
-    if (srt->dtype->type != DTYPE_VOID) dst = create_dest_reg_immcope(immcgen);
+    if (srt->dtype->type != DTYPE_VOID) {
+        dst = create_dest_reg_immcope(immcgen);
+    }
 
     vector_push(codes, new_inst_immc(IMMC_INST_CALL, dst, fst_src, snd_src));
 

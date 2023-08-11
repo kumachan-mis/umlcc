@@ -27,13 +27,25 @@ ResolverReturn* resolver_resolve_semantics(Resolver* resolver) {
 
 void delete_resolver(Resolver* resolver) {
     delete_ast(resolver->ast);
-    if (resolver->trans_unit_srt != NULL) delete_srt(resolver->trans_unit_srt);
-    if (resolver->scope_srt != NULL) delete_srt(resolver->scope_srt);
+    if (resolver->trans_unit_srt != NULL) {
+        delete_srt(resolver->trans_unit_srt);
+    }
+    if (resolver->scope_srt != NULL) {
+        delete_srt(resolver->scope_srt);
+    }
     delete_symboltable(resolver->symbol_table);
     delete_tagtable(resolver->tag_table);
-    if (resolver->return_dtype != NULL) delete_dtype(resolver->return_dtype);
-    if (resolver->specifier_dtype != NULL) delete_dtype(resolver->specifier_dtype);
-    if (resolver->initialized_dtype != NULL) delete_dtype(resolver->initialized_dtype);
-    if (resolver->expr_dtype != NULL) delete_dtype(resolver->expr_dtype);
+    if (resolver->return_dtype != NULL) {
+        delete_dtype(resolver->return_dtype);
+    }
+    if (resolver->specifier_dtype != NULL) {
+        delete_dtype(resolver->specifier_dtype);
+    }
+    if (resolver->initialized_dtype != NULL) {
+        delete_dtype(resolver->initialized_dtype);
+    }
+    if (resolver->expr_dtype != NULL) {
+        delete_dtype(resolver->expr_dtype);
+    }
     free(resolver);
 }

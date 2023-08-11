@@ -145,7 +145,9 @@ void run_parser_error_test(Vector* input, Error* expected) {
     CU_ASSERT_PTR_NULL(ret);
     testlib_assert_error_equal(actual, expected);
 
-    if (actual != NULL) delete_error(actual);
+    if (actual != NULL) {
+        delete_error(actual);
+    }
     delete_parser(parser);
 }
 
@@ -158,6 +160,8 @@ void run_function_definition_parser_error_test(Vector* input, Error* expected) {
     CU_ASSERT_PTR_NULL(ret);
     testlib_assert_error_equal(actual, expected);
 
-    if (actual != NULL) delete_error(actual);
+    if (actual != NULL) {
+        delete_error(actual);
+    }
     delete_parser(parser);
 }

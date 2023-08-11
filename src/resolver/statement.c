@@ -30,7 +30,9 @@ ResolverReturn* resolve_stmt(Resolver* resolver) {
             exit(1);
     }
 
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
     return new_resolverret(srt);
 }
 
@@ -55,7 +57,9 @@ ResolverReturn* resolve_compound_stmt(Resolver* resolver) {
         }
 
         if (child_errs != NULL) {
-            if (errs == NULL) errs = new_vector(&t_error);
+            if (errs == NULL) {
+                errs = new_vector(&t_error);
+            }
             vector_extend(errs, child_errs);
             delete_vector(child_errs);
             continue;
@@ -103,7 +107,9 @@ ResolverReturn* resolve_return_stmt(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
 
     if (!dtype_isassignable(srt->dtype, resolver->return_dtype)) {
         errs = new_vector(&t_error);
@@ -129,8 +135,9 @@ ResolverReturn* resolve_expression_stmt(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 0);
     resolverret_assign(&srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
-    if (errs != NULL) return new_resolverret_errors(errs);
-
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
     srt = new_srt(SRT_EXPR_STMT, 1, srt);
     return new_resolverret(srt);
 }

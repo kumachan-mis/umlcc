@@ -28,7 +28,9 @@ int liveseq_isalive(Liveseq* liveseq) {
     int index = liveseq->index;
 
     int livenesses_len = vector_size(liveseq->livenesses);
-    if (livenesses_len == 0 || liveseq->liveness_index >= livenesses_len) return 0;
+    if (livenesses_len == 0 || liveseq->liveness_index >= livenesses_len) {
+        return 0;
+    }
 
     if (liveseq->liveness_index < 0) {
         Liveness* first_liveness = vector_at(liveseq->livenesses, 0);
@@ -44,22 +46,30 @@ void liveseq_goto_next(Liveseq* liveseq) {
     int index = liveseq->index;
 
     int livenesses_len = vector_size(liveseq->livenesses);
-    if (livenesses_len == 0 || liveseq->liveness_index >= livenesses_len) return;
+    if (livenesses_len == 0 || liveseq->liveness_index >= livenesses_len) {
+        return;
+    }
 
     if (liveseq->liveness_index < 0) {
         Liveness* first_liveness = vector_at(liveseq->livenesses, 0);
-        if (index >= first_liveness->first_def_index) liveseq->liveness_index = 0;
+        if (index >= first_liveness->first_def_index) {
+            liveseq->liveness_index = 0;
+        }
         return;
     }
 
     Liveness* liveness = vector_at(liveseq->livenesses, liveseq->liveness_index);
     if (liveseq->liveness_index == livenesses_len - 1) {
-        if (index >= liveness->last_use_index) liveseq->liveness_index = livenesses_len;
+        if (index >= liveness->last_use_index) {
+            liveseq->liveness_index = livenesses_len;
+        }
         return;
     }
 
     Liveness* next_liveness = vector_at(liveseq->livenesses, liveseq->liveness_index + 1);
-    if (index >= next_liveness->first_def_index) liveseq->liveness_index++;
+    if (index >= next_liveness->first_def_index) {
+        liveseq->liveness_index++;
+    }
 }
 
 void delete_liveseq(Liveseq* liveseq) {

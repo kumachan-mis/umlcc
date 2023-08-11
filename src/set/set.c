@@ -67,7 +67,9 @@ SetIter* set_iter_next(SetIter* iter, Set* set) {
 
 int set_iter_end(SetIter* iter, Set* set) {
     int end = map_iter_end(iter->inner, set->inner);
-    if (end) free(iter);
+    if (end) {
+        free(iter);
+    }
     return end;
 }
 
@@ -84,7 +86,9 @@ Set* set_intersection(Set* set, Set* other) {
     Set* intersection_set = new_set(set->t_item);
     for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set); iter = set_iter_next(iter, set)) {
         void* item = set_iter_item(iter, set);
-        if (!set_contains(other, item)) continue;
+        if (!set_contains(other, item)) {
+            continue;
+        }
         set_add(intersection_set, set->t_item->copy_object(item));
     }
     return intersection_set;
@@ -107,7 +111,9 @@ Set* set_difference(Set* set, Set* other) {
     Set* difference_set = new_set(set->t_item);
     for (SetIter* iter = set_iter_begin(set); !set_iter_end(iter, set); iter = set_iter_next(iter, set)) {
         void* item = set_iter_item(iter, set);
-        if (set_contains(other, item)) continue;
+        if (set_contains(other, item)) {
+            continue;
+        }
         set_add(difference_set, set->t_item->copy_object(item));
     }
     return difference_set;

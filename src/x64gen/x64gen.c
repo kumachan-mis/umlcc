@@ -27,7 +27,9 @@ Vector* x64gen_generate_x64code(X64gen* x64gen) {
 
     int immcs_len = vector_size(x64gen->immcs);
     while (1) {
-        if (x64gen->index >= immcs_len) break;
+        if (x64gen->index >= immcs_len) {
+            break;
+        }
 
         Immc* immc = vector_at(x64gen->immcs, x64gen->index);
         switch (immc->label->type) {
@@ -69,7 +71,9 @@ Vector* gen_function_x64code(X64gen* x64gen) {
     Vector* body_codes = new_vector(&t_string);
     while (1) {
         Immc* immc = vector_at(x64gen->immcs, x64gen->index);
-        if (immc->type == IMMC_INST && immc->inst->type == IMMC_INST_LEAVE) break;
+        if (immc->type == IMMC_INST && immc->inst->type == IMMC_INST_LEAVE) {
+            break;
+        }
 
         switch (immc->type) {
             case IMMC_INST:
@@ -133,7 +137,9 @@ Vector* gen_variable_x64code(X64gen* x64gen) {
 
     while (1) {
         Immc* immc = vector_at(x64gen->immcs, x64gen->index);
-        if (immc == NULL || (immc->type == IMMC_LABEL && immc->label->type != IMMC_LABEL_NORMAL)) break;
+        if (immc == NULL || (immc->type == IMMC_LABEL && immc->label->type != IMMC_LABEL_NORMAL)) {
+            break;
+        }
 
         switch (immc->type) {
             case IMMC_DATA:

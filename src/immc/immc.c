@@ -52,11 +52,17 @@ Immc* immc_copy(Immc* immc) {
     copied_immc->type = immc->type;
 
     copied_immc->inst = NULL;
-    if (immc->inst != NULL) copied_immc->inst = immcinst_copy(immc->inst);
+    if (immc->inst != NULL) {
+        copied_immc->inst = immcinst_copy(immc->inst);
+    }
     copied_immc->data = NULL;
-    if (immc->data != NULL) copied_immc->data = immcdata_copy(immc->data);
+    if (immc->data != NULL) {
+        copied_immc->data = immcdata_copy(immc->data);
+    }
     copied_immc->label = NULL;
-    if (immc->label != NULL) copied_immc->label = immclabel_copy(immc->label);
+    if (immc->label != NULL) {
+        copied_immc->label = immclabel_copy(immc->label);
+    }
 
     return copied_immc;
 }
@@ -79,8 +85,14 @@ char* immc_tostring(Immc* immc) {
 }
 
 void delete_immc(Immc* immc) {
-    if (immc->inst != NULL) delete_immcinst(immc->inst);
-    if (immc->data != NULL) delete_immcdata(immc->data);
-    if (immc->label != NULL) delete_immclabel(immc->label);
+    if (immc->inst != NULL) {
+        delete_immcinst(immc->inst);
+    }
+    if (immc->data != NULL) {
+        delete_immcdata(immc->data);
+    }
+    if (immc->label != NULL) {
+        delete_immclabel(immc->label);
+    }
     free(immc);
 }

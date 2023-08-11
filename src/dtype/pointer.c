@@ -19,7 +19,9 @@ DPointer* new_socket_dpointer(void) {
 DPointer* dpointer_copy(DPointer* dpointer) {
     DPointer* copied_dpointer = malloc(sizeof(DPointer));
     copied_dpointer->to_dtype = NULL;
-    if (dpointer->to_dtype != NULL) copied_dpointer->to_dtype = dtype_copy(dpointer->to_dtype);
+    if (dpointer->to_dtype != NULL) {
+        copied_dpointer->to_dtype = dtype_copy(dpointer->to_dtype);
+    }
     return copied_dpointer;
 }
 
@@ -37,6 +39,8 @@ int dpointer_equals(DPointer* dpointer, DPointer* other) {
 }
 
 void delete_dpointer(DPointer* dpointer) {
-    if (dpointer->to_dtype != NULL) delete_dtype(dpointer->to_dtype);
+    if (dpointer->to_dtype != NULL) {
+        delete_dtype(dpointer->to_dtype);
+    }
     free(dpointer);
 }

@@ -61,11 +61,17 @@ Ast* ast_copy(Ast* ast) {
     Ast* copied_ast = malloc(sizeof(Ast));
     copied_ast->type = ast->type;
     copied_ast->ident_name = NULL;
-    if (ast->ident_name != NULL) copied_ast->ident_name = new_string(ast->ident_name);
+    if (ast->ident_name != NULL) {
+        copied_ast->ident_name = new_string(ast->ident_name);
+    }
     copied_ast->iliteral = NULL;
-    if (ast->iliteral != NULL) copied_ast->iliteral = iliteral_copy(ast->iliteral);
+    if (ast->iliteral != NULL) {
+        copied_ast->iliteral = iliteral_copy(ast->iliteral);
+    }
     copied_ast->sliteral = NULL;
-    if (ast->sliteral != NULL) copied_ast->sliteral = sliteral_copy(ast->sliteral);
+    if (ast->sliteral != NULL) {
+        copied_ast->sliteral = sliteral_copy(ast->sliteral);
+    }
     copied_ast->children = vector_copy(ast->children);
     return copied_ast;
 }
@@ -75,9 +81,15 @@ int ast_isexpr(Ast* ast) {
 }
 
 void delete_ast(Ast* ast) {
-    if (ast->ident_name != NULL) free(ast->ident_name);
-    if (ast->iliteral != NULL) delete_iliteral(ast->iliteral);
-    if (ast->sliteral != NULL) delete_sliteral(ast->sliteral);
+    if (ast->ident_name != NULL) {
+        free(ast->ident_name);
+    }
+    if (ast->iliteral != NULL) {
+        delete_iliteral(ast->iliteral);
+    }
+    if (ast->sliteral != NULL) {
+        delete_sliteral(ast->sliteral);
+    }
     delete_vector(ast->children);
     free(ast);
 }

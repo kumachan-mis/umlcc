@@ -275,6 +275,8 @@ void run_stmt_immcgen_test(Srt* input, SymbolTable* local_table, int return_labe
 
     testlib_assert_immcs_equal(actual, expected);
 
-    if (actual != NULL) delete_vector(actual);
+    if (actual != NULL) {
+        delete_vector(actual);
+    }
     delete_immcgen(immcgen);
 }

@@ -451,7 +451,9 @@ void run_lexer_test(char* input, Vector* expected) {
     testlib_assert_ctokens_equal(actual, expected);
     CU_ASSERT_PTR_NULL(err);
 
-    if (actual != NULL) delete_vector(actual);
+    if (actual != NULL) {
+        delete_vector(actual);
+    }
     delete_lexer(lexer);
 
     fclose(file_ptr);
