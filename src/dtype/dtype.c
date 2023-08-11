@@ -174,6 +174,24 @@ DType* dtype_connect(DType* socket_dtype, DType* plug_dtype) {
     }
 }
 
+int dtype_integer_rank(DType* dtype) {
+    switch (dtype->type) {
+        case DTYPE_CHAR:
+            return 1;
+        case DTYPE_INT:
+        case DTYPE_UNSIGNED_INT:
+            return 2;
+        case DTYPE_LONG:
+        case DTYPE_UNSIGNED_LONG:
+            return 3;
+        case DTYPE_LONGLONG:
+        case DTYPE_UNSIGNED_LONGLONG:
+            return 4;
+        default:
+            return 0;
+    }
+}
+
 DType* dtype_aggregate_at(DType* dtype, int index) {
     switch (dtype->type) {
         case DTYPE_ARRAY:
@@ -239,6 +257,16 @@ int dtype_isassignable(DType* dtype, DType* other) {
 
     // TODO: more rules may be added
     return 0;
+}
+
+int dtype_issignedinteger(DType* dtype) {
+    return (dtype->type == DTYPE_CHAR || dtype->type == DTYPE_INT || dtype->type == DTYPE_LONG ||
+            dtype->type == DTYPE_LONGLONG || dtype->type == DTYPE_ENUM);
+}
+
+int dtype_isunsignedinteger(DType* dtype) {
+    return (dtype->type == DTYPE_UNSIGNED_INT || dtype->type == DTYPE_UNSIGNED_LONG ||
+            dtype->type == DTYPE_UNSIGNED_LONGLONG);
 }
 
 int dtype_isinteger(DType* dtype) {
