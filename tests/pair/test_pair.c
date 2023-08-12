@@ -72,6 +72,16 @@ void test_pair_set(void) {
     second = pair_second(pair);
     CU_ASSERT_STRING_EQUAL(second, "one");
 
+    first = new_integer(2);
+    second = new_string("two");
+    pair_set(pair, first, second);
+
+    first = pair_first(pair);
+    CU_ASSERT_EQUAL(*first, 2);
+
+    second = pair_second(pair);
+    CU_ASSERT_STRING_EQUAL(second, "two");
+
     delete_pair(pair);
 }
 
@@ -85,6 +95,15 @@ void test_pair_set_first(void) {
 
     first = pair_first(pair);
     CU_ASSERT_EQUAL(*first, 1);
+
+    second = pair_second(pair);
+    CU_ASSERT_PTR_NULL(second);
+
+    first = new_integer(2);
+    pair_set_first(pair, first);
+
+    first = pair_first(pair);
+    CU_ASSERT_EQUAL(*first, 2);
 
     second = pair_second(pair);
     CU_ASSERT_PTR_NULL(second);
@@ -105,6 +124,15 @@ void test_pair_set_second(void) {
 
     second = pair_second(pair);
     CU_ASSERT_STRING_EQUAL(second, "one");
+
+    second = new_string("two");
+    pair_set_second(pair, second);
+
+    first = pair_first(pair);
+    CU_ASSERT_PTR_NULL(first);
+
+    second = pair_second(pair);
+    CU_ASSERT_STRING_EQUAL(second, "two");
 
     delete_pair(pair);
 }
