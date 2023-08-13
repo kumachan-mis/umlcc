@@ -4,7 +4,12 @@
 
 void test_resolve_compound_stmt_completed_typedef(void);
 void test_resolve_compound_stmt_incompleted_typedef(void);
-void test_resolve_compound_stmt_integer(void);
+void test_resolve_compound_stmt_int(void);
+void test_resolve_compound_stmt_unsigned_int(void);
+void test_resolve_compound_stmt_long(void);
+void test_resolve_compound_stmt_unsigned_long(void);
+void test_resolve_compound_stmt_long_long(void);
+void test_resolve_compound_stmt_unsigned_long_long(void);
 void test_resolve_compound_stmt_void_pointer(void);
 void test_resolve_compound_stmt_empty(void);
 void test_resolve_return_stmt_without_cast(void);
@@ -18,7 +23,12 @@ CU_Suite* add_test_suite_stmt_resolver(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_completed_typedef);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_incompleted_typedef);
-    CU_ADD_TEST(suite, test_resolve_compound_stmt_integer);
+    CU_ADD_TEST(suite, test_resolve_compound_stmt_int);
+    CU_ADD_TEST(suite, test_resolve_compound_stmt_unsigned_int);
+    CU_ADD_TEST(suite, test_resolve_compound_stmt_long);
+    CU_ADD_TEST(suite, test_resolve_compound_stmt_unsigned_long);
+    CU_ADD_TEST(suite, test_resolve_compound_stmt_long_long);
+    CU_ADD_TEST(suite, test_resolve_compound_stmt_unsigned_long_long);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_void_pointer);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_empty);
     CU_ADD_TEST(suite, test_resolve_return_stmt_without_cast);
@@ -197,7 +207,7 @@ void test_resolve_compound_stmt_incompleted_typedef(void) {
     delete_srt(expected);
 }
 
-void test_resolve_compound_stmt_integer(void) {
+void test_resolve_compound_stmt_int(void) {
     Ast* input = new_ast(AST_CMPD_STMT, 3,                  // non-terminal
                          new_ast(AST_DECL, 2,               // non-terminal
                                  new_ast(AST_DECL_SPECS, 1, // non-terminal
@@ -263,6 +273,355 @@ void test_resolve_compound_stmt_integer(void) {
                     SRT_MUL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
                     new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)),
                     new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))))));
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_compound_stmt_unsigned_int(void) {
+    Ast* input = new_ast(
+        AST_CMPD_STMT, 4,                  // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 2, // non-terminal
+                        new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("x")),
+                                new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 4u))))),
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 2, // non-terminal
+                        new_ast(AST_TYPE_INT, 0), new_ast(AST_TYPE_UNSIGNED, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("y")),
+                                new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 2u))))),
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 1, // non-terminal
+                        new_ast(AST_TYPE_UNSIGNED, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                                new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("z")))))),
+        new_ast(AST_EXPR_STMT, 1,                  // non-terminal
+                new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
+                        new_ast(AST_INDIR_EXPR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("z"))),
+                        new_ast(AST_DIV_EXPR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("y"))))));
+
+    Srt* expected = new_srt(
+        SRT_CMPD_STMT, 4,                 // non-terminal
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_UNSIGNED_INT), new_string("x")),
+                        new_srt(SRT_INIT, 1,
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT),
+                                                 new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 4u))))),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_UNSIGNED_INT), new_string("y")),
+                        new_srt(SRT_INIT, 1,
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT),
+                                                 new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 2u))))),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_UNSIGNED_INT)),
+                                           new_string("z")))),
+        new_srt(SRT_EXPR_STMT, 1, // non-terminal
+                new_dtyped_srt(
+                    SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 2, // non-terminal
+                    new_dtyped_srt(
+                        SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_UNSIGNED_INT)), 1, // non-terminal
+                        new_dtyped_srt(SRT_INDIR_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 1,    // non-terminal
+                                       new_identifier_srt(SRT_IDENT_EXPR,
+                                                          new_pointer_dtype(new_integer_dtype(DTYPE_UNSIGNED_INT)),
+                                                          new_string("z")))),
+                    new_dtyped_srt(
+                        SRT_DIV_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 2, // non-terminal
+                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), new_string("x")),
+                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), new_string("y"))))));
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_compound_stmt_long(void) {
+    Ast* input =
+        new_ast(AST_CMPD_STMT, 4,                  // non-terminal
+                new_ast(AST_DECL, 2,               // non-terminal
+                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                new_ast(AST_TYPE_LONG, 0)),
+                        new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("x")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_LONG, 5l))))),
+                new_ast(AST_DECL, 2,               // non-terminal
+                        new_ast(AST_DECL_SPECS, 2, // non-terminal
+                                new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_INT, 0)),
+                        new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("y")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_LONG, 3l))))),
+                new_ast(AST_DECL, 2,               // non-terminal
+                        new_ast(AST_DECL_SPECS, 2, // non-terminal
+                                new_ast(AST_TYPE_INT, 0), new_ast(AST_TYPE_LONG, 0)),
+                        new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                                new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("z")))))),
+                new_ast(AST_EXPR_STMT, 1,                  // non-terminal
+                        new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
+                                new_ast(AST_INDIR_EXPR, 1, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("z"))),
+                                new_ast(AST_ADD_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("y"))))));
+
+    Srt* expected = new_srt(
+        SRT_CMPD_STMT, 4,                 // non-terminal
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_LONG), new_string("x")),
+                        new_srt(SRT_INIT, 1,
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_LONG),
+                                                 new_signed_iliteral(INTEGER_LONG, 5l))))),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_LONG), new_string("y")),
+                        new_srt(SRT_INIT, 1,
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_LONG),
+                                                 new_signed_iliteral(INTEGER_LONG, 3l))))),
+        new_srt(
+            SRT_DECL_LIST, 1,         // non-terminal
+            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                    new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_LONG)), new_string("z")))),
+        new_srt(
+            SRT_EXPR_STMT, 1, // non-terminal
+            new_dtyped_srt(
+                SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_LONG), 2, // non-terminal
+                new_dtyped_srt(
+                    SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_LONG)), 1, // non-terminal
+                    new_dtyped_srt(SRT_INDIR_EXPR, new_integer_dtype(DTYPE_LONG), 1,    // non-terminal
+                                   new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_LONG)),
+                                                      new_string("z")))),
+                new_dtyped_srt(SRT_ADD_EXPR, new_integer_dtype(DTYPE_LONG), 2, // non-terminal
+                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_LONG), new_string("x")),
+                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_LONG), new_string("y"))))));
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_compound_stmt_unsigned_long(void) {
+    Ast* input = new_ast(
+        AST_CMPD_STMT, 4,                  // non-terminal
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 2, // non-terminal
+                        new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_LONG, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("x")),
+                                new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 6ul))))),
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 3, // non-terminal
+                        new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("y")),
+                                new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 4ul))))),
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 3, // non-terminal
+                        new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_INT, 0), new_ast(AST_TYPE_LONG, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                                new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("z")))))),
+        new_ast(AST_EXPR_STMT, 1,                  // non-terminal
+                new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
+                        new_ast(AST_INDIR_EXPR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("z"))),
+                        new_ast(AST_SUB_EXPR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("y"))))));
+
+    Srt* expected = new_srt(
+        SRT_CMPD_STMT, 4,                 // non-terminal
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_UNSIGNED_LONG), new_string("x")),
+                        new_srt(SRT_INIT, 1,
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG),
+                                                 new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 6ul))))),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_UNSIGNED_LONG), new_string("y")),
+                        new_srt(SRT_INIT, 1,
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG),
+                                                 new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 4ul))))),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_UNSIGNED_LONG)),
+                                           new_string("z")))),
+        new_srt(SRT_EXPR_STMT, 1, // non-terminal
+                new_dtyped_srt(
+                    SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), 2, // non-terminal
+                    new_dtyped_srt(
+                        SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_UNSIGNED_LONG)), 1, // non-terminal
+                        new_dtyped_srt(SRT_INDIR_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), 1,    // non-terminal
+                                       new_identifier_srt(SRT_IDENT_EXPR,
+                                                          new_pointer_dtype(new_integer_dtype(DTYPE_UNSIGNED_LONG)),
+                                                          new_string("z")))),
+                    new_dtyped_srt(
+                        SRT_SUB_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), 2, // non-terminal
+                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), new_string("x")),
+                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), new_string("y"))))));
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_compound_stmt_long_long(void) {
+    Ast* input =
+        new_ast(AST_CMPD_STMT, 4,                  // non-terminal
+                new_ast(AST_DECL, 2,               // non-terminal
+                        new_ast(AST_DECL_SPECS, 2, // non-terminal
+                                new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_LONG, 0)),
+                        new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("x")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_LONGLONG, 7ll))))),
+                new_ast(AST_DECL, 2,               // non-terminal
+                        new_ast(AST_DECL_SPECS, 3, // non-terminal
+                                new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_INT, 0)),
+                        new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("y")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_LONGLONG, 5ll))))),
+                new_ast(AST_DECL, 2,               // non-terminal
+                        new_ast(AST_DECL_SPECS, 3, // non-terminal
+                                new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_INT, 0), new_ast(AST_TYPE_LONG, 0)),
+                        new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                                new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                                        new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                                new_identifier_ast(AST_IDENT_DECLOR, new_string("z")))))),
+                new_ast(AST_EXPR_STMT, 1,                  // non-terminal
+                        new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
+                                new_ast(AST_INDIR_EXPR, 1, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("z"))),
+                                new_ast(AST_ADD_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("y"))))));
+
+    Srt* expected = new_srt(
+        SRT_CMPD_STMT, 4,                 // non-terminal
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_LONGLONG), new_string("x")),
+                        new_srt(SRT_INIT, 1,
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_LONGLONG),
+                                                 new_signed_iliteral(INTEGER_LONGLONG, 7ll))))),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_LONGLONG), new_string("y")),
+                        new_srt(SRT_INIT, 1,
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_LONGLONG),
+                                                 new_signed_iliteral(INTEGER_LONGLONG, 5ll))))),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_LONGLONG)),
+                                           new_string("z")))),
+        new_srt(
+            SRT_EXPR_STMT, 1, // non-terminal
+            new_dtyped_srt(
+                SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_LONGLONG), 2,                                 // non-terminal
+                new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_LONGLONG)), 1, // non-terminal
+                               new_dtyped_srt(SRT_INDIR_EXPR, new_integer_dtype(DTYPE_LONGLONG), 1,    // non-terminal
+                                              new_identifier_srt(SRT_IDENT_EXPR,
+                                                                 new_pointer_dtype(new_integer_dtype(DTYPE_LONGLONG)),
+                                                                 new_string("z")))),
+                new_dtyped_srt(
+                    SRT_ADD_EXPR, new_integer_dtype(DTYPE_LONGLONG), 2, // non-terminal
+                    new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_LONGLONG), new_string("x")),
+                    new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_LONGLONG), new_string("y"))))));
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_compound_stmt_unsigned_long_long(void) {
+    Ast* input = new_ast(
+        AST_CMPD_STMT, 4, // non-terminal
+        new_ast(
+            AST_DECL, 2,               // non-terminal
+            new_ast(AST_DECL_SPECS, 3, // non-terminal
+                    new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_LONG, 0)),
+            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                    new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_DECLOR, new_string("x")),
+                            new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_LONGLONG, 8ull))))),
+        new_ast(
+            AST_DECL, 2,               // non-terminal
+            new_ast(AST_DECL_SPECS, 4, // non-terminal
+                    new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_LONG, 0),
+                    new_ast(AST_TYPE_INT, 0)),
+            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                    new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_DECLOR, new_string("y")),
+                            new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_LONGLONG, 6ull))))),
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 4, // non-terminal
+                        new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_LONG, 0),
+                        new_ast(AST_TYPE_INT, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,           // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1,        // non-terminal
+                                new_ast(AST_PTR_DECLOR, 1, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("z")))))),
+        new_ast(AST_EXPR_STMT, 1,                  // non-terminal
+                new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
+                        new_ast(AST_INDIR_EXPR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("z"))),
+                        new_ast(AST_SUB_EXPR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("y"))))));
+
+    Srt* expected = new_srt(
+        SRT_CMPD_STMT, 4,                 // non-terminal
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), new_string("x")),
+                        new_srt(SRT_INIT, 1,
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG),
+                                                 new_unsigned_iliteral(INTEGER_UNSIGNED_LONGLONG, 8ull))))),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), new_string("y")),
+                        new_srt(SRT_INIT, 1,
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG),
+                                                 new_unsigned_iliteral(INTEGER_UNSIGNED_LONGLONG, 6ull))))),
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_pointer_dtype(new_integer_dtype(DTYPE_UNSIGNED_LONGLONG)),
+                                           new_string("z")))),
+        new_srt(
+            SRT_EXPR_STMT, 1, // non-terminal
+            new_dtyped_srt(
+                SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), 2, // non-terminal
+                new_dtyped_srt(
+                    SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_UNSIGNED_LONGLONG)), 1, // non-terminal
+                    new_dtyped_srt(SRT_INDIR_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), 1,    // non-terminal
+                                   new_identifier_srt(SRT_IDENT_EXPR,
+                                                      new_pointer_dtype(new_integer_dtype(DTYPE_UNSIGNED_LONGLONG)),
+                                                      new_string("z")))),
+                new_dtyped_srt(
+                    SRT_SUB_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), 2, // non-terminal
+                    new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), new_string("x")),
+                    new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), new_string("y"))))));
 
     run_stmt_resolver_test(input, NULL, NULL, expected);
 

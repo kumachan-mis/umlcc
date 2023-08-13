@@ -27,6 +27,7 @@
 #include "./parser/test_statement_error.h"
 #include "./regalloc/test_basicblock.h"
 #include "./regalloc/test_regalloc.h"
+#include "./resolver/test_conversion.h"
 #include "./resolver/test_declaration.h"
 #include "./resolver/test_declaration_error.h"
 #include "./resolver/test_expression.h"
@@ -106,6 +107,7 @@ int main(void) {
     // resolver tests
     add_test_suite_expr_resolver();
     add_test_suite_expr_resolver_error();
+    add_test_suite_conv_resolver();
     add_test_suite_stmt_resolver();
     add_test_suite_stmt_resolver_error();
     add_test_suite_decl_resolver();
