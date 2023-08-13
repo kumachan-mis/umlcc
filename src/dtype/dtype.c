@@ -323,7 +323,7 @@ int dtype_alignment(DType* dtype) {
             return 4;
         case DTYPE_LONG:
         case DTYPE_UNSIGNED_LONG:
-            return 4;
+            return 8;
         case DTYPE_LONGLONG:
         case DTYPE_UNSIGNED_LONGLONG:
             return 8;

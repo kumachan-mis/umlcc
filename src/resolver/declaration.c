@@ -1023,39 +1023,27 @@ ResolverReturn* resolve_initializer(Resolver* resolver) {
 
     DType* dtype = resolver->initialized_dtype;
 
-    switch (dtype->type) {
-        case DTYPE_CHAR:
-        case DTYPE_INT:
-        case DTYPE_POINTER:
-            resolverret_assign(&srt, &errs, resolve_scalar_initializer(resolver));
-            break;
-        case DTYPE_ARRAY:
-            if (dtype->darray->of_dtype->type == DTYPE_CHAR) {
-                resolverret_assign(&srt, &errs, resolve_string_initializer(resolver));
-                break;
-            }
-            resolverret_assign(&srt, &errs, resolve_aggregate_initializer(resolver));
-            break;
-        case DTYPE_STRUCT:
-            if (dtype->dstruct->members == NULL) {
-                resolver->initialized_dtype = tagtable_search(resolver->tag_table, dtype->dstruct->name);
-            }
-            resolverret_assign(&srt, &errs, resolve_aggregate_initializer(resolver));
-            break;
-        case DTYPE_FUNCTION:
-            errs = new_vector(&t_error);
-            err = new_error("function cannot be initialized\n");
-            vector_push(errs, err);
-            break;
-        case DTYPE_TYPEDEF:
-            errs = new_vector(&t_error);
-            err = new_error("typedef-name cannot be initialized\n");
-            vector_push(errs, err);
-            break;
-        default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
-                            "unreachable statement (in resolve_initializer)\n");
-            exit(1);
+    if (dtype_isscalar(dtype)) {
+        resolverret_assign(&srt, &errs, resolve_scalar_initializer(resolver));
+    } else if (dtype->type == DTYPE_ARRAY && dtype->darray->of_dtype->type == DTYPE_CHAR) {
+        resolverret_assign(&srt, &errs, resolve_string_initializer(resolver));
+    } else if (dtype->type == DTYPE_STRUCT && dtype->dstruct->members == NULL) {
+        resolver->initialized_dtype = tagtable_search(resolver->tag_table, dtype->dstruct->name);
+        resolverret_assign(&srt, &errs, resolve_aggregate_initializer(resolver));
+    } else if (dtype->type == DTYPE_ARRAY || dtype->type == DTYPE_STRUCT) {
+        resolverret_assign(&srt, &errs, resolve_aggregate_initializer(resolver));
+    } else if (dtype->type == DTYPE_FUNCTION) {
+        errs = new_vector(&t_error);
+        err = new_error("function cannot be initialized\n");
+        vector_push(errs, err);
+    } else if (dtype->type == DTYPE_TYPEDEF) {
+        errs = new_vector(&t_error);
+        err = new_error("typedef-name cannot be initialized\n");
+        vector_push(errs, err);
+    } else {
+        fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                        "unreachable statement (in resolve_initializer)\n");
+        exit(1);
     }
 
     if (errs != NULL) {
