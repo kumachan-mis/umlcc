@@ -4,7 +4,8 @@
 
 #include <stdlib.h>
 
-void test_resolve_decl_specifiers_error(void);
+void test_resolve_decl_specifiers_error_toolong(void);
+void test_resolve_decl_specifiers_error_combination(void);
 void test_resolve_declarator_list_error_duplicated(void);
 void test_resolve_declarator_error_incomplete(void);
 void test_resolve_array_error_functions(void);
@@ -47,7 +48,8 @@ void run_global_decl_resolver_error_test(Ast* input, SymbolTable* symbol_table, 
 
 CU_Suite* add_test_suite_decl_resolver_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_decl_resolver_error", NULL, NULL);
-    CU_ADD_TEST(suite, test_resolve_decl_specifiers_error);
+    CU_ADD_TEST(suite, test_resolve_decl_specifiers_error_toolong);
+    CU_ADD_TEST(suite, test_resolve_decl_specifiers_error_combination);
     CU_ADD_TEST(suite, test_resolve_declarator_list_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_declarator_error_incomplete);
     CU_ADD_TEST(suite, test_resolve_array_error_functions);
@@ -87,7 +89,26 @@ CU_Suite* add_test_suite_decl_resolver_error(void) {
     return suite;
 }
 
-void test_resolve_decl_specifiers_error(void) {
+void test_resolve_decl_specifiers_error_toolong(void) {
+    Ast* local_input = new_ast(AST_DECL, 2,               // non-terminal
+                               new_ast(AST_DECL_SPECS, 5, // non-terminal
+                                       new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_LONG, 0),
+                                       new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_INT, 0)),
+                               new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                       new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                               new_identifier_ast(AST_IDENT_DECLOR, new_string("x")))));
+    Ast* global_input = ast_copy(local_input);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("combination of type specifiers is invalid\n"));
+
+    run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
+    run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_decl_specifiers_error_combination(void) {
     Ast* local_input = new_ast(AST_DECL, 2,               // non-terminal
                                new_ast(AST_DECL_SPECS, 2, // non-terminal
                                        new_ast(AST_TYPE_CHAR, 0), new_ast(AST_TYPE_INT, 0)),
