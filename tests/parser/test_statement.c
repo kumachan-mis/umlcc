@@ -540,7 +540,7 @@ void test_parse_compound_stmt_unsigned_long_long(void) {
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
-    vector_push(input, new_ctoken(CTOKEN_MINUS));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_RBRACE));
@@ -577,7 +577,7 @@ void test_parse_compound_stmt_unsigned_long_long(void) {
                 new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
                         new_ast(AST_INDIR_EXPR, 1, // non-terminal
                                 new_identifier_ast(AST_IDENT_EXPR, new_string("z"))),
-                        new_ast(AST_SUB_EXPR, 2, // non-terminal
+                        new_ast(AST_MUL_EXPR, 2, // non-terminal
                                 new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                                 new_identifier_ast(AST_IDENT_EXPR, new_string("y"))))));
 

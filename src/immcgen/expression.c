@@ -505,9 +505,11 @@ Vector* gen_primary_expr_immcode(Immcgen* immcgen) {
             break;
         }
         case SRT_INT_EXPR:
-        case SRT_CHAR_EXPR:
-            src = new_int_immcope(IMMC_SUFFIX_LONG, iliteral_copy(srt->iliteral));
+        case SRT_CHAR_EXPR: {
+            ImmcSuffix suffix = immcsuffix_get(dtype_nbytes(srt->dtype));
+            src = new_int_immcope(suffix, iliteral_copy(srt->iliteral));
             break;
+        }
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
                             "unreachable statement (in gen_primary_expr_immcode)\n");

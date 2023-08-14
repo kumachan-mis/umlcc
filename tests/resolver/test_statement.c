@@ -586,7 +586,7 @@ void test_resolve_compound_stmt_unsigned_long_long(void) {
                 new_ast(AST_ASSIGN_EXPR, 2,        // non-terminal
                         new_ast(AST_INDIR_EXPR, 1, // non-terminal
                                 new_identifier_ast(AST_IDENT_EXPR, new_string("z"))),
-                        new_ast(AST_SUB_EXPR, 2, // non-terminal
+                        new_ast(AST_MUL_EXPR, 2, // non-terminal
                                 new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                                 new_identifier_ast(AST_IDENT_EXPR, new_string("y"))))));
 
@@ -619,7 +619,7 @@ void test_resolve_compound_stmt_unsigned_long_long(void) {
                                                       new_pointer_dtype(new_integer_dtype(DTYPE_UNSIGNED_LONGLONG)),
                                                       new_string("z")))),
                 new_dtyped_srt(
-                    SRT_SUB_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), 2, // non-terminal
+                    SRT_MUL_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), 2, // non-terminal
                     new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), new_string("x")),
                     new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), new_string("y"))))));
 
