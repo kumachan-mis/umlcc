@@ -68,72 +68,72 @@ unsigned muodl(void) {
     return c;
 }
 
-long long addq(void) {
-    long long a = 14LL;
-    long long b = 3LL;
-    long long c = a + b;
+long addq(void) {
+    long a = 14LL;
+    long b = 3LL;
+    long c = a + b;
     return c;
 }
 
-long long subq(void) {
-    long long a = 14LL;
-    long long b = 3LL;
-    long long c = a - b;
+long subq(void) {
+    long a = 14LL;
+    long b = 3LL;
+    long c = a - b;
     return c;
 }
 
-long long mulq(void) {
-    long long a = 14LL;
-    long long b = 3LL;
-    long long c = a * b;
+long mulq(void) {
+    long a = 14LL;
+    long b = 3LL;
+    long c = a * b;
     return c;
 }
 
-long long divq(void) {
-    long long a = 14LL;
-    long long b = 3LL;
-    long long c = a / b;
+long divq(void) {
+    long a = 14LL;
+    long b = 3LL;
+    long c = a / b;
     return c;
 }
 
-long long modq(void) {
-    long long a = 14LL;
-    long long b = 3LL;
-    long long c = a % b;
+long modq(void) {
+    long a = 14LL;
+    long b = 3LL;
+    long c = a % b;
     return c;
 }
 
-unsigned long long uaddq(void) {
-    unsigned long long a = 14;
-    unsigned long long b = 3;
-    unsigned long long c = a + b;
+unsigned long uaddq(void) {
+    unsigned long a = 14;
+    unsigned long b = 3;
+    unsigned long c = a + b;
     return c;
 }
 
-unsigned long long usubq(void) {
-    unsigned long long a = 14;
-    unsigned long long b = 3;
-    unsigned long long c = a - b;
+unsigned long usubq(void) {
+    unsigned long a = 14;
+    unsigned long b = 3;
+    unsigned long c = a - b;
     return c;
 }
 
-unsigned long long umulq(void) {
-    unsigned long long a = 14;
-    unsigned long long b = 3;
-    unsigned long long c = a * b;
+unsigned long umulq(void) {
+    unsigned long a = 14;
+    unsigned long b = 3;
+    unsigned long c = a * b;
     return c;
 }
 
-unsigned long long udivq(void) {
-    unsigned long long a = 14;
-    unsigned long long b = 3;
-    unsigned long long c = a / b;
+unsigned long udivq(void) {
+    unsigned long a = 14;
+    unsigned long b = 3;
+    unsigned long c = a / b;
     return c;
 }
 
-unsigned long long umodq(void) {
-    unsigned long long a = 14;
-    unsigned long long b = 3;
-    unsigned long long c = a % b;
+unsigned long umodq(void) {
+    unsigned long a = 14;
+    unsigned long b = 3;
+    unsigned long c = a % b;
     return c;
 }
