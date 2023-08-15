@@ -188,7 +188,7 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, X64InstType type, int resu
 
     X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
     if (type == X64_INST_DIVX) {
-        X64Ope* zero_src = new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_UNSIGNED_INT, 0);
+        X64Ope* zero_src = new_signed_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 0);
         X64Ope* dx_dst = new_reg_x64ope(X64_SUFFIX_LONG, DX_REG_ID);
         vector_push(codes, new_inst_x64(X64_INST_MOVX, zero_src, dx_dst));
     } else if (suffix != X64_SUFFIX_QUAD) {
