@@ -24,8 +24,8 @@ void test_parse_subscription_expr(void);
 void test_parse_member_expr(void);
 void test_parse_tomember_expr(void);
 void test_parse_ident_expr(void);
-void test_parse_iliteral_expr_int(void);
 void test_parse_iliteral_expr_char(void);
+void test_parse_iliteral_expr_int(void);
 void test_parse_sliteral_expr(void);
 void test_parse_parenthesized_expr(void);
 
@@ -54,8 +54,8 @@ CU_Suite* add_test_suite_expr_parser(void) {
     CU_ADD_TEST(suite, test_parse_member_expr);
     CU_ADD_TEST(suite, test_parse_tomember_expr);
     CU_ADD_TEST(suite, test_parse_ident_expr);
-    CU_ADD_TEST(suite, test_parse_iliteral_expr_int);
     CU_ADD_TEST(suite, test_parse_iliteral_expr_char);
+    CU_ADD_TEST(suite, test_parse_iliteral_expr_int);
     CU_ADD_TEST(suite, test_parse_sliteral_expr);
     CU_ADD_TEST(suite, test_parse_parenthesized_expr);
     return suite;
@@ -525,24 +525,24 @@ void test_parse_ident_expr(void) {
     delete_ast(expected);
 }
 
-void test_parse_iliteral_expr_int(void) {
-    Vector* input = new_vector(&t_ctoken);
-    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
-    vector_push(input, new_ctoken(CTOKEN_EOF));
-
-    Ast* expected = new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3));
-
-    run_expr_parser_test(input, expected);
-
-    delete_ast(expected);
-}
-
 void test_parse_iliteral_expr_char(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, 89)));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Ast* expected = new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 89));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_iliteral_expr_int(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3));
 
     run_expr_parser_test(input, expected);
 

@@ -1,6 +1,8 @@
 #include "./reader.h"
 #include "../error/errint.h"
+#include "../error/errstr.h"
 #include "../literal/sliteral.h"
+#include "./util.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -42,16 +44,26 @@ LexerReturnItem* read_keyword_or_identifier(Lexer* lexer) {
 }
 
 LexerReturnItem* read_integer_constant(Lexer* lexer) {
-    int read_decimal_constant(Lexer * lexer);
-    int read_octal_constant(Lexer * lexer);
-    int read_hexadecimal_constant(Lexer * lexer);
+    ErrorableString* read_integer_constant_digits(Lexer * lexer, Map * digit_map);
+    IntegerLiteralType read_integer_suffix(Lexer * lexer);
+
+    char* value = NULL;
+    Error* err = NULL;
 
     int fst = fgetc(lexer->file_ptr);
     int snd = fgetc(lexer->file_ptr);
 
     if (fst == '0' && (snd == 'x' || snd == 'X')) {
-        int value = read_hexadecimal_constant(lexer);
-        CToken* ctoken = new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, value));
+        ErrorableString* errstr = read_integer_constant_digits(lexer, lexer->hexdigit_map);
+        errstr_assign(&value, &err, errstr);
+        if (err != NULL) {
+            return new_lexerret_item_error(err);
+        }
+        IntegerLiteralType suffix = read_integer_suffix(lexer);
+
+        IntegerLiteral* iliteral = create_iliteral(value, 0x10, suffix);
+        CToken* ctoken = new_iliteral_ctoken(CTOKEN_INT, iliteral);
+        free(value);
         return new_lexerret_item(ctoken);
     }
 
@@ -59,13 +71,29 @@ LexerReturnItem* read_integer_constant(Lexer* lexer) {
     ungetc(fst, lexer->file_ptr);
 
     if (fst == '0') {
-        int value = read_octal_constant(lexer);
-        CToken* ctoken = new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, value));
+        ErrorableString* errstr = read_integer_constant_digits(lexer, lexer->octdigit_map);
+        errstr_assign(&value, &err, errstr);
+        if (err != NULL) {
+            return new_lexerret_item_error(err);
+        }
+        IntegerLiteralType suffix = read_integer_suffix(lexer);
+
+        IntegerLiteral* iliteral = create_iliteral(value, 010, suffix);
+        CToken* ctoken = new_iliteral_ctoken(CTOKEN_INT, iliteral);
+        free(value);
         return new_lexerret_item(ctoken);
     }
 
-    int value = read_decimal_constant(lexer);
-    CToken* ctoken = new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, value));
+    ErrorableString* errstr = read_integer_constant_digits(lexer, lexer->digit_map);
+    errstr_assign(&value, &err, errstr);
+    if (err != NULL) {
+        return new_lexerret_item_error(err);
+    }
+    IntegerLiteralType suffix = read_integer_suffix(lexer);
+
+    IntegerLiteral* iliteral = create_iliteral(value, 10, suffix);
+    CToken* ctoken = new_iliteral_ctoken(CTOKEN_INT, iliteral);
+    free(value);
     return new_lexerret_item(ctoken);
 }
 
@@ -217,61 +245,86 @@ LexerReturnItem* read_punctuator(Lexer* lexer) {
     return new_lexerret_item(ctoken);
 }
 
-int read_decimal_constant(Lexer* lexer) {
+ErrorableString* read_integer_constant_digits(Lexer* lexer, Map* digit_map) {
+    int length = 0, capacity = 4;
+    char* ctoken_str = malloc(sizeof(char) * capacity);
+
     int c = fgetc(lexer->file_ptr);
-    int* digit_ref = map_get(lexer->digit_map, &c);
-    int value = *digit_ref;
+    int* digit_ref = map_get(digit_map, &c);
+    if (digit_ref == NULL) {
+        free(ctoken_str);
+        Error* err = new_error("integer constant digits are empty\n");
+        return new_errstr_error(err);
+    }
+
+    ctoken_str[length] = c;
+    length++;
 
     while (1) {
         c = fgetc(lexer->file_ptr);
-        digit_ref = map_get(lexer->digit_map, &c);
-        if (digit_ref != NULL) {
-            value = value * 10 + *digit_ref;
-            continue;
+        digit_ref = map_get(digit_map, &c);
+        if (digit_ref == NULL) {
+            ungetc(c, lexer->file_ptr);
+            break;
         }
-        ungetc(c, lexer->file_ptr);
-        break;
+
+        ctoken_str[length] = c;
+        length++;
+        if (length + 1 >= capacity) {
+            ctoken_str = realloc(ctoken_str, 2 * capacity * sizeof(char));
+            capacity *= 2;
+        }
+        continue;
     }
 
-    return value;
+    ctoken_str[length] = '\0';
+    ctoken_str = realloc(ctoken_str, (length + 1) * sizeof(char));
+    return new_errstr(ctoken_str);
 }
 
-int read_octal_constant(Lexer* lexer) {
-    int c = fgetc(lexer->file_ptr);
-    int* octdigit_ref = map_get(lexer->octdigit_map, &c);
-    int value = *octdigit_ref;
+IntegerLiteralType read_integer_suffix(Lexer* lexer) {
+    int MAX_SUFFIX_LEN = 3;
 
-    while (1) {
+    char* suffix_str = malloc((MAX_SUFFIX_LEN + 1) * sizeof(int));
+    int length = 0;
+    memset(suffix_str, 0, MAX_SUFFIX_LEN + 1);
+
+    int c = fgetc(lexer->file_ptr);
+    if (c == EOF) {
+        free(suffix_str);
+        return INTEGER_INT;
+    }
+    suffix_str[length] = c;
+    length++;
+
+    for (int i = 0; i < MAX_SUFFIX_LEN - 1; i++) {
         c = fgetc(lexer->file_ptr);
-        octdigit_ref = map_get(lexer->octdigit_map, &c);
-        if (octdigit_ref != NULL) {
-            value = value * 010 + *octdigit_ref;
-            continue;
+        if (c == EOF) {
+            ungetc(c, lexer->file_ptr);
+            break;
         }
-        ungetc(c, lexer->file_ptr);
-        break;
+        suffix_str[length] = c;
+        length++;
     }
 
-    return value;
-}
-
-int read_hexadecimal_constant(Lexer* lexer) {
-    int c = fgetc(lexer->file_ptr);
-    int* hexdigit_ref = map_get(lexer->hexdigit_map, &c);
-    int value = *hexdigit_ref;
-
-    while (1) {
-        c = fgetc(lexer->file_ptr);
-        hexdigit_ref = map_get(lexer->hexdigit_map, &c);
-        if (hexdigit_ref != NULL) {
-            value = value * 0x10 + *hexdigit_ref;
-            continue;
+    IntegerLiteralType* suffix_ref = NULL;
+    while (length > 0) {
+        suffix_ref = map_get(lexer->integer_suffix_map, suffix_str);
+        if (suffix_ref != NULL) {
+            break;
         }
-        ungetc(c, lexer->file_ptr);
-        break;
-    }
 
-    return value;
+        length--;
+        c = suffix_str[length];
+        ungetc(suffix_str[length], lexer->file_ptr);
+        suffix_str[length] = '\0';
+    }
+    free(suffix_str);
+
+    if (suffix_ref == NULL) {
+        return INTEGER_INT;
+    }
+    return *suffix_ref;
 }
 
 ErrorableInt* read_escape_seqence(Lexer* lexer) {

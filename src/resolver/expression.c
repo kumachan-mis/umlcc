@@ -234,8 +234,9 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
-        lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
-        rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
+        Pair* srt_pair = new_pair(&t_srt, &t_srt);
+        pair_set(srt_pair, lhs_srt, rhs_srt);
+        pair_assign((void**)&lhs_srt, (void**)&rhs_srt, perform_usual_arithmetic_conversion(srt_pair));
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER &&
                dtype_iscompatible(lhs_srt->dtype, rhs_srt->dtype)) {
         // do nothing
@@ -343,9 +344,10 @@ ResolverReturn* resolve_add_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
-        lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
-        rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
-        dtype = new_integer_dtype(DTYPE_INT);
+        Pair* srt_pair = new_pair(&t_srt, &t_srt);
+        pair_set(srt_pair, lhs_srt, rhs_srt);
+        pair_assign((void**)&lhs_srt, (void**)&rhs_srt, perform_usual_arithmetic_conversion(srt_pair));
+        dtype = dtype_copy(lhs_srt->dtype);
         srt = new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, lhs_srt, rhs_srt);
         return new_resolverret(srt);
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && dtype_isinteger(rhs_srt->dtype)) {
@@ -398,9 +400,10 @@ ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
 
     if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
-        lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
-        rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
-        dtype = new_integer_dtype(DTYPE_INT);
+        Pair* srt_pair = new_pair(&t_srt, &t_srt);
+        pair_set(srt_pair, lhs_srt, rhs_srt);
+        pair_assign((void**)&lhs_srt, (void**)&rhs_srt, perform_usual_arithmetic_conversion(srt_pair));
+        dtype = dtype_copy(lhs_srt->dtype);
         srt = new_dtyped_srt(SRT_SUB_EXPR, dtype, 2, lhs_srt, rhs_srt);
         return new_resolverret(srt);
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && dtype_isinteger(rhs_srt->dtype)) {
@@ -409,7 +412,7 @@ ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
         return new_resolverret(srt);
     } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER &&
                dtype_iscompatible(lhs_srt->dtype, rhs_srt->dtype)) {
-        dtype = new_integer_dtype(DTYPE_INT);
+        dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
         srt = new_dtyped_srt(SRT_PDIFF_EXPR, dtype, 2, lhs_srt, rhs_srt);
         return new_resolverret(srt);
     }
@@ -445,7 +448,6 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
     }
     lhs_srt = convert_to_ptr_if_array(lhs_srt);
     lhs_srt = convert_to_ptr_if_function(lhs_srt);
-    lhs_srt = perform_usual_arithmetic_conversion(lhs_srt);
 
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&rhs_srt, &errs, resolve_expr(resolver));
@@ -454,9 +456,13 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
         delete_srt(lhs_srt);
         return new_resolverret_errors(errs);
     }
+
     rhs_srt = convert_to_ptr_if_array(rhs_srt);
     rhs_srt = convert_to_ptr_if_function(rhs_srt);
-    rhs_srt = perform_usual_arithmetic_conversion(rhs_srt);
+
+    Pair* srt_pair = new_pair(&t_srt, &t_srt);
+    pair_set(srt_pair, lhs_srt, rhs_srt);
+    pair_assign((void**)&lhs_srt, (void**)&rhs_srt, perform_usual_arithmetic_conversion(srt_pair));
 
     switch (ast->type) {
         case AST_MUL_EXPR:
@@ -466,7 +472,7 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
                 vector_push(errs, err);
                 break;
             }
-            dtype = new_integer_dtype(DTYPE_INT);
+            dtype = dtype_copy(lhs_srt->dtype);
             srt = new_dtyped_srt(SRT_MUL_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         case AST_DIV_EXPR:
@@ -476,7 +482,7 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
                 vector_push(errs, err);
                 break;
             }
-            dtype = new_integer_dtype(DTYPE_INT);
+            dtype = dtype_copy(lhs_srt->dtype);
             srt = new_dtyped_srt(SRT_DIV_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         case AST_MOD_EXPR:
@@ -486,7 +492,7 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
                 vector_push(errs, err);
                 break;
             }
-            dtype = new_integer_dtype(DTYPE_INT);
+            dtype = dtype_copy(lhs_srt->dtype);
             srt = new_dtyped_srt(SRT_MOD_EXPR, dtype, 2, lhs_srt, rhs_srt);
             break;
         default:
@@ -1009,64 +1015,28 @@ ResolverReturn* resolve_member_name_expr(Resolver* resolver) {
 }
 
 ResolverReturn* resolve_primary_expr(Resolver* resolver) {
+    ResolverReturn* resolve_identifier_expr(Resolver * resolver);
+    ResolverReturn* resolve_integer_expr(Resolver * resolver);
+    ResolverReturn* resolve_character_expr(Resolver * resolver);
+    ResolverReturn* resolve_string_expr(Resolver * resolver);
+
     Srt* srt = NULL;
     Vector* errs = NULL;
-    Error* err = NULL;
     Ast* ast = resolver->ast;
 
     switch (ast->type) {
-        case AST_IDENT_EXPR: {
-            Symbol* symbol = symboltable_search(resolver->symbol_table, ast->ident_name);
-            if (symbol == NULL) {
-                errs = new_vector(&t_error);
-                err = new_error("identifier '%s' is used before declared\n", ast->ident_name);
-                vector_push(errs, err);
-                break;
-            }
-
-            if (symbol->type == SYMBOL_INT) {
-                DType* dtype = new_integer_dtype(DTYPE_INT);
-                IntegerLiteral* iliteral = iliteral_copy(symbol->iliteral);
-                srt = new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
-                break;
-            }
-
-            DType* ident_dtype = dtype_copy(symbol->dtype);
-            char* ident_name = new_string(symbol->name);
-            srt = new_identifier_srt(SRT_IDENT_EXPR, ident_dtype, ident_name);
+        case AST_IDENT_EXPR:
+            resolverret_assign(&srt, &errs, resolve_identifier_expr(resolver));
             break;
-        }
-        case AST_INT_EXPR: {
-            DType* dtype = new_integer_dtype(DTYPE_INT);
-            IntegerLiteral* iliteral = iliteral_copy(ast->iliteral);
-            srt = new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
+        case AST_INT_EXPR:
+            resolverret_assign(&srt, &errs, resolve_integer_expr(resolver));
             break;
-        }
-        case AST_CHAR_EXPR: {
-            DType* dtype = new_integer_dtype(DTYPE_INT);
-            IntegerLiteral* iliteral = iliteral_copy(ast->iliteral);
-            srt = new_iliteral_srt(SRT_CHAR_EXPR, dtype, iliteral);
+        case AST_CHAR_EXPR:
+            resolverret_assign(&srt, &errs, resolve_character_expr(resolver));
             break;
-        }
-        case AST_STRING_EXPR: {
-            resolver->sliteral_id++;
-            char* sliteral_label = sliteral_create_label(resolver->sliteral_id);
-            DType* decl_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->sliteral->size);
-            Srt* decl_srt = new_identifier_srt(SRT_DECL, decl_dtype, sliteral_label);
-
-            DType* init_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->sliteral->size);
-            StringLiteral* sliteral = sliteral_copy(ast->sliteral);
-            Srt* literal_srt = new_sliteral_srt(SRT_STRING_EXPR, init_dtype, sliteral);
-            Srt* init_srt = new_srt(SRT_INIT, 1, literal_srt);
-
-            Srt* decl_list_srt = new_srt(SRT_DECL_LIST, 1, new_srt(SRT_INIT_DECL, 2, decl_srt, init_srt));
-            vector_push(resolver->trans_unit_srt->children, decl_list_srt);
-
-            DType* ident_dtype = dtype_copy(decl_dtype);
-            char* ident_name = new_string(sliteral_label);
-            srt = new_identifier_srt(SRT_IDENT_EXPR, ident_dtype, ident_name);
+        case AST_STRING_EXPR:
+            resolverret_assign(&srt, &errs, resolve_string_expr(resolver));
             break;
-        }
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
                             "unreachable statement (in resolve_primary_expr)\n");
@@ -1076,5 +1046,97 @@ ResolverReturn* resolve_primary_expr(Resolver* resolver) {
     if (errs != NULL) {
         return new_resolverret_errors(errs);
     }
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_identifier_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    Symbol* symbol = symboltable_search(resolver->symbol_table, ast->ident_name);
+    if (symbol == NULL) {
+        errs = new_vector(&t_error);
+        err = new_error("identifier '%s' is used before declared\n", ast->ident_name);
+        vector_push(errs, err);
+        return new_resolverret_errors(errs);
+    }
+
+    if (symbol->type == SYMBOL_INT) {
+        DType* dtype = new_integer_dtype(DTYPE_INT);
+        IntegerLiteral* iliteral = iliteral_copy(symbol->iliteral);
+        srt = new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
+        return new_resolverret(srt);
+    }
+
+    DType* ident_dtype = dtype_copy(symbol->dtype);
+    char* ident_name = new_string(symbol->name);
+    srt = new_identifier_srt(SRT_IDENT_EXPR, ident_dtype, ident_name);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_integer_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    Ast* ast = resolver->ast;
+
+    DType* dtype = NULL;
+    switch (ast->iliteral->type) {
+        case INTEGER_INT:
+            dtype = new_integer_dtype(DTYPE_INT);
+            break;
+        case INTEGER_UNSIGNED_INT:
+            dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
+            break;
+        case INTEGER_LONG:
+            dtype = new_integer_dtype(DTYPE_LONG);
+            break;
+        case INTEGER_UNSIGNED_LONG:
+            dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+            break;
+        case INTEGER_LONGLONG:
+            dtype = new_integer_dtype(DTYPE_LONGLONG);
+            break;
+        case INTEGER_UNSIGNED_LONGLONG:
+            dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+            break;
+    }
+
+    IntegerLiteral* iliteral = iliteral_copy(ast->iliteral);
+    srt = new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_character_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    Ast* ast = resolver->ast;
+
+    DType* dtype = new_integer_dtype(DTYPE_INT);
+    IntegerLiteral* iliteral = iliteral_copy(ast->iliteral);
+    srt = new_iliteral_srt(SRT_CHAR_EXPR, dtype, iliteral);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_string_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->sliteral_id++;
+    char* sliteral_label = sliteral_create_label(resolver->sliteral_id);
+    DType* decl_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->sliteral->size);
+    Srt* decl_srt = new_identifier_srt(SRT_DECL, decl_dtype, sliteral_label);
+
+    DType* init_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->sliteral->size);
+    StringLiteral* sliteral = sliteral_copy(ast->sliteral);
+    Srt* literal_srt = new_sliteral_srt(SRT_STRING_EXPR, init_dtype, sliteral);
+    Srt* init_srt = new_srt(SRT_INIT, 1, literal_srt);
+
+    Srt* decl_list_srt = new_srt(SRT_DECL_LIST, 1, new_srt(SRT_INIT_DECL, 2, decl_srt, init_srt));
+    vector_push(resolver->trans_unit_srt->children, decl_list_srt);
+
+    DType* ident_dtype = dtype_copy(decl_dtype);
+    char* ident_name = new_string(sliteral_label);
+    srt = new_identifier_srt(SRT_IDENT_EXPR, ident_dtype, ident_name);
+
     return new_resolverret(srt);
 }

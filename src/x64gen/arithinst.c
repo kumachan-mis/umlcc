@@ -5,18 +5,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Vector* gen_additive_common_x64code(X64gen* x64gen, X64InstType type);
-Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id);
+Vector* gen_additive_subtractive_common_x64code(X64gen* x64gen, X64InstType type);
+Vector* gen_multiplicative_common_x64code(X64gen* x64gen, X64InstType type);
+Vector* gen_divisional_common_x64code(X64gen* x64gen, X64InstType type, int result_reg_id);
 
 Vector* gen_add_x64code(X64gen* x64gen) {
-    return gen_additive_common_x64code(x64gen, X64_INST_ADDX);
+    return gen_additive_subtractive_common_x64code(x64gen, X64_INST_ADDX);
 }
 
 Vector* gen_sub_x64code(X64gen* x64gen) {
-    return gen_additive_common_x64code(x64gen, X64_INST_SUBX);
+    return gen_additive_subtractive_common_x64code(x64gen, X64_INST_SUBX);
 }
 
-Vector* gen_additive_common_x64code(X64gen* x64gen, X64InstType type) {
+Vector* gen_additive_subtractive_common_x64code(X64gen* x64gen, X64InstType type) {
     Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
@@ -51,7 +52,7 @@ Vector* gen_additive_common_x64code(X64gen* x64gen, X64InstType type) {
         }
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
-                            "unreachable statement (in gen_additive_common_x64code)\n");
+                            "unreachable statement (in gen_additive_common_x64code snd_src)\n");
             exit(1);
     }
 
@@ -62,6 +63,14 @@ Vector* gen_additive_common_x64code(X64gen* x64gen, X64InstType type) {
 }
 
 Vector* gen_mul_x64code(X64gen* x64gen) {
+    return gen_multiplicative_common_x64code(x64gen, X64_INST_IMULX);
+}
+
+Vector* gen_umul_x64code(X64gen* x64gen) {
+    return gen_multiplicative_common_x64code(x64gen, X64_INST_IMULX);
+}
+
+Vector* gen_multiplicative_common_x64code(X64gen* x64gen, X64InstType type) {
     Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
@@ -82,7 +91,7 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
             append_mov_code(codes, fst_src_id, suffix, AX_REG_ID, suffix);
             X64Ope* fst_src = new_reg_x64ope(suffix, AX_REG_ID);
             X64Ope* snd_src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
-            vector_push(codes, new_inst_x64(X64_INST_IMULX, snd_src, fst_src));
+            vector_push(codes, new_inst_x64(type, snd_src, fst_src));
             break;
         }
         case IMMC_OPERAND_REG: {
@@ -91,7 +100,7 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
             append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
             X64Ope* fst_src = new_reg_x64ope(suffix, AX_REG_ID);
             X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
-            vector_push(codes, new_inst_x64(X64_INST_IMULX, snd_src, fst_src));
+            vector_push(codes, new_inst_x64(type, snd_src, fst_src));
             break;
         }
         default:
@@ -107,14 +116,22 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
 }
 
 Vector* gen_div_x64code(X64gen* x64gen) {
-    return gen_divisional_common_x64code(x64gen, AX_REG_ID);
+    return gen_divisional_common_x64code(x64gen, X64_INST_IDIVX, AX_REG_ID);
+}
+
+Vector* gen_udiv_x64code(X64gen* x64gen) {
+    return gen_divisional_common_x64code(x64gen, X64_INST_DIVX, AX_REG_ID);
 }
 
 Vector* gen_mod_x64code(X64gen* x64gen) {
-    return gen_divisional_common_x64code(x64gen, DX_REG_ID);
+    return gen_divisional_common_x64code(x64gen, X64_INST_IDIVX, DX_REG_ID);
 }
 
-Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
+Vector* gen_umod_x64code(X64gen* x64gen) {
+    return gen_divisional_common_x64code(x64gen, X64_INST_DIVX, DX_REG_ID);
+}
+
+Vector* gen_divisional_common_x64code(X64gen* x64gen, X64InstType type, int result_reg_id) {
     Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
@@ -153,7 +170,7 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
         }
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
-                            "unreachable statement (in gen_divisional_common_x64code)\n");
+                            "unreachable statement (in gen_divisional_common_x64code snd_src)\n");
             exit(1);
     }
 
@@ -169,10 +186,18 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, int result_reg_id) {
         append_mov_code(codes, DX_REG_ID, X64_SUFFIX_QUAD, evacuation_id, X64_SUFFIX_QUAD);
     }
 
-    vector_push(codes, new_inst_x64(X64_INST_CXTD, new_suffix_x64ope(suffix), NULL));
-
     X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
-    vector_push(codes, new_inst_x64(X64_INST_IDIVX, snd_src, NULL));
+    if (type == X64_INST_DIVX) {
+        X64Ope* zero_src = new_signed_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 0);
+        X64Ope* dx_dst = new_reg_x64ope(X64_SUFFIX_LONG, DX_REG_ID);
+        vector_push(codes, new_inst_x64(X64_INST_MOVX, zero_src, dx_dst));
+    } else if (suffix != X64_SUFFIX_QUAD) {
+        vector_push(codes, new_inst_x64(X64_INST_CXTD, new_suffix_x64ope(suffix), NULL));
+    } else {
+        vector_push(codes, new_inst_x64(X64_INST_CQTO, NULL, NULL));
+    }
+
+    vector_push(codes, new_inst_x64(type, snd_src, NULL));
 
     X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immc_dst->suffix));
     append_mov_code(codes, result_reg_id, suffix, dst_id, dst_suffix);

@@ -9,6 +9,17 @@ void put_int(int x) {
     printf("%d\n", x);
 }
 
+void put_unsigned_int(unsigned int x) {
+    printf("%u\n", x);
+}
+
+void put_long_long(long long x) {
+    printf("%lld\n", x);
+}
+void put_unsigned_long_long(unsigned long long x) {
+    printf("%llu\n", x);
+}
+
 int identity_put_int(int x) {
     printf("%d\n", x);
     return x;

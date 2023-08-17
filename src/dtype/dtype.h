@@ -17,6 +17,11 @@ typedef enum DTypeType {
     DTYPE_VOID,
     DTYPE_CHAR,
     DTYPE_INT,
+    DTYPE_UNSIGNED_INT,
+    DTYPE_LONG,
+    DTYPE_UNSIGNED_LONG,
+    DTYPE_LONGLONG,
+    DTYPE_UNSIGNED_LONGLONG,
     DTYPE_POINTER,
     DTYPE_ARRAY,
     DTYPE_STRUCT,
@@ -53,12 +58,15 @@ DType* new_socket_function_dtype(Vector* params);
 DType* new_socket_typedef_dtype(void);
 DType* dtype_copy(DType* dtype);
 DType* dtype_connect(DType* socket_dtype, DType* plug_dtype);
+int dtype_integer_rank(DType* dtype);
 DType* dtype_aggregate_at(DType* dtype, int index);
 int dtype_aggregate_size(DType* dtype);
 int dtype_equals(DType* dtype, DType* other);
 int dtype_iscompatible(DType* dtype, DType* other);
 int dtype_isassignable(DType* dtype, DType* other);
 int dtype_isinteger(DType* dtype);
+int dtype_issignedinteger(DType* dtype);
+int dtype_isunsignedinteger(DType* dtype);
 int dtype_isarithmetic(DType* dtype);
 int dtype_isscalar(DType* dtype);
 int dtype_isaggregate(DType* dtype);

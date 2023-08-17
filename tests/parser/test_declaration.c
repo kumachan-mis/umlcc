@@ -5,6 +5,11 @@
 
 void test_parse_char_decl(void);
 void test_parse_int_decl(void);
+void test_parse_unsigned_int_decl(void);
+void test_parse_long_decl(void);
+void test_parse_unsigned_long_decl(void);
+void test_parse_long_long_decl(void);
+void test_parse_unsigned_long_long_decl(void);
 void test_parse_pointer_decl(void);
 void test_parse_array_decl(void);
 void test_parse_function_decl(void);
@@ -36,6 +41,11 @@ CU_Suite* add_test_suite_decl_parser(void) {
     CU_Suite* suite = CU_add_suite("test_suite_decl_parser", NULL, NULL);
     CU_ADD_TEST(suite, test_parse_char_decl);
     CU_ADD_TEST(suite, test_parse_int_decl);
+    CU_ADD_TEST(suite, test_parse_unsigned_int_decl);
+    CU_ADD_TEST(suite, test_parse_long_decl);
+    CU_ADD_TEST(suite, test_parse_unsigned_long_decl);
+    CU_ADD_TEST(suite, test_parse_long_long_decl);
+    CU_ADD_TEST(suite, test_parse_unsigned_long_long_decl);
     CU_ADD_TEST(suite, test_parse_pointer_decl);
     CU_ADD_TEST(suite, test_parse_array_decl);
     CU_ADD_TEST(suite, test_parse_function_decl);
@@ -95,6 +105,107 @@ void test_parse_int_decl(void) {
                             new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
                                     new_ast(AST_INIT_DECLOR, 1, // non-terminal
                                             new_identifier_ast(AST_IDENT_DECLOR, new_string("i")))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_unsigned_int_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_UNSIGNED));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("u")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_DECL, 2,               // non-terminal
+                            new_ast(AST_DECL_SPECS, 2, // non-terminal
+                                    new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_INT, 0)),
+                            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                    new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("u")))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_long_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_LONG));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("l")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_DECL, 2,               // non-terminal
+                            new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                    new_ast(AST_TYPE_LONG, 0)),
+                            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                    new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("l")))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_unsigned_long_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_UNSIGNED));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_LONG));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("ul")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_DECL, 2,               // non-terminal
+                            new_ast(AST_DECL_SPECS, 2, // non-terminal
+                                    new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_LONG, 0)),
+                            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                    new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("ul")))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_long_long_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_LONG));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_LONG));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("ll")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_DECL, 2,               // non-terminal
+                            new_ast(AST_DECL_SPECS, 2, // non-terminal
+                                    new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_LONG, 0)),
+                            new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                    new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_DECLOR, new_string("ll")))));
+
+    run_decl_parser_test(input, NULL, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_unsigned_long_long_decl(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_UNSIGNED));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_LONG));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_LONG));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("ull")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected =
+        new_ast(AST_DECL, 2,               // non-terminal
+                new_ast(AST_DECL_SPECS, 3, // non-terminal
+                        new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_LONG, 0)),
+                new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                        new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_DECLOR, new_string("ull")))));
 
     run_decl_parser_test(input, NULL, expected);
 

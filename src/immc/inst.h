@@ -59,21 +59,36 @@ typedef enum ImmcInstType {
     // - subtract snd_src from fst_src.
     // sub dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_SUB,
-    // - multiply fst_src and snd_src.
+    // - multiply fst_src and snd_src (signed).
     // mul dst(reg), fst_src(reg), snd_src(int)
-    // - multiply fst_src and snd_src.
+    // - multiply fst_src and snd_src (signed).
     // mul dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_MUL,
-    // - divide fst_src by snd_src.
+    // - multiply fst_src and snd_src (unsigned).
+    // mul dst(reg), fst_src(reg), snd_src(int)
+    // - multiply fst_src and snd_src (unsigned).
+    // mul dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_UMUL,
+    // - divide fst_src by snd_src (signed).
     // div dst(reg), fst_src(reg), snd_src(int)
-    // - divide fst_src by snd_src.
+    // - divide fst_src by snd_src (signed).
     // div dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_DIV,
-    // - modulo fst_src by snd_src.
+    // - divide fst_src by snd_src (unsigned).
+    // div dst(reg), fst_src(reg), snd_src(int)
+    // - divide fst_src by snd_src (unsigned).
+    // div dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_UDIV,
+    // - modulo fst_src by snd_src (signed).
     // mod dst(reg), fst_src(reg), snd_src(int)
-    // - modulo fst_src by snd_src.
+    // - modulo fst_src by snd_src (signed).
     // mod dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_MOD,
+    // - modulo fst_src by snd_src (unsigned).
+    // mod dst(reg), fst_src(reg), snd_src(int)
+    // - modulo fst_src by snd_src (unsigned).
+    // mod dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_UMOD,
 
     // - arithmetic shift-left fst_src to snd_src bit positions
     // sal dst(reg), fst_src(reg), snd_src(int)

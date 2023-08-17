@@ -25,6 +25,8 @@ typedef enum AstType {
     AST_TYPE_VOID,
     AST_TYPE_CHAR,
     AST_TYPE_INT,
+    AST_TYPE_LONG,
+    AST_TYPE_UNSIGNED,
     AST_TYPE_STRUCT,
     AST_TYPE_ENUM,
     AST_TYPEDEF_NAME,

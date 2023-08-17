@@ -433,7 +433,6 @@ void testlib_assert_iliteral_equal(IntegerLiteral* actual, IntegerLiteral* expec
     }
 
     CU_ASSERT_EQUAL(actual->type, expected->type);
-    CU_ASSERT_EQUAL(actual->is_unsigned, expected->is_unsigned);
     CU_ASSERT_EQUAL(actual->signed_value, expected->signed_value);
     CU_ASSERT_EQUAL(actual->unsigned_value, expected->unsigned_value);
 }

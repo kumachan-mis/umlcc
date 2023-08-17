@@ -14,6 +14,7 @@ ResolverReturnDStructMember* resolve_struct_declarator(Resolver* resolver);
 ResolverDTypeReturn* resolve_enum_specifier(Resolver* resolver);
 ResolverReturnDEnumMembers* resolve_enumerator_list(Resolver* resolver);
 ResolverReturnDEnumMember* resolve_enumerator(Resolver* resolver);
+ResolverDTypeReturn* resolve_typedef_name_specifier(Resolver* resolver);
 ResolverReturn* resolve_init_declarator_list(Resolver* resolver);
 ResolverReturn* resolve_init_declarator(Resolver* resolver);
 ResolverReturn* resolve_declarator(Resolver* resolver);

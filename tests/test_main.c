@@ -16,6 +16,7 @@
 #include "./liveseq/test_liveness.h"
 #include "./liveseq/test_liveseq.h"
 #include "./map/test_map.h"
+#include "./pair/test_pair.h"
 #include "./parser/test_declaration.h"
 #include "./parser/test_declaration_error.h"
 #include "./parser/test_expression.h"
@@ -26,6 +27,7 @@
 #include "./parser/test_statement_error.h"
 #include "./regalloc/test_basicblock.h"
 #include "./regalloc/test_regalloc.h"
+#include "./resolver/test_conversion.h"
 #include "./resolver/test_declaration.h"
 #include "./resolver/test_declaration_error.h"
 #include "./resolver/test_expression.h"
@@ -58,6 +60,7 @@ int main(void) {
     CU_initialize_registry();
 
     // container tests
+    add_test_suite_pair();
     add_test_suite_vector();
     add_test_suite_map();
     add_test_suite_set();
@@ -104,6 +107,7 @@ int main(void) {
     // resolver tests
     add_test_suite_expr_resolver();
     add_test_suite_expr_resolver_error();
+    add_test_suite_conv_resolver();
     add_test_suite_stmt_resolver();
     add_test_suite_stmt_resolver_error();
     add_test_suite_decl_resolver();

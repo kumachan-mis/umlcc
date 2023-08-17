@@ -1,8 +1,13 @@
 #include "./test_dtype.h"
 #include "../../src/dtype/dtype.h"
 
-void test_new_integer_dtype_int(void);
 void test_new_integer_dtype_char(void);
+void test_new_integer_dtype_int(void);
+void test_new_integer_dtype_unsigned_int(void);
+void test_new_integer_dtype_long(void);
+void test_new_integer_dtype_unsigned_long(void);
+void test_new_integer_dtype_long_long(void);
+void test_new_integer_dtype_unsigned_long_long(void);
 void test_new_pointer_dtype(void);
 void test_new_array_dtype(void);
 void test_new_named_struct_dtype(void);
@@ -17,14 +22,11 @@ void test_socket_function_dtype(void);
 void test_socket_typedef_dtype(void);
 void test_socket_nested_dtype(void);
 void test_socket_null_dtype(void);
-void test_dtype_equals_int(void);
-void test_dtype_equals_char(void);
+void test_dtype_equals_integer(void);
 void test_dtype_equals_pointer(void);
 void test_dtype_equals_array(void);
-void test_dtype_equals_named_struct(void);
-void test_dtype_equals_unnamed_struct(void);
-void test_dtype_equals_named_enum(void);
-void test_dtype_equals_unnamed_enum(void);
+void test_dtype_equals_struct(void);
+void test_dtype_equals_enum(void);
 void test_dtype_equals_function(void);
 void test_dtype_equals_typedef(void);
 void test_dtype_equals_diff_type(void);
@@ -50,6 +52,8 @@ void test_dtype_equals_function_diff_param_name(void);
 void test_dtype_equals_function_diff_param_order(void);
 void test_dtype_equals_typedef_diff_defined_dtype(void);
 void test_dtype_isinteger(void);
+void test_dtype_issignedinteger(void);
+void test_dtype_isunsignedinteger(void);
 void test_dtype_isarithmetic(void);
 void test_dtype_isscalar(void);
 void test_dtype_isaggregate(void);
@@ -60,8 +64,8 @@ void test_dtype_nbytes(void);
 
 CU_Suite* add_test_suite_dtype(void) {
     CU_Suite* suite = CU_add_suite("test_suite_dtype", NULL, NULL);
-    CU_ADD_TEST(suite, test_new_integer_dtype_int);
     CU_ADD_TEST(suite, test_new_integer_dtype_char);
+    CU_ADD_TEST(suite, test_new_integer_dtype_int);
     CU_ADD_TEST(suite, test_new_pointer_dtype);
     CU_ADD_TEST(suite, test_new_array_dtype);
     CU_ADD_TEST(suite, test_new_named_struct_dtype);
@@ -76,14 +80,11 @@ CU_Suite* add_test_suite_dtype(void) {
     CU_ADD_TEST(suite, test_socket_typedef_dtype);
     CU_ADD_TEST(suite, test_socket_nested_dtype);
     CU_ADD_TEST(suite, test_socket_null_dtype);
-    CU_ADD_TEST(suite, test_dtype_equals_int);
-    CU_ADD_TEST(suite, test_dtype_equals_char);
+    CU_ADD_TEST(suite, test_dtype_equals_integer);
     CU_ADD_TEST(suite, test_dtype_equals_pointer);
     CU_ADD_TEST(suite, test_dtype_equals_array);
-    CU_ADD_TEST(suite, test_dtype_equals_named_struct);
-    CU_ADD_TEST(suite, test_dtype_equals_unnamed_struct);
-    CU_ADD_TEST(suite, test_dtype_equals_named_enum);
-    CU_ADD_TEST(suite, test_dtype_equals_unnamed_enum);
+    CU_ADD_TEST(suite, test_dtype_equals_struct);
+    CU_ADD_TEST(suite, test_dtype_equals_enum);
     CU_ADD_TEST(suite, test_dtype_equals_function);
     CU_ADD_TEST(suite, test_dtype_equals_typedef);
     CU_ADD_TEST(suite, test_dtype_equals_diff_type);
@@ -109,6 +110,8 @@ CU_Suite* add_test_suite_dtype(void) {
     CU_ADD_TEST(suite, test_dtype_equals_function_diff_param_order);
     CU_ADD_TEST(suite, test_dtype_equals_typedef_diff_defined_dtype);
     CU_ADD_TEST(suite, test_dtype_isinteger);
+    CU_ADD_TEST(suite, test_dtype_issignedinteger);
+    CU_ADD_TEST(suite, test_dtype_isunsignedinteger);
     CU_ADD_TEST(suite, test_dtype_isarithmetic);
     CU_ADD_TEST(suite, test_dtype_isscalar);
     CU_ADD_TEST(suite, test_dtype_isaggregate);
@@ -117,6 +120,27 @@ CU_Suite* add_test_suite_dtype(void) {
     CU_ADD_TEST(suite, test_dtype_alignment);
     CU_ADD_TEST(suite, test_dtype_nbytes);
     return suite;
+}
+
+void test_new_integer_dtype_char(void) {
+    DType* dtype = new_integer_dtype(DTYPE_CHAR);
+
+    for (int i = 0; i < 2; i++) {
+        if (i > 0) {
+            DType* copied_dtype = dtype_copy(dtype);
+            delete_dtype(dtype);
+            dtype = copied_dtype;
+        }
+        CU_ASSERT_EQUAL(dtype->type, DTYPE_CHAR);
+        CU_ASSERT_PTR_NULL(dtype->dpointer);
+        CU_ASSERT_PTR_NULL(dtype->darray);
+        CU_ASSERT_PTR_NULL(dtype->denum);
+        CU_ASSERT_PTR_NULL(dtype->dstruct);
+        CU_ASSERT_PTR_NULL(dtype->dfunction);
+        CU_ASSERT_PTR_NULL(dtype->dtypedef);
+    }
+
+    delete_dtype(dtype);
 }
 
 void test_new_integer_dtype_int(void) {
@@ -140,8 +164,8 @@ void test_new_integer_dtype_int(void) {
     delete_dtype(dtype);
 }
 
-void test_new_integer_dtype_char(void) {
-    DType* dtype = new_integer_dtype(DTYPE_CHAR);
+void test_new_integer_dtype_unsigned_int(void) {
+    DType* dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
 
     for (int i = 0; i < 2; i++) {
         if (i > 0) {
@@ -149,7 +173,91 @@ void test_new_integer_dtype_char(void) {
             delete_dtype(dtype);
             dtype = copied_dtype;
         }
-        CU_ASSERT_EQUAL(dtype->type, DTYPE_CHAR);
+        CU_ASSERT_EQUAL(dtype->type, DTYPE_UNSIGNED_INT);
+        CU_ASSERT_PTR_NULL(dtype->dpointer);
+        CU_ASSERT_PTR_NULL(dtype->darray);
+        CU_ASSERT_PTR_NULL(dtype->denum);
+        CU_ASSERT_PTR_NULL(dtype->dstruct);
+        CU_ASSERT_PTR_NULL(dtype->dfunction);
+        CU_ASSERT_PTR_NULL(dtype->dtypedef);
+    }
+
+    delete_dtype(dtype);
+}
+
+void test_new_integer_dtype_long(void) {
+    DType* dtype = new_integer_dtype(DTYPE_LONG);
+
+    for (int i = 0; i < 2; i++) {
+        if (i > 0) {
+            DType* copied_dtype = dtype_copy(dtype);
+            delete_dtype(dtype);
+            dtype = copied_dtype;
+        }
+        CU_ASSERT_EQUAL(dtype->type, DTYPE_LONG);
+        CU_ASSERT_PTR_NULL(dtype->dpointer);
+        CU_ASSERT_PTR_NULL(dtype->darray);
+        CU_ASSERT_PTR_NULL(dtype->denum);
+        CU_ASSERT_PTR_NULL(dtype->dstruct);
+        CU_ASSERT_PTR_NULL(dtype->dfunction);
+        CU_ASSERT_PTR_NULL(dtype->dtypedef);
+    }
+
+    delete_dtype(dtype);
+}
+
+void test_new_integer_dtype_unsigned_long(void) {
+    DType* dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+
+    for (int i = 0; i < 2; i++) {
+        if (i > 0) {
+            DType* copied_dtype = dtype_copy(dtype);
+            delete_dtype(dtype);
+            dtype = copied_dtype;
+        }
+        CU_ASSERT_EQUAL(dtype->type, DTYPE_UNSIGNED_LONG);
+        CU_ASSERT_PTR_NULL(dtype->dpointer);
+        CU_ASSERT_PTR_NULL(dtype->darray);
+        CU_ASSERT_PTR_NULL(dtype->denum);
+        CU_ASSERT_PTR_NULL(dtype->dstruct);
+        CU_ASSERT_PTR_NULL(dtype->dfunction);
+        CU_ASSERT_PTR_NULL(dtype->dtypedef);
+    }
+
+    delete_dtype(dtype);
+}
+
+void test_new_integer_dtype_long_long(void) {
+    DType* dtype = new_integer_dtype(DTYPE_LONGLONG);
+
+    for (int i = 0; i < 2; i++) {
+        if (i > 0) {
+            DType* copied_dtype = dtype_copy(dtype);
+            delete_dtype(dtype);
+            dtype = copied_dtype;
+        }
+        CU_ASSERT_EQUAL(dtype->type, DTYPE_LONGLONG);
+        CU_ASSERT_PTR_NULL(dtype->dpointer);
+        CU_ASSERT_PTR_NULL(dtype->darray);
+        CU_ASSERT_PTR_NULL(dtype->denum);
+        CU_ASSERT_PTR_NULL(dtype->dstruct);
+        CU_ASSERT_PTR_NULL(dtype->dfunction);
+        CU_ASSERT_PTR_NULL(dtype->dtypedef);
+    }
+
+    delete_dtype(dtype);
+}
+
+void test_new_integer_dtype_unsigned_long_long(void) {
+    DType* dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+
+    for (int i = 0; i < 2; i++) {
+        if (i > 0) {
+            DType* copied_dtype = dtype_copy(dtype);
+            delete_dtype(dtype);
+            dtype = copied_dtype;
+        }
+        CU_ASSERT_EQUAL(dtype->type, DTYPE_UNSIGNED_LONGLONG);
         CU_ASSERT_PTR_NULL(dtype->dpointer);
         CU_ASSERT_PTR_NULL(dtype->darray);
         CU_ASSERT_PTR_NULL(dtype->denum);
@@ -523,24 +631,22 @@ void test_socket_null_dtype(void) {
     delete_dtype(dtype);
 }
 
-void test_dtype_equals_int(void) {
-    DType* dtype = new_integer_dtype(DTYPE_INT);
-    DType* other = new_integer_dtype(DTYPE_INT);
+void test_dtype_equals_integer(void) {
+    DType* char_dtype = new_integer_dtype(DTYPE_CHAR);
+    DType* char_other = new_integer_dtype(DTYPE_CHAR);
 
-    CU_ASSERT_TRUE(dtype_equals(dtype, other));
+    CU_ASSERT_TRUE(dtype_equals(char_dtype, char_other));
 
-    delete_dtype(dtype);
-    delete_dtype(other);
-}
+    delete_dtype(char_dtype);
+    delete_dtype(char_other);
 
-void test_dtype_equals_char(void) {
-    DType* dtype = new_integer_dtype(DTYPE_CHAR);
-    DType* other = new_integer_dtype(DTYPE_CHAR);
+    DType* int_dtype = new_integer_dtype(DTYPE_INT);
+    DType* int_other = new_integer_dtype(DTYPE_INT);
 
-    CU_ASSERT_TRUE(dtype_equals(dtype, other));
+    CU_ASSERT_TRUE(dtype_equals(int_dtype, int_other));
 
-    delete_dtype(dtype);
-    delete_dtype(other);
+    delete_dtype(int_dtype);
+    delete_dtype(int_other);
 }
 
 void test_dtype_equals_pointer(void) {
@@ -563,56 +669,52 @@ void test_dtype_equals_array(void) {
     delete_dtype(other);
 }
 
-void test_dtype_equals_named_struct(void) {
-    DType* dtype = new_named_struct_dtype(new_string("Struct"), 24, 4);
-    DType* other = new_named_struct_dtype(new_string("Struct"), 24, 4);
+void test_dtype_equals_struct(void) {
+    DType* named_dtype = new_named_struct_dtype(new_string("Struct"), 24, 4);
+    DType* named_other = new_named_struct_dtype(new_string("Struct"), 24, 4);
 
-    CU_ASSERT_TRUE(dtype_equals(dtype, other));
+    CU_ASSERT_TRUE(dtype_equals(named_dtype, named_other));
 
-    delete_dtype(dtype);
-    delete_dtype(other);
-}
+    delete_dtype(named_dtype);
+    delete_dtype(named_other);
 
-void test_dtype_equals_unnamed_struct(void) {
     Vector* dtype_members = new_vector(&t_dstructmember);
     vector_push(dtype_members,
                 new_dstructmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
-    DType* dtype = new_unnamed_struct_dtype(dtype_members);
+    DType* unnamed_dtype = new_unnamed_struct_dtype(dtype_members);
 
     Vector* other_members = new_vector(&t_dstructmember);
     vector_push(other_members,
                 new_dstructmember(new_string("member"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR))));
-    DType* other = new_unnamed_struct_dtype(other_members);
+    DType* unnamed_other = new_unnamed_struct_dtype(other_members);
 
-    CU_ASSERT_TRUE(dtype_equals(dtype, other));
+    CU_ASSERT_TRUE(dtype_equals(unnamed_dtype, unnamed_other));
 
-    delete_dtype(dtype);
-    delete_dtype(other);
+    delete_dtype(unnamed_dtype);
+    delete_dtype(unnamed_other);
 }
 
-void test_dtype_equals_named_enum(void) {
-    DType* dtype = new_named_enum_dtype(new_string("Enum"));
-    DType* other = new_named_enum_dtype(new_string("Enum"));
+void test_dtype_equals_enum(void) {
+    DType* named_dtype = new_named_enum_dtype(new_string("Enum"));
+    DType* named_other = new_named_enum_dtype(new_string("Enum"));
 
-    CU_ASSERT_TRUE(dtype_equals(dtype, other));
+    CU_ASSERT_TRUE(dtype_equals(named_dtype, named_other));
 
-    delete_dtype(dtype);
-    delete_dtype(other);
-}
+    delete_dtype(named_dtype);
+    delete_dtype(named_other);
 
-void test_dtype_equals_unnamed_enum(void) {
     Vector* dtype_members = new_vector(&t_denummember);
     vector_push(dtype_members, new_denummember(new_string("MEMBER"), 0));
-    DType* dtype = new_unnamed_enum_dtype(dtype_members);
+    DType* unnamed_dtype = new_unnamed_enum_dtype(dtype_members);
 
     Vector* other_members = new_vector(&t_denummember);
     vector_push(other_members, new_denummember(new_string("MEMBER"), 0));
-    DType* other = new_unnamed_enum_dtype(other_members);
+    DType* unnamed_other = new_unnamed_enum_dtype(other_members);
 
-    CU_ASSERT_TRUE(dtype_equals(dtype, other));
+    CU_ASSERT_TRUE(dtype_equals(unnamed_dtype, unnamed_other));
 
-    delete_dtype(dtype);
-    delete_dtype(other);
+    delete_dtype(unnamed_dtype);
+    delete_dtype(unnamed_other);
 }
 
 void test_dtype_equals_function(void) {
@@ -972,6 +1074,26 @@ void test_dtype_isinteger(void) {
     CU_ASSERT_TRUE(dtype_isinteger(int_dtype));
     delete_dtype(int_dtype);
 
+    DType* unsigned_int_dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
+    CU_ASSERT_TRUE(dtype_isinteger(unsigned_int_dtype));
+    delete_dtype(unsigned_int_dtype);
+
+    DType* long_dtype = new_integer_dtype(DTYPE_LONG);
+    CU_ASSERT_TRUE(dtype_isinteger(long_dtype));
+    delete_dtype(long_dtype);
+
+    DType* unsigned_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+    CU_ASSERT_TRUE(dtype_isinteger(unsigned_long_dtype));
+    delete_dtype(unsigned_long_dtype);
+
+    DType* long_long_dtype = new_integer_dtype(DTYPE_LONGLONG);
+    CU_ASSERT_TRUE(dtype_isinteger(long_long_dtype));
+    delete_dtype(long_long_dtype);
+
+    DType* unsigned_long_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+    CU_ASSERT_TRUE(dtype_isinteger(unsigned_long_long_dtype));
+    delete_dtype(unsigned_long_long_dtype);
+
     DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     CU_ASSERT_FALSE(dtype_isinteger(pointer_dtype));
     delete_dtype(pointer_dtype);
@@ -1013,6 +1135,146 @@ void test_dtype_isinteger(void) {
     delete_dtype(typedef_dtype);
 }
 
+void test_dtype_issignedinteger(void) {
+    DType* char_dtype = new_integer_dtype(DTYPE_CHAR);
+    CU_ASSERT_TRUE(dtype_issignedinteger(char_dtype));
+    delete_dtype(char_dtype);
+
+    DType* int_dtype = new_integer_dtype(DTYPE_INT);
+    CU_ASSERT_TRUE(dtype_issignedinteger(int_dtype));
+    delete_dtype(int_dtype);
+
+    DType* unsigned_int_dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
+    CU_ASSERT_FALSE(dtype_issignedinteger(unsigned_int_dtype));
+    delete_dtype(unsigned_int_dtype);
+
+    DType* long_dtype = new_integer_dtype(DTYPE_LONG);
+    CU_ASSERT_TRUE(dtype_issignedinteger(long_dtype));
+    delete_dtype(long_dtype);
+
+    DType* unsigned_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+    CU_ASSERT_FALSE(dtype_issignedinteger(unsigned_long_dtype));
+    delete_dtype(unsigned_long_dtype);
+
+    DType* long_long_dtype = new_integer_dtype(DTYPE_LONGLONG);
+    CU_ASSERT_TRUE(dtype_issignedinteger(long_long_dtype));
+    delete_dtype(long_long_dtype);
+
+    DType* unsigned_long_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+    CU_ASSERT_FALSE(dtype_issignedinteger(unsigned_long_long_dtype));
+    delete_dtype(unsigned_long_long_dtype);
+
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
+    CU_ASSERT_FALSE(dtype_issignedinteger(pointer_dtype));
+    delete_dtype(pointer_dtype);
+
+    DType* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 3);
+    CU_ASSERT_FALSE(dtype_issignedinteger(array_dtype));
+    delete_dtype(array_dtype);
+
+    DType* complete_named_struct_dtype = new_named_struct_dtype(new_string("Struct"), 20, 4);
+    CU_ASSERT_FALSE(dtype_issignedinteger(complete_named_struct_dtype));
+    delete_dtype(complete_named_struct_dtype);
+
+    DType* incomplete_named_struct_dtype = new_named_struct_dtype(new_string("Struct"), 0, 0);
+    CU_ASSERT_FALSE(dtype_issignedinteger(incomplete_named_struct_dtype));
+    delete_dtype(incomplete_named_struct_dtype);
+
+    Vector* unnamed_struct_members = new_vector(&t_dstructmember);
+    vector_push(unnamed_struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    DType* unnamed_struct_dtype = new_unnamed_struct_dtype(unnamed_struct_members);
+    CU_ASSERT_FALSE(dtype_issignedinteger(unnamed_struct_dtype));
+    delete_dtype(unnamed_struct_dtype);
+
+    DType* named_enum_dtype = new_named_enum_dtype(new_string("Enum"));
+    CU_ASSERT_TRUE(dtype_issignedinteger(named_enum_dtype));
+    delete_dtype(named_enum_dtype);
+
+    Vector* unnamed_enum_members = new_vector(&t_denummember);
+    vector_push(unnamed_enum_members, new_denummember(new_string("MEMBER"), 0));
+    DType* unnamed_enum_dtype = new_unnamed_enum_dtype(unnamed_enum_members);
+    CU_ASSERT_TRUE(dtype_issignedinteger(unnamed_enum_dtype));
+    delete_dtype(unnamed_enum_dtype);
+
+    DType* func_dtype = new_function_dtype(new_vector(&t_dparam), new_integer_dtype(DTYPE_INT));
+    CU_ASSERT_FALSE(dtype_issignedinteger(func_dtype));
+    delete_dtype(func_dtype);
+
+    DType* typedef_dtype = new_typedef_dtype(new_integer_dtype(DTYPE_INT));
+    CU_ASSERT_FALSE(dtype_issignedinteger(typedef_dtype));
+    delete_dtype(typedef_dtype);
+}
+
+void test_dtype_isunsignedinteger(void) {
+    DType* char_dtype = new_integer_dtype(DTYPE_CHAR);
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(char_dtype));
+    delete_dtype(char_dtype);
+
+    DType* int_dtype = new_integer_dtype(DTYPE_INT);
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(int_dtype));
+    delete_dtype(int_dtype);
+
+    DType* unsigned_int_dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
+    CU_ASSERT_TRUE(dtype_isunsignedinteger(unsigned_int_dtype));
+    delete_dtype(unsigned_int_dtype);
+
+    DType* long_dtype = new_integer_dtype(DTYPE_LONG);
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(long_dtype));
+    delete_dtype(long_dtype);
+
+    DType* unsigned_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+    CU_ASSERT_TRUE(dtype_isunsignedinteger(unsigned_long_dtype));
+    delete_dtype(unsigned_long_dtype);
+
+    DType* long_long_dtype = new_integer_dtype(DTYPE_LONGLONG);
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(long_long_dtype));
+    delete_dtype(long_long_dtype);
+
+    DType* unsigned_long_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+    CU_ASSERT_TRUE(dtype_isunsignedinteger(unsigned_long_long_dtype));
+    delete_dtype(unsigned_long_long_dtype);
+
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(pointer_dtype));
+    delete_dtype(pointer_dtype);
+
+    DType* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 3);
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(array_dtype));
+    delete_dtype(array_dtype);
+
+    DType* complete_named_struct_dtype = new_named_struct_dtype(new_string("Struct"), 20, 4);
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(complete_named_struct_dtype));
+    delete_dtype(complete_named_struct_dtype);
+
+    DType* incomplete_named_struct_dtype = new_named_struct_dtype(new_string("Struct"), 0, 0);
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(incomplete_named_struct_dtype));
+    delete_dtype(incomplete_named_struct_dtype);
+
+    Vector* unnamed_struct_members = new_vector(&t_dstructmember);
+    vector_push(unnamed_struct_members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    DType* unnamed_struct_dtype = new_unnamed_struct_dtype(unnamed_struct_members);
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(unnamed_struct_dtype));
+    delete_dtype(unnamed_struct_dtype);
+
+    DType* named_enum_dtype = new_named_enum_dtype(new_string("Enum"));
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(named_enum_dtype));
+    delete_dtype(named_enum_dtype);
+
+    Vector* unnamed_enum_members = new_vector(&t_denummember);
+    vector_push(unnamed_enum_members, new_denummember(new_string("MEMBER"), 0));
+    DType* unnamed_enum_dtype = new_unnamed_enum_dtype(unnamed_enum_members);
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(unnamed_enum_dtype));
+    delete_dtype(unnamed_enum_dtype);
+
+    DType* func_dtype = new_function_dtype(new_vector(&t_dparam), new_integer_dtype(DTYPE_INT));
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(func_dtype));
+    delete_dtype(func_dtype);
+
+    DType* typedef_dtype = new_typedef_dtype(new_integer_dtype(DTYPE_INT));
+    CU_ASSERT_FALSE(dtype_isunsignedinteger(typedef_dtype));
+    delete_dtype(typedef_dtype);
+}
+
 void test_dtype_isarithmetic(void) {
     DType* char_dtype = new_integer_dtype(DTYPE_CHAR);
     CU_ASSERT_TRUE(dtype_isarithmetic(char_dtype));
@@ -1021,6 +1283,26 @@ void test_dtype_isarithmetic(void) {
     DType* int_dtype = new_integer_dtype(DTYPE_INT);
     CU_ASSERT_TRUE(dtype_isarithmetic(int_dtype));
     delete_dtype(int_dtype);
+
+    DType* unsigned_int_dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
+    CU_ASSERT_TRUE(dtype_isarithmetic(unsigned_int_dtype));
+    delete_dtype(unsigned_int_dtype);
+
+    DType* long_dtype = new_integer_dtype(DTYPE_LONG);
+    CU_ASSERT_TRUE(dtype_isarithmetic(long_dtype));
+    delete_dtype(long_dtype);
+
+    DType* unsigned_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+    CU_ASSERT_TRUE(dtype_isarithmetic(unsigned_long_dtype));
+    delete_dtype(unsigned_long_dtype);
+
+    DType* long_long_dtype = new_integer_dtype(DTYPE_LONGLONG);
+    CU_ASSERT_TRUE(dtype_isarithmetic(long_long_dtype));
+    delete_dtype(long_long_dtype);
+
+    DType* unsigned_long_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+    CU_ASSERT_TRUE(dtype_isarithmetic(unsigned_long_long_dtype));
+    delete_dtype(unsigned_long_long_dtype);
 
     DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     CU_ASSERT_FALSE(dtype_isarithmetic(pointer_dtype));
@@ -1072,6 +1354,26 @@ void test_dtype_isscalar(void) {
     CU_ASSERT_TRUE(dtype_isscalar(int_dtype));
     delete_dtype(int_dtype);
 
+    DType* unsigned_int_dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
+    CU_ASSERT_TRUE(dtype_isscalar(unsigned_int_dtype));
+    delete_dtype(unsigned_int_dtype);
+
+    DType* long_dtype = new_integer_dtype(DTYPE_LONG);
+    CU_ASSERT_TRUE(dtype_isscalar(long_dtype));
+    delete_dtype(long_dtype);
+
+    DType* unsigned_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+    CU_ASSERT_TRUE(dtype_isscalar(unsigned_long_dtype));
+    delete_dtype(unsigned_long_dtype);
+
+    DType* long_long_dtype = new_integer_dtype(DTYPE_LONGLONG);
+    CU_ASSERT_TRUE(dtype_isscalar(long_long_dtype));
+    delete_dtype(long_long_dtype);
+
+    DType* unsigned_long_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+    CU_ASSERT_TRUE(dtype_isscalar(unsigned_long_long_dtype));
+    delete_dtype(unsigned_long_long_dtype);
+
     DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     CU_ASSERT_TRUE(dtype_isscalar(pointer_dtype));
     delete_dtype(pointer_dtype);
@@ -1121,6 +1423,26 @@ void test_dtype_isaggregate(void) {
     DType* int_dtype = new_integer_dtype(DTYPE_INT);
     CU_ASSERT_FALSE(dtype_isaggregate(int_dtype));
     delete_dtype(int_dtype);
+
+    DType* unsigned_int_dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
+    CU_ASSERT_FALSE(dtype_isaggregate(unsigned_int_dtype));
+    delete_dtype(unsigned_int_dtype);
+
+    DType* long_dtype = new_integer_dtype(DTYPE_LONG);
+    CU_ASSERT_FALSE(dtype_isaggregate(long_dtype));
+    delete_dtype(long_dtype);
+
+    DType* unsigned_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+    CU_ASSERT_FALSE(dtype_isaggregate(unsigned_long_dtype));
+    delete_dtype(unsigned_long_dtype);
+
+    DType* long_long_dtype = new_integer_dtype(DTYPE_LONGLONG);
+    CU_ASSERT_FALSE(dtype_isaggregate(long_long_dtype));
+    delete_dtype(long_long_dtype);
+
+    DType* unsigned_long_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+    CU_ASSERT_FALSE(dtype_isaggregate(unsigned_long_long_dtype));
+    delete_dtype(unsigned_long_long_dtype);
 
     DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     CU_ASSERT_FALSE(dtype_isaggregate(pointer_dtype));
@@ -1172,6 +1494,26 @@ void test_dtype_isobject(void) {
     CU_ASSERT_TRUE(dtype_isobject(int_dtype));
     delete_dtype(int_dtype);
 
+    DType* unsigned_int_dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
+    CU_ASSERT_TRUE(dtype_isobject(unsigned_int_dtype));
+    delete_dtype(unsigned_int_dtype);
+
+    DType* long_dtype = new_integer_dtype(DTYPE_LONG);
+    CU_ASSERT_TRUE(dtype_isobject(long_dtype));
+    delete_dtype(long_dtype);
+
+    DType* unsigned_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+    CU_ASSERT_TRUE(dtype_isobject(unsigned_long_dtype));
+    delete_dtype(unsigned_long_dtype);
+
+    DType* long_long_dtype = new_integer_dtype(DTYPE_LONGLONG);
+    CU_ASSERT_TRUE(dtype_isobject(long_long_dtype));
+    delete_dtype(long_long_dtype);
+
+    DType* unsigned_long_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+    CU_ASSERT_TRUE(dtype_isobject(unsigned_long_long_dtype));
+    delete_dtype(unsigned_long_long_dtype);
+
     DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     CU_ASSERT_TRUE(dtype_isobject(pointer_dtype));
     delete_dtype(pointer_dtype);
@@ -1222,6 +1564,26 @@ void test_dtype_isincomplete(void) {
     CU_ASSERT_FALSE(dtype_isincomplete(int_dtype));
     delete_dtype(int_dtype);
 
+    DType* unsigned_int_dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
+    CU_ASSERT_FALSE(dtype_isincomplete(unsigned_int_dtype));
+    delete_dtype(unsigned_int_dtype);
+
+    DType* long_dtype = new_integer_dtype(DTYPE_LONG);
+    CU_ASSERT_FALSE(dtype_isincomplete(long_dtype));
+    delete_dtype(long_dtype);
+
+    DType* unsigned_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+    CU_ASSERT_FALSE(dtype_isincomplete(unsigned_long_dtype));
+    delete_dtype(unsigned_long_dtype);
+
+    DType* long_long_dtype = new_integer_dtype(DTYPE_LONGLONG);
+    CU_ASSERT_FALSE(dtype_isincomplete(long_long_dtype));
+    delete_dtype(long_long_dtype);
+
+    DType* unsigned_long_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+    CU_ASSERT_FALSE(dtype_isincomplete(unsigned_long_long_dtype));
+    delete_dtype(unsigned_long_long_dtype);
+
     DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     CU_ASSERT_FALSE(dtype_isincomplete(pointer_dtype));
     delete_dtype(pointer_dtype);
@@ -1271,6 +1633,26 @@ void test_dtype_alignment(void) {
     DType* int_dtype = new_integer_dtype(DTYPE_INT);
     CU_ASSERT_EQUAL(dtype_alignment(int_dtype), 4);
     delete_dtype(int_dtype);
+
+    DType* unsigned_int_dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
+    CU_ASSERT_EQUAL(dtype_alignment(unsigned_int_dtype), 4);
+    delete_dtype(unsigned_int_dtype);
+
+    DType* long_dtype = new_integer_dtype(DTYPE_LONG);
+    CU_ASSERT_EQUAL(dtype_alignment(long_dtype), 8);
+    delete_dtype(long_dtype);
+
+    DType* unsigned_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+    CU_ASSERT_EQUAL(dtype_alignment(unsigned_long_dtype), 8);
+    delete_dtype(unsigned_long_dtype);
+
+    DType* long_long_dtype = new_integer_dtype(DTYPE_LONGLONG);
+    CU_ASSERT_EQUAL(dtype_alignment(long_long_dtype), 8);
+    delete_dtype(long_long_dtype);
+
+    DType* unsigned_long_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+    CU_ASSERT_EQUAL(dtype_alignment(unsigned_long_long_dtype), 8);
+    delete_dtype(unsigned_long_long_dtype);
 
     DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     CU_ASSERT_EQUAL(dtype_alignment(pointer_dtype), 8);
@@ -1324,6 +1706,26 @@ void test_dtype_nbytes(void) {
     DType* int_dtype = new_integer_dtype(DTYPE_INT);
     CU_ASSERT_EQUAL(dtype_nbytes(int_dtype), 4);
     delete_dtype(int_dtype);
+
+    DType* unsigned_int_dtype = new_integer_dtype(DTYPE_UNSIGNED_INT);
+    CU_ASSERT_EQUAL(dtype_nbytes(unsigned_int_dtype), 4);
+    delete_dtype(unsigned_int_dtype);
+
+    DType* long_dtype = new_integer_dtype(DTYPE_LONG);
+    CU_ASSERT_EQUAL(dtype_nbytes(long_dtype), 8);
+    delete_dtype(long_dtype);
+
+    DType* unsigned_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONG);
+    CU_ASSERT_EQUAL(dtype_nbytes(unsigned_long_dtype), 8);
+    delete_dtype(unsigned_long_dtype);
+
+    DType* long_long_dtype = new_integer_dtype(DTYPE_LONGLONG);
+    CU_ASSERT_EQUAL(dtype_nbytes(long_long_dtype), 8);
+    delete_dtype(long_long_dtype);
+
+    DType* unsigned_long_long_dtype = new_integer_dtype(DTYPE_UNSIGNED_LONGLONG);
+    CU_ASSERT_EQUAL(dtype_nbytes(unsigned_long_long_dtype), 8);
+    delete_dtype(unsigned_long_long_dtype);
 
     DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
     CU_ASSERT_EQUAL(dtype_nbytes(pointer_dtype), 8);

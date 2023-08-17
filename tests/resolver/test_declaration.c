@@ -6,6 +6,11 @@
 
 void test_resolve_char_decl(void);
 void test_resolve_int_decl(void);
+void test_resolve_unsigned_int_decl(void);
+void test_resolve_long_decl(void);
+void test_resolve_unsigned_long_decl(void);
+void test_resolve_long_long_decl(void);
+void test_resolve_unsigned_long_long_decl(void);
 void test_resolve_pointer_decl(void);
 void test_resolve_array_decl(void);
 void test_resolve_named_struct_decl(void);
@@ -133,6 +138,99 @@ void test_resolve_int_decl(void) {
 
     run_local_decl_resolver_test(local_input, NULL, NULL, expected, NULL);
     run_global_decl_resolver_test(global_input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_unsigned_int_decl(void) {
+    Ast* input = new_ast(AST_DECL, 2,               // non-terminal
+                         new_ast(AST_DECL_SPECS, 2, // non-terminal
+                                 new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_INT, 0)),
+                         new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                 new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("u")))));
+
+    Srt* expected =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_UNSIGNED_INT), new_string("u"))));
+
+    run_local_decl_resolver_test(input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_long_decl(void) {
+    Ast* input = new_ast(AST_DECL, 2,               // non-terminal
+                         new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                 new_ast(AST_TYPE_LONG, 0)),
+                         new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                 new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("l")))));
+
+    Srt* expected = new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                    new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_LONG), new_string("l"))));
+
+    run_local_decl_resolver_test(input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_unsigned_long_decl(void) {
+    Ast* input = new_ast(AST_DECL, 2,               // non-terminal
+                         new_ast(AST_DECL_SPECS, 2, // non-terminal
+                                 new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_LONG, 0)),
+                         new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                 new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("ul")))));
+
+    Srt* expected =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_UNSIGNED_LONG), new_string("ul"))));
+
+    run_local_decl_resolver_test(input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_long_long_decl(void) {
+    Ast* input = new_ast(AST_DECL, 2,               // non-terminal
+                         new_ast(AST_DECL_SPECS, 2, // non-terminal
+                                 new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_LONG, 0)),
+                         new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                 new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("ll")))));
+
+    Srt* expected = new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                            new_srt(SRT_INIT_DECL, 1, // non-terminal
+                                    new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_LONGLONG), new_string("ll"))));
+
+    run_local_decl_resolver_test(input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_unsigned_long_long_decl(void) {
+    Ast* input = new_ast(AST_DECL, 2,               // non-terminal
+                         new_ast(AST_DECL_SPECS, 3, // non-terminal
+                                 new_ast(AST_TYPE_UNSIGNED, 0), new_ast(AST_TYPE_LONG, 0), new_ast(AST_TYPE_LONG, 0)),
+                         new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                 new_ast(AST_INIT_DECLOR, 1, // non-terminal
+                                         new_identifier_ast(AST_IDENT_DECLOR, new_string("ull")))));
+
+    Srt* expected =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 1, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), new_string("ull"))));
+
+    run_local_decl_resolver_test(input, NULL, NULL, expected, NULL);
+    run_global_decl_resolver_test(input, NULL, NULL, expected, NULL);
 
     delete_srt(expected);
 }

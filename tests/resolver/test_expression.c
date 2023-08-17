@@ -32,8 +32,13 @@ void test_resolve_ident_expr_local(void);
 void test_resolve_ident_expr_global(void);
 void test_resolve_enum_ident_expr_local(void);
 void test_resolve_enum_ident_expr_global(void);
-void test_resolve_iliteral_expr_int(void);
 void test_resolve_iliteral_expr_char(void);
+void test_resolve_iliteral_expr_int(void);
+void test_resolve_iliteral_expr_unsigned_int(void);
+void test_resolve_iliteral_expr_long(void);
+void test_resolve_iliteral_expr_unsigned_long(void);
+void test_resolve_iliteral_expr_long_long(void);
+void test_resolve_iliteral_expr_unsigned_long_long(void);
 void test_resolve_sliteral_expr(void);
 
 void run_global_expr_resolver_test(Ast* input, SymbolTable* symbol_table, TagTable* tag_table, Srt* expected,
@@ -72,8 +77,13 @@ CU_Suite* add_test_suite_expr_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_ident_expr_global);
     CU_ADD_TEST(suite, test_resolve_enum_ident_expr_local);
     CU_ADD_TEST(suite, test_resolve_enum_ident_expr_global);
-    CU_ADD_TEST(suite, test_resolve_iliteral_expr_int);
     CU_ADD_TEST(suite, test_resolve_iliteral_expr_char);
+    CU_ADD_TEST(suite, test_resolve_iliteral_expr_int);
+    CU_ADD_TEST(suite, test_resolve_iliteral_expr_unsigned_int);
+    CU_ADD_TEST(suite, test_resolve_iliteral_expr_long);
+    CU_ADD_TEST(suite, test_resolve_iliteral_expr_unsigned_long);
+    CU_ADD_TEST(suite, test_resolve_iliteral_expr_long_long);
+    CU_ADD_TEST(suite, test_resolve_iliteral_expr_unsigned_long_long);
     CU_ADD_TEST(suite, test_resolve_sliteral_expr);
     return suite;
 }
@@ -355,9 +365,8 @@ void test_resolve_pointer_difference_expr(void) {
     symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
     symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
 
-    // In current implementation, ptrdiff_t is int
     Srt* expected = new_dtyped_srt(
-        SRT_PDIFF_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+        SRT_PDIFF_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG), 2, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("p")),
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("q")));
 
@@ -728,6 +737,16 @@ void test_resolve_enum_ident_expr_global(void) {
     delete_srt(expected);
 }
 
+void test_resolve_iliteral_expr_char(void) {
+    Ast* input = new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 89));
+
+    Srt* expected = new_iliteral_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 89));
+
+    run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
 void test_resolve_iliteral_expr_int(void) {
     Ast* input = new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3));
 
@@ -738,10 +757,55 @@ void test_resolve_iliteral_expr_int(void) {
     delete_srt(expected);
 }
 
-void test_resolve_iliteral_expr_char(void) {
-    Ast* input = new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 89));
+void test_resolve_iliteral_expr_unsigned_int(void) {
+    Ast* input = new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 16u));
 
-    Srt* expected = new_iliteral_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 89));
+    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT),
+                                     new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 16u));
+
+    run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_iliteral_expr_long(void) {
+    Ast* input = new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_LONG, 4l));
+
+    Srt* expected =
+        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_LONG), new_signed_iliteral(INTEGER_LONG, 4l));
+
+    run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_iliteral_expr_unsigned_long(void) {
+    Ast* input = new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 9ul));
+
+    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG),
+                                     new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 9ul));
+
+    run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_iliteral_expr_long_long(void) {
+    Ast* input = new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_LONGLONG, 8ll));
+
+    Srt* expected =
+        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_LONGLONG), new_signed_iliteral(INTEGER_LONGLONG, 8ll));
+
+    run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_iliteral_expr_unsigned_long_long(void) {
+    Ast* input = new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_LONGLONG, 20ull));
+
+    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG),
+                                     new_unsigned_iliteral(INTEGER_UNSIGNED_LONGLONG, 20ull));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
 

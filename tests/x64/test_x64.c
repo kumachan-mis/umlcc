@@ -118,7 +118,7 @@ void test_new_int_data_x64(void) {
         CU_ASSERT_PTR_NULL(x64->inst);
         CU_ASSERT_EQUAL(x64->data->type, X64_DATA_QUAD);
         CU_ASSERT_EQUAL(x64->data->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(x64->data->iliteral->is_unsigned);
+        CU_ASSERT_FALSE(iliteral_type_isunsigned(x64->data->iliteral->type));
         CU_ASSERT_EQUAL(x64->data->iliteral->signed_value, 623);
         CU_ASSERT_EQUAL(x64->data->iliteral->unsigned_value, 0ULL);
         CU_ASSERT_PTR_NULL(x64->data->sliteral);
