@@ -31,16 +31,10 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
             return gen_sub_x64code(x64gen);
         case IMMC_INST_MUL:
             return gen_mul_x64code(x64gen);
-        case IMMC_INST_UMUL:
-            return gen_umul_x64code(x64gen);
         case IMMC_INST_DIV:
             return gen_div_x64code(x64gen);
-        case IMMC_INST_UDIV:
-            return gen_udiv_x64code(x64gen);
         case IMMC_INST_MOD:
             return gen_mod_x64code(x64gen);
-        case IMMC_INST_UMOD:
-            return gen_umod_x64code(x64gen);
         case IMMC_INST_SAL:
             return gen_sal_x64code(x64gen);
         case IMMC_INST_SAR:

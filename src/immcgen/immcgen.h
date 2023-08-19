@@ -12,7 +12,7 @@ typedef struct Immcgen {
     SymbolTable* symbol_table;
     TagTable* tag_table;
     ImmcSuffix expr_reg_suffix;
-    int expr_reg_id;
+    ImmcRegister* expr_reg;
     int next_reg_id;
     DType* initialized_dtype;
     int initialized_offset;

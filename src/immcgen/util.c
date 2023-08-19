@@ -35,21 +35,29 @@ void append_child_immcode(Immcgen* immcgen, Vector* codes, int index) {
 
 void update_non_void_expr_register(Immcgen* immcgen, ImmcOpe* dst) {
     immcgen->expr_reg_suffix = dst->suffix;
-    immcgen->expr_reg_id = dst->reg_id;
+    if (immcgen->expr_reg != NULL) {
+        delete_immcreg(immcgen->expr_reg);
+    }
+    immcgen->expr_reg = immcreg_copy(dst->reg);
 }
 
 void update_void_expr_register(Immcgen* immcgen) {
     immcgen->expr_reg_suffix = IMMC_SUFFIX_NONE;
-    immcgen->expr_reg_id = -1;
+    if (immcgen->expr_reg != NULL) {
+        delete_immcreg(immcgen->expr_reg);
+    }
+    immcgen->expr_reg = NULL;
 }
 
 ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
     Srt* srt = immcgen->srt;
     Srt* child_srt = vector_at(srt->children, index);
 
-    ImmcSuffix suffix = IMMC_SUFFIX_NONE;
+    ImmcSuffix cast_suffix = IMMC_SUFFIX_NONE;
+    int cast_is_unsigned = 0;
     if (child_srt->type == SRT_CAST_EXPR) {
-        suffix = immcsuffix_get(dtype_nbytes(child_srt->dtype));
+        cast_suffix = immcsuffix_get(dtype_nbytes(child_srt->dtype));
+        cast_is_unsigned = dtype_isunsignedinteger(child_srt->dtype);
     }
     while (child_srt->type == SRT_CAST_EXPR) {
         immcgen->srt = child_srt;
@@ -59,22 +67,27 @@ ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
 
     if (child_srt->type == SRT_INT_EXPR || child_srt->type == SRT_CHAR_EXPR) {
         immcgen->srt = srt;
-        if (suffix == IMMC_SUFFIX_NONE) {
-            suffix = immcsuffix_get(dtype_nbytes(child_srt->dtype));
+        if (cast_suffix == IMMC_SUFFIX_NONE) {
+            cast_suffix = immcsuffix_get(dtype_nbytes(child_srt->dtype));
         }
-        return new_int_immcope(suffix, iliteral_copy(child_srt->iliteral));
+        return new_int_immcope(cast_suffix, iliteral_copy(child_srt->iliteral));
     }
 
     append_child_immcode(immcgen, codes, index);
     immcgen->srt = srt;
 
-    if (suffix == IMMC_SUFFIX_NONE) {
-        return new_reg_immcope(immcgen->expr_reg_suffix, immcgen->expr_reg_id);
+    if (cast_suffix == IMMC_SUFFIX_NONE) {
+        ImmcRegister* reg = immcreg_copy(immcgen->expr_reg);
+        return new_reg_immcope(immcgen->expr_reg_suffix, reg);
     }
 
-    ImmcOpe* src = new_reg_immcope(immcgen->expr_reg_suffix, immcgen->expr_reg_id);
+    ImmcRegister* src_reg = immcreg_copy(immcgen->expr_reg);
+    ImmcOpe* src = new_reg_immcope(immcgen->expr_reg_suffix, src_reg);
+
     immcgen->next_reg_id++;
-    ImmcOpe* dst = new_reg_immcope(suffix, immcgen->next_reg_id);
+    ImmcRegister* dst_reg = new_immcreg(immcgen->next_reg_id, cast_is_unsigned);
+    ImmcOpe* dst = new_reg_immcope(cast_suffix, dst_reg);
+
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
     return immcope_copy(dst);
 }
@@ -86,7 +99,9 @@ ImmcOpe* gen_child_reg_immcope(Immcgen* immcgen, Vector* codes, int index) {
     }
 
     immcgen->next_reg_id++;
-    ImmcOpe* dst = new_reg_immcope(src->suffix, immcgen->next_reg_id);
+    ImmcRegister* dst_reg = new_immcreg(immcgen->next_reg_id, iliteral_type_isunsigned(src->iliteral->type));
+    ImmcOpe* dst = new_reg_immcope(src->suffix, dst_reg);
+
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
     return immcope_copy(dst);
 }
@@ -116,8 +131,9 @@ ImmcOpe* gen_child_ptr_immcope(Immcgen* immcgen, Vector* codes, int index) {
 
 ImmcOpe* create_dest_reg_immcope(Immcgen* immcgen) {
     ImmcSuffix suffix = immcsuffix_get(dtype_nbytes(immcgen->srt->dtype));
+    int is_unsigned = dtype_isunsignedinteger(immcgen->srt->dtype);
     immcgen->next_reg_id++;
-    return new_reg_immcope(suffix, immcgen->next_reg_id);
+    return new_reg_immcope(suffix, new_immcreg(immcgen->next_reg_id, is_unsigned));
 }
 
 char* create_label_name(int label_id) {

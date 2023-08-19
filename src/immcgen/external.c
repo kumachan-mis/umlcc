@@ -40,7 +40,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
 
         ImmcSuffix suffix = immcsuffix_get(dtype_nbytes(dparam->dtype));
         ImmcOpe* dst = new_mem_immcope(symbol->memory_offset);
-        ImmcOpe* src = new_arg_immcope(suffix, i);
+        ImmcOpe* src = new_signed_arg_immcope(suffix, i);
         vector_push(param_codes, new_inst_immc(IMMC_INST_LDARG, dst, src, NULL));
     }
 

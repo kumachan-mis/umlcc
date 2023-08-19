@@ -6,8 +6,7 @@
 #include <stdlib.h>
 
 Vector* gen_additive_subtractive_common_x64code(X64gen* x64gen, X64InstType type);
-Vector* gen_multiplicative_common_x64code(X64gen* x64gen, X64InstType type);
-Vector* gen_divisional_common_x64code(X64gen* x64gen, X64InstType type, int result_reg_id);
+Vector* gen_divisional_common_x64code(X64gen* x64gen, X64RegisterId result_reg_id);
 
 Vector* gen_add_x64code(X64gen* x64gen) {
     return gen_additive_subtractive_common_x64code(x64gen, X64_INST_ADDX);
@@ -26,8 +25,8 @@ Vector* gen_additive_subtractive_common_x64code(X64gen* x64gen, X64InstType type
     ImmcOpe* immc_fst_src = immc->inst->fst_src;
     ImmcOpe* immc_snd_src = immc->inst->snd_src;
 
-    int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
-    int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
+    int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg->reg_id];
+    int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg->reg_id];
 
     X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_fst_src->suffix));
     X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_snd_src->suffix));
@@ -42,7 +41,7 @@ Vector* gen_additive_subtractive_common_x64code(X64gen* x64gen, X64InstType type
             break;
         }
         case IMMC_OPERAND_REG: {
-            int snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg_id];
+            int snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg->reg_id];
             append_mov_code(codes, fst_src_id, fst_src_suffix, fst_src_id, suffix);
             append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
             X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
@@ -63,14 +62,6 @@ Vector* gen_additive_subtractive_common_x64code(X64gen* x64gen, X64InstType type
 }
 
 Vector* gen_mul_x64code(X64gen* x64gen) {
-    return gen_multiplicative_common_x64code(x64gen, X64_INST_IMULX);
-}
-
-Vector* gen_umul_x64code(X64gen* x64gen) {
-    return gen_multiplicative_common_x64code(x64gen, X64_INST_IMULX);
-}
-
-Vector* gen_multiplicative_common_x64code(X64gen* x64gen, X64InstType type) {
     Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
@@ -79,8 +70,8 @@ Vector* gen_multiplicative_common_x64code(X64gen* x64gen, X64InstType type) {
     ImmcOpe* immc_fst_src = immc->inst->fst_src;
     ImmcOpe* immc_snd_src = immc->inst->snd_src;
 
-    int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
-    int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
+    int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg->reg_id];
+    int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg->reg_id];
 
     X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_fst_src->suffix));
     X64Suffix snd_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_snd_src->suffix));
@@ -91,16 +82,16 @@ Vector* gen_multiplicative_common_x64code(X64gen* x64gen, X64InstType type) {
             append_mov_code(codes, fst_src_id, suffix, AX_REG_ID, suffix);
             X64Ope* fst_src = new_reg_x64ope(suffix, AX_REG_ID);
             X64Ope* snd_src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
-            vector_push(codes, new_inst_x64(type, snd_src, fst_src));
+            vector_push(codes, new_inst_x64(X64_INST_IMULX, snd_src, fst_src));
             break;
         }
         case IMMC_OPERAND_REG: {
-            int snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg_id];
+            int snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg->reg_id];
             append_mov_code(codes, fst_src_id, fst_src_suffix, AX_REG_ID, suffix);
             append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
             X64Ope* fst_src = new_reg_x64ope(suffix, AX_REG_ID);
             X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
-            vector_push(codes, new_inst_x64(type, snd_src, fst_src));
+            vector_push(codes, new_inst_x64(X64_INST_IMULX, snd_src, fst_src));
             break;
         }
         default:
@@ -116,22 +107,14 @@ Vector* gen_multiplicative_common_x64code(X64gen* x64gen, X64InstType type) {
 }
 
 Vector* gen_div_x64code(X64gen* x64gen) {
-    return gen_divisional_common_x64code(x64gen, X64_INST_IDIVX, AX_REG_ID);
-}
-
-Vector* gen_udiv_x64code(X64gen* x64gen) {
-    return gen_divisional_common_x64code(x64gen, X64_INST_DIVX, AX_REG_ID);
+    return gen_divisional_common_x64code(x64gen, AX_REG_ID);
 }
 
 Vector* gen_mod_x64code(X64gen* x64gen) {
-    return gen_divisional_common_x64code(x64gen, X64_INST_IDIVX, DX_REG_ID);
+    return gen_divisional_common_x64code(x64gen, DX_REG_ID);
 }
 
-Vector* gen_umod_x64code(X64gen* x64gen) {
-    return gen_divisional_common_x64code(x64gen, X64_INST_DIVX, DX_REG_ID);
-}
-
-Vector* gen_divisional_common_x64code(X64gen* x64gen, X64InstType type, int result_reg_id) {
+Vector* gen_divisional_common_x64code(X64gen* x64gen, X64RegisterId result_reg_id) {
     Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
     x64gen->index++;
@@ -140,8 +123,8 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, X64InstType type, int resu
     ImmcOpe* immc_fst_src = immc->inst->fst_src;
     ImmcOpe* immc_snd_src = immc->inst->snd_src;
 
-    int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg_id];
-    int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg_id];
+    int dst_id = CALLER_SAVED_REG_IDS[immc_dst->reg->reg_id];
+    int fst_src_id = CALLER_SAVED_REG_IDS[immc_fst_src->reg->reg_id];
     int snd_src_id = -1;
 
     X64Suffix fst_src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_fst_src->suffix));
@@ -158,7 +141,7 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, X64InstType type, int resu
             break;
         }
         case IMMC_OPERAND_REG: {
-            snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg_id];
+            snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg->reg_id];
             append_mov_code(codes, fst_src_id, fst_src_suffix, AX_REG_ID, suffix);
             if (snd_src_id != DX_REG_ID) {
                 append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
@@ -177,7 +160,9 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, X64InstType type, int resu
     int dx_needs_evacuation = 0;
     if (fst_src_id != DX_REG_ID && snd_src_id != DX_REG_ID && dst_id != DX_REG_ID) {
         Set* alive_regs_set = create_alive_regs_set(x64gen->liveseqs);
-        dx_needs_evacuation = set_contains(alive_regs_set, &DX_REG_ID);
+        int* dx_reg_id_ref = new_integer(DX_REG_ID);
+        dx_needs_evacuation = set_contains(alive_regs_set, dx_reg_id_ref);
+        free(dx_reg_id_ref);
         delete_set(alive_regs_set);
     }
 
@@ -187,8 +172,8 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, X64InstType type, int resu
     }
 
     X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
-    if (type == X64_INST_DIVX) {
-        X64Ope* zero_src = new_signed_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 0);
+    if (immc_dst->reg->is_unsigned) {
+        X64Ope* zero_src = new_signed_int_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 0);
         X64Ope* dx_dst = new_reg_x64ope(X64_SUFFIX_LONG, DX_REG_ID);
         vector_push(codes, new_inst_x64(X64_INST_MOVX, zero_src, dx_dst));
     } else if (suffix != X64_SUFFIX_QUAD) {
@@ -197,7 +182,11 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, X64InstType type, int resu
         vector_push(codes, new_inst_x64(X64_INST_CQTO, NULL, NULL));
     }
 
-    vector_push(codes, new_inst_x64(type, snd_src, NULL));
+    if (immc_dst->reg->is_unsigned) {
+        vector_push(codes, new_inst_x64(X64_INST_DIVX, snd_src, NULL));
+    } else {
+        vector_push(codes, new_inst_x64(X64_INST_IDIVX, snd_src, NULL));
+    }
 
     X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immc_dst->suffix));
     append_mov_code(codes, result_reg_id, suffix, dst_id, dst_suffix);
