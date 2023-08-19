@@ -70,7 +70,7 @@ void test_new_iliteral_ctoken_int(void) {
         CU_ASSERT_EQUAL(ctoken->iliteral->type, INTEGER_INT);
         CU_ASSERT_FALSE(iliteral_type_isunsigned(ctoken->iliteral->type));
         CU_ASSERT_EQUAL(ctoken->iliteral->signed_value, 6);
-        CU_ASSERT_EQUAL(ctoken->iliteral->unsigned_value, 0ULL);
+        CU_ASSERT_EQUAL(ctoken->iliteral->unsigned_value, 0ull);
         CU_ASSERT_PTR_NULL(ctoken->sliteral);
     }
 
@@ -92,7 +92,7 @@ void test_new_iliteral_ctoken_char(void) {
         CU_ASSERT_EQUAL(ctoken->iliteral->type, INTEGER_INT);
         CU_ASSERT_FALSE(iliteral_type_isunsigned(ctoken->iliteral->type));
         CU_ASSERT_EQUAL(ctoken->iliteral->signed_value, 89);
-        CU_ASSERT_EQUAL(ctoken->iliteral->unsigned_value, 0ULL);
+        CU_ASSERT_EQUAL(ctoken->iliteral->unsigned_value, 0ull);
         CU_ASSERT_PTR_NULL(ctoken->sliteral);
     }
 

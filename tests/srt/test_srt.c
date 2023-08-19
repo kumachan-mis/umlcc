@@ -97,7 +97,7 @@ void test_new_dtyped_srt(void) {
         CU_ASSERT_EQUAL(child_srt->iliteral->type, INTEGER_INT);
         CU_ASSERT_FALSE(iliteral_type_isunsigned(child_srt->iliteral->type));
         CU_ASSERT_EQUAL(child_srt->iliteral->signed_value, 6);
-        CU_ASSERT_EQUAL(child_srt->iliteral->unsigned_value, 0ULL);
+        CU_ASSERT_EQUAL(child_srt->iliteral->unsigned_value, 0ull);
         CU_ASSERT_PTR_NULL(child_srt->sliteral);
         CU_ASSERT_EQUAL(vector_size(child_srt->children), 0);
 
@@ -108,7 +108,7 @@ void test_new_dtyped_srt(void) {
         CU_ASSERT_EQUAL(child_srt->iliteral->type, INTEGER_INT);
         CU_ASSERT_FALSE(iliteral_type_isunsigned(child_srt->iliteral->type));
         CU_ASSERT_EQUAL(child_srt->iliteral->signed_value, 3);
-        CU_ASSERT_EQUAL(child_srt->iliteral->unsigned_value, 0ULL);
+        CU_ASSERT_EQUAL(child_srt->iliteral->unsigned_value, 0ull);
         CU_ASSERT_PTR_NULL(child_srt->sliteral);
         CU_ASSERT_EQUAL(vector_size(child_srt->children), 0);
     }
@@ -156,7 +156,7 @@ void test_new_iliteral_srt_int(void) {
         CU_ASSERT_EQUAL(srt->iliteral->type, INTEGER_INT);
         CU_ASSERT_FALSE(iliteral_type_isunsigned(srt->iliteral->type));
         CU_ASSERT_EQUAL(srt->iliteral->signed_value, 6);
-        CU_ASSERT_EQUAL(srt->iliteral->unsigned_value, 0ULL);
+        CU_ASSERT_EQUAL(srt->iliteral->unsigned_value, 0ull);
         CU_ASSERT_PTR_NULL(srt->sliteral);
         CU_ASSERT_EQUAL(vector_size(srt->children), 0);
     }
@@ -183,7 +183,7 @@ void test_new_iliteral_srt_char(void) {
         CU_ASSERT_EQUAL(srt->iliteral->type, INTEGER_INT);
         CU_ASSERT_FALSE(iliteral_type_isunsigned(srt->iliteral->type));
         CU_ASSERT_EQUAL(srt->iliteral->signed_value, 89);
-        CU_ASSERT_EQUAL(srt->iliteral->unsigned_value, 0ULL);
+        CU_ASSERT_EQUAL(srt->iliteral->unsigned_value, 0ull);
         CU_ASSERT_PTR_NULL(srt->sliteral);
         CU_ASSERT_EQUAL(vector_size(srt->children), 0);
     }

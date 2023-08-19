@@ -69,36 +69,36 @@ unsigned muodl(void) {
 }
 
 long addq(void) {
-    long a = 14LL;
-    long b = 3LL;
+    long a = 14ll;
+    long b = 3ll;
     long c = a + b;
     return c;
 }
 
 long subq(void) {
-    long a = 14LL;
-    long b = 3LL;
+    long a = 14ll;
+    long b = 3ll;
     long c = a - b;
     return c;
 }
 
 long mulq(void) {
-    long a = 14LL;
-    long b = 3LL;
+    long a = 14ll;
+    long b = 3ll;
     long c = a * b;
     return c;
 }
 
 long divq(void) {
-    long a = 14LL;
-    long b = 3LL;
+    long a = 14ll;
+    long b = 3ll;
     long c = a / b;
     return c;
 }
 
 long modq(void) {
-    long a = 14LL;
-    long b = 3LL;
+    long a = 14ll;
+    long b = 3ll;
     long c = a % b;
     return c;
 }
