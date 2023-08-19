@@ -9,19 +9,25 @@ BaseType t_iliteral = {
     .delete_object = (void (*)(void*))delete_iliteral,
 };
 
+IntegerLiteral* new_base_iliteral(IntegerLiteralType type);
+
 IntegerLiteral* new_signed_iliteral(IntegerLiteralType type, long long value) {
-    IntegerLiteral* iliteral = malloc(sizeof(IntegerLiteral));
-    iliteral->type = type;
+    IntegerLiteral* iliteral = new_base_iliteral(type);
     iliteral->signed_value = value;
-    iliteral->unsigned_value = 0ULL;
     return iliteral;
 }
 
 IntegerLiteral* new_unsigned_iliteral(IntegerLiteralType type, unsigned long long value) {
+    IntegerLiteral* iliteral = new_base_iliteral(type);
+    iliteral->unsigned_value = value;
+    return iliteral;
+}
+
+IntegerLiteral* new_base_iliteral(IntegerLiteralType type) {
     IntegerLiteral* iliteral = malloc(sizeof(IntegerLiteral));
     iliteral->type = type;
-    iliteral->signed_value = -1LL;
-    iliteral->unsigned_value = value;
+    iliteral->signed_value = -1ll;
+    iliteral->unsigned_value = 0ull;
     return iliteral;
 }
 

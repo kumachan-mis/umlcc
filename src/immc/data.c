@@ -9,19 +9,25 @@
 #include <stdlib.h>
 #include <string.h>
 
+ImmcData* new_base_immcdata(ImmcDataType type);
+
 ImmcData* new_int_immcdata(ImmcDataType type, IntegerLiteral* iliteral) {
-    ImmcData* immcdata = malloc(sizeof(ImmcData));
-    immcdata->type = type;
+    ImmcData* immcdata = new_base_immcdata(type);
     immcdata->iliteral = iliteral;
-    immcdata->sliteral = NULL;
     return immcdata;
 }
 
 ImmcData* new_str_immcdata(ImmcDataType type, StringLiteral* sliteral) {
+    ImmcData* immcdata = new_base_immcdata(type);
+    immcdata->sliteral = sliteral;
+    return immcdata;
+}
+
+ImmcData* new_base_immcdata(ImmcDataType type) {
     ImmcData* immcdata = malloc(sizeof(ImmcData));
     immcdata->type = type;
     immcdata->iliteral = NULL;
-    immcdata->sliteral = sliteral;
+    immcdata->sliteral = NULL;
     return immcdata;
 }
 

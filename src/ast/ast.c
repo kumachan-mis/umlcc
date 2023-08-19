@@ -9,13 +9,10 @@ BaseType t_ast = {
     .delete_object = (void (*)(void*))delete_ast,
 };
 
+Ast* new_base_ast(AstType type);
+
 Ast* new_ast(AstType type, int num_children, ...) {
-    Ast* ast = malloc(sizeof(Ast));
-    ast->type = type;
-    ast->ident_name = NULL;
-    ast->iliteral = NULL;
-    ast->sliteral = NULL;
-    ast->children = new_vector(&t_ast);
+    Ast* ast = new_base_ast(type);
 
     va_list children;
     va_start(children, num_children);
@@ -28,31 +25,29 @@ Ast* new_ast(AstType type, int num_children, ...) {
 }
 
 Ast* new_identifier_ast(AstType type, char* name) {
-    Ast* ast = malloc(sizeof(Ast));
-    ast->type = type;
+    Ast* ast = new_base_ast(type);
     ast->ident_name = name;
-    ast->iliteral = NULL;
-    ast->sliteral = NULL;
-    ast->children = new_vector(&t_ast);
     return ast;
 }
 
 Ast* new_iliteral_ast(AstType type, IntegerLiteral* iliteral) {
-    Ast* ast = malloc(sizeof(Ast));
-    ast->type = type;
-    ast->ident_name = NULL;
+    Ast* ast = new_base_ast(type);
     ast->iliteral = iliteral;
-    ast->sliteral = NULL;
-    ast->children = new_vector(&t_ast);
     return ast;
 }
 
 Ast* new_sliteral_ast(AstType type, StringLiteral* sliteral) {
+    Ast* ast = new_base_ast(type);
+    ast->sliteral = sliteral;
+    return ast;
+}
+
+Ast* new_base_ast(AstType type) {
     Ast* ast = malloc(sizeof(Ast));
     ast->type = type;
     ast->ident_name = NULL;
     ast->iliteral = NULL;
-    ast->sliteral = sliteral;
+    ast->sliteral = NULL;
     ast->children = new_vector(&t_ast);
     return ast;
 }

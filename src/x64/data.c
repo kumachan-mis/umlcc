@@ -8,19 +8,25 @@
 #include <stdlib.h>
 #include <string.h>
 
+X64Data* new_base_x64data(X64DataType type);
+
 X64Data* new_int_x64data(X64DataType type, IntegerLiteral* iliteral) {
-    X64Data* x64data = malloc(sizeof(X64Data));
-    x64data->type = type;
+    X64Data* x64data = new_base_x64data(type);
     x64data->iliteral = iliteral;
-    x64data->sliteral = NULL;
     return x64data;
 }
 
 X64Data* new_str_x64data(X64DataType type, StringLiteral* sliteral) {
+    X64Data* x64data = new_base_x64data(type);
+    x64data->sliteral = sliteral;
+    return x64data;
+}
+
+X64Data* new_base_x64data(X64DataType type) {
     X64Data* x64data = malloc(sizeof(X64Data));
     x64data->type = type;
     x64data->iliteral = NULL;
-    x64data->sliteral = sliteral;
+    x64data->sliteral = NULL;
     return x64data;
 }
 

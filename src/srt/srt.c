@@ -9,14 +9,10 @@ BaseType t_srt = {
     .delete_object = (void (*)(void*))delete_srt,
 };
 
+Srt* new_base_srt(SrtType type);
+
 Srt* new_srt(SrtType type, int num_children, ...) {
-    Srt* srt = malloc(sizeof(Srt));
-    srt->type = type;
-    srt->dtype = NULL;
-    srt->ident_name = NULL;
-    srt->iliteral = NULL;
-    srt->sliteral = NULL;
-    srt->children = new_vector(&t_srt);
+    Srt* srt = new_base_srt(type);
 
     va_list children;
     va_start(children, num_children);
@@ -29,13 +25,8 @@ Srt* new_srt(SrtType type, int num_children, ...) {
 }
 
 Srt* new_dtyped_srt(SrtType type, DType* dtype, int num_children, ...) {
-    Srt* srt = malloc(sizeof(Srt));
-    srt->type = type;
+    Srt* srt = new_base_srt(type);
     srt->dtype = dtype;
-    srt->ident_name = NULL;
-    srt->iliteral = NULL;
-    srt->sliteral = NULL;
-    srt->children = new_vector(&t_srt);
 
     va_list children;
     va_start(children, num_children);
@@ -48,34 +39,33 @@ Srt* new_dtyped_srt(SrtType type, DType* dtype, int num_children, ...) {
 }
 
 Srt* new_identifier_srt(SrtType type, DType* dtype, char* ident_name) {
-    Srt* srt = malloc(sizeof(Srt));
-    srt->type = type;
+    Srt* srt = new_base_srt(type);
     srt->dtype = dtype;
     srt->ident_name = ident_name;
-    srt->iliteral = NULL;
-    srt->sliteral = NULL;
-    srt->children = new_vector(&t_srt);
     return srt;
 }
 
 Srt* new_iliteral_srt(SrtType type, DType* dtype, IntegerLiteral* iliteral) {
-    Srt* srt = malloc(sizeof(Srt));
-    srt->type = type;
+    Srt* srt = new_base_srt(type);
     srt->dtype = dtype;
-    srt->ident_name = NULL;
     srt->iliteral = iliteral;
-    srt->sliteral = NULL;
-    srt->children = new_vector(&t_srt);
     return srt;
 }
 
 Srt* new_sliteral_srt(SrtType type, DType* dtype, StringLiteral* sliteral) {
+    Srt* srt = new_base_srt(type);
+    srt->dtype = dtype;
+    srt->sliteral = sliteral;
+    return srt;
+}
+
+Srt* new_base_srt(SrtType type) {
     Srt* srt = malloc(sizeof(Srt));
     srt->type = type;
-    srt->dtype = dtype;
+    srt->dtype = NULL;
     srt->ident_name = NULL;
     srt->iliteral = NULL;
-    srt->sliteral = sliteral;
+    srt->sliteral = NULL;
     srt->children = new_vector(&t_srt);
     return srt;
 }
