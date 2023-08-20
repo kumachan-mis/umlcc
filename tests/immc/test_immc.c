@@ -147,7 +147,7 @@ void test_new_int_data_immc(void) {
         CU_ASSERT_PTR_NULL(immc->inst);
         CU_ASSERT_EQUAL(immc->data->type, IMMC_DATA_WORD);
         CU_ASSERT_EQUAL(immc->data->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(iliteral_type_isunsigned(immc->data->iliteral->type));
+        CU_ASSERT_FALSE(iliteral_isunsigned(immc->data->iliteral));
         CU_ASSERT_EQUAL(immc->data->iliteral->signed_value, 6);
         CU_ASSERT_EQUAL(immc->data->iliteral->unsigned_value, 0ull);
         CU_ASSERT_PTR_NULL(immc->data->sliteral);

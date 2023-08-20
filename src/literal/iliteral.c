@@ -39,9 +39,13 @@ IntegerLiteral* iliteral_copy(IntegerLiteral* iliteral) {
     return copied_iliteral;
 }
 
+int iliteral_isunsigned(IntegerLiteral* iliteral) {
+    return iliteral_type_isunsigned(iliteral->type);
+}
+
 char* iliteral_display_string(IntegerLiteral* iliteral) {
     char* display_string = malloc(50 * sizeof(char));
-    if (iliteral_type_isunsigned(iliteral->type)) {
+    if (iliteral_isunsigned(iliteral)) {
         sprintf(display_string, "%llu", iliteral->unsigned_value);
     } else {
         sprintf(display_string, "%lld", iliteral->signed_value);
@@ -57,4 +61,14 @@ void delete_iliteral(IntegerLiteral* iliteral) {
 
 int iliteral_type_isunsigned(IntegerLiteralType type) {
     return type == INTEGER_UNSIGNED_INT || type == INTEGER_UNSIGNED_LONG || type == INTEGER_UNSIGNED_LONGLONG;
+}
+
+IntegerLiteralType iliteral_type_get(int scalar_rank, int is_unsigned) {
+    if (scalar_rank < 3) {
+        return is_unsigned ? INTEGER_UNSIGNED_INT : INTEGER_INT;
+    } else if (scalar_rank == 3) {
+        return is_unsigned ? INTEGER_UNSIGNED_LONG : INTEGER_LONG;
+    } else {
+        return is_unsigned ? INTEGER_UNSIGNED_LONGLONG : INTEGER_LONGLONG;
+    }
 }

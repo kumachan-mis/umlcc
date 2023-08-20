@@ -58,7 +58,7 @@ DType* new_socket_function_dtype(Vector* params);
 DType* new_socket_typedef_dtype(void);
 DType* dtype_copy(DType* dtype);
 DType* dtype_connect(DType* socket_dtype, DType* plug_dtype);
-int dtype_integer_rank(DType* dtype);
+int dtype_scalar_rank(DType* dtype);
 DType* dtype_aggregate_at(DType* dtype, int index);
 int dtype_aggregate_size(DType* dtype);
 int dtype_equals(DType* dtype, DType* other);

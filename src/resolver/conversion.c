@@ -44,7 +44,7 @@ Pair* perform_usual_arithmetic_conversion(Pair* srt_pair) {
         return srt_pair;
     }
 
-    int lhs_rank = dtype_integer_rank(lhs_srt->dtype), rhs_rank = dtype_integer_rank(rhs_srt->dtype);
+    int lhs_rank = dtype_scalar_rank(lhs_srt->dtype), rhs_rank = dtype_scalar_rank(rhs_srt->dtype);
     int lhs_nbytes = dtype_nbytes(lhs_srt->dtype), rhs_nbytes = dtype_nbytes(rhs_srt->dtype);
     int lhs_signed = dtype_issignedinteger(lhs_srt->dtype), rhs_signed = dtype_issignedinteger(rhs_srt->dtype);
     int lhs_unsigned = dtype_isunsignedinteger(lhs_srt->dtype), rhs_unsigned = dtype_isunsignedinteger(rhs_srt->dtype);

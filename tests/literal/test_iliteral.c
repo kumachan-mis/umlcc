@@ -27,7 +27,7 @@ void test_new_signed_iliteral(void) {
             iliteral = copied_iliteral;
         }
         CU_ASSERT_EQUAL(iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(iliteral_type_isunsigned(iliteral->type));
+        CU_ASSERT_FALSE(iliteral_isunsigned(iliteral));
         CU_ASSERT_EQUAL(iliteral->signed_value, 45);
         CU_ASSERT_EQUAL(iliteral->unsigned_value, 0ull);
     }
@@ -45,7 +45,7 @@ void test_new_unsigned_iliteral(void) {
             iliteral = copied_iliteral;
         }
         CU_ASSERT_EQUAL(iliteral->type, INTEGER_UNSIGNED_LONG);
-        CU_ASSERT_TRUE(iliteral_type_isunsigned(iliteral->type));
+        CU_ASSERT_TRUE(iliteral_isunsigned(iliteral));
         CU_ASSERT_EQUAL(iliteral->signed_value, -1ll);
         CU_ASSERT_EQUAL(iliteral->unsigned_value, 2147483648ull);
     }

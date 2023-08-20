@@ -97,7 +97,7 @@ ImmcOpe* gen_child_reg_immcope(Immcgen* immcgen, Vector* codes, int index) {
     }
 
     immcgen->next_reg_id++;
-    ImmcRegister* dst_reg = new_immcreg(immcgen->next_reg_id, iliteral_type_isunsigned(src->iliteral->type));
+    ImmcRegister* dst_reg = new_immcreg(immcgen->next_reg_id, iliteral_isunsigned(src->iliteral));
     ImmcOpe* dst = new_reg_immcope(src->suffix, dst_reg);
 
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
