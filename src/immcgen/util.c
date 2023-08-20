@@ -3,8 +3,6 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 void append_children_immcode(Immcgen* immcgen, Vector* codes) {
     Vector* sub_codes = NULL;
@@ -134,13 +132,4 @@ ImmcOpe* create_dest_reg_immcope(Immcgen* immcgen) {
     int is_unsigned = dtype_isunsignedinteger(immcgen->srt->dtype);
     immcgen->next_reg_id++;
     return new_reg_immcope(suffix, new_immcreg(immcgen->next_reg_id, is_unsigned));
-}
-
-char* create_label_name(int label_id) {
-    // TODO: fix to prevent buffer overflow
-    char* label_name = malloc(50 * sizeof(char));
-    // TODO: don't use label name which can be conflict with a user-defined identifier
-    sprintf(label_name, "L%d", label_id);
-    label_name = realloc(label_name, (strlen(label_name) + 1) * sizeof(char));
-    return label_name;
 }

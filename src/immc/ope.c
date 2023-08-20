@@ -1,5 +1,6 @@
 #include "./ope.h"
 #include "../common/type.h"
+#include "./util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -65,6 +66,12 @@ ImmcOpe* new_mem_immcope(int mem_offset) {
 ImmcOpe* new_label_immcope(char* label_name) {
     ImmcOpe* immcope = new_base_immcope(IMMC_OPERAND_LABEL);
     immcope->label_name = label_name;
+    return immcope;
+}
+
+ImmcOpe* new_label_immcope_from_id(int label_id) {
+    ImmcOpe* immcope = new_base_immcope(IMMC_OPERAND_LABEL);
+    immcope->label_name = create_label_name(label_id);
     return immcope;
 }
 

@@ -20,8 +20,7 @@ Vector* gen_return_stmt_immcode(Immcgen* immcgen) {
         vector_push(codes, new_inst_immc(IMMC_INST_STRET, NULL, ret_value, NULL));
     }
 
-    char* label_name = create_label_name(immcgen->return_label_id);
-    ImmcOpe* ret_label = new_label_immcope(label_name);
+    ImmcOpe* ret_label = new_label_immcope_from_id(immcgen->return_label_id);
     vector_push(codes, new_inst_immc(IMMC_INST_JMP, ret_label, NULL, NULL));
 
     immcgen->srt = srt;

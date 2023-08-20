@@ -25,6 +25,7 @@ Immc* new_inst_immc(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* 
 Immc* new_int_data_immc(ImmcDataType type, IntegerLiteral* iliteral);
 Immc* new_str_data_immc(ImmcDataType type, StringLiteral* sliteral);
 Immc* new_label_immc(ImmcLabelType type, ImmcVisibility visibility, char* name);
+Immc* new_label_immc_from_id(ImmcLabelType type, ImmcVisibility visibility, int label_id);
 Immc* immc_copy(Immc* immc);
 int immc_isjumpinst(Immc* immc);
 char* immc_tostring(Immc* immc);

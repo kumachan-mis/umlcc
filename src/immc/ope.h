@@ -35,6 +35,7 @@ ImmcOpe* new_unsigned_reg_immcope(ImmcSuffix suffix, int reg_id);
 ImmcOpe* new_ptr_immcope(int reg_id);
 ImmcOpe* new_mem_immcope(int mem_offset);
 ImmcOpe* new_label_immcope(char* label_name);
+ImmcOpe* new_label_immcope_from_id(int label_id);
 ImmcOpe* new_int_immcope(ImmcSuffix suffix, IntegerLiteral* iliteral);
 ImmcOpe* new_signed_int_immcope(ImmcSuffix suffix, IntegerLiteralType type, long long value);
 ImmcOpe* new_unsigned_int_immcope(ImmcSuffix suffix, IntegerLiteralType type, unsigned long long value);

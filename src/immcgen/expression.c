@@ -36,16 +36,16 @@ Vector* gen_logical_or_expr_immcode(Immcgen* immcgen) {
     ImmcOpe* snd_src = NULL;
 
     immcgen->label_id++;
-    char* true_label = create_label_name(immcgen->label_id);
+    int true_label_id = immcgen->label_id;
     immcgen->label_id++;
-    char* end_label = create_label_name(immcgen->label_id);
+    int end_label_id = immcgen->label_id;
 
-    label = new_label_immcope(new_string(true_label));
+    label = new_label_immcope_from_id(true_label_id);
     fst_src = gen_child_reg_immcope(immcgen, codes, 0);
     snd_src = new_signed_int_immcope(fst_src->suffix, INTEGER_INT, 0);
     vector_push(codes, new_inst_immc(IMMC_INST_JNEQ, label, fst_src, snd_src));
 
-    label = new_label_immcope(new_string(true_label));
+    label = new_label_immcope_from_id(true_label_id);
     fst_src = gen_child_reg_immcope(immcgen, codes, 1);
     snd_src = new_signed_int_immcope(fst_src->suffix, INTEGER_INT, 0);
     vector_push(codes, new_inst_immc(IMMC_INST_JNEQ, label, fst_src, snd_src));
@@ -54,20 +54,18 @@ Vector* gen_logical_or_expr_immcode(Immcgen* immcgen) {
     fst_src = new_signed_int_immcope(reg->suffix, INTEGER_INT, 0);
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, reg, fst_src, NULL));
 
-    label = new_label_immcope(new_string(end_label));
+    label = new_label_immcope_from_id(end_label_id);
     vector_push(codes, new_inst_immc(IMMC_INST_JMP, label, NULL, NULL));
 
-    vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(true_label)));
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, true_label_id));
 
     reg = immcope_copy(reg);
     fst_src = new_signed_int_immcope(reg->suffix, INTEGER_INT, 1);
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, reg, fst_src, NULL));
 
-    vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(end_label)));
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, end_label_id));
 
     update_non_void_expr_register(immcgen, reg);
-    free(true_label);
-    free(end_label);
     return codes;
 }
 
@@ -80,16 +78,16 @@ Vector* gen_logical_and_expr_immcode(Immcgen* immcgen) {
     ImmcOpe* snd_src = NULL;
 
     immcgen->label_id++;
-    char* false_label = create_label_name(immcgen->label_id);
+    int false_label_id = immcgen->label_id;
     immcgen->label_id++;
-    char* end_label = create_label_name(immcgen->label_id);
+    int end_label_id = immcgen->label_id;
 
-    label = new_label_immcope(new_string(false_label));
+    label = new_label_immcope_from_id(false_label_id);
     fst_src = gen_child_reg_immcope(immcgen, codes, 0);
     snd_src = new_signed_int_immcope(fst_src->suffix, INTEGER_INT, 0);
     vector_push(codes, new_inst_immc(IMMC_INST_JEQ, label, fst_src, snd_src));
 
-    label = new_label_immcope(new_string(false_label));
+    label = new_label_immcope_from_id(false_label_id);
     fst_src = gen_child_reg_immcope(immcgen, codes, 1);
     snd_src = new_signed_int_immcope(fst_src->suffix, INTEGER_INT, 0);
     vector_push(codes, new_inst_immc(IMMC_INST_JEQ, label, fst_src, snd_src));
@@ -98,20 +96,18 @@ Vector* gen_logical_and_expr_immcode(Immcgen* immcgen) {
     fst_src = new_signed_int_immcope(reg->suffix, INTEGER_INT, 1);
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, reg, fst_src, NULL));
 
-    label = new_label_immcope(new_string(end_label));
+    label = new_label_immcope_from_id(end_label_id);
     vector_push(codes, new_inst_immc(IMMC_INST_JMP, label, NULL, NULL));
 
-    vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(false_label)));
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, false_label_id));
 
     reg = immcope_copy(reg);
     fst_src = new_signed_int_immcope(reg->suffix, INTEGER_INT, 0);
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, reg, fst_src, NULL));
 
-    vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(end_label)));
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, end_label_id));
 
     update_non_void_expr_register(immcgen, reg);
-    free(false_label);
-    free(end_label);
     return codes;
 }
 

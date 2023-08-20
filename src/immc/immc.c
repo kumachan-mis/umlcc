@@ -37,6 +37,12 @@ Immc* new_label_immc(ImmcLabelType type, ImmcVisibility visibility, char* name) 
     return immc;
 }
 
+Immc* new_label_immc_from_id(ImmcLabelType type, ImmcVisibility visibility, int label_id) {
+    Immc* immc = new_base_immc(IMMC_LABEL);
+    immc->label = new_immclabel_from_id(type, visibility, label_id);
+    return immc;
+}
+
 Immc* new_base_immc(ImmcType type) {
     Immc* immc = malloc(sizeof(Immc));
     immc->type = type;

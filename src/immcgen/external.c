@@ -61,8 +61,7 @@ Vector* gen_function_definition_immcode(Immcgen* immcgen) {
     vector_extend(codes, body_codes);
     delete_vector(body_codes);
 
-    char* return_label_name = create_label_name(immcgen->return_label_id);
-    vector_push(codes, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, return_label_name));
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, immcgen->return_label_id));
     vector_push(codes, new_inst_immc(IMMC_INST_LEAVE, NULL, immcope_copy(memory_nbytes), NULL));
 
     immcgen->tag_table = tagtable_exit_scope(immcgen->tag_table);
