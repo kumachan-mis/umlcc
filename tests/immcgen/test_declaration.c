@@ -237,7 +237,7 @@ void test_immcgen_global_struct_tag_decl(void) {
 
 void test_immcgen_local_scalar_init(void) {
     Srt* input = new_srt(
-        SRT_DECL_LIST, 3,         // non-terminal
+        SRT_DECL_LIST, 4,         // non-terminal
         new_srt(SRT_INIT_DECL, 2, // non-terminal
                 new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c")),
                 new_srt(SRT_INIT, 1,                                                    // non-terminal
@@ -259,7 +259,13 @@ void test_immcgen_local_scalar_init(void) {
                 new_srt(SRT_INIT, 1, // non-terminal
                         new_dtyped_srt(
                             SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
-                            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("y"))))));
+                            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("y"))))),
+        new_srt(SRT_INIT_DECL, 2, // non-terminal
+                new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_UNSIGNED_LONG), new_string("ul")),
+                new_srt(SRT_INIT, 1,                                                             // non-terminal
+                        new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), 1, // non-terminal
+                                       new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                        new_signed_iliteral(INTEGER_INT, 2147483647))))));
 
     SymbolTable* symbol_table = new_symboltable();
     symboltable_define_memory(symbol_table, new_string("x"), new_integer_dtype(DTYPE_INT));
@@ -301,6 +307,12 @@ void test_immcgen_local_scalar_init(void) {
                               new_mem_immcope(14),                         // dst
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2), // fst_src
                               NULL));                                      // snd_src
+    vector_push(
+        expected,
+        new_inst_immc(IMMC_INST_STORE,                                                                 // inst
+                      new_mem_immcope(22),                                                             // dst
+                      new_unsigned_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_UNSIGNED_LONG, 2147483647ul), // fst_src
+                      NULL));                                                                          // snd_src
 
     run_local_decl_immcgen_test(input, symbol_table, NULL, expected);
 
@@ -308,24 +320,34 @@ void test_immcgen_local_scalar_init(void) {
 }
 
 void test_immcgen_global_scalar_init(void) {
-    Srt* input = new_srt(SRT_DECL_LIST, 2,         // non-terminal
-                         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                                 new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c")),
-                                 new_srt(SRT_INIT, 1,                                                    // non-terminal
-                                         new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
-                                                        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                                         new_signed_iliteral(INTEGER_INT, 89))))),
-                         new_srt(SRT_INIT_DECL, 2, // non-terminal
-                                 new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("i")),
-                                 new_srt(SRT_INIT, 1, // non-terminal
-                                         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                          new_signed_iliteral(INTEGER_INT, 2)))));
+    Srt* input =
+        new_srt(SRT_DECL_LIST, 3,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_CHAR), new_string("c")),
+                        new_srt(SRT_INIT, 1,                                                    // non-terminal
+                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                new_signed_iliteral(INTEGER_INT, 89))))),
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_INT), new_string("i")),
+                        new_srt(SRT_INIT, 1, // non-terminal
+                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                 new_signed_iliteral(INTEGER_INT, 2)))),
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_identifier_srt(SRT_DECL, new_integer_dtype(DTYPE_UNSIGNED_LONG), new_string("ul")),
+                        new_srt(SRT_INIT, 1,                                                             // non-terminal
+                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), 1, // non-terminal
+                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                new_signed_iliteral(INTEGER_INT, 2147483647))))));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("c")));
     vector_push(expected, new_int_data_immc(IMMC_DATA_BYTE, new_signed_iliteral(INTEGER_INT, 89)));
     vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("i")));
     vector_push(expected, new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 2)));
+    vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("ul")));
+    vector_push(expected,
+                new_int_data_immc(IMMC_DATA_QUAD, new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 2147483647ul)));
 
     run_global_decl_immcgen_test(input, NULL, NULL, expected);
 

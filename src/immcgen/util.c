@@ -51,11 +51,9 @@ ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
     Srt* srt = immcgen->srt;
     Srt* child_srt = vector_at(srt->children, index);
 
-    ImmcSuffix cast_suffix = IMMC_SUFFIX_NONE;
-    int cast_is_unsigned = 0;
+    DType* cast_dtype = NULL;
     if (child_srt->type == SRT_CAST_EXPR) {
-        cast_suffix = immcsuffix_get(dtype_nbytes(child_srt->dtype));
-        cast_is_unsigned = dtype_isunsignedinteger(child_srt->dtype);
+        cast_dtype = child_srt->dtype;
     }
     while (child_srt->type == SRT_CAST_EXPR) {
         immcgen->srt = child_srt;
@@ -65,22 +63,25 @@ ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
 
     if (child_srt->type == SRT_INT_EXPR || child_srt->type == SRT_CHAR_EXPR) {
         immcgen->srt = srt;
-        if (cast_suffix == IMMC_SUFFIX_NONE) {
-            cast_suffix = immcsuffix_get(dtype_nbytes(child_srt->dtype));
-        }
-        return new_int_immcope(cast_suffix, iliteral_copy(child_srt->iliteral));
+        DType* iliteral_dtype = cast_dtype == NULL ? child_srt->dtype : cast_dtype;
+        IntegerLiteral* iliteral = create_dtyped_iliteral(iliteral_dtype, child_srt->iliteral);
+        ImmcSuffix suffix = immcsuffix_get(dtype_nbytes(iliteral_dtype));
+        return new_int_immcope(suffix, iliteral);
     }
 
     append_child_immcode(immcgen, codes, index);
     immcgen->srt = srt;
 
-    if (cast_suffix == IMMC_SUFFIX_NONE) {
+    if (cast_dtype == NULL) {
         ImmcRegister* reg = immcreg_copy(immcgen->expr_reg);
         return new_reg_immcope(immcgen->expr_reg_suffix, reg);
     }
 
     ImmcRegister* src_reg = immcreg_copy(immcgen->expr_reg);
     ImmcOpe* src = new_reg_immcope(immcgen->expr_reg_suffix, src_reg);
+
+    int cast_is_unsigned = dtype_isunsignedinteger(cast_dtype);
+    ImmcSuffix cast_suffix = immcsuffix_get(dtype_nbytes(cast_dtype));
 
     immcgen->next_reg_id++;
     ImmcRegister* dst_reg = new_immcreg(immcgen->next_reg_id, cast_is_unsigned);
@@ -132,4 +133,19 @@ ImmcOpe* create_dest_reg_immcope(Immcgen* immcgen) {
     int is_unsigned = dtype_isunsignedinteger(immcgen->srt->dtype);
     immcgen->next_reg_id++;
     return new_reg_immcope(suffix, new_immcreg(immcgen->next_reg_id, is_unsigned));
+}
+
+IntegerLiteral* create_dtyped_iliteral(DType* dtype, IntegerLiteral* iliteral) {
+    int rank = dtype_scalar_rank(dtype);
+
+    if (dtype_isunsignedinteger(dtype)) {
+        unsigned long long value =
+            iliteral_isunsigned(iliteral) ? iliteral->unsigned_value : (unsigned long long)iliteral->signed_value;
+        IntegerLiteralType type = iliteral_type_get(rank, 1);
+        return new_unsigned_iliteral(type, value);
+    } else {
+        long long value = iliteral_isunsigned(iliteral) ? (long long)iliteral->unsigned_value : iliteral->signed_value;
+        IntegerLiteralType type = iliteral_type_get(rank, 0);
+        return new_signed_iliteral(type, value);
+    }
 }
