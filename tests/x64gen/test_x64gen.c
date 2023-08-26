@@ -40,11 +40,11 @@ void test_x64gen_without_evacuation(void) {
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
                               NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(input_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(input_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -89,10 +89,10 @@ void test_x64gen_without_evacuation(void) {
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]), // src
                              new_label_x64ope(new_string("count"))));                  // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_JMP,                          // inst
-                             NULL,                                  // src
-                             new_jlabel_x64ope(new_string("L0")))); // dst
-    vector_push(expected, new_label_x64(X64_LABEL_NORMAL, X64_VIS_NONE, new_string("L0")));
+                new_inst_x64(X64_INST_JMP,                           // inst
+                             NULL,                                   // src
+                             new_jlabel_x64ope(new_string(".L0")))); // dst
+    vector_push(expected, new_label_x64(X64_LABEL_NORMAL, X64_VIS_NONE, new_string(".L0")));
     vector_push(expected,
                 new_inst_x64(X64_INST_POPX,                                // inst
                              NULL,                                         // src
@@ -160,11 +160,11 @@ void test_x64gen_with_evacuation(void) {
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
                               NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(input_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(input_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -255,10 +255,10 @@ void test_x64gen_with_evacuation(void) {
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]), // src
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID)));             // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_JMP,                          // inst
-                             NULL,                                  // src
-                             new_jlabel_x64ope(new_string("L0")))); // dst
-    vector_push(expected, new_label_x64(X64_LABEL_NORMAL, X64_VIS_NONE, new_string("L0")));
+                new_inst_x64(X64_INST_JMP,                           // inst
+                             NULL,                                   // src
+                             new_jlabel_x64ope(new_string(".L0")))); // dst
+    vector_push(expected, new_label_x64(X64_LABEL_NORMAL, X64_VIS_NONE, new_string(".L0")));
     vector_push(expected,
                 new_inst_x64(X64_INST_ADDX,                                          // inst
                              new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8), // src

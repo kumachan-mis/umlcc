@@ -45,6 +45,13 @@ Srt* new_identifier_srt(SrtType type, DType* dtype, char* ident_name) {
     return srt;
 }
 
+Srt* new_sliteral_identifier_srt(SrtType type, DType* dtype, int sliteral_id) {
+    Srt* srt = new_base_srt(type);
+    srt->dtype = dtype;
+    srt->sliteral_id = sliteral_id;
+    return srt;
+}
+
 Srt* new_iliteral_srt(SrtType type, DType* dtype, IntegerLiteral* iliteral) {
     Srt* srt = new_base_srt(type);
     srt->dtype = dtype;
@@ -64,6 +71,7 @@ Srt* new_base_srt(SrtType type) {
     srt->type = type;
     srt->dtype = NULL;
     srt->ident_name = NULL;
+    srt->sliteral_id = -1;
     srt->iliteral = NULL;
     srt->sliteral = NULL;
     srt->children = new_vector(&t_srt);
@@ -81,6 +89,7 @@ Srt* srt_copy(Srt* srt) {
     if (srt->ident_name != NULL) {
         copied_srt->ident_name = new_string(srt->ident_name);
     }
+    copied_srt->sliteral_id = srt->sliteral_id;
     copied_srt->iliteral = NULL;
     if (srt->iliteral != NULL) {
         copied_srt->iliteral = iliteral_copy(srt->iliteral);

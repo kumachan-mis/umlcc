@@ -45,6 +45,9 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
         case SRT_DECL:
             codes = gen_decl_immcode(immcgen);
             break;
+        case SRT_STRDECL:
+            codes = gen_string_decl_immcode(immcgen);
+            break;
         case SRT_INIT:
             codes = gen_initializer_immcode(immcgen);
             break;
@@ -98,6 +101,7 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
             codes = gen_postfix_expr_immcode(immcgen);
             break;
         case SRT_IDENT_EXPR:
+        case SRT_STRIDENT_EXPR:
         case SRT_INT_EXPR:
         case SRT_CHAR_EXPR:
             codes = gen_primary_expr_immcode(immcgen);

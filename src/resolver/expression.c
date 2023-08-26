@@ -1122,9 +1122,9 @@ ResolverReturn* resolve_string_expr(Resolver* resolver) {
     Ast* ast = resolver->ast;
 
     resolver->sliteral_id++;
-    char* sliteral_label = sliteral_create_label(resolver->sliteral_id);
     DType* decl_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->sliteral->size);
-    Srt* decl_srt = new_identifier_srt(SRT_DECL, decl_dtype, sliteral_label);
+    int sliteral_id = resolver->sliteral_id;
+    Srt* decl_srt = new_sliteral_identifier_srt(SRT_STRDECL, decl_dtype, sliteral_id);
 
     DType* init_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->sliteral->size);
     StringLiteral* sliteral = sliteral_copy(ast->sliteral);
@@ -1135,8 +1135,7 @@ ResolverReturn* resolve_string_expr(Resolver* resolver) {
     vector_push(resolver->trans_unit_srt->children, decl_list_srt);
 
     DType* ident_dtype = dtype_copy(decl_dtype);
-    char* ident_name = new_string(sliteral_label);
-    srt = new_identifier_srt(SRT_IDENT_EXPR, ident_dtype, ident_name);
+    srt = new_sliteral_identifier_srt(SRT_STRIDENT_EXPR, ident_dtype, sliteral_id);
 
     return new_resolverret(srt);
 }

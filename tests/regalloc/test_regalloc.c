@@ -32,7 +32,7 @@ void test_regalloc_empty_function(void) {
                               NULL,                                                     // dst
                               new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 4), // fst_src
                               NULL));                                                   // snd_src
-    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(input,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -48,7 +48,7 @@ void test_regalloc_empty_function(void) {
                               NULL,                                                     // dst
                               new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 4), // fst_src
                               NULL));                                                   // snd_src
-    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -93,11 +93,11 @@ void test_regalloc_single_register(void) {
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1), // fst_src
                               NULL));                                      // snd_src
     vector_push(input,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(input,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -134,11 +134,11 @@ void test_regalloc_single_register(void) {
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
                               NULL));                                      // snd_src
     vector_push(expected_immcs,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -203,11 +203,11 @@ void test_regalloc_multiple_register(void) {
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2), // fst_src
                               NULL));                                      // snd_src
     vector_push(input,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(input,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -253,11 +253,11 @@ void test_regalloc_multiple_register(void) {
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
                               NULL));                                      // snd_src
     vector_push(expected_immcs,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -326,11 +326,11 @@ void test_regalloc_longlife_register(void) {
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
                               NULL));                                                   // snd_src
     vector_push(input,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(input,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -377,11 +377,11 @@ void test_regalloc_longlife_register(void) {
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
                               NULL));                                                   // snd_src
     vector_push(expected_immcs,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -431,7 +431,7 @@ void test_regalloc_jump(void) {
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
     vector_push(input,
                 new_inst_immc(IMMC_INST_JEQ,                                              // inst
-                              new_label_immcope(new_string("L1")),                        // dst
+                              new_label_immcope(new_string(".L1")),                       // dst
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1),                // fst_src
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
     vector_push(input,
@@ -461,7 +461,7 @@ void test_regalloc_jump(void) {
                               NULL));                                                   // snd_src
     vector_push(input,
                 new_inst_immc(IMMC_INST_JEQ,                                              // inst
-                              new_label_immcope(new_string("L1")),                        // dst
+                              new_label_immcope(new_string(".L1")),                       // dst
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 3),                // fst_src
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
     vector_push(input,
@@ -470,28 +470,28 @@ void test_regalloc_jump(void) {
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 1), // fst_src
                               NULL));                                                   // snd_sr
     vector_push(input,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L2")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L1")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L2")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L1")));
     vector_push(input,
                 new_inst_immc(IMMC_INST_LOAD,                                           // inst
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 4),              // dst
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
                               NULL));                                                   // snd_sr
-    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L2")));
+    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L2")));
     vector_push(input,
                 new_inst_immc(IMMC_INST_STRET,                                          // inst
                               NULL,                                                     // dst
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
                               NULL));                                                   // snd_src
     vector_push(input,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(input,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -519,7 +519,7 @@ void test_regalloc_jump(void) {
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_JEQ,                                              // inst
-                              new_label_immcope(new_string("L1")),                        // dst
+                              new_label_immcope(new_string(".L1")),                       // dst
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                // fst_src
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
     vector_push(expected_immcs,
@@ -549,7 +549,7 @@ void test_regalloc_jump(void) {
                               NULL));                                                   // snd_src
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_JEQ,                                              // inst
-                              new_label_immcope(new_string("L1")),                        // dst
+                              new_label_immcope(new_string(".L1")),                       // dst
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                // fst_src
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
     vector_push(expected_immcs,
@@ -558,28 +558,28 @@ void test_regalloc_jump(void) {
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 1), // fst_src
                               NULL));                                                   // snd_sr
     vector_push(expected_immcs,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L2")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L1")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L2")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L1")));
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                                           // inst
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),              // dst
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
                               NULL));                                                   // snd_sr
-    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L2")));
+    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L2")));
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_STRET,                                          // inst
                               NULL,                                                     // dst
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
                               NULL));                                                   // snd_src
     vector_push(expected_immcs,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -675,11 +675,11 @@ void test_regalloc_function_variable_mixed(void) {
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1), // fst_src
                               NULL));                                      // snd_src
     vector_push(input,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(input,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -713,11 +713,11 @@ void test_regalloc_function_variable_mixed(void) {
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
                               NULL));                                      // snd_src
     vector_push(expected_immcs,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst

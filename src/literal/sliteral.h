@@ -15,6 +15,5 @@ StringLiteral* sliteral_copy(StringLiteral* sliteral);
 StringLiteral* sliteral_zero_padding_copy(StringLiteral* sliteral, int size);
 char* sliteral_display_string(StringLiteral* sliteral);
 void delete_sliteral(StringLiteral* sliteral);
-char* sliteral_create_label(int sliteral_id);
 
 #endif

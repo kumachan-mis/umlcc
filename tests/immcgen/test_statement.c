@@ -709,10 +709,10 @@ void test_immcgen_return_stmt_with_value(void) {
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
                               NULL));                                                   // snd_src
     vector_push(expected,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
 
     run_stmt_immcgen_test(input, NULL, 0, expected);
 
@@ -724,10 +724,10 @@ void test_immcgen_return_stmt_with_no_value(void) {
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
 
     run_stmt_immcgen_test(input, NULL, 0, expected);
 

@@ -68,6 +68,7 @@ void testlib_assert_srt_equal(Srt* actual, Srt* expected) {
     CU_ASSERT_EQUAL(actual->type, expected->type);
     testlib_assert_dtype_equal(actual->dtype, expected->dtype);
     testlib_assert_string_equal(actual->ident_name, expected->ident_name);
+    CU_ASSERT_EQUAL(actual->sliteral_id, expected->sliteral_id);
     testlib_assert_iliteral_equal(actual->iliteral, expected->iliteral);
     testlib_assert_sliteral_equal(actual->sliteral, expected->sliteral);
 
