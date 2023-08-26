@@ -8,6 +8,7 @@ void test_immcgen_local_scalar_decl(void);
 void test_immcgen_global_scalar_decl(void);
 void test_immcgen_local_array_decl(void);
 void test_immcgen_global_array_decl(void);
+void test_immcgen_strdecl(void);
 void test_immcgen_local_struct_decl(void);
 void test_immcgen_global_struct_decl(void);
 void test_immcgen_local_function_decl(void);
@@ -32,6 +33,7 @@ CU_Suite* add_test_suite_decl_immcgen(void) {
     CU_ADD_TEST(suite, test_immcgen_global_scalar_decl);
     CU_ADD_TEST(suite, test_immcgen_local_array_decl);
     CU_ADD_TEST(suite, test_immcgen_global_array_decl);
+    CU_ADD_TEST(suite, test_immcgen_strdecl);
     CU_ADD_TEST(suite, test_immcgen_local_struct_decl);
     CU_ADD_TEST(suite, test_immcgen_global_struct_decl);
     CU_ADD_TEST(suite, test_immcgen_local_function_decl);
@@ -111,6 +113,31 @@ void test_immcgen_global_array_decl(void) {
     vector_push(expected, new_int_data_immc(IMMC_DATA_ZERO, new_signed_iliteral(INTEGER_INT, 20)));
     vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string("b")));
     vector_push(expected, new_int_data_immc(IMMC_DATA_ZERO, new_signed_iliteral(INTEGER_INT, 24)));
+
+    run_global_decl_immcgen_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_immcgen_strdecl(void) {
+    char sliteral_const[15] = "string literal";
+    int sliteral_size = 15;
+    char* sliteral_value = malloc(sliteral_size * sizeof(char));
+    memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
+
+    StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
+
+    Srt* input =
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_sliteral_identifier_srt(SRT_STRDECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), 0),
+                        new_srt(SRT_INIT, 1, // non-terminal
+                                new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6),
+                                                 sliteral))));
+
+    Vector* expected = new_vector(&t_immc);
+    vector_push(expected, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, new_string(".SL0")));
+    vector_push(expected, new_str_data_immc(IMMC_DATA_STR, sliteral_copy(sliteral)));
 
     run_global_decl_immcgen_test(input, NULL, NULL, expected);
 
