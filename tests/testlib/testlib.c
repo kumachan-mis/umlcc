@@ -161,11 +161,21 @@ void testlib_assert_immcope_equal(ImmcOpe* actual, ImmcOpe* expected) {
 
     CU_ASSERT_EQUAL(actual->type, expected->type);
     CU_ASSERT_EQUAL(actual->suffix, expected->suffix);
-    CU_ASSERT_EQUAL(actual->reg_id, expected->reg_id);
+    testlib_assert_immcreg_equal(actual->reg, expected->reg);
     CU_ASSERT_EQUAL(actual->mem_offset, expected->mem_offset);
     testlib_assert_string_equal(actual->label_name, expected->label_name);
     testlib_assert_iliteral_equal(actual->iliteral, expected->iliteral);
     testlib_assert_sliteral_equal(actual->sliteral, expected->sliteral);
+}
+
+void testlib_assert_immcreg_equal(ImmcRegister* actual, ImmcRegister* expected) {
+    if (actual == NULL || expected == NULL) {
+        CU_ASSERT_TRUE(actual == NULL && expected == NULL);
+        return;
+    }
+
+    CU_ASSERT_EQUAL(actual->reg_id, expected->reg_id);
+    CU_ASSERT_EQUAL(actual->is_unsigned, expected->is_unsigned);
 }
 
 void testlib_assert_x64codes_equal(Vector* actual, Vector* expected) {

@@ -106,9 +106,9 @@ void test_new_iliteral_ast_int(void) {
         CU_ASSERT_EQUAL(ast->type, AST_INT_EXPR);
         CU_ASSERT_PTR_NULL(ast->ident_name);
         CU_ASSERT_EQUAL(ast->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(iliteral_type_isunsigned(ast->iliteral->type));
+        CU_ASSERT_FALSE(iliteral_isunsigned(ast->iliteral));
         CU_ASSERT_EQUAL(ast->iliteral->signed_value, 6);
-        CU_ASSERT_EQUAL(ast->iliteral->unsigned_value, 0ULL);
+        CU_ASSERT_EQUAL(ast->iliteral->unsigned_value, 0ull);
         CU_ASSERT_PTR_NULL(ast->sliteral);
         CU_ASSERT_EQUAL(vector_size(ast->children), 0);
     }
@@ -129,9 +129,9 @@ void test_new_iliteral_ast_char(void) {
         CU_ASSERT_EQUAL(ast->type, AST_CHAR_EXPR);
         CU_ASSERT_PTR_NULL(ast->ident_name);
         CU_ASSERT_EQUAL(ast->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(iliteral_type_isunsigned(ast->iliteral->type));
+        CU_ASSERT_FALSE(iliteral_isunsigned(ast->iliteral));
         CU_ASSERT_EQUAL(ast->iliteral->signed_value, 89);
-        CU_ASSERT_EQUAL(ast->iliteral->unsigned_value, 0ULL);
+        CU_ASSERT_EQUAL(ast->iliteral->unsigned_value, 0ull);
         CU_ASSERT_PTR_NULL(ast->sliteral);
         CU_ASSERT_EQUAL(vector_size(ast->children), 0);
     }

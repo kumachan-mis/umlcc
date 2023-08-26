@@ -13,7 +13,7 @@ Immcgen* new_immcgen(Srt* srt) {
     immcgen->symbol_table = new_symboltable();
     immcgen->tag_table = new_tagtable();
     immcgen->expr_reg_suffix = IMMC_SUFFIX_NONE;
-    immcgen->expr_reg_id = -1;
+    immcgen->expr_reg = NULL;
     immcgen->next_reg_id = -1;
     immcgen->initialized_dtype = NULL;
     immcgen->initialized_offset = -1;
@@ -115,6 +115,9 @@ void delete_immcgen(Immcgen* immcgen) {
     delete_srt(immcgen->srt);
     delete_symboltable(immcgen->symbol_table);
     delete_tagtable(immcgen->tag_table);
+    if (immcgen->expr_reg != NULL) {
+        delete_immcreg(immcgen->expr_reg);
+    }
     if (immcgen->initialized_dtype != NULL) {
         delete_dtype(immcgen->initialized_dtype);
     }

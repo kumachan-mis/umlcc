@@ -15,39 +15,37 @@ char* ctoken_types[] = {
     "[", "]", "(", ")", "{", "}", ".", "->", "&", "*", "+", "-", "!", "/", "%", "==", "!=", "&&", "||", ";", "=", ",",
     "EOF"};
 
+CToken* new_base_ctoken(CTokenType type);
+
 CToken* new_ctoken(CTokenType type) {
-    CToken* ctoken = malloc(sizeof(CToken));
-    ctoken->type = type;
-    ctoken->ident_name = NULL;
-    ctoken->iliteral = NULL;
-    ctoken->sliteral = NULL;
+    CToken* ctoken = new_base_ctoken(type);
     return ctoken;
 }
 
 CToken* new_identifier_ctoken(CTokenType type, char* name) {
-    CToken* ctoken = malloc(sizeof(CToken));
-    ctoken->type = type;
+    CToken* ctoken = new_ctoken(type);
     ctoken->ident_name = name;
-    ctoken->iliteral = NULL;
-    ctoken->sliteral = NULL;
     return ctoken;
 }
 
 CToken* new_iliteral_ctoken(CTokenType type, IntegerLiteral* iliteral) {
-    CToken* ctoken = malloc(sizeof(CToken));
-    ctoken->type = type;
-    ctoken->ident_name = NULL;
+    CToken* ctoken = new_ctoken(type);
     ctoken->iliteral = iliteral;
-    ctoken->sliteral = NULL;
     return ctoken;
 }
 
 CToken* new_sliteral_ctoken(CTokenType type, StringLiteral* sliteral) {
+    CToken* ctoken = new_ctoken(type);
+    ctoken->sliteral = sliteral;
+    return ctoken;
+}
+
+CToken* new_base_ctoken(CTokenType type) {
     CToken* ctoken = malloc(sizeof(CToken));
     ctoken->type = type;
     ctoken->ident_name = NULL;
     ctoken->iliteral = NULL;
-    ctoken->sliteral = sliteral;
+    ctoken->sliteral = NULL;
     return ctoken;
 }
 

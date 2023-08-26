@@ -188,7 +188,7 @@ DType* dtype_connect(DType* socket_dtype, DType* plug_dtype) {
     }
 }
 
-int dtype_integer_rank(DType* dtype) {
+int dtype_scalar_rank(DType* dtype) {
     switch (dtype->type) {
         case DTYPE_CHAR:
             return 1;
@@ -201,6 +201,9 @@ int dtype_integer_rank(DType* dtype) {
         case DTYPE_LONGLONG:
         case DTYPE_UNSIGNED_LONGLONG:
             return 4;
+        case DTYPE_POINTER:
+            // ptrdiff_t is long int
+            return 3;
         default:
             return 0;
     }

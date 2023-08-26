@@ -9,19 +9,25 @@ BaseType t_iliteral = {
     .delete_object = (void (*)(void*))delete_iliteral,
 };
 
+IntegerLiteral* new_base_iliteral(IntegerLiteralType type);
+
 IntegerLiteral* new_signed_iliteral(IntegerLiteralType type, long long value) {
-    IntegerLiteral* iliteral = malloc(sizeof(IntegerLiteral));
-    iliteral->type = type;
+    IntegerLiteral* iliteral = new_base_iliteral(type);
     iliteral->signed_value = value;
-    iliteral->unsigned_value = 0ULL;
     return iliteral;
 }
 
 IntegerLiteral* new_unsigned_iliteral(IntegerLiteralType type, unsigned long long value) {
+    IntegerLiteral* iliteral = new_base_iliteral(type);
+    iliteral->unsigned_value = value;
+    return iliteral;
+}
+
+IntegerLiteral* new_base_iliteral(IntegerLiteralType type) {
     IntegerLiteral* iliteral = malloc(sizeof(IntegerLiteral));
     iliteral->type = type;
-    iliteral->signed_value = -1LL;
-    iliteral->unsigned_value = value;
+    iliteral->signed_value = -1ll;
+    iliteral->unsigned_value = 0ull;
     return iliteral;
 }
 
@@ -33,9 +39,13 @@ IntegerLiteral* iliteral_copy(IntegerLiteral* iliteral) {
     return copied_iliteral;
 }
 
+int iliteral_isunsigned(IntegerLiteral* iliteral) {
+    return iliteral_type_isunsigned(iliteral->type);
+}
+
 char* iliteral_display_string(IntegerLiteral* iliteral) {
     char* display_string = malloc(50 * sizeof(char));
-    if (iliteral_type_isunsigned(iliteral->type)) {
+    if (iliteral_isunsigned(iliteral)) {
         sprintf(display_string, "%llu", iliteral->unsigned_value);
     } else {
         sprintf(display_string, "%lld", iliteral->signed_value);
@@ -51,4 +61,14 @@ void delete_iliteral(IntegerLiteral* iliteral) {
 
 int iliteral_type_isunsigned(IntegerLiteralType type) {
     return type == INTEGER_UNSIGNED_INT || type == INTEGER_UNSIGNED_LONG || type == INTEGER_UNSIGNED_LONGLONG;
+}
+
+IntegerLiteralType iliteral_type_get(int scalar_rank, int is_unsigned) {
+    if (scalar_rank < 3) {
+        return is_unsigned ? INTEGER_UNSIGNED_INT : INTEGER_INT;
+    } else if (scalar_rank == 3) {
+        return is_unsigned ? INTEGER_UNSIGNED_LONG : INTEGER_LONG;
+    } else {
+        return is_unsigned ? INTEGER_UNSIGNED_LONGLONG : INTEGER_LONGLONG;
+    }
 }

@@ -13,8 +13,8 @@ void test_new_mem_x64ope(void);
 void test_new_label_x64ope(void);
 void test_new_jlabel_x64ope(void);
 void test_new_int_x64ope(void);
-void test_new_signed_x64ope(void);
-void test_new_unsigned_x64ope(void);
+void test_new_signed_int_x64ope(void);
+void test_new_unsigned_int_x64ope(void);
 void test_x64ope_tostring_suffix(void);
 void test_x64ope_tostring_reg(void);
 void test_x64ope_tostring_ptr(void);
@@ -23,8 +23,8 @@ void test_x64ope_tostring_mem(void);
 void test_x64ope_tostring_label(void);
 void test_x64ope_tostring_jlabel(void);
 void test_x64ope_tostring_int(void);
-void test_x64ope_tostring_signed(void);
-void test_x64ope_tostring_unsigned(void);
+void test_x64ope_tostring_signed_int(void);
+void test_x64ope_tostring_unsigned_int(void);
 
 CU_Suite* add_test_suite_x64ope(void) {
     CU_Suite* suite = CU_add_suite("test_suite_x64ope", NULL, NULL);
@@ -36,8 +36,8 @@ CU_Suite* add_test_suite_x64ope(void) {
     CU_ADD_TEST(suite, test_new_label_x64ope);
     CU_ADD_TEST(suite, test_new_jlabel_x64ope);
     CU_ADD_TEST(suite, test_new_int_x64ope);
-    CU_ADD_TEST(suite, test_new_signed_x64ope);
-    CU_ADD_TEST(suite, test_new_unsigned_x64ope);
+    CU_ADD_TEST(suite, test_new_signed_int_x64ope);
+    CU_ADD_TEST(suite, test_new_unsigned_int_x64ope);
     CU_ADD_TEST(suite, test_x64ope_tostring_suffix);
     CU_ADD_TEST(suite, test_x64ope_tostring_reg);
     CU_ADD_TEST(suite, test_x64ope_tostring_ptr);
@@ -46,8 +46,8 @@ CU_Suite* add_test_suite_x64ope(void) {
     CU_ADD_TEST(suite, test_x64ope_tostring_label);
     CU_ADD_TEST(suite, test_x64ope_tostring_jlabel);
     CU_ADD_TEST(suite, test_x64ope_tostring_int);
-    CU_ADD_TEST(suite, test_x64ope_tostring_signed);
-    CU_ADD_TEST(suite, test_x64ope_tostring_unsigned);
+    CU_ADD_TEST(suite, test_x64ope_tostring_signed_int);
+    CU_ADD_TEST(suite, test_x64ope_tostring_unsigned_int);
     return suite;
 }
 
@@ -206,16 +206,16 @@ void test_new_int_x64ope(void) {
         CU_ASSERT_EQUAL(ope->mem_offset, -1);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(iliteral_type_isunsigned(ope->iliteral->type));
+        CU_ASSERT_FALSE(iliteral_isunsigned(ope->iliteral));
         CU_ASSERT_EQUAL(ope->iliteral->signed_value, 56);
-        CU_ASSERT_EQUAL(ope->iliteral->unsigned_value, 0ULL);
+        CU_ASSERT_EQUAL(ope->iliteral->unsigned_value, 0ull);
     }
 
     delete_x64ope(ope);
 }
 
-void test_new_signed_x64ope(void) {
-    X64Ope* ope = new_signed_x64ope(X64_SUFFIX_BYTE, INTEGER_INT, 14);
+void test_new_signed_int_x64ope(void) {
+    X64Ope* ope = new_signed_int_x64ope(X64_SUFFIX_BYTE, INTEGER_INT, 14);
 
     for (int i = 0; i < 2; i++) {
         if (i > 0) {
@@ -229,16 +229,16 @@ void test_new_signed_x64ope(void) {
         CU_ASSERT_EQUAL(ope->mem_offset, -1);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(iliteral_type_isunsigned(ope->iliteral->type));
+        CU_ASSERT_FALSE(iliteral_isunsigned(ope->iliteral));
         CU_ASSERT_EQUAL(ope->iliteral->signed_value, 14);
-        CU_ASSERT_EQUAL(ope->iliteral->unsigned_value, 0ULL);
+        CU_ASSERT_EQUAL(ope->iliteral->unsigned_value, 0ull);
     }
 
     delete_x64ope(ope);
 }
 
-void test_new_unsigned_x64ope(void) {
-    X64Ope* ope = new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_UNSIGNED_INT, 2147483648U);
+void test_new_unsigned_int_x64ope(void) {
+    X64Ope* ope = new_unsigned_int_x64ope(X64_SUFFIX_LONG, INTEGER_UNSIGNED_INT, 2147483648u);
 
     for (int i = 0; i < 2; i++) {
         if (i > 0) {
@@ -252,9 +252,9 @@ void test_new_unsigned_x64ope(void) {
         CU_ASSERT_EQUAL(ope->mem_offset, -1);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_UNSIGNED_INT);
-        CU_ASSERT_TRUE(iliteral_type_isunsigned(ope->iliteral->type));
-        CU_ASSERT_EQUAL(ope->iliteral->signed_value, -1LL);
-        CU_ASSERT_EQUAL(ope->iliteral->unsigned_value, 2147483648U);
+        CU_ASSERT_TRUE(iliteral_isunsigned(ope->iliteral));
+        CU_ASSERT_EQUAL(ope->iliteral->signed_value, -1ll);
+        CU_ASSERT_EQUAL(ope->iliteral->unsigned_value, 2147483648u);
     }
 
     delete_x64ope(ope);
@@ -340,8 +340,8 @@ void test_x64ope_tostring_int(void) {
     delete_x64ope(ope);
 }
 
-void test_x64ope_tostring_signed(void) {
-    X64Ope* ope = new_signed_x64ope(X64_SUFFIX_BYTE, INTEGER_INT, 14);
+void test_x64ope_tostring_signed_int(void) {
+    X64Ope* ope = new_signed_int_x64ope(X64_SUFFIX_BYTE, INTEGER_INT, 14);
     char* ope_str = x64ope_tostring(ope);
 
     CU_ASSERT_STRING_EQUAL(ope_str, "$14");
@@ -350,8 +350,8 @@ void test_x64ope_tostring_signed(void) {
     delete_x64ope(ope);
 }
 
-void test_x64ope_tostring_unsigned(void) {
-    X64Ope* ope = new_unsigned_x64ope(X64_SUFFIX_LONG, INTEGER_UNSIGNED_INT, 2147483648U);
+void test_x64ope_tostring_unsigned_int(void) {
+    X64Ope* ope = new_unsigned_int_x64ope(X64_SUFFIX_LONG, INTEGER_UNSIGNED_INT, 2147483648u);
     char* ope_str = x64ope_tostring(ope);
 
     CU_ASSERT_STRING_EQUAL(ope_str, "$2147483648");

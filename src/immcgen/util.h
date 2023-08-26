@@ -12,6 +12,6 @@ ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index);
 ImmcOpe* gen_child_reg_immcope(Immcgen* immcgen, Vector* codes, int index);
 ImmcOpe* gen_child_ptr_immcope(Immcgen* immcgen, Vector* codes, int index);
 ImmcOpe* create_dest_reg_immcope(Immcgen* immcgen);
-char* create_label_name(int label_id);
+IntegerLiteral* create_dtyped_iliteral(DType* dtype, IntegerLiteral* iliteral);
 
 #endif

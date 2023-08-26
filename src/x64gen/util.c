@@ -7,20 +7,72 @@
 #include <stdlib.h>
 #include <string.h>
 
-void append_mov_code(Vector* codes, int src_reg_id, X64Suffix src_suffix, int dst_reg_id, X64Suffix dst_suffix) {
-    if (src_suffix >= dst_suffix) {
-        if (src_reg_id == dst_reg_id) {
-            return;
-        }
-        X64Ope* src = new_reg_x64ope(dst_suffix, src_reg_id);
-        X64Ope* dst = new_reg_x64ope(dst_suffix, dst_reg_id);
-        vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
+void append_mov_code(Vector* codes, X64Ope* src, X64Ope* dst, int is_unsigned) {
+    void append_mov_code_simple(Vector * codes, X64Ope * src, X64Ope * dst);
+    void append_mov_code_unsigned(Vector * codes, X64Ope * src, X64Ope * dst);
+    void append_mov_code_signed(Vector * codes, X64Ope * src, X64Ope * dst);
+
+    if (src->suffix >= dst->suffix) {
+        append_mov_code_simple(codes, src, dst);
         return;
     }
 
-    X64Ope* src = new_reg_x64ope(src_suffix, src_reg_id);
-    X64Ope* dst = new_reg_x64ope(dst_suffix, dst_reg_id);
-    vector_push(codes, new_inst_x64(X64_INST_MOVSXX, src, dst));
+    if (is_unsigned) {
+        append_mov_code_unsigned(codes, src, dst);
+    } else {
+        append_mov_code_signed(codes, src, dst);
+    }
+}
+
+void append_mov_code_simple(Vector* codes, X64Ope* src, X64Ope* dst) {
+    if (src->reg_id == dst->reg_id) {
+        delete_x64ope(src);
+        delete_x64ope(dst);
+        return;
+    }
+    src->suffix = dst->suffix;
+    vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
+}
+
+void append_mov_code_unsigned(Vector* codes, X64Ope* src, X64Ope* dst) {
+    if (src->suffix == X64_SUFFIX_BYTE || src->suffix == X64_SUFFIX_WORD) {
+        vector_push(codes, new_inst_x64(X64_INST_MOVZXX, src, dst));
+        return;
+    }
+    if (src->reg_id == dst->reg_id) {
+        delete_x64ope(src);
+        delete_x64ope(dst);
+        return;
+    }
+    vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
+}
+
+void append_mov_code_signed(Vector* codes, X64Ope* src, X64Ope* dst) {
+    if (src->suffix == X64_SUFFIX_BYTE || src->suffix == X64_SUFFIX_WORD) {
+        vector_push(codes, new_inst_x64(X64_INST_MOVSXX, src, dst));
+        return;
+    }
+
+    X64Suffix src_suffix = src->suffix;
+    X64Suffix dst_suffix = dst->suffix;
+
+    if (src->reg_id != AX_REG_ID) {
+        X64Ope* ax_dst = new_reg_x64ope(src->suffix, AX_REG_ID);
+        vector_push(codes, new_inst_x64(X64_INST_MOVX, src, ax_dst));
+    } else {
+        delete_x64ope(src);
+    }
+
+    X64Ope* suffix_src = new_suffix_x64ope(src_suffix);
+    X64Ope* suffix_dst = new_suffix_x64ope(dst_suffix);
+    vector_push(codes, new_inst_x64(X64_INST_CXTX, suffix_src, suffix_dst));
+
+    if (dst->reg_id != AX_REG_ID) {
+        X64Ope* ax_src = new_reg_x64ope(dst->suffix, AX_REG_ID);
+        vector_push(codes, new_inst_x64(X64_INST_MOVX, ax_src, dst));
+    } else {
+        delete_x64ope(dst);
+    }
 }
 
 void liveseqs_next(Vector* liveseqs) {

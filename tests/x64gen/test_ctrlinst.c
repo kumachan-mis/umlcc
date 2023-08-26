@@ -71,15 +71,15 @@ void test_x64gen_jmp(void) {
 void test_x64gen_jeq_reg_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_BYTE, 0), // dst
-                              new_mem_immcope(1),                   // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 0), // dst
+                              new_mem_immcope(1),                          // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_JEQ,                                          // inst
-                              new_label_immcope(new_string("LABEL")),                 // dst
-                              new_reg_immcope(IMMC_SUFFIX_BYTE, 0),                   // fst_src
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 4))); // snd_src
+                new_inst_immc(IMMC_INST_JEQ,                                              // inst
+                              new_label_immcope(new_string("LABEL")),                     // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 0),                // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 4))); // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -102,7 +102,7 @@ void test_x64gen_jeq_reg_int(void) {
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_CMPX,                                              // inst
-                             new_signed_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 4),         // src
+                             new_signed_int_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 4),     // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_JE,                              // inst
@@ -117,20 +117,20 @@ void test_x64gen_jeq_reg_int(void) {
 void test_x64gen_jeq_reg_reg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
-                              new_mem_immcope(4),                   // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_mem_immcope(4),                          // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 1), // dst
-                              new_mem_immcope(8),                   // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1), // dst
+                              new_mem_immcope(8),                          // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_JEQ,                          // inst
-                              new_label_immcope(new_string("LABEL")), // dst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0),   // fst_src
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 1))); // snd_src
+                new_inst_immc(IMMC_INST_JEQ,                                 // inst
+                              new_label_immcope(new_string("LABEL")),        // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),   // fst_src
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1))); // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -172,15 +172,15 @@ void test_x64gen_jeq_reg_reg(void) {
 void test_x64gen_jneq_reg_int(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_QUAD, 0), // dst
-                              new_mem_immcope(8),                   // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 0), // dst
+                              new_mem_immcope(8),                          // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_JNEQ,                                         // inst
-                              new_label_immcope(new_string("LABEL")),                 // dst
-                              new_reg_immcope(IMMC_SUFFIX_QUAD, 0),                   // fst_src
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 8))); // snd_src
+                new_inst_immc(IMMC_INST_JNEQ,                                             // inst
+                              new_label_immcope(new_string("LABEL")),                     // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 0),                // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 8))); // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -199,7 +199,7 @@ void test_x64gen_jneq_reg_int(void) {
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_CMPX,                                              // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8),         // src
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8),     // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_JNE,                             // inst
@@ -214,20 +214,20 @@ void test_x64gen_jneq_reg_int(void) {
 void test_x64gen_jneq_reg_reg(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
-                              new_mem_immcope(4),                   // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_mem_immcope(4),                          // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_BYTE, 1), // dst
-                              new_mem_immcope(5),                   // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 1), // dst
+                              new_mem_immcope(5),                          // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_JNEQ,                         // inst
-                              new_label_immcope(new_string("LABEL")), // dst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0),   // fst_src
-                              new_reg_immcope(IMMC_SUFFIX_BYTE, 1))); // snd_src
+                new_inst_immc(IMMC_INST_JNEQ,                                // inst
+                              new_label_immcope(new_string("LABEL")),        // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),   // fst_src
+                              new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 1))); // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -273,40 +273,40 @@ void test_x64gen_jneq_reg_reg(void) {
 void test_x64gen_call_label_six_or_less(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_PREP,                                       // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_PREP,                                           // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 1),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 3), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 1),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 3), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_BYTE, 0), // dst
-                              new_mem_immcope(1),                   // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 0), // dst
+                              new_mem_immcope(1),                          // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
-                              new_reg_immcope(IMMC_SUFFIX_BYTE, 0), // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 0), // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 0), // dst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                             // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CALL,                                         // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // dst
-                              new_label_immcope(new_string("function")),              // fst_src
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2))); // snd_src
+                new_inst_immc(IMMC_INST_CALL,                                             // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                // dst
+                              new_label_immcope(new_string("function")),                  // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2))); // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CLEAN,                                      // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_CLEAN,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2), // fst_src
+                              NULL));                                                   // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -326,9 +326,9 @@ void test_x64gen_call_label_six_or_less(void) {
     Vector* expected = new_vector(&t_x64);
 
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 3), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 3), // src
+                             NULL));                                                 // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_mem_x64ope(1),                                          // src
@@ -350,9 +350,9 @@ void test_x64gen_call_label_six_or_less(void) {
                              NULL,                                         // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, SI_REG_ID))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));       // dst
+                new_inst_x64(X64_INST_MOVX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));           // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_CALL,                             // inst
                              new_jlabel_x64ope(new_string("function")), // src
@@ -370,55 +370,55 @@ void test_x64gen_call_label_six_or_less(void) {
 void test_x64gen_call_label_seven_or_more_odd(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_PREP,                                       // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 7), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_PREP,                                           // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 7), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                       // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 6),                  // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 12), // fst_src
-                              NULL));                                                // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                           // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 6),               // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 12), // fst_src
+                              NULL));                                                    // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                       // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 5),                  // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 10), // fst_src
-                              NULL));                                                // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                           // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 5),               // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 10), // fst_src
+                              NULL));                                                    // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 4),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 8), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 4),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 8), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 3),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 6), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 3),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 6), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 2),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 4), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 2),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 4), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 1),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 1),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 0),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 0),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CALL,                                         // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // dst
-                              new_label_immcope(new_string("function")),              // fst_src
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 7))); // snd_src
+                new_inst_immc(IMMC_INST_CALL,                                             // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                // dst
+                              new_label_immcope(new_string("function")),                  // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 7))); // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CLEAN,                                      // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 7), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_CLEAN,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 7), // fst_src
+                              NULL));                                                   // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -431,37 +431,37 @@ void test_x64gen_call_label_seven_or_more_odd(void) {
 
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
-                new_inst_x64(X64_INST_SUBX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));       // dst
+                new_inst_x64(X64_INST_SUBX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));           // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 12), // src
-                             NULL));                                              // dst
+                new_inst_x64(X64_INST_PUSHX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 12), // src
+                             NULL));                                                  // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 10), // src
-                             NULL));                                              // dst
+                new_inst_x64(X64_INST_PUSHX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 10), // src
+                             NULL));                                                  // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8), // src
+                             NULL));                                                 // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 6), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 6), // src
+                             NULL));                                                 // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 4), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 4), // src
+                             NULL));                                                 // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 2), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 2), // src
+                             NULL));                                                 // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
+                             NULL));                                                 // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_POPX,                                // inst
                              NULL,                                         // src
@@ -487,9 +487,9 @@ void test_x64gen_call_label_seven_or_more_odd(void) {
                              NULL,                                         // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, R9_REG_ID))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));       // dst
+                new_inst_x64(X64_INST_MOVX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));           // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_CALL,                             // inst
                              new_jlabel_x64ope(new_string("function")), // src
@@ -499,9 +499,9 @@ void test_x64gen_call_label_seven_or_more_odd(void) {
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_ADDX,                                       // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 16), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));        // dst
+                new_inst_x64(X64_INST_ADDX,                                           // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 16), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));            // dst
 
     run_ctrlinst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -511,60 +511,60 @@ void test_x64gen_call_label_seven_or_more_odd(void) {
 void test_x64gen_call_label_seven_or_more_even(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_PREP,                                       // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 8), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_PREP,                                           // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 8), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                       // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 7),                  // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 14), // fst_src
-                              NULL));                                                // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                           // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 7),               // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 14), // fst_src
+                              NULL));                                                    // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                       // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 6),                  // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 12), // fst_src
-                              NULL));                                                // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                           // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 6),               // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 12), // fst_src
+                              NULL));                                                    // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                       // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 5),                  // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 10), // fst_src
-                              NULL));                                                // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                           // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 5),               // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 10), // fst_src
+                              NULL));                                                    // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 4),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 8), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 4),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 8), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 3),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 6), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 3),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 6), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 2),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 4), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 2),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 4), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 1),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 1),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 0),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 0),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CALL,                                         // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // dst
-                              new_label_immcope(new_string("function")),              // fst_src
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 8))); // snd_src
+                new_inst_immc(IMMC_INST_CALL,                                             // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                // dst
+                              new_label_immcope(new_string("function")),                  // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 8))); // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CLEAN,                                      // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 8), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_CLEAN,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 8), // fst_src
+                              NULL));                                                   // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -577,37 +577,37 @@ void test_x64gen_call_label_seven_or_more_even(void) {
 
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 14), // src
-                             NULL));                                              // dst
+                new_inst_x64(X64_INST_PUSHX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 14), // src
+                             NULL));                                                  // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 12), // src
-                             NULL));                                              // dst
+                new_inst_x64(X64_INST_PUSHX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 12), // src
+                             NULL));                                                  // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 10), // src
-                             NULL));                                              // dst
+                new_inst_x64(X64_INST_PUSHX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 10), // src
+                             NULL));                                                  // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 8), // src
+                             NULL));                                                 // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 6), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 6), // src
+                             NULL));                                                 // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 4), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 4), // src
+                             NULL));                                                 // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 2), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 2), // src
+                             NULL));                                                 // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
+                             NULL));                                                 // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_POPX,                                // inst
                              NULL,                                         // src
@@ -633,9 +633,9 @@ void test_x64gen_call_label_seven_or_more_even(void) {
                              NULL,                                         // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, R9_REG_ID))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));       // dst
+                new_inst_x64(X64_INST_MOVX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));           // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_CALL,                             // inst
                              new_jlabel_x64ope(new_string("function")), // src
@@ -645,9 +645,9 @@ void test_x64gen_call_label_seven_or_more_even(void) {
                              new_reg_x64ope(X64_SUFFIX_LONG, AX_REG_ID),                 // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_ADDX,                                       // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 16), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));        // dst
+                new_inst_x64(X64_INST_ADDX,                                           // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 16), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));            // dst
 
     run_ctrlinst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -657,30 +657,30 @@ void test_x64gen_call_label_seven_or_more_even(void) {
 void test_x64gen_call_ptr_without_evacuation(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_QUAD, 0), // dst
-                              new_mem_immcope(8),                   // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 0), // dst
+                              new_mem_immcope(8),                          // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_PREP,                                       // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_PREP,                                           // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 0),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 5), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 0),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 5), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CALL,                                         // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // dst
-                              new_ptr_immcope(0),                                     // fst_src
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1))); // snd_src
+                new_inst_immc(IMMC_INST_CALL,                                             // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                // dst
+                              new_ptr_immcope(0),                                         // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1))); // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CLEAN,                                      // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_CLEAN,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
+                              NULL));                                                   // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -700,17 +700,17 @@ void test_x64gen_call_ptr_without_evacuation(void) {
                              new_mem_x64ope(8),                                          // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 5), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 5), // src
+                             NULL));                                                 // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_POPX,                                // inst
                              NULL,                                         // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, DI_REG_ID))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));       // dst
+                new_inst_x64(X64_INST_MOVX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));           // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_CALL,                            // inst
                              new_jptr_x64ope(CALLER_SAVED_REG_IDS[0]), // src
@@ -728,30 +728,30 @@ void test_x64gen_call_ptr_without_evacuation(void) {
 void test_x64gen_call_ptr_with_evacuation(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_QUAD, 3), // dst
-                              new_mem_immcope(8),                   // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 3), // dst
+                              new_mem_immcope(8),                          // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_PREP,                                       // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_PREP,                                           // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 0),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 5), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 0),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 5), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CALL,                                         // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0),                   // dst
-                              new_ptr_immcope(3),                                     // fst_src
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1))); // snd_src
+                new_inst_immc(IMMC_INST_CALL,                                             // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                // dst
+                              new_ptr_immcope(3),                                         // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1))); // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CLEAN,                                      // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_CLEAN,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
+                              NULL));                                                   // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -772,9 +772,9 @@ void test_x64gen_call_ptr_with_evacuation(void) {
                              new_mem_x64ope(8),                                          // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 5), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 5), // src
+                             NULL));                                                 // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[3]), // src
@@ -784,9 +784,9 @@ void test_x64gen_call_ptr_with_evacuation(void) {
                              NULL,                                         // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, DI_REG_ID))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));       // dst
+                new_inst_x64(X64_INST_MOVX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));           // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_CALL,               // inst
                              new_jptr_x64ope(R10_REG_ID), // src
@@ -808,35 +808,35 @@ void test_x64gen_call_ptr_with_evacuation(void) {
 void test_x64gen_call_caller_saved_evacuation(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_PREP,                                       // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_PREP,                                           // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 1),                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 3), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                                          // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 1),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 3), // fst_src
+                              NULL));                                                   // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
-                              new_mem_immcope(4),                   // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_mem_immcope(4),                          // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 0), // dst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                             // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CALL,                                         // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 1),                   // dst
-                              new_label_immcope(new_string("function")),              // fst_src
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2))); // snd_src
+                new_inst_immc(IMMC_INST_CALL,                                             // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1),                // dst
+                              new_label_immcope(new_string("function")),                  // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2))); // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CLEAN,                                      // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_CLEAN,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 2), // fst_src
+                              NULL));                                                   // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -858,9 +858,9 @@ void test_x64gen_call_caller_saved_evacuation(void) {
 
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
-                new_inst_x64(X64_INST_PUSHX,                                     // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 3), // src
-                             NULL));                                             // dst
+                new_inst_x64(X64_INST_PUSHX,                                         // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 3), // src
+                             NULL));                                                 // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_mem_x64ope(4),                                          // src
@@ -882,9 +882,9 @@ void test_x64gen_call_caller_saved_evacuation(void) {
                              NULL,                                         // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, SI_REG_ID))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));       // dst
+                new_inst_x64(X64_INST_MOVX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));           // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_CALL,                             // inst
                              new_jlabel_x64ope(new_string("function")), // src
@@ -906,30 +906,30 @@ void test_x64gen_call_caller_saved_evacuation(void) {
 void test_x64gen_call_no_return_value(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_PREP,                                       // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
+                new_inst_immc(IMMC_INST_PREP,                                           // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
                               NULL)); // snd_src                                       // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                       // inst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
-                              new_mem_immcope(4),                   // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_mem_immcope(4),                          // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STARG,                      // inst
-                              new_arg_immcope(IMMC_SUFFIX_LONG, 0), // dst
-                              new_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
-                              NULL));                               // snd_src
+                new_inst_immc(IMMC_INST_STARG,                             // inst
+                              new_signed_arg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
+                              NULL));                                      // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CALL,                                         // inst
-                              NULL,                                                   // dst
-                              new_label_immcope(new_string("function")),              // fst_src
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1))); // snd_src
+                new_inst_immc(IMMC_INST_CALL,                                             // inst
+                              NULL,                                                       // dst
+                              new_label_immcope(new_string("function")),                  // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1))); // snd_src
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_CLEAN,                                      // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_CLEAN,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1), // fst_src
+                              NULL));                                                   // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -955,9 +955,9 @@ void test_x64gen_call_no_return_value(void) {
                              NULL,                                         // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, DI_REG_ID))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                      // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));       // dst
+                new_inst_x64(X64_INST_MOVX,                                          // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 0), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, AX_REG_ID)));           // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_CALL,                             // inst
                              new_jlabel_x64ope(new_string("function")), // src
@@ -971,10 +971,10 @@ void test_x64gen_call_no_return_value(void) {
 void test_x64gen_enter_zero(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_ENTER,                                      // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 0), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_ENTER,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 0), // fst_src
+                              NULL));                                                   // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -997,10 +997,10 @@ void test_x64gen_enter_zero(void) {
 void test_x64gen_enter_non_16bytes_boundary(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_ENTER,                                       // inst
-                              NULL,                                                  // dst
-                              new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 31), // fst_src
-                              NULL));                                                // snd_src
+                new_inst_immc(IMMC_INST_ENTER,                                           // inst
+                              NULL,                                                      // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 31), // fst_src
+                              NULL));                                                    // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -1015,9 +1015,9 @@ void test_x64gen_enter_non_16bytes_boundary(void) {
                              new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID),   // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, BP_REG_ID))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_SUBX,                                       // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 32), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));        // dst
+                new_inst_x64(X64_INST_SUBX,                                           // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 32), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));            // dst
 
     run_ctrlinst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -1027,10 +1027,10 @@ void test_x64gen_enter_non_16bytes_boundary(void) {
 void test_x64gen_enter_16bytes_boundary(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_ENTER,                                       // inst
-                              NULL,                                                  // dst
-                              new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 16), // fst_src
-                              NULL));                                                // snd_src
+                new_inst_immc(IMMC_INST_ENTER,                                           // inst
+                              NULL,                                                      // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 16), // fst_src
+                              NULL));                                                    // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -1045,9 +1045,9 @@ void test_x64gen_enter_16bytes_boundary(void) {
                              new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID),   // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, BP_REG_ID))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_SUBX,                                       // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 16), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));        // dst
+                new_inst_x64(X64_INST_SUBX,                                           // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 16), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));            // dst
 
     run_ctrlinst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -1057,10 +1057,10 @@ void test_x64gen_enter_16bytes_boundary(void) {
 void test_x64gen_leave_zero(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LEAVE,                                      // inst
-                              NULL,                                                 // dst
-                              new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 0), // fst_src
-                              NULL));                                               // snd_src
+                new_inst_immc(IMMC_INST_LEAVE,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 0), // fst_src
+                              NULL));                                                   // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -1083,19 +1083,19 @@ void test_x64gen_leave_zero(void) {
 void test_x64gen_leave_non_16bytes_boundary(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LEAVE,                                       // inst
-                              NULL,                                                  // dst
-                              new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 31), // fst_src
-                              NULL));                                                // snd_src
+                new_inst_immc(IMMC_INST_LEAVE,                                           // inst
+                              NULL,                                                      // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 31), // fst_src
+                              NULL));                                                    // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
 
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
-                new_inst_x64(X64_INST_ADDX,                                       // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 32), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));        // dst
+                new_inst_x64(X64_INST_ADDX,                                           // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 32), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));            // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_POPX,                                // inst
                              NULL,                                         // src
@@ -1113,19 +1113,19 @@ void test_x64gen_leave_non_16bytes_boundary(void) {
 void test_x64gen_leave_16bytes_boundary(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LEAVE,                                       // inst
-                              NULL,                                                  // dst
-                              new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 16), // fst_src
-                              NULL));                                                // snd_src
+                new_inst_immc(IMMC_INST_LEAVE,                                           // inst
+                              NULL,                                                      // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 16), // fst_src
+                              NULL));                                                    // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
 
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
-                new_inst_x64(X64_INST_ADDX,                                       // inst
-                             new_signed_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 16), // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));        // dst
+                new_inst_x64(X64_INST_ADDX,                                           // inst
+                             new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, 16), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, SP_REG_ID)));            // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_POPX,                                // inst
                              NULL,                                         // src

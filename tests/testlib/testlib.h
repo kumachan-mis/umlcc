@@ -20,6 +20,7 @@ void testlib_assert_srt_equal(Srt* actual, Srt* expected);
 void testlib_assert_immcs_equal(Vector* actual, Vector* expected);
 void testlib_assert_immc_equal(Immc* actual, Immc* expected);
 void testlib_assert_immcope_equal(ImmcOpe* actual, ImmcOpe* expected);
+void testlib_assert_immcreg_equal(ImmcRegister* actual, ImmcRegister* expected);
 void testlib_assert_x64codes_equal(Vector* actual, Vector* expected);
 void testlib_assert_x64code_equal(X64* actual, X64* expected);
 void testlib_assert_x64ope_equal(X64Ope* actual, X64Ope* expected);

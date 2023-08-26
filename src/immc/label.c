@@ -4,11 +4,25 @@
 
 #include "./label.h"
 #include "../common/type.h"
+#include "./util.h"
 
 #include <stdlib.h>
 #include <string.h>
 
+ImmcLabel* new_base_immclabel(ImmcLabelType type, ImmcVisibility visibility, char* name);
+
 ImmcLabel* new_immclabel(ImmcLabelType type, ImmcVisibility visibility, char* name) {
+    ImmcLabel* immclabel = new_base_immclabel(type, visibility, name);
+    return immclabel;
+}
+
+ImmcLabel* new_immclabel_from_id(ImmcLabelType type, ImmcVisibility visibility, int label_id) {
+    char* name = create_label_name(label_id);
+    ImmcLabel* immclabel = new_base_immclabel(type, visibility, name);
+    return immclabel;
+}
+
+ImmcLabel* new_base_immclabel(ImmcLabelType type, ImmcVisibility visibility, char* name) {
     ImmcLabel* immclabel = malloc(sizeof(ImmcLabel));
     immclabel->type = type;
     immclabel->visibility = visibility;

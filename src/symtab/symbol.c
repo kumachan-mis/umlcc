@@ -7,33 +7,32 @@ BaseType t_symbol = {
     .delete_object = (void (*)(void*))delete_symbol,
 };
 
+Symbol* new_base_symbol(SymbolType type, char* name, DType* dtype);
+
 Symbol* new_label_symbol(char* name, DType* dtype) {
-    Symbol* symbol = malloc(sizeof(Symbol));
-    symbol->type = SYMBOL_LABEL;
-    symbol->name = name;
-    symbol->dtype = dtype;
-    symbol->memory_offset = -1;
-    symbol->iliteral = NULL;
+    Symbol* symbol = new_base_symbol(SYMBOL_LABEL, name, dtype);
     return symbol;
 }
 
 Symbol* new_memory_symbol(char* name, DType* dtype, int memory_offset) {
-    Symbol* symbol = malloc(sizeof(Symbol));
-    symbol->type = SYMBOL_MEM;
-    symbol->name = name;
-    symbol->dtype = dtype;
+    Symbol* symbol = new_base_symbol(SYMBOL_MEM, name, dtype);
     symbol->memory_offset = memory_offset;
-    symbol->iliteral = NULL;
     return symbol;
 }
 
 Symbol* new_integer_symbol(char* name, DType* dtype, IntegerLiteral* iliteral) {
-    Symbol* symbol = malloc(sizeof(Symbol));
-    symbol->type = SYMBOL_INT;
-    symbol->name = name;
-    symbol->dtype = dtype;
-    symbol->memory_offset = -1;
+    Symbol* symbol = new_base_symbol(SYMBOL_INT, name, dtype);
     symbol->iliteral = iliteral;
+    return symbol;
+}
+
+Symbol* new_base_symbol(SymbolType type, char* name, DType* dtype) {
+    Symbol* symbol = malloc(sizeof(Symbol));
+    symbol->type = type;
+    symbol->dtype = dtype;
+    symbol->name = name;
+    symbol->memory_offset = -1;
+    symbol->iliteral = NULL;
     return symbol;
 }
 

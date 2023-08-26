@@ -11,39 +11,44 @@ BaseType t_immc = {
     .delete_object = (void (*)(void*))delete_immc,
 };
 
+Immc* new_base_immc(ImmcType type);
+
 Immc* new_inst_immc(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* snd_src) {
-    Immc* immc = malloc(sizeof(Immc));
-    immc->type = IMMC_INST;
+    Immc* immc = new_base_immc(IMMC_INST);
     immc->inst = new_immcinst(type, dst, fst_src, snd_src);
-    immc->data = NULL;
-    immc->label = NULL;
     return immc;
 }
 
 Immc* new_int_data_immc(ImmcDataType type, IntegerLiteral* iliteral) {
-    Immc* immc = malloc(sizeof(Immc));
-    immc->type = IMMC_DATA;
-    immc->inst = NULL;
+    Immc* immc = new_base_immc(IMMC_DATA);
     immc->data = new_int_immcdata(type, iliteral);
-    immc->label = NULL;
     return immc;
 }
 
 Immc* new_str_data_immc(ImmcDataType type, StringLiteral* sliteral) {
-    Immc* immc = malloc(sizeof(Immc));
-    immc->type = IMMC_DATA;
-    immc->inst = NULL;
+    Immc* immc = new_base_immc(IMMC_DATA);
     immc->data = new_str_immcdata(type, sliteral);
-    immc->label = NULL;
     return immc;
 }
 
 Immc* new_label_immc(ImmcLabelType type, ImmcVisibility visibility, char* name) {
+    Immc* immc = new_base_immc(IMMC_LABEL);
+    immc->label = new_immclabel(type, visibility, name);
+    return immc;
+}
+
+Immc* new_label_immc_from_id(ImmcLabelType type, ImmcVisibility visibility, int label_id) {
+    Immc* immc = new_base_immc(IMMC_LABEL);
+    immc->label = new_immclabel_from_id(type, visibility, label_id);
+    return immc;
+}
+
+Immc* new_base_immc(ImmcType type) {
     Immc* immc = malloc(sizeof(Immc));
-    immc->type = IMMC_LABEL;
+    immc->type = type;
     immc->inst = NULL;
     immc->data = NULL;
-    immc->label = new_immclabel(type, visibility, name);
+    immc->label = NULL;
     return immc;
 }
 

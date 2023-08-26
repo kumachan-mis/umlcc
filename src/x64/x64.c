@@ -11,39 +11,38 @@ BaseType t_x64 = {
     .delete_object = (void (*)(void*))delete_x64,
 };
 
+X64* new_base_x64(X64Type type);
+
 X64* new_inst_x64(X64InstType type, X64Ope* src, X64Ope* dst) {
-    X64* x64 = malloc(sizeof(X64));
-    x64->type = X64_INST;
+    X64* x64 = new_base_x64(X64_INST);
     x64->inst = new_x64inst(type, src, dst);
-    x64->data = NULL;
-    x64->label = NULL;
     return x64;
 }
 
 X64* new_int_data_x64(X64DataType type, IntegerLiteral* iliteral) {
-    X64* x64 = malloc(sizeof(X64));
-    x64->type = X64_DATA;
-    x64->inst = NULL;
+    X64* x64 = new_base_x64(X64_DATA);
     x64->data = new_int_x64data(type, iliteral);
-    x64->label = NULL;
     return x64;
 }
 
 X64* new_str_data_x64(X64DataType type, StringLiteral* sliteral) {
-    X64* x64 = malloc(sizeof(X64));
-    x64->type = X64_DATA;
-    x64->inst = NULL;
+    X64* x64 = new_base_x64(X64_DATA);
     x64->data = new_str_x64data(type, sliteral);
-    x64->label = NULL;
     return x64;
 }
 
 X64* new_label_x64(X64LabelType type, X64Visibility visibility, char* name) {
+    X64* x64 = new_base_x64(X64_LABEL);
+    x64->label = new_x64label(type, visibility, name);
+    return x64;
+}
+
+X64* new_base_x64(X64Type type) {
     X64* x64 = malloc(sizeof(X64));
-    x64->type = X64_LABEL;
+    x64->type = type;
     x64->inst = NULL;
     x64->data = NULL;
-    x64->label = new_x64label(type, visibility, name);
+    x64->label = NULL;
     return x64;
 }
 

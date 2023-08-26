@@ -60,7 +60,7 @@ void test_new_inst_immc_1arg(void) {
 
     delete_immc(immc);
 
-    arg = new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 20);
+    arg = new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 20);
     immc = new_inst_immc(IMMC_INST_ENTER, NULL, arg, NULL);
 
     for (int i = 0; i < 2; i++) {
@@ -83,8 +83,8 @@ void test_new_inst_immc_1arg(void) {
 }
 
 void test_new_inst_immc_2arg(void) {
-    ImmcOpe* dst = new_reg_immcope(IMMC_SUFFIX_LONG, 1);
-    ImmcOpe* src = new_reg_immcope(IMMC_SUFFIX_BYTE, 0);
+    ImmcOpe* dst = new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1);
+    ImmcOpe* src = new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 0);
     Immc* immc = new_inst_immc(IMMC_INST_LOAD, dst, src, NULL);
 
     for (int i = 0; i < 2; i++) {
@@ -108,9 +108,9 @@ void test_new_inst_immc_2arg(void) {
 }
 
 void test_new_inst_immc_3arg(void) {
-    ImmcOpe* dst = new_reg_immcope(IMMC_SUFFIX_QUAD, 1);
-    ImmcOpe* fst_src = new_reg_immcope(IMMC_SUFFIX_QUAD, 0);
-    ImmcOpe* snd_src = new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 8);
+    ImmcOpe* dst = new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 1);
+    ImmcOpe* fst_src = new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 0);
+    ImmcOpe* snd_src = new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 8);
     Immc* immc = new_inst_immc(IMMC_INST_ADD, dst, fst_src, snd_src);
 
     for (int i = 0; i < 2; i++) {
@@ -147,9 +147,9 @@ void test_new_int_data_immc(void) {
         CU_ASSERT_PTR_NULL(immc->inst);
         CU_ASSERT_EQUAL(immc->data->type, IMMC_DATA_WORD);
         CU_ASSERT_EQUAL(immc->data->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(iliteral_type_isunsigned(immc->data->iliteral->type));
+        CU_ASSERT_FALSE(iliteral_isunsigned(immc->data->iliteral));
         CU_ASSERT_EQUAL(immc->data->iliteral->signed_value, 6);
-        CU_ASSERT_EQUAL(immc->data->iliteral->unsigned_value, 0ULL);
+        CU_ASSERT_EQUAL(immc->data->iliteral->unsigned_value, 0ull);
         CU_ASSERT_PTR_NULL(immc->data->sliteral);
         CU_ASSERT_PTR_NULL(immc->label);
     }
@@ -217,36 +217,36 @@ void test_immc_isjumpinst(void) {
     delete_immc(immc);
 
     dst = new_label_immcope(new_string("label"));
-    fst_src = new_reg_immcope(IMMC_SUFFIX_LONG, 2);
-    snd_src = new_reg_immcope(IMMC_SUFFIX_QUAD, 3);
+    fst_src = new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2);
+    snd_src = new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 3);
     immc = new_inst_immc(IMMC_INST_JEQ, dst, fst_src, snd_src);
     CU_ASSERT_TRUE(immc_isjumpinst(immc));
     delete_immc(immc);
 
     dst = new_label_immcope(new_string("label"));
-    fst_src = new_reg_immcope(IMMC_SUFFIX_BYTE, 4);
-    snd_src = new_signed_immcope(IMMC_SUFFIX_BYTE, INTEGER_INT, 3);
+    fst_src = new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 4);
+    snd_src = new_signed_int_immcope(IMMC_SUFFIX_BYTE, INTEGER_INT, 3);
     immc = new_inst_immc(IMMC_INST_JNEQ, dst, fst_src, snd_src);
     CU_ASSERT_TRUE(immc_isjumpinst(immc));
     delete_immc(immc);
 
-    dst = new_reg_immcope(IMMC_SUFFIX_LONG, 1);
+    dst = new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1);
     fst_src = new_label_immcope(new_string("callee"));
-    snd_src = new_signed_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1);
+    snd_src = new_signed_int_immcope(IMMC_SUFFIX_NONE, INTEGER_INT, 1);
     immc = new_inst_immc(IMMC_INST_CALL, dst, fst_src, snd_src);
     CU_ASSERT_FALSE(immc_isjumpinst(immc));
     delete_immc(immc);
 
-    dst = new_reg_immcope(IMMC_SUFFIX_BYTE, 1);
-    fst_src = new_reg_immcope(IMMC_SUFFIX_LONG, 2);
-    snd_src = new_reg_immcope(IMMC_SUFFIX_QUAD, 3);
+    dst = new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 1);
+    fst_src = new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2);
+    snd_src = new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 3);
     immc = new_inst_immc(IMMC_INST_SETEQ, dst, fst_src, snd_src);
     CU_ASSERT_FALSE(immc_isjumpinst(immc));
     delete_immc(immc);
 
-    dst = new_reg_immcope(IMMC_SUFFIX_BYTE, 5);
-    fst_src = new_reg_immcope(IMMC_SUFFIX_BYTE, 4);
-    snd_src = new_signed_immcope(IMMC_SUFFIX_BYTE, INTEGER_INT, 3);
+    dst = new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 5);
+    fst_src = new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 4);
+    snd_src = new_signed_int_immcope(IMMC_SUFFIX_BYTE, INTEGER_INT, 3);
     immc = new_inst_immc(IMMC_INST_SETNEQ, dst, fst_src, snd_src);
     CU_ASSERT_FALSE(immc_isjumpinst(immc));
     delete_immc(immc);
@@ -264,7 +264,7 @@ void test_immc_tostring_1arg_inst(void) {
     delete_immc(immc);
     free(immc_str);
 
-    arg = new_signed_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 20);
+    arg = new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 20);
     immc = new_inst_immc(IMMC_INST_ENTER, NULL, arg, NULL);
     immc_str = immc_tostring(immc);
     CU_ASSERT_STRING_EQUAL(immc_str, "\tenter\t20\n");
@@ -273,25 +273,25 @@ void test_immc_tostring_1arg_inst(void) {
 }
 
 void test_immc_tostring_2arg_inst(void) {
-    ImmcOpe* dst = new_reg_immcope(IMMC_SUFFIX_LONG, 1);
-    ImmcOpe* src = new_reg_immcope(IMMC_SUFFIX_BYTE, 0);
+    ImmcOpe* dst = new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1);
+    ImmcOpe* src = new_unsigned_reg_immcope(IMMC_SUFFIX_BYTE, 0);
     Immc* immc = new_inst_immc(IMMC_INST_LOAD, dst, src, NULL);
     char* immc_str = immc_tostring(immc);
 
-    CU_ASSERT_STRING_EQUAL(immc_str, "\tload\t%r1l, %r0b\n");
+    CU_ASSERT_STRING_EQUAL(immc_str, "\tload\t%sr1l, %ur0b\n");
 
     delete_immc(immc);
     free(immc_str);
 }
 
 void test_immc_tostring_3arg_inst(void) {
-    ImmcOpe* dst = new_reg_immcope(IMMC_SUFFIX_QUAD, 1);
-    ImmcOpe* fst_src = new_reg_immcope(IMMC_SUFFIX_QUAD, 0);
-    ImmcOpe* snd_src = new_signed_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 8);
+    ImmcOpe* dst = new_unsigned_reg_immcope(IMMC_SUFFIX_QUAD, 1);
+    ImmcOpe* fst_src = new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 0);
+    ImmcOpe* snd_src = new_unsigned_int_immcope(IMMC_SUFFIX_LONG, INTEGER_UNSIGNED_INT, 8u);
     Immc* immc = new_inst_immc(IMMC_INST_ADD, dst, fst_src, snd_src);
     char* immc_str = immc_tostring(immc);
 
-    CU_ASSERT_STRING_EQUAL(immc_str, "\tadd\t%r1q, %r0q, 8\n");
+    CU_ASSERT_STRING_EQUAL(immc_str, "\tadd\t%ur1q, %sr0q, 8\n");
 
     delete_immc(immc);
     free(immc_str);
@@ -301,7 +301,7 @@ void test_immc_tostring_int_data(void) {
     Immc* immc = NULL;
     char* immc_str = NULL;
 
-    immc = new_int_data_immc(IMMC_DATA_BYTE, new_signed_iliteral(INTEGER_INT, 8));
+    immc = new_int_data_immc(IMMC_DATA_BYTE, new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 8u));
     immc_str = immc_tostring(immc);
     CU_ASSERT_STRING_EQUAL(immc_str, "\tbyte\t8\n");
     delete_immc(immc);
@@ -313,7 +313,7 @@ void test_immc_tostring_int_data(void) {
     delete_immc(immc);
     free(immc_str);
 
-    immc = new_int_data_immc(IMMC_DATA_LONG, new_signed_iliteral(INTEGER_INT, 19));
+    immc = new_int_data_immc(IMMC_DATA_LONG, new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 19u));
     immc_str = immc_tostring(immc);
     CU_ASSERT_STRING_EQUAL(immc_str, "\tlong\t19\n");
     delete_immc(immc);
@@ -325,7 +325,7 @@ void test_immc_tostring_int_data(void) {
     delete_immc(immc);
     free(immc_str);
 
-    immc = new_int_data_immc(IMMC_DATA_ZERO, new_signed_iliteral(INTEGER_INT, 10));
+    immc = new_int_data_immc(IMMC_DATA_ZERO, new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 10u));
     immc_str = immc_tostring(immc);
     CU_ASSERT_STRING_EQUAL(immc_str, "\tzero\t10\n");
     delete_immc(immc);
