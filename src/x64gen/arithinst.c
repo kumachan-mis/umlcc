@@ -34,16 +34,28 @@ Vector* gen_additive_subtractive_common_x64code(X64gen* x64gen, X64InstType type
 
     switch (immc_snd_src->type) {
         case IMMC_OPERAND_INT: {
-            append_mov_code(codes, fst_src_id, fst_src_suffix, fst_src_id, suffix);
+            X64Ope* fst_src_mov_dst = new_reg_x64ope(suffix, fst_src_id);
+            X64Ope* fst_src_mov_src = new_reg_x64ope(fst_src_suffix, fst_src_id);
+            int fst_src_is_unsigned = immc_fst_src->reg->is_unsigned;
+            append_mov_code(codes, fst_src_mov_src, fst_src_mov_dst, fst_src_is_unsigned);
+
             X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
             X64Ope* snd_src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
             vector_push(codes, new_inst_x64(type, snd_src, fst_src));
             break;
         }
         case IMMC_OPERAND_REG: {
+            X64Ope* fst_src_mov_dst = new_reg_x64ope(suffix, fst_src_id);
+            X64Ope* fst_src_mov_src = new_reg_x64ope(fst_src_suffix, fst_src_id);
+            int fst_src_is_unsigned = immc_fst_src->reg->is_unsigned;
+            append_mov_code(codes, fst_src_mov_src, fst_src_mov_dst, fst_src_is_unsigned);
+
             int snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg->reg_id];
-            append_mov_code(codes, fst_src_id, fst_src_suffix, fst_src_id, suffix);
-            append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
+            X64Ope* snd_src_mov_dst = new_reg_x64ope(suffix, snd_src_id);
+            X64Ope* snd_src_mov_src = new_reg_x64ope(snd_src_suffix, snd_src_id);
+            int snd_src_is_unsigned = immc_snd_src->reg->is_unsigned;
+            append_mov_code(codes, snd_src_mov_src, snd_src_mov_dst, snd_src_is_unsigned);
+
             X64Ope* fst_src = new_reg_x64ope(suffix, fst_src_id);
             X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
             vector_push(codes, new_inst_x64(type, snd_src, fst_src));
@@ -56,7 +68,12 @@ Vector* gen_additive_subtractive_common_x64code(X64gen* x64gen, X64InstType type
     }
 
     X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immc_dst->suffix));
-    append_mov_code(codes, fst_src_id, suffix, dst_id, dst_suffix);
+
+    X64Ope* dst_mov_dst = new_reg_x64ope(dst_suffix, dst_id);
+    X64Ope* dst_mov_src = new_reg_x64ope(suffix, fst_src_id);
+    int dst_is_unsigned = immc_dst->reg->is_unsigned;
+    append_mov_code(codes, dst_mov_src, dst_mov_dst, dst_is_unsigned);
+
     liveseqs_next(x64gen->liveseqs);
     return codes;
 }
@@ -79,16 +96,28 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
 
     switch (immc_snd_src->type) {
         case IMMC_OPERAND_INT: {
-            append_mov_code(codes, fst_src_id, suffix, AX_REG_ID, suffix);
-            X64Ope* fst_src = new_reg_x64ope(suffix, AX_REG_ID);
+            X64Ope* fst_src_mov_dst = new_reg_x64ope(suffix, AX_REG_ID);
+            X64Ope* fst_src_mov_src = new_reg_x64ope(fst_src_suffix, fst_src_id);
+            int fst_src_is_unsigned = immc_fst_src->reg->is_unsigned;
+            append_mov_code(codes, fst_src_mov_src, fst_src_mov_dst, fst_src_is_unsigned);
+
             X64Ope* snd_src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
+            X64Ope* fst_src = new_reg_x64ope(suffix, AX_REG_ID);
             vector_push(codes, new_inst_x64(X64_INST_IMULX, snd_src, fst_src));
             break;
         }
         case IMMC_OPERAND_REG: {
+            X64Ope* fst_src_mov_dst = new_reg_x64ope(suffix, AX_REG_ID);
+            X64Ope* fst_src_mov_src = new_reg_x64ope(fst_src_suffix, fst_src_id);
+            int fst_src_is_unsigned = immc_fst_src->reg->is_unsigned;
+            append_mov_code(codes, fst_src_mov_src, fst_src_mov_dst, fst_src_is_unsigned);
+
             int snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg->reg_id];
-            append_mov_code(codes, fst_src_id, fst_src_suffix, AX_REG_ID, suffix);
-            append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
+            X64Ope* snd_src_mov_dst = new_reg_x64ope(suffix, snd_src_id);
+            X64Ope* snd_src_mov_src = new_reg_x64ope(snd_src_suffix, snd_src_id);
+            int snd_src_is_unsigned = immc_snd_src->reg->is_unsigned;
+            append_mov_code(codes, snd_src_mov_src, snd_src_mov_dst, snd_src_is_unsigned);
+
             X64Ope* fst_src = new_reg_x64ope(suffix, AX_REG_ID);
             X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
             vector_push(codes, new_inst_x64(X64_INST_IMULX, snd_src, fst_src));
@@ -101,7 +130,12 @@ Vector* gen_mul_x64code(X64gen* x64gen) {
     }
 
     X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immc_dst->suffix));
-    append_mov_code(codes, AX_REG_ID, suffix, dst_id, dst_suffix);
+
+    X64Ope* dst_mov_dst = new_reg_x64ope(dst_suffix, dst_id);
+    X64Ope* dst_mov_src = new_reg_x64ope(suffix, AX_REG_ID);
+    int dst_is_unsigned = immc_dst->reg->is_unsigned;
+    append_mov_code(codes, dst_mov_src, dst_mov_dst, dst_is_unsigned);
+
     liveseqs_next(x64gen->liveseqs);
     return codes;
 }
@@ -134,7 +168,12 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, X64RegisterId result_reg_i
     switch (immc_snd_src->type) {
         case IMMC_OPERAND_INT: {
             snd_src_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
-            append_mov_code(codes, fst_src_id, suffix, AX_REG_ID, suffix);
+
+            X64Ope* fst_src_mov_dst = new_reg_x64ope(suffix, AX_REG_ID);
+            X64Ope* fst_src_mov_src = new_reg_x64ope(fst_src_suffix, fst_src_id);
+            int fst_src_is_unsigned = immc_fst_src->reg->is_unsigned;
+            append_mov_code(codes, fst_src_mov_src, fst_src_mov_dst, fst_src_is_unsigned);
+
             X64Ope* dst = new_reg_x64ope(suffix, snd_src_id);
             X64Ope* src = new_int_x64ope(suffix, iliteral_copy(immc_snd_src->iliteral));
             vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
@@ -142,11 +181,22 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, X64RegisterId result_reg_i
         }
         case IMMC_OPERAND_REG: {
             snd_src_id = CALLER_SAVED_REG_IDS[immc_snd_src->reg->reg_id];
-            append_mov_code(codes, fst_src_id, fst_src_suffix, AX_REG_ID, suffix);
+
+            X64Ope* fst_src_mov_dst = new_reg_x64ope(suffix, AX_REG_ID);
+            X64Ope* fst_src_mov_src = new_reg_x64ope(fst_src_suffix, fst_src_id);
+            int fst_src_is_unsigned = immc_fst_src->reg->is_unsigned;
+            append_mov_code(codes, fst_src_mov_src, fst_src_mov_dst, fst_src_is_unsigned);
+
             if (snd_src_id != DX_REG_ID) {
-                append_mov_code(codes, snd_src_id, snd_src_suffix, snd_src_id, suffix);
+                X64Ope* snd_src_mov_dst = new_reg_x64ope(suffix, snd_src_id);
+                X64Ope* snd_src_mov_src = new_reg_x64ope(snd_src_suffix, snd_src_id);
+                int snd_src_is_unsigned = immc_snd_src->reg->is_unsigned;
+                append_mov_code(codes, snd_src_mov_src, snd_src_mov_dst, snd_src_is_unsigned);
             } else {
-                append_mov_code(codes, snd_src_id, snd_src_suffix, fst_src_id, suffix);
+                X64Ope* snd_src_mov_dst = new_reg_x64ope(suffix, fst_src_id);
+                X64Ope* snd_src_mov_src = new_reg_x64ope(snd_src_suffix, snd_src_id);
+                int snd_src_is_unsigned = immc_snd_src->reg->is_unsigned;
+                append_mov_code(codes, snd_src_mov_src, snd_src_mov_dst, snd_src_is_unsigned);
                 snd_src_id = fst_src_id;
             }
             break;
@@ -168,13 +218,15 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, X64RegisterId result_reg_i
 
     if (dx_needs_evacuation) {
         int evacuation_id = CALLEE_SAVED_REG_IDS[0];
-        append_mov_code(codes, DX_REG_ID, X64_SUFFIX_QUAD, evacuation_id, X64_SUFFIX_QUAD);
+        X64Ope* evacuation_dst = new_reg_x64ope(X64_SUFFIX_QUAD, evacuation_id);
+        X64Ope* evacuation_src = new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID);
+        append_mov_code(codes, evacuation_src, evacuation_dst, 0);
     }
 
     X64Ope* snd_src = new_reg_x64ope(suffix, snd_src_id);
     if (immc_dst->reg->is_unsigned) {
-        X64Ope* zero_src = new_signed_int_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 0);
         X64Ope* dx_dst = new_reg_x64ope(X64_SUFFIX_LONG, DX_REG_ID);
+        X64Ope* zero_src = new_signed_int_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 0);
         vector_push(codes, new_inst_x64(X64_INST_MOVX, zero_src, dx_dst));
     } else if (suffix != X64_SUFFIX_QUAD) {
         vector_push(codes, new_inst_x64(X64_INST_CXTD, new_suffix_x64ope(suffix), NULL));
@@ -189,11 +241,17 @@ Vector* gen_divisional_common_x64code(X64gen* x64gen, X64RegisterId result_reg_i
     }
 
     X64Suffix dst_suffix = x64suffix_get(immcsuffix_tonbytes(immc_dst->suffix));
-    append_mov_code(codes, result_reg_id, suffix, dst_id, dst_suffix);
+
+    X64Ope* dst_mov_dst = new_reg_x64ope(dst_suffix, dst_id);
+    X64Ope* dst_mov_src = new_reg_x64ope(suffix, result_reg_id);
+    int dst_is_unsigned = immc_dst->reg->is_unsigned;
+    append_mov_code(codes, dst_mov_src, dst_mov_dst, dst_is_unsigned);
 
     if (dx_needs_evacuation) {
         int evacuation_id = CALLEE_SAVED_REG_IDS[0];
-        append_mov_code(codes, evacuation_id, X64_SUFFIX_QUAD, DX_REG_ID, X64_SUFFIX_QUAD);
+        X64Ope* evacuation_dst = new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID);
+        X64Ope* evacuation_src = new_reg_x64ope(X64_SUFFIX_QUAD, evacuation_id);
+        append_mov_code(codes, evacuation_src, evacuation_dst, 0);
         if (x64gen->evacuation_count < 1) {
             x64gen->evacuation_count = 1;
         }

@@ -27,7 +27,11 @@ Vector* gen_load_x64code(X64gen* x64gen) {
         case IMMC_OPERAND_REG: {
             X64Suffix src_suffix = x64suffix_get(immcsuffix_tonbytes(immc_src->suffix));
             int src_id = CALLER_SAVED_REG_IDS[immc_src->reg->reg_id];
-            append_mov_code(codes, src_id, src_suffix, dst_id, dst_suffix);
+
+            X64Ope* dst = new_reg_x64ope(dst_suffix, dst_id);
+            X64Ope* src = new_reg_x64ope(src_suffix, src_id);
+            int src_is_unsigned = immc_src->reg->is_unsigned;
+            append_mov_code(codes, src, dst, src_is_unsigned);
             break;
         }
         case IMMC_OPERAND_PTR: {
@@ -298,7 +302,11 @@ Vector* gen_stret_x64code(X64gen* x64gen) {
         }
         case IMMC_OPERAND_REG: {
             int ret_id = CALLER_SAVED_REG_IDS[immc_ret->reg->reg_id];
-            append_mov_code(codes, ret_id, ret_suffix, AX_REG_ID, ret_suffix);
+
+            X64Ope* dst = new_reg_x64ope(ret_suffix, AX_REG_ID);
+            X64Ope* src = new_reg_x64ope(ret_suffix, ret_id);
+            int ret_is_unsigned = immc_ret->reg->is_unsigned;
+            append_mov_code(codes, src, dst, ret_is_unsigned);
             break;
         }
         default:

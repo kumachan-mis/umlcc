@@ -11,3 +11,17 @@ int notequal(void) {
     int c = a != b;
     return c;
 }
+
+unsigned int uequal(void) {
+    unsigned int a = 3;
+    unsigned int b = 2;
+    unsigned int c = a == b;
+    return c;
+}
+
+unsigned int unotequal(void) {
+    unsigned int a = 3;
+    unsigned int b = 2;
+    unsigned int c = a != b;
+    return c;
+}

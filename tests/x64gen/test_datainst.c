@@ -153,8 +153,8 @@ void test_x64gen_load_ptr(void) {
 void test_x64gen_load_mem(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_ADDR,                              // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 0), // dst
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
                               new_mem_immcope(4),                          // fst_src
                               NULL));                                      // snd_src
 
@@ -169,9 +169,9 @@ void test_x64gen_load_mem(void) {
 
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
-                new_inst_x64(X64_INST_LEAX,                                              // inst
+                new_inst_x64(X64_INST_MOVX,                                              // inst
                              new_mem_x64ope(4),                                          // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[0]))); // dst
+                             new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
 
     run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -181,6 +181,62 @@ void test_x64gen_load_mem(void) {
 void test_x64gen_load_label(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_label_immcope(new_string("variable")),   // fst_src
+                              NULL));                                      // snd_src
+
+    Vector* input_liveseqs = new_vector(&t_liveseq);
+    vector_fill(input_liveseqs, 8, new_liveseq());
+
+    Liveseq* liveseq = NULL;
+    Liveness* liveness = NULL;
+    liveseq = vector_at(input_liveseqs, 0);
+    liveness = new_liveness(0);
+    vector_push(liveseq->livenesses, liveness);
+
+    Vector* expected = new_vector(&t_x64);
+    vector_push(expected,
+                new_inst_x64(X64_INST_MOVX,                                              // inst
+                             new_label_x64ope(new_string("variable")),                   // src
+                             new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
+
+    run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
+
+    delete_vector(expected);
+}
+
+void test_x64gen_addr_mem(void) {
+    Vector* input_immcs = new_vector(&t_immc);
+    vector_push(input_immcs,
+                new_inst_immc(IMMC_INST_ADDR,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 0), // dst
+                              new_mem_immcope(4),                          // fst_src
+                              NULL));                                      // snd_src
+
+    Vector* input_liveseqs = new_vector(&t_liveseq);
+    vector_fill(input_liveseqs, 8, new_liveseq());
+
+    Liveseq* liveseq = NULL;
+    Liveness* liveness = NULL;
+    liveseq = vector_at(input_liveseqs, 0);
+    liveness = new_liveness(0);
+    vector_push(liveseq->livenesses, liveness);
+
+    Vector* expected = new_vector(&t_x64);
+    vector_push(expected,
+                new_inst_x64(X64_INST_LEAX,                                              // inst
+                             new_mem_x64ope(4),                                          // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[0]))); // dst
+
+    run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
+
+    delete_vector(expected);
+}
+
+void test_x64gen_addr_label(void) {
+    Vector* input_immcs = new_vector(&t_immc);
+    vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_ADDR,                              // inst
                               new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 0), // dst
                               new_label_immcope(new_string("variable")),   // fst_src
@@ -200,62 +256,6 @@ void test_x64gen_load_label(void) {
                 new_inst_x64(X64_INST_LEAX,                                              // inst
                              new_label_x64ope(new_string("variable")),                   // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[0]))); // dst
-
-    run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
-
-    delete_vector(expected);
-}
-
-void test_x64gen_addr_mem(void) {
-    Vector* input_immcs = new_vector(&t_immc);
-    vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                              // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
-                              new_mem_immcope(4),                          // fst_src
-                              NULL));                                      // snd_src
-
-    Vector* input_liveseqs = new_vector(&t_liveseq);
-    vector_fill(input_liveseqs, 8, new_liveseq());
-
-    Liveseq* liveseq = NULL;
-    Liveness* liveness = NULL;
-    liveseq = vector_at(input_liveseqs, 0);
-    liveness = new_liveness(0);
-    vector_push(liveseq->livenesses, liveness);
-
-    Vector* expected = new_vector(&t_x64);
-    vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                              // inst
-                             new_mem_x64ope(4),                                          // src
-                             new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
-
-    run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
-
-    delete_vector(expected);
-}
-
-void test_x64gen_addr_label(void) {
-    Vector* input_immcs = new_vector(&t_immc);
-    vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_LOAD,                              // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
-                              new_label_immcope(new_string("variable")),   // fst_src
-                              NULL));                                      // snd_src
-
-    Vector* input_liveseqs = new_vector(&t_liveseq);
-    vector_fill(input_liveseqs, 8, new_liveseq());
-
-    Liveseq* liveseq = NULL;
-    Liveness* liveness = NULL;
-    liveseq = vector_at(input_liveseqs, 0);
-    liveness = new_liveness(0);
-    vector_push(liveseq->livenesses, liveness);
-
-    Vector* expected = new_vector(&t_x64);
-    vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                              // inst
-                             new_label_x64ope(new_string("variable")),                   // src
-                             new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
 
     run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
 
