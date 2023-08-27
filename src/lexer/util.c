@@ -135,6 +135,10 @@ Map* new_punctuator_map(void) {
     ctoken_map_add(punctuator_map, "!", CTOKEN_EXCLAM);
     ctoken_map_add(punctuator_map, "/", CTOKEN_SLASH);
     ctoken_map_add(punctuator_map, "%", CTOKEN_PERCENT);
+    ctoken_map_add(punctuator_map, "<", CTOKEN_LESS);
+    ctoken_map_add(punctuator_map, ">", CTOKEN_GREATER);
+    ctoken_map_add(punctuator_map, "<=", CTOKEN_LESS_EQUAL);
+    ctoken_map_add(punctuator_map, ">=", CTOKEN_GREATER_EQUAL);
     ctoken_map_add(punctuator_map, "==", CTOKEN_EQUAL_EQUAL);
     ctoken_map_add(punctuator_map, "!=", CTOKEN_EXCLAM_EQUAL);
     ctoken_map_add(punctuator_map, "&&", CTOKEN_AND_AND);
