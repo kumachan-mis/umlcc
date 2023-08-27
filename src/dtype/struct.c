@@ -4,6 +4,7 @@
 
 #include "./struct.h"
 #include "../common/type.h"
+#include "../common/util.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -34,17 +35,15 @@ DStruct* new_unnamed_dstruct(Vector* members) {
         DStructMember* member = vector_at(members, i);
         int alignment = dtype_alignment(member->dtype);
 
-        member->memory_offset = (dstruct->nbytes + alignment - 1) / alignment * alignment;
-        dstruct->nbytes = member->memory_offset;
-        dstruct->nbytes += dtype_nbytes(member->dtype);
+        member->memory_offset = min_multiple_of(dstruct->nbytes, alignment);
+        dstruct->nbytes = member->memory_offset + dtype_nbytes(member->dtype);
 
         if (alignment > dstruct->alignment) {
             dstruct->alignment = alignment;
         }
     }
 
-    int nbytes = dstruct->nbytes, alignment = dstruct->alignment;
-    dstruct->nbytes = (nbytes + alignment - 1) / alignment * alignment;
+    dstruct->nbytes = min_multiple_of(dstruct->nbytes, dstruct->alignment);
     return dstruct;
 }
 

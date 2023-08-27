@@ -272,19 +272,19 @@ void test_x64gen_str_byte(void) {
 
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STR,                  // inst
-                              new_mem_immcope(sliteral_size), // dst
-                              new_str_immcope(sliteral),      // fst_src
-                              NULL));                         // snd_src
+                new_inst_immc(IMMC_INST_STR,             // inst
+                              new_mem_immcope(4),        // dst
+                              new_str_immcope(sliteral), // fst_src
+                              NULL));                    // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
 
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                                          // inst
-                             new_unsigned_int_x64ope(X64_SUFFIX_BYTE, INTEGER_UNSIGNED_LONGLONG, 0), // src
-                             new_mem_x64ope(1)));                                                    // dst
+                new_inst_x64(X64_INST_MOVX,                                                     // inst
+                             new_unsigned_int_x64ope(X64_SUFFIX_BYTE, INTEGER_UNSIGNED_INT, 0), // src
+                             new_mem_x64ope(4)));                                               // dst
 
     run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -301,10 +301,10 @@ void test_x64gen_str_word(void) {
 
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STR,                  // inst
-                              new_mem_immcope(sliteral_size), // dst
-                              new_str_immcope(sliteral),      // fst_src
-                              NULL));                         // snd_src
+                new_inst_immc(IMMC_INST_STR,             // inst
+                              new_mem_immcope(12),       // dst
+                              new_str_immcope(sliteral), // fst_src
+                              NULL));                    // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -318,11 +318,11 @@ void test_x64gen_str_word(void) {
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVX,                               // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID), // src
-                             new_mem_x64ope(10)));                        // dst
+                             new_mem_x64ope(12)));                        // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                                              // inst
-                             new_unsigned_int_x64ope(X64_SUFFIX_WORD, INTEGER_UNSIGNED_LONGLONG, 0x39u), // src
-                             new_mem_x64ope(2)));                                                        // dst
+                new_inst_x64(X64_INST_MOVX,                                                         // inst
+                             new_unsigned_int_x64ope(X64_SUFFIX_WORD, INTEGER_UNSIGNED_INT, 0x39u), // src
+                             new_mem_x64ope(4)));                                                   // dst
 
     run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -339,10 +339,10 @@ void test_x64gen_str_long(void) {
 
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STR,                  // inst
-                              new_mem_immcope(sliteral_size), // dst
-                              new_str_immcope(sliteral),      // fst_src
-                              NULL));                         // snd_src
+                new_inst_immc(IMMC_INST_STR,             // inst
+                              new_mem_immcope(12),       // dst
+                              new_str_immcope(sliteral), // fst_src
+                              NULL));                    // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -358,9 +358,9 @@ void test_x64gen_str_long(void) {
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID), // src
                              new_mem_x64ope(12)));                        // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVX,                                                                  // inst
-                             new_unsigned_int_x64ope(X64_SUFFIX_LONG, INTEGER_UNSIGNED_LONGLONG, 0x4B4A49u), // src
-                             new_mem_x64ope(4)));                                                            // dst
+                new_inst_x64(X64_INST_MOVX,                                                             // inst
+                             new_unsigned_int_x64ope(X64_SUFFIX_LONG, INTEGER_UNSIGNED_INT, 0x4B4A49u), // src
+                             new_mem_x64ope(4)));                                                       // dst
 
     run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -377,10 +377,10 @@ void test_x64gen_str_quad(void) {
 
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STR,                  // inst
-                              new_mem_immcope(sliteral_size), // dst
-                              new_str_immcope(sliteral),      // fst_src
-                              NULL));                         // snd_src
+                new_inst_immc(IMMC_INST_STR,             // inst
+                              new_mem_immcope(16),       // dst
+                              new_str_immcope(sliteral), // fst_src
+                              NULL));                    // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -411,8 +411,8 @@ void test_x64gen_str_quad(void) {
 }
 
 void test_x64gen_str_other(void) {
-    char sliteral_const[11] = "ABCDEFGHIJ";
-    int sliteral_size = 11;
+    char sliteral_const[13] = "ABCDEFGHIJKL";
+    int sliteral_size = 13;
     char* sliteral_value = malloc(sliteral_size * sizeof(char));
     memcpy(sliteral_value, sliteral_const, sliteral_size * sizeof(char));
 
@@ -420,10 +420,10 @@ void test_x64gen_str_other(void) {
 
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
-                new_inst_immc(IMMC_INST_STR,                  // inst
-                              new_mem_immcope(sliteral_size), // dst
-                              new_str_immcope(sliteral),      // fst_src
-                              NULL));                         // snd_src
+                new_inst_immc(IMMC_INST_STR,             // inst
+                              new_mem_immcope(12),       // dst
+                              new_str_immcope(sliteral), // fst_src
+                              NULL));                    // snd_src
 
     Vector* input_liveseqs = new_vector(&t_liveseq);
     vector_fill(input_liveseqs, 8, new_liveseq());
@@ -437,16 +437,15 @@ void test_x64gen_str_other(void) {
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVX,                               // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID), // src
-                             new_mem_x64ope(11)));                        // dst
+                             new_mem_x64ope(12)));                        // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVABSX, // inst
-                             new_unsigned_int_x64ope(X64_SUFFIX_QUAD, INTEGER_UNSIGNED_LONGLONG,
-                                                     0x4A494847464544u),    // src
-                             new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID))); // dst
+                new_inst_x64(X64_INST_MOVABSX,                                                             // inst
+                             new_unsigned_int_x64ope(X64_SUFFIX_QUAD, INTEGER_UNSIGNED_LONG, 0x4C4B4A49u), // src
+                             new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID)));                                // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVX,                               // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, R10_REG_ID), // src
-                             new_mem_x64ope(8)));                         // dst
+                             new_mem_x64ope(4)));                         // dst
 
     run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
 
@@ -560,7 +559,7 @@ void test_x64gen_store_reg_mem(void) {
     Vector* input_immcs = new_vector(&t_immc);
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_STORE,                             // inst
-                              new_mem_immcope(1),                          // dst
+                              new_mem_immcope(4),                          // dst
                               new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 0), // fst_src
                               NULL));                                      // snd_src
 
@@ -577,7 +576,7 @@ void test_x64gen_store_reg_mem(void) {
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[0]), // src
-                             new_mem_x64ope(1)));                                      // dst
+                             new_mem_x64ope(4)));                                      // dst
 
     run_datainst_x64gen_test(input_immcs, input_liveseqs, expected);
 

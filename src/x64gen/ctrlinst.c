@@ -1,4 +1,5 @@
 #include "./ctrlinst.h"
+#include "../common/util.h"
 #include "../immc/immc.h"
 #include "./util.h"
 
@@ -192,7 +193,7 @@ Vector* gen_enter_x64code(X64gen* x64gen) {
     x64gen->index++;
 
     ImmcOpe* immc_src = immc->inst->fst_src;
-    int aligned_memory_size = ((immc_src->iliteral->signed_value + 15) / 16) * 16;
+    int aligned_memory_size = min_multiple_of(immc_src->iliteral->signed_value, 16);
 
     X64Ope* bp = NULL;
     X64Ope* sp = NULL;
@@ -219,7 +220,7 @@ Vector* gen_leave_x64code(X64gen* x64gen) {
     x64gen->index++;
 
     ImmcOpe* immc_src = immc->inst->fst_src;
-    int aligned_memory_size = ((immc_src->iliteral->signed_value + 15) / 16) * 16;
+    int aligned_memory_size = min_multiple_of(immc_src->iliteral->signed_value, 16);
 
     if (aligned_memory_size > 0) {
         X64Ope* imm = new_signed_int_x64ope(X64_SUFFIX_QUAD, INTEGER_INT, aligned_memory_size);

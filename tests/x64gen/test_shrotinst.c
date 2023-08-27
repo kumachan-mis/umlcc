@@ -19,7 +19,7 @@ void test_x64gen_sal_reg_int(void) {
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_LOAD,                              // inst
                               new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 0), // dst
-                              new_mem_immcope(1),                          // fst_src
+                              new_mem_immcope(4),                          // fst_src
                               NULL));                                      // snd_src
     vector_push(input_immcs,
                 new_inst_immc(IMMC_INST_SAL,                                              // inst
@@ -42,7 +42,7 @@ void test_x64gen_sal_reg_int(void) {
     Vector* expected = new_vector(&t_x64);
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVX,                                              // inst
-                             new_mem_x64ope(1),                                          // src
+                             new_mem_x64ope(4),                                          // src
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
                 new_inst_x64(X64_INST_MOVSXX,                                            // inst
