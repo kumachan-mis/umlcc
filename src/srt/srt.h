@@ -37,6 +37,11 @@ typedef enum SrtType {
     //   equality-expression
     SRT_EQUAL_EXPR,
     SRT_NEQUAL_EXPR,
+    //   relational-expression
+    SRT_LESS_EXPR,
+    SRT_GREATER_EXPR,
+    SRT_LESSEQ_EXPR,
+    SRT_GREATEREQ_EXPR,
     //   additive-expression
     SRT_ADD_EXPR,
     SRT_SUB_EXPR,
