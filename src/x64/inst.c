@@ -75,6 +75,7 @@ char* x64instcode_tostring(X64Inst* x64inst) {
     switch (x64inst->type) {
         // two-suffixes instruction
         case X64_INST_MOVSXX:
+        case X64_INST_MOVZXX:
         case X64_INST_CXTX: {
             // TODO: fix to prevent buffer overflow
             char* instcode_str = malloc(50 * sizeof(char));
