@@ -72,8 +72,7 @@ Vector* gen_setcmp_common_x64code(X64gen* x64gen, X64InstType type) {
 
     X64Ope* dst_mov_dst = new_reg_x64ope(dst_suffix, dst_id);
     X64Ope* dst_mov_src = new_reg_x64ope(X64_SUFFIX_BYTE, fst_src_id);
-    int dst_is_unsigned = immc_dst->reg->is_unsigned;
-    append_mov_code(codes, dst_mov_src, dst_mov_dst, dst_is_unsigned);
+    append_mov_code(codes, dst_mov_src, dst_mov_dst, 1);
 
     liveseqs_next(x64gen->liveseqs);
     return codes;

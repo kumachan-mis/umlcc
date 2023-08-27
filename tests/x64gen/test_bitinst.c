@@ -69,7 +69,7 @@ void test_x64gen_sete_reg_int_signed(void) {
                              NULL,                                                       // src
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVSXX,                                            // inst
+                new_inst_x64(X64_INST_MOVZXX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[0]),   // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
 
@@ -130,7 +130,7 @@ void test_x64gen_sete_reg_reg_signed(void) {
                              NULL,                                                       // src
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVSXX,                                            // inst
+                new_inst_x64(X64_INST_MOVZXX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[0]),   // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLER_SAVED_REG_IDS[0]))); // dst
 
@@ -291,7 +291,7 @@ void test_x64gen_setne_reg_int_signed(void) {
                              NULL,                                                       // src
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVSXX,                                            // inst
+                new_inst_x64(X64_INST_MOVZXX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[0]),   // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
 
@@ -356,7 +356,7 @@ void test_x64gen_setne_reg_reg_signed(void) {
                              NULL,                                                       // src
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[0]))); // dst
     vector_push(expected,
-                new_inst_x64(X64_INST_MOVSXX,                                            // inst
+                new_inst_x64(X64_INST_MOVZXX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_BYTE, CALLER_SAVED_REG_IDS[0]),   // src
                              new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
 
