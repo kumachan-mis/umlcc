@@ -15,6 +15,22 @@ Vector* gen_setneq_x64code(X64gen* x64gen) {
     return gen_setcmp_common_x64code(x64gen, X64_INST_SETNE);
 }
 
+Vector* gen_setlt_x64code(X64gen* x64gen) {
+    return gen_setcmp_common_x64code(x64gen, X64_INST_SETL);
+}
+
+Vector* gen_setgt_x64code(X64gen* x64gen) {
+    return gen_setcmp_common_x64code(x64gen, X64_INST_SETG);
+}
+
+Vector* gen_setleq_x64code(X64gen* x64gen) {
+    return gen_setcmp_common_x64code(x64gen, X64_INST_SETLE);
+}
+
+Vector* gen_setgeq_x64code(X64gen* x64gen) {
+    return gen_setcmp_common_x64code(x64gen, X64_INST_SETGE);
+}
+
 Vector* gen_setcmp_common_x64code(X64gen* x64gen, X64InstType type) {
     Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);
@@ -72,8 +88,7 @@ Vector* gen_setcmp_common_x64code(X64gen* x64gen, X64InstType type) {
 
     X64Ope* dst_mov_dst = new_reg_x64ope(dst_suffix, dst_id);
     X64Ope* dst_mov_src = new_reg_x64ope(X64_SUFFIX_BYTE, fst_src_id);
-    int dst_is_unsigned = immc_dst->reg->is_unsigned;
-    append_mov_code(codes, dst_mov_src, dst_mov_dst, dst_is_unsigned);
+    append_mov_code(codes, dst_mov_src, dst_mov_dst, 1);
 
     liveseqs_next(x64gen->liveseqs);
     return codes;

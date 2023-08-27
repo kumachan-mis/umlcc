@@ -67,6 +67,11 @@ typedef enum AstType {
     //   equality-expression
     AST_EQUAL_EXPR,
     AST_NEQUAL_EXPR,
+    //  relational-expression
+    AST_LESS_EXPR,
+    AST_GREATER_EXPR,
+    AST_LESSEQ_EXPR,
+    AST_GREATEREQ_EXPR,
     //   additive-expression
     AST_ADD_EXPR,
     AST_SUB_EXPR,

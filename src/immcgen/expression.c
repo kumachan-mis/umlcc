@@ -137,6 +137,37 @@ Vector* gen_equality_expr_immcode(Immcgen* immcgen) {
     return codes;
 }
 
+Vector* gen_relational_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+    Srt* srt = immcgen->srt;
+
+    ImmcOpe* fst_src = gen_child_reg_immcope(immcgen, codes, 0);
+    ImmcOpe* snd_src = gen_child_int_immcope(immcgen, codes, 1);
+    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
+
+    switch (srt->type) {
+        case SRT_LESS_EXPR:
+            vector_push(codes, new_inst_immc(IMMC_INST_SETLT, dst, fst_src, snd_src));
+            break;
+        case SRT_GREATER_EXPR:
+            vector_push(codes, new_inst_immc(IMMC_INST_SETGT, dst, fst_src, snd_src));
+            break;
+        case SRT_LESSEQ_EXPR:
+            vector_push(codes, new_inst_immc(IMMC_INST_SETLEQ, dst, fst_src, snd_src));
+            break;
+        case SRT_GREATEREQ_EXPR:
+            vector_push(codes, new_inst_immc(IMMC_INST_SETGEQ, dst, fst_src, snd_src));
+            break;
+        default:
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_relational_expr_immcode)\n");
+            exit(1);
+    }
+
+    update_non_void_expr_register(immcgen, dst);
+    return codes;
+}
+
 Vector* gen_additive_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = immcgen->srt;

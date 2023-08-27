@@ -131,7 +131,7 @@ ParserReturn* parse_equality_expr(Parser* parser) {
     Ast* child_ast = NULL;
     Error* err = NULL;
 
-    parserret_assign(&ast, &err, parse_additive_expr(parser));
+    parserret_assign(&ast, &err, parse_relational_expr(parser));
     if (err != NULL) {
         return new_parserret_error(err);
     }
@@ -141,7 +141,7 @@ ParserReturn* parse_equality_expr(Parser* parser) {
         switch (ctoken->type) {
             case CTOKEN_EQUAL_EQUAL:
                 parser->index++;
-                parserret_assign(&child_ast, &err, parse_additive_expr(parser));
+                parserret_assign(&child_ast, &err, parse_relational_expr(parser));
                 if (err != NULL) {
                     break;
                 }
@@ -149,11 +149,65 @@ ParserReturn* parse_equality_expr(Parser* parser) {
                 break;
             case CTOKEN_EXCLAM_EQUAL:
                 parser->index++;
-                parserret_assign(&child_ast, &err, parse_additive_expr(parser));
+                parserret_assign(&child_ast, &err, parse_relational_expr(parser));
                 if (err != NULL) {
                     break;
                 }
                 ast = new_ast(AST_NEQUAL_EXPR, 2, ast, child_ast);
+                break;
+            default:
+                return new_parserret(ast);
+        }
+    }
+
+    delete_ast(ast);
+    return new_parserret_error(err);
+}
+
+ParserReturn* parse_relational_expr(Parser* parser) {
+    Ast* ast = NULL;
+    Ast* child_ast = NULL;
+    Error* err = NULL;
+
+    parserret_assign(&ast, &err, parse_additive_expr(parser));
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
+
+    while (err == NULL) {
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_LESS:
+                parser->index++;
+                parserret_assign(&child_ast, &err, parse_additive_expr(parser));
+                if (err != NULL) {
+                    break;
+                }
+                ast = new_ast(AST_LESS_EXPR, 2, ast, child_ast);
+                break;
+            case CTOKEN_GREATER:
+                parser->index++;
+                parserret_assign(&child_ast, &err, parse_additive_expr(parser));
+                if (err != NULL) {
+                    break;
+                }
+                ast = new_ast(AST_GREATER_EXPR, 2, ast, child_ast);
+                break;
+            case CTOKEN_LESS_EQUAL:
+                parser->index++;
+                parserret_assign(&child_ast, &err, parse_additive_expr(parser));
+                if (err != NULL) {
+                    break;
+                }
+                ast = new_ast(AST_LESSEQ_EXPR, 2, ast, child_ast);
+                break;
+            case CTOKEN_GREATER_EQUAL:
+                parser->index++;
+                parserret_assign(&child_ast, &err, parse_additive_expr(parser));
+                if (err != NULL) {
+                    break;
+                }
+                ast = new_ast(AST_GREATEREQ_EXPR, 2, ast, child_ast);
                 break;
             default:
                 return new_parserret(ast);

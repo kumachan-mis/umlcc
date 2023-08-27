@@ -7,6 +7,10 @@ void test_resolve_logical_or_expr(void);
 void test_resolve_logical_and_expr(void);
 void test_resolve_equal_expr(void);
 void test_resolve_not_equal_expr(void);
+void test_resolve_less_expr(void);
+void test_resolve_greater_expr(void);
+void test_resolve_less_equal_expr(void);
+void test_resolve_greater_equal_expr(void);
 void test_resolve_add_expr(void);
 void test_resolve_subtract_expr(void);
 void test_resolve_pointer_add_expr(void);
@@ -53,6 +57,10 @@ CU_Suite* add_test_suite_expr_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_logical_and_expr);
     CU_ADD_TEST(suite, test_resolve_equal_expr);
     CU_ADD_TEST(suite, test_resolve_not_equal_expr);
+    CU_ADD_TEST(suite, test_resolve_less_expr);
+    CU_ADD_TEST(suite, test_resolve_greater_expr);
+    CU_ADD_TEST(suite, test_resolve_less_equal_expr);
+    CU_ADD_TEST(suite, test_resolve_greater_equal_expr);
     CU_ADD_TEST(suite, test_resolve_add_expr);
     CU_ADD_TEST(suite, test_resolve_subtract_expr);
     CU_ADD_TEST(suite, test_resolve_pointer_add_expr);
@@ -254,6 +262,109 @@ void test_resolve_not_equal_expr(void) {
             new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("zero_flag")),
             new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
         new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_less_expr(void) {
+    Ast* input = new_ast(AST_LESS_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("m")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("i"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("m"), new_integer_dtype(DTYPE_CHAR));
+
+    // The usual arithmetic conversions should be performed
+    Srt* expected = new_dtyped_srt(
+        SRT_LESS_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
+        new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("m"))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_greater_expr(void) {
+    Ast* input = new_ast(AST_GREATER_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("j")),
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("j"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
+        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_less_equal_expr(void) {
+    Ast* input = new_ast(AST_LESSEQ_EXPR, 2,       // non-terminal
+                         new_ast(AST_LESS_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("m"))),
+                         new_ast(AST_EQUAL_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("j")),
+                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("i"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("j"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("m"), new_integer_dtype(DTYPE_CHAR));
+
+    // The usual arithmetic conversions should be performed
+    Srt* expected =
+        new_dtyped_srt(SRT_LESSEQ_EXPR, new_integer_dtype(DTYPE_INT), 2,              // non-terminal
+                       new_dtyped_srt(SRT_LESS_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
+                                      new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                                                     new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR),
+                                                                        new_string("m")))),
+                       new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
+                                      new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                       new_signed_iliteral(INTEGER_INT, 0))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_greater_equal_expr(void) {
+    Ast* input = new_ast(AST_GREATEREQ_EXPR, 2,       // non-terminal
+                         new_ast(AST_GREATER_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("j")),
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("n"))),
+                         new_ast(AST_EQUAL_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("i"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("j"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("n"), new_integer_dtype(DTYPE_CHAR));
+
+    // The usual arithmetic conversions should be performed
+    Srt* expected =
+        new_dtyped_srt(SRT_GREATEREQ_EXPR, new_integer_dtype(DTYPE_INT), 2,              // non-terminal
+                       new_dtyped_srt(SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
+                                      new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                                                     new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR),
+                                                                        new_string("n")))),
+                       new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
+                                      new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                       new_signed_iliteral(INTEGER_INT, 0))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 

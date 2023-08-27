@@ -9,9 +9,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* x64_inst_formats[] = {"mov%c", "movs%c%c", "movz%c%c", "movabs%c", "lea%c", "c%ct%c", "c%ctd", "cqto",  "push%c",
-                            "pop%c", "add%c",    "sub%c",    "imul%c",   "div%c", "idiv%c", "sal%c", "sar%c", "cmp%c",
-                            "sete",  "setne",    "jmp",      "je",       "jne",   "call",   "ret"};
+char* x64_inst_formats[] = {"mov%c",  "movs%c%c", "movz%c%c", "movabs%c", "lea%c",  "c%ct%c", "c%ctd",  "cqto",
+                            "push%c", "pop%c",    "add%c",    "sub%c",    "imul%c", "div%c",  "idiv%c", "sal%c",
+                            "sar%c",  "cmp%c",    "sete",     "setne",    "setl",   "setg",   "setle",  "setge",
+                            "jmp",    "je",       "jne",      "call",     "ret"};
 
 X64Inst* new_x64inst(X64InstType type, X64Ope* src, X64Ope* dst) {
     X64Inst* x64inst = malloc(sizeof(X64Inst));
@@ -75,6 +76,7 @@ char* x64instcode_tostring(X64Inst* x64inst) {
     switch (x64inst->type) {
         // two-suffixes instruction
         case X64_INST_MOVSXX:
+        case X64_INST_MOVZXX:
         case X64_INST_CXTX: {
             // TODO: fix to prevent buffer overflow
             char* instcode_str = malloc(50 * sizeof(char));

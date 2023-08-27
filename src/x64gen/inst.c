@@ -43,6 +43,14 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
             return gen_seteq_x64code(x64gen);
         case IMMC_INST_SETNEQ:
             return gen_setneq_x64code(x64gen);
+        case IMMC_INST_SETLT:
+            return gen_setlt_x64code(x64gen);
+        case IMMC_INST_SETGT:
+            return gen_setgt_x64code(x64gen);
+        case IMMC_INST_SETLEQ:
+            return gen_setleq_x64code(x64gen);
+        case IMMC_INST_SETGEQ:
+            return gen_setgeq_x64code(x64gen);
         case IMMC_INST_JMP:
             return gen_jmp_x64code(x64gen);
         case IMMC_INST_JEQ:

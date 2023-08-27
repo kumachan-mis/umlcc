@@ -8,6 +8,10 @@ void test_parse_logical_or_expr(void);
 void test_parse_logical_and_expr(void);
 void test_parse_equal_expr(void);
 void test_parse_not_equal_expr(void);
+void test_parse_less_expr(void);
+void test_parse_greater_expr(void);
+void test_parse_less_equal_expr(void);
+void test_parse_greater_equal_expr(void);
 void test_parse_add_expr(void);
 void test_parse_subtract_expr(void);
 void test_parse_multiply_expr(void);
@@ -38,6 +42,10 @@ CU_Suite* add_test_suite_expr_parser(void) {
     CU_ADD_TEST(suite, test_parse_logical_and_expr);
     CU_ADD_TEST(suite, test_parse_equal_expr);
     CU_ADD_TEST(suite, test_parse_not_equal_expr);
+    CU_ADD_TEST(suite, test_parse_less_expr);
+    CU_ADD_TEST(suite, test_parse_greater_expr);
+    CU_ADD_TEST(suite, test_parse_less_equal_expr);
+    CU_ADD_TEST(suite, test_parse_greater_equal_expr);
     CU_ADD_TEST(suite, test_parse_add_expr);
     CU_ADD_TEST(suite, test_parse_subtract_expr);
     CU_ADD_TEST(suite, test_parse_multiply_expr);
@@ -166,19 +174,19 @@ void test_parse_logical_and_expr(void) {
 void test_parse_equal_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
-    vector_push(input, new_ctoken(CTOKEN_MINUS));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_EQUAL));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
     vector_push(input, new_ctoken(CTOKEN_EQUAL_EQUAL));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
-    vector_push(input, new_ctoken(CTOKEN_SLASH));
+    vector_push(input, new_ctoken(CTOKEN_LESS));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 8)));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected = new_ast(AST_EQUAL_EXPR, 2,       // non-terminal
-                            new_ast(AST_SUB_EXPR, 2, // non-terminal
+    Ast* expected = new_ast(AST_EQUAL_EXPR, 2,             // non-terminal
+                            new_ast(AST_GREATEREQ_EXPR, 2, // non-terminal
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                                     new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))),
-                            new_ast(AST_DIV_EXPR, 2, // non-terminal
+                            new_ast(AST_LESS_EXPR, 2, // non-terminal
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
                                     new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 8))));
 
@@ -201,6 +209,86 @@ void test_parse_not_equal_expr(void) {
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("zero_flag")),
                                     new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_less_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_PLUS));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input, new_ctoken(CTOKEN_LESS));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("m")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_LESS_EXPR, 2,        // non-terminal
+                            new_ast(AST_ADD_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))),
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("m")));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_greater_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("j")));
+    vector_push(input, new_ctoken(CTOKEN_MINUS));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input, new_ctoken(CTOKEN_GREATER));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("n")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_GREATER_EXPR, 2,     // non-terminal
+                            new_ast(AST_SUB_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("j")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))),
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("n")));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_less_equal_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_LESS_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("j")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_GREATER_EXPR, 2,        // non-terminal
+                            new_ast(AST_LESSEQ_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("j"))),
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_greater_equal_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("j")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_LESS));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_LESS_EXPR, 2,              // non-terminal
+                            new_ast(AST_GREATEREQ_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("j")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("i"))),
+                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)));
 
     run_expr_parser_test(input, expected);
 

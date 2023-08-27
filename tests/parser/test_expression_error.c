@@ -8,6 +8,10 @@ void test_parse_logical_or_expr_error(void);
 void test_parse_logical_and_expr_error(void);
 void test_parse_equal_expr_error(void);
 void test_parse_not_equal_expr_error(void);
+void test_parse_less_expr_error(void);
+void test_parse_greater_expr_error(void);
+void test_parse_less_equal_expr_error(void);
+void test_parse_greater_equal_expr_error(void);
 void test_parse_add_expr_error(void);
 void test_parse_subtract_expr_error(void);
 void test_parse_multiply_expr_error(void);
@@ -39,6 +43,10 @@ CU_Suite* add_test_suite_expr_parser_error(void) {
     CU_ADD_TEST(suite, test_parse_logical_and_expr_error);
     CU_ADD_TEST(suite, test_parse_equal_expr_error);
     CU_ADD_TEST(suite, test_parse_not_equal_expr_error);
+    CU_ADD_TEST(suite, test_parse_less_expr_error);
+    CU_ADD_TEST(suite, test_parse_greater_expr_error);
+    CU_ADD_TEST(suite, test_parse_less_equal_expr_error);
+    CU_ADD_TEST(suite, test_parse_greater_equal_expr_error);
     CU_ADD_TEST(suite, test_parse_add_expr_error);
     CU_ADD_TEST(suite, test_parse_subtract_expr_error);
     CU_ADD_TEST(suite, test_parse_multiply_expr_error);
@@ -127,6 +135,62 @@ void test_parse_not_equal_expr_error(void) {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("unexpected token =\n");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_less_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_LESS));
+    vector_push(input, new_ctoken(CTOKEN_GREATER));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token >\n");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_greater_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER));
+    vector_push(input, new_ctoken(CTOKEN_LESS));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token <\n");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_less_equal_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_LESS_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token >=\n");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_greater_equal_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_LESS_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token <=\n");
 
     run_expr_parser_error_test(input, NULL, expected);
 

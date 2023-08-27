@@ -77,6 +77,12 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
         case SRT_NEQUAL_EXPR:
             codes = gen_equality_expr_immcode(immcgen);
             break;
+        case SRT_LESS_EXPR:
+        case SRT_GREATER_EXPR:
+        case SRT_LESSEQ_EXPR:
+        case SRT_GREATEREQ_EXPR:
+            codes = gen_relational_expr_immcode(immcgen);
+            break;
         case SRT_ADD_EXPR:
         case SRT_SUB_EXPR:
             codes = gen_additive_expr_immcode(immcgen);
