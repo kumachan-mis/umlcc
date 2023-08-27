@@ -11,8 +11,8 @@ void test_immcgen_compound_stmt_long_long(void);
 void test_immcgen_compound_stmt_unsigned_long_long(void);
 void test_immcgen_compound_stmt_void_pointer(void);
 void test_immcgen_compound_stmt_empty(void);
-void test_immcgen_return_stmt_with_value(void);
-void test_immcgen_return_stmt_with_no_value(void);
+void test_immcgen_return_stmt_non_void(void);
+void test_immcgen_return_stmt_void(void);
 void test_immcgen_expression_stmt(void);
 
 void run_stmt_immcgen_test(Srt* input, SymbolTable* local_table, int return_label_id, Vector* expected);
@@ -28,8 +28,8 @@ CU_Suite* add_test_suite_stmt_immcgen(void) {
     CU_ADD_TEST(suite, test_immcgen_compound_stmt_unsigned_long_long);
     CU_ADD_TEST(suite, test_immcgen_compound_stmt_void_pointer);
     CU_ADD_TEST(suite, test_immcgen_compound_stmt_empty);
-    CU_ADD_TEST(suite, test_immcgen_return_stmt_with_value);
-    CU_ADD_TEST(suite, test_immcgen_return_stmt_with_no_value);
+    CU_ADD_TEST(suite, test_immcgen_return_stmt_non_void);
+    CU_ADD_TEST(suite, test_immcgen_return_stmt_void);
     CU_ADD_TEST(suite, test_immcgen_expression_stmt);
     return suite;
 }
@@ -697,7 +697,7 @@ void test_immcgen_compound_stmt_empty(void) {
     delete_vector(expected);
 }
 
-void test_immcgen_return_stmt_with_value(void) {
+void test_immcgen_return_stmt_non_void(void) {
     Srt* input =
         new_srt(SRT_RET_STMT, 1,
                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
@@ -719,7 +719,7 @@ void test_immcgen_return_stmt_with_value(void) {
     delete_vector(expected);
 }
 
-void test_immcgen_return_stmt_with_no_value(void) {
+void test_immcgen_return_stmt_void(void) {
     Srt* input = new_srt(SRT_RET_STMT, 0);
 
     Vector* expected = new_vector(&t_immc);
