@@ -31,6 +31,10 @@ typedef enum X64InstType {
     X64_INST_CMPX,
     X64_INST_SETE,
     X64_INST_SETNE,
+    X64_INST_SETL,
+    X64_INST_SETG,
+    X64_INST_SETLE,
+    X64_INST_SETGE,
 
     // control transfar instructions
     X64_INST_JMP,
