@@ -7,6 +7,7 @@ Vector* gen_assignment_expr_immcode(Immcgen* immcgen);
 Vector* gen_logical_or_expr_immcode(Immcgen* immcgen);
 Vector* gen_logical_and_expr_immcode(Immcgen* immcgen);
 Vector* gen_equality_expr_immcode(Immcgen* immcgen);
+Vector* gen_relational_expr_immcode(Immcgen* immcgen);
 Vector* gen_additive_expr_immcode(Immcgen* immcgen);
 Vector* gen_pointer_additive_expr_immcode(Immcgen* immcgen);
 Vector* gen_multiplicative_expr_immcode(Immcgen* immcgen);

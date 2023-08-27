@@ -91,6 +91,23 @@ typedef enum ImmcInstType {
     // setneq dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_SETNEQ,
 
+    // - set dst to 1 if fst_src is less than snd_src, 0 otherwise
+    // setlt dst(reg), fst_src(reg), snd_src(int)
+    // setlt dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_SETLT,
+    // - set dst to 1 if fst_src is greater than snd_src, 0 otherwise
+    // setgt dst(reg), fst_src(reg), snd_src(int)
+    // setgt dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_SETGT,
+    // - set dst to 1 if fst_src is less than or equal to snd_src, 0 otherwise
+    // setleq dst(reg), fst_src(reg), snd_src(int)
+    // setleq dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_SETLEQ,
+    // - set dst to 1 if fst_src is greater than or equal to snd_src, 0 otherwise
+    // setgeq dst(reg), fst_src(reg), snd_src(int)
+    // setgeq dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_SETGEQ,
+
     // - jump to dst label
     // jmp dst(label)
     IMMC_INST_JMP,
