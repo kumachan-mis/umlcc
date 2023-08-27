@@ -540,6 +540,9 @@ ResolverReturnDEnumMember* resolve_enumerator(Resolver* resolver) {
         return new_resolverret_denummember_errors(errs);
     }
 
+    enum_const_srt = convert_to_ptr_if_array(enum_const_srt);
+    enum_const_srt = convert_to_ptr_if_function(enum_const_srt);
+
     if (enum_const_srt->type != SRT_INT_EXPR || iliteral_isunsigned(enum_const_srt->iliteral)) {
         errs = new_vector(&t_error);
         err = new_error("only integer constant is supported as enumeration constant\n");
@@ -743,6 +746,9 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                 if (errs != NULL) {
                     break;
                 }
+
+                array_size_srt = convert_to_ptr_if_array(array_size_srt);
+                array_size_srt = convert_to_ptr_if_function(array_size_srt);
 
                 if (array_size_srt->type != SRT_INT_EXPR || iliteral_isunsigned(array_size_srt->iliteral)) {
                     errs = new_vector(&t_error);

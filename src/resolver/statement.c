@@ -1,4 +1,5 @@
 #include "./statement.h"
+#include "./conversion.h"
 #include "./declaration.h"
 #include "./expression.h"
 
@@ -111,6 +112,9 @@ ResolverReturn* resolve_return_stmt(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
+    srt = convert_to_ptr_if_array(srt);
+    srt = convert_to_ptr_if_function(srt);
+
     if (!dtype_isassignable(srt->dtype, resolver->return_dtype)) {
         errs = new_vector(&t_error);
         err = new_error("expression is not assignable to function return\n");
@@ -138,6 +142,10 @@ ResolverReturn* resolve_expression_stmt(Resolver* resolver) {
     if (errs != NULL) {
         return new_resolverret_errors(errs);
     }
+
+    srt = convert_to_ptr_if_array(srt);
+    srt = convert_to_ptr_if_function(srt);
+
     srt = new_srt(SRT_EXPR_STMT, 1, srt);
     return new_resolverret(srt);
 }

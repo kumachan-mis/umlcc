@@ -1,6 +1,7 @@
 #include "./expression.h"
 #include "../common/type.h"
 #include "../immc/immc.h"
+#include "../immc/util.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -297,6 +298,14 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             update_non_void_expr_register(immcgen, dst);
             break;
         }
+        case SRT_STRIDENT_EXPR: {
+            char* sliteral_label = create_sliteral_label(child_srt->sliteral_id);
+            src = new_label_immcope(sliteral_label);
+            dst = create_dest_reg_immcope(immcgen);
+            vector_push(codes, new_inst_immc(IMMC_INST_ADDR, dst, src, NULL));
+            update_non_void_expr_register(immcgen, dst);
+            break;
+        }
         case SRT_TOMEMBER_EXPR: {
             immcgen->srt = child_srt;
             src = gen_child_reg_immcope(immcgen, codes, 0);
@@ -477,6 +486,11 @@ Vector* gen_primary_expr_immcode(Immcgen* immcgen) {
             } else {
                 src = new_mem_immcope(symbol->memory_offset);
             }
+            break;
+        }
+        case SRT_STRIDENT_EXPR: {
+            char* sliteral_label = create_sliteral_label(srt->sliteral_id);
+            src = new_label_immcope(sliteral_label);
             break;
         }
         case SRT_INT_EXPR:

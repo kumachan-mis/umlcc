@@ -816,17 +816,16 @@ void test_resolve_sliteral_expr(void) {
     Ast* input = new_sliteral_ast(AST_STRING_EXPR, new_sliteral(new_string("Hello"), 6));
 
     Srt* expected =
-        new_identifier_srt(SRT_IDENT_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), new_string(".SL0"));
+        new_sliteral_identifier_srt(SRT_STRIDENT_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), 0);
 
     Srt* expected_trans_unit = new_srt(
-        SRT_TRAS_UNIT, 1, // non-terminal
-        new_srt(
-            SRT_DECL_LIST, 1,         // non-terminal
-            new_srt(SRT_INIT_DECL, 2, // non-terminal
-                    new_identifier_srt(SRT_DECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), new_string(".SL0")),
-                    new_srt(SRT_INIT, 1, // non-terminal
-                            new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6),
-                                             new_sliteral(new_string("Hello"), 6))))));
+        SRT_TRAS_UNIT, 1,                 // non-terminal
+        new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                new_srt(SRT_INIT_DECL, 2, // non-terminal
+                        new_sliteral_identifier_srt(SRT_STRDECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), 0),
+                        new_srt(SRT_INIT, 1, // non-terminal
+                                new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6),
+                                                 new_sliteral(new_string("Hello"), 6))))));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, expected_trans_unit);
 

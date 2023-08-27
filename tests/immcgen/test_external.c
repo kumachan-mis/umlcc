@@ -75,11 +75,11 @@ void test_immcgen_transration_unit(void) {
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1), // fst_src
                               NULL));                                      // snd_src
     vector_push(expected,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L0")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(expected, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L0")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L0")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(expected,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst
@@ -112,11 +112,11 @@ void test_immcgen_transration_unit(void) {
                               new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 1), // fst_src
                               NULL));                                      // snd_src
     vector_push(expected,
-                new_inst_immc(IMMC_INST_JMP,                       // inst
-                              new_label_immcope(new_string("L1")), // dst
-                              NULL,                                // fst_src
-                              NULL));                              // snd_src
-    vector_push(expected, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string("L1")));
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L1")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L1")));
     vector_push(expected,
                 new_inst_immc(IMMC_INST_LEAVE,                                          // inst
                               NULL,                                                     // dst

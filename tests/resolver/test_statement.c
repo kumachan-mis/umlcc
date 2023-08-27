@@ -14,8 +14,12 @@ void test_resolve_compound_stmt_void_pointer(void);
 void test_resolve_compound_stmt_empty(void);
 void test_resolve_return_stmt_without_cast(void);
 void test_resolve_return_stmt_with_cast(void);
-void test_resolve_return_stmt_without_value(void);
-void test_resolve_expression_stmt(void);
+void test_resolve_return_stmt_array(void);
+void test_resolve_return_stmt_function(void);
+void test_resolve_return_stmt_void(void);
+void test_resolve_expression_stmt_scalar(void);
+void test_resolve_expression_stmt_array(void);
+void test_resolve_expression_stmt_function(void);
 
 void run_stmt_resolver_test(Ast* input, SymbolTable* local_table, DType* return_dtype, Srt* expected);
 
@@ -33,8 +37,12 @@ CU_Suite* add_test_suite_stmt_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_compound_stmt_empty);
     CU_ADD_TEST(suite, test_resolve_return_stmt_without_cast);
     CU_ADD_TEST(suite, test_resolve_return_stmt_with_cast);
-    CU_ADD_TEST(suite, test_resolve_return_stmt_without_value);
-    CU_ADD_TEST(suite, test_resolve_expression_stmt);
+    CU_ADD_TEST(suite, test_resolve_return_stmt_array);
+    CU_ADD_TEST(suite, test_resolve_return_stmt_function);
+    CU_ADD_TEST(suite, test_resolve_return_stmt_void);
+    CU_ADD_TEST(suite, test_resolve_expression_stmt_scalar);
+    CU_ADD_TEST(suite, test_resolve_expression_stmt_array);
+    CU_ADD_TEST(suite, test_resolve_expression_stmt_function);
     return suite;
 }
 
@@ -770,7 +778,48 @@ void test_resolve_return_stmt_with_cast(void) {
     delete_srt(expected);
 }
 
-void test_resolve_return_stmt_without_value(void) {
+void test_resolve_return_stmt_array(void) {
+    Ast* input = new_ast(AST_RET_STMT, 1, // non-terminal
+                         new_sliteral_ast(AST_STRING_EXPR, new_sliteral(new_string("return"), 7)));
+
+    DType* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
+
+    Srt* expected =
+        new_srt(SRT_RET_STMT, 1,                                                                   // non-terminal
+                new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 1, // non-terminal
+                               new_sliteral_identifier_srt(SRT_STRIDENT_EXPR,
+                                                           new_array_dtype(new_integer_dtype(DTYPE_CHAR), 7), 0)));
+
+    run_stmt_resolver_test(input, NULL, return_dtype, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_return_stmt_function(void) {
+    SymbolTable* local_table = new_symboltable();
+
+    Vector* params = new_vector(&t_dparam);
+    vector_push(params, new_named_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
+
+    symboltable_define_label(local_table, new_string("func"), func_dtype);
+
+    Ast* input = new_ast(AST_RET_STMT, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("func")));
+
+    DType* return_dtype = new_pointer_dtype(dtype_copy(func_dtype));
+
+    Srt* expected =
+        new_srt(SRT_RET_STMT, 1,                                                            // non-terminal
+                new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(func_dtype)), 1, // non-terminal
+                               new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(func_dtype), new_string("func"))));
+
+    run_stmt_resolver_test(input, local_table, return_dtype, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_return_stmt_void(void) {
     Ast* input = new_ast(AST_RET_STMT, 0);
 
     DType* return_dtype = new_void_dtype();
@@ -782,7 +831,7 @@ void test_resolve_return_stmt_without_value(void) {
     delete_srt(expected);
 }
 
-void test_resolve_expression_stmt(void) {
+void test_resolve_expression_stmt_scalar(void) {
     Ast* input = new_ast(AST_EXPR_STMT, 1,           // non-terminal
                          new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                                  new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
@@ -798,6 +847,43 @@ void test_resolve_expression_stmt(void) {
             new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
                            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))),
             new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 12))));
+
+    run_stmt_resolver_test(input, local_table, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_expression_stmt_array(void) {
+    Ast* input = new_ast(AST_EXPR_STMT, 1, // non-terminal
+                         new_sliteral_ast(AST_STRING_EXPR, new_sliteral(new_string("expression"), 11)));
+
+    Srt* expected =
+        new_srt(SRT_EXPR_STMT, 1,                                                                  // non-terminal
+                new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 1, // non-terminal
+                               new_sliteral_identifier_srt(SRT_STRIDENT_EXPR,
+                                                           new_array_dtype(new_integer_dtype(DTYPE_CHAR), 11), 0)));
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_expression_stmt_function(void) {
+    SymbolTable* local_table = new_symboltable();
+
+    Vector* params = new_vector(&t_dparam);
+    vector_push(params, new_named_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
+
+    symboltable_define_label(local_table, new_string("func"), func_dtype);
+
+    Ast* input = new_ast(AST_EXPR_STMT, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("func")));
+
+    Srt* expected =
+        new_srt(SRT_EXPR_STMT, 1,                                                           // non-terminal
+                new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(func_dtype)), 1, // non-terminal
+                               new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(func_dtype), new_string("func"))));
 
     run_stmt_resolver_test(input, local_table, NULL, expected);
 

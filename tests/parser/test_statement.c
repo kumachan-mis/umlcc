@@ -13,8 +13,8 @@ void test_parse_compound_stmt_long_long(void);
 void test_parse_compound_stmt_unsigned_long_long(void);
 void test_parse_compound_stmt_void_pointer(void);
 void test_parse_compound_stmt_empty(void);
-void test_parse_return_stmt_with_value(void);
-void test_parse_return_stmt_without_value(void);
+void test_parse_return_stmt_non_void(void);
+void test_parse_return_stmt_void(void);
 void test_parse_expression_stmt(void);
 
 void run_stmt_parser_test(Vector* input, Ast* expected);
@@ -31,8 +31,8 @@ CU_Suite* add_test_suite_stmt_parser(void) {
     CU_ADD_TEST(suite, test_parse_compound_stmt_unsigned_long_long);
     CU_ADD_TEST(suite, test_parse_compound_stmt_void_pointer);
     CU_ADD_TEST(suite, test_parse_compound_stmt_empty);
-    CU_ADD_TEST(suite, test_parse_return_stmt_with_value);
-    CU_ADD_TEST(suite, test_parse_return_stmt_without_value);
+    CU_ADD_TEST(suite, test_parse_return_stmt_non_void);
+    CU_ADD_TEST(suite, test_parse_return_stmt_void);
     CU_ADD_TEST(suite, test_parse_expression_stmt);
     return suite;
 }
@@ -690,7 +690,7 @@ void test_parse_compound_stmt_empty(void) {
     delete_ast(expected);
 }
 
-void test_parse_return_stmt_with_value(void) {
+void test_parse_return_stmt_non_void(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_RETURN));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
@@ -705,7 +705,7 @@ void test_parse_return_stmt_with_value(void) {
     delete_ast(expected);
 }
 
-void test_parse_return_stmt_without_value(void) {
+void test_parse_return_stmt_void(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_RETURN));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));

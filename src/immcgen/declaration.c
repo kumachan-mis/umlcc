@@ -2,6 +2,7 @@
 #include "../common/type.h"
 #include "../dtype/dtype.h"
 #include "../immc/immc.h"
+#include "../immc/util.h"
 #include "./util.h"
 
 #include <stdio.h>
@@ -42,12 +43,22 @@ Vector* gen_global_init_decl_immcode(Immcgen* immcgen) {
     append_child_immcode(immcgen, codes, 0);
 
     Srt* decl_srt = vector_at(immcgen->srt->children, 0);
-    Symbol* decl_symbol = symboltable_search(immcgen->symbol_table, decl_srt->ident_name);
+
+    Symbol* decl_symbol = NULL;
+    char* label_name = NULL;
+    if (decl_srt->type == SRT_STRDECL) {
+        label_name = create_sliteral_label(decl_srt->sliteral_id);
+        decl_symbol = symboltable_search(immcgen->symbol_table, label_name);
+    } else {
+        label_name = new_string(decl_srt->ident_name);
+        decl_symbol = symboltable_search(immcgen->symbol_table, decl_srt->ident_name);
+    }
+
     if (!dtype_isobject(decl_symbol->dtype)) {
+        free(label_name);
         return codes;
     }
 
-    char* label_name = new_string(decl_srt->ident_name);
     vector_push(codes, new_label_immc(IMMC_LABEL_VARIABLE, IMMC_VIS_GLOBAL, label_name));
 
     if (vector_size(immcgen->srt->children) == 1) {
@@ -97,6 +108,17 @@ Vector* gen_decl_immcode(Immcgen* immcgen) {
     } else {
         symboltable_define_memory(immcgen->symbol_table, symbol_name, symbol_dtype);
     }
+
+    return new_vector(&t_immc);
+}
+
+Vector* gen_string_decl_immcode(Immcgen* immcgen) {
+    Srt* srt = immcgen->srt;
+
+    DType* sliteral_dtype = dtype_copy(srt->dtype);
+    char* sliteral_label = create_sliteral_label(srt->sliteral_id);
+
+    symboltable_define_label(immcgen->symbol_table, sliteral_label, sliteral_dtype);
 
     return new_vector(&t_immc);
 }
