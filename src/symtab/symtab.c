@@ -1,5 +1,6 @@
 #include "./symtab.h"
 #include "../common/type.h"
+#include "../common/util.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -41,7 +42,7 @@ Symbol* symboltable_define_memory(SymbolTable* table, char* name, DType* dtype) 
     if (!symboltable_can_define(table, name)) {
         return NULL;
     }
-    table->memory_nbytes += dtype_nbytes(dtype);
+    table->memory_nbytes = min_multiple_of(table->memory_nbytes + dtype_nbytes(dtype), 4);
     Symbol* symbol = new_memory_symbol(name, dtype, table->memory_nbytes);
     char* symbol_name = new_string(name);
     map_add(table->symbol_map, symbol_name, symbol);

@@ -301,7 +301,7 @@ void test_immcgen_local_scalar_init(void) {
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
                 new_inst_immc(IMMC_INST_STORE,                                           // inst
-                              new_mem_immcope(6),                                        // dst
+                              new_mem_immcope(12),                                       // dst
                               new_signed_int_immcope(IMMC_SUFFIX_BYTE, INTEGER_INT, 89), // fst_src
                               NULL));                                                    // snd_src
     vector_push(expected,
@@ -316,13 +316,13 @@ void test_immcgen_local_scalar_init(void) {
                               NULL));                                      // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_STORE,                             // inst
-                              new_mem_immcope(10),                         // dst
+                              new_mem_immcope(16),                         // dst
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
                               NULL));                                      // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_LOAD,                              // inst
                               new_signed_reg_immcope(IMMC_SUFFIX_BYTE, 1), // dst
-                              new_mem_immcope(5),                          // fst_src
+                              new_mem_immcope(8),                          // fst_src
                               NULL));                                      // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_LOAD,                              // inst
@@ -331,13 +331,13 @@ void test_immcgen_local_scalar_init(void) {
                               NULL));                                      // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_STORE,                             // inst
-                              new_mem_immcope(14),                         // dst
+                              new_mem_immcope(20),                         // dst
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2), // fst_src
                               NULL));                                      // snd_src
     vector_push(
         expected,
         new_inst_immc(IMMC_INST_STORE,                                                                 // inst
-                      new_mem_immcope(22),                                                             // dst
+                      new_mem_immcope(28),                                                             // dst
                       new_unsigned_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_UNSIGNED_LONG, 2147483647ul), // fst_src
                       NULL));                                                                          // snd_src
 
@@ -401,7 +401,7 @@ void test_immcgen_local_sliteral_init(void) {
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
                 new_inst_immc(IMMC_INST_STR,                            // inst
-                              new_mem_immcope(sliteral_size),           // dst
+                              new_mem_immcope(8),                       // dst
                               new_str_immcope(sliteral_copy(sliteral)), // fst_src
                               NULL));                                   // snd_src
 

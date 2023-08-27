@@ -109,7 +109,7 @@ Vector* gen_str_x64code(X64gen* x64gen) {
     int tmp_reg_id = CALLER_SAVED_REG_IDS[NUM_CALLER_SAVED_REGS - 2];
     int unit_size = x64suffix_tonbytes(X64_SUFFIX_QUAD);
 
-    while (index_offset + unit_size < immc_src->sliteral->size) {
+    while (index_offset + unit_size <= immc_src->sliteral->size) {
         unsigned long long unit_value = 0ull;
         for (int i = 0; i < unit_size; i++) {
             unsigned long long char_bits = immc_src->sliteral->value[index_offset + i];
@@ -129,42 +129,47 @@ Vector* gen_str_x64code(X64gen* x64gen) {
     }
 
     int num_rest_bytes = immc_src->sliteral->size - index_offset;
-    switch (num_rest_bytes) {
-        case 0:
-            break;
-        case 1:
-        case 2:
-        case 4: {
-            X64Suffix suffix = x64suffix_get(num_rest_bytes);
-            unsigned long long unit_value = 0ull;
-            for (int i = 0; i < num_rest_bytes; i++) {
-                unsigned long long char_bits = immc_src->sliteral->value[index_offset + i];
-                unit_value = (char_bits << (i * CHAR_BIT)) | unit_value;
-            }
 
-            X64Ope* dst = new_mem_x64ope(mem_offset);
-            X64Ope* src = new_unsigned_int_x64ope(suffix, INTEGER_UNSIGNED_LONGLONG, unit_value);
-            vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
-            break;
-        }
-        default: {
-            mem_offset = immmc_dst->mem_offset - immc_src->sliteral->size + unit_size;
-            index_offset = immc_src->sliteral->size - unit_size;
-            unsigned long long unit_value = 0ull;
-            for (int i = 0; i < unit_size; i++) {
-                unsigned long long char_bits = immc_src->sliteral->value[index_offset + i];
-                unit_value = (char_bits << (i * CHAR_BIT)) | unit_value;
-            }
+    if (num_rest_bytes == 0) {
+        liveseqs_next(x64gen->liveseqs);
+        return codes;
+    }
 
-            X64Ope* imm_dst = new_reg_x64ope(X64_SUFFIX_QUAD, tmp_reg_id);
-            X64Ope* imm_src = new_unsigned_int_x64ope(X64_SUFFIX_QUAD, INTEGER_UNSIGNED_LONGLONG, unit_value);
-            vector_push(codes, new_inst_x64(X64_INST_MOVABSX, imm_src, imm_dst));
+    int boundary_rest_bytes = 0;
+    IntegerLiteralType iliteral_type = INTEGER_UNSIGNED_INT;
+    if (num_rest_bytes <= 1) {
+        boundary_rest_bytes = 1;
+        iliteral_type = INTEGER_UNSIGNED_INT;
+    } else if (num_rest_bytes <= 2) {
+        boundary_rest_bytes = 2;
+        iliteral_type = INTEGER_UNSIGNED_INT;
+    } else if (num_rest_bytes <= 4) {
+        boundary_rest_bytes = 4;
+        iliteral_type = INTEGER_UNSIGNED_INT;
+    } else {
+        boundary_rest_bytes = 8;
+        iliteral_type = INTEGER_UNSIGNED_LONG;
+    }
 
-            X64Ope* mem_dst = new_mem_x64ope(mem_offset);
-            X64Ope* mem_src = new_reg_x64ope(X64_SUFFIX_QUAD, tmp_reg_id);
-            vector_push(codes, new_inst_x64(X64_INST_MOVX, mem_src, mem_dst));
-            break;
-        }
+    X64Suffix suffix = x64suffix_get(boundary_rest_bytes);
+    unsigned long long unit_value = 0ull;
+    for (int i = 0; i < num_rest_bytes; i++) {
+        unsigned long long char_bits = immc_src->sliteral->value[index_offset + i];
+        unit_value = (char_bits << (i * CHAR_BIT)) | unit_value;
+    }
+
+    if (suffix == X64_SUFFIX_QUAD) {
+        X64Ope* imm_dst = new_reg_x64ope(X64_SUFFIX_QUAD, tmp_reg_id);
+        X64Ope* imm_src = new_unsigned_int_x64ope(X64_SUFFIX_QUAD, iliteral_type, unit_value);
+        vector_push(codes, new_inst_x64(X64_INST_MOVABSX, imm_src, imm_dst));
+
+        X64Ope* mem_dst = new_mem_x64ope(mem_offset);
+        X64Ope* mem_src = new_reg_x64ope(X64_SUFFIX_QUAD, tmp_reg_id);
+        vector_push(codes, new_inst_x64(X64_INST_MOVX, mem_src, mem_dst));
+    } else {
+        X64Ope* dst = new_mem_x64ope(mem_offset);
+        X64Ope* src = new_unsigned_int_x64ope(suffix, iliteral_type, unit_value);
+        vector_push(codes, new_inst_x64(X64_INST_MOVX, src, dst));
     }
 
     liveseqs_next(x64gen->liveseqs);

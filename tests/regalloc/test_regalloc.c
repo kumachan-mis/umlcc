@@ -442,7 +442,7 @@ void test_regalloc_jump(void) {
     vector_push(input,
                 new_inst_immc(IMMC_INST_ADDR,                              // inst
                               new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 2), // dst
-                              new_mem_immcope(10),                         // fst_src
+                              new_mem_immcope(12),                         // fst_src
                               NULL));                                      // snd_src
     vector_push(input,
                 new_inst_immc(IMMC_INST_STARG,                             // inst
@@ -530,7 +530,7 @@ void test_regalloc_jump(void) {
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_ADDR,                              // inst
                               new_signed_reg_immcope(IMMC_SUFFIX_QUAD, 0), // dst
-                              new_mem_immcope(10),                         // fst_src
+                              new_mem_immcope(12),                         // fst_src
                               NULL));                                      // snd_src
     vector_push(expected_immcs,
                 new_inst_immc(IMMC_INST_STARG,                             // inst
