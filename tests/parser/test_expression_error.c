@@ -22,6 +22,9 @@ void test_parse_cast_expr_error_type_name(void);
 void test_parse_address_expr_error(void);
 void test_parse_indirection_expr_error(void);
 void test_parse_logical_not_expr_error(void);
+void test_parse_positive_expr_error(void);
+void test_parse_negative_expr_error(void);
+void test_parse_bitwise_not_expr_error(void);
 void test_parse_sizeof_expr_error_paren(void);
 void test_parse_sizeof_expr_error_type_name(void);
 void test_parse_call_expr_error_arg_expr(void);
@@ -57,6 +60,9 @@ CU_Suite* add_test_suite_expr_parser_error(void) {
     CU_ADD_TEST(suite, test_parse_address_expr_error);
     CU_ADD_TEST(suite, test_parse_indirection_expr_error);
     CU_ADD_TEST(suite, test_parse_logical_not_expr_error);
+    CU_ADD_TEST(suite, test_parse_positive_expr_error);
+    CU_ADD_TEST(suite, test_parse_negative_expr_error);
+    CU_ADD_TEST(suite, test_parse_bitwise_not_expr_error);
     CU_ADD_TEST(suite, test_parse_sizeof_expr_error_paren);
     CU_ADD_TEST(suite, test_parse_sizeof_expr_error_type_name);
     CU_ADD_TEST(suite, test_parse_call_expr_error_arg_expr);
@@ -322,6 +328,42 @@ void test_parse_address_expr_error(void) {
 void test_parse_indirection_expr_error(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token EOF\n");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_positive_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_PLUS));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token EOF\n");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_negative_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_MINUS));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token EOF\n");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_bitwise_not_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_TILDE));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("unexpected token EOF\n");
