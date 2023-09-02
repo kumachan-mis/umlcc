@@ -39,6 +39,7 @@ typedef enum CTokenType {
     CTOKEN_ASTERISK,
     CTOKEN_PLUS,
     CTOKEN_MINUS,
+    CTOKEN_TILDE,
     CTOKEN_EXCLAM,
     CTOKEN_SLASH,
     CTOKEN_PERCENT,

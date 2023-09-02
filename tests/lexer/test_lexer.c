@@ -470,7 +470,7 @@ void test_read_multiplicative_expr(void) {
 }
 
 void test_read_unary_expr(void) {
-    char* input = "&a; *ptr; !false_flag; !!true_flag;";
+    char* input = "&a; *ptr; +x; -x; ~bits; !false_flag; !!true_flag;";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_AND));
@@ -478,6 +478,15 @@ void test_read_unary_expr(void) {
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_ASTERISK));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("ptr")));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_PLUS));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_MINUS));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_TILDE));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("bits")));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EXCLAM));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("false_flag")));
