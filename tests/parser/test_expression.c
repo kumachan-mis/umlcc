@@ -20,6 +20,9 @@ void test_parse_modulo_expr(void);
 void test_parse_cast_expr(void);
 void test_parse_address_expr(void);
 void test_parse_indirection_expr(void);
+void test_parse_positive_expr(void);
+void test_parse_negative_expr(void);
+void test_parse_inversion_expr(void);
 void test_parse_logical_not_expr(void);
 void test_parse_sizeof_expr_typename(void);
 void test_parse_sizeof_expr_expr(void);
@@ -54,6 +57,9 @@ CU_Suite* add_test_suite_expr_parser(void) {
     CU_ADD_TEST(suite, test_parse_cast_expr);
     CU_ADD_TEST(suite, test_parse_address_expr);
     CU_ADD_TEST(suite, test_parse_indirection_expr);
+    CU_ADD_TEST(suite, test_parse_positive_expr);
+    CU_ADD_TEST(suite, test_parse_negative_expr);
+    CU_ADD_TEST(suite, test_parse_inversion_expr);
     CU_ADD_TEST(suite, test_parse_logical_not_expr);
     CU_ADD_TEST(suite, test_parse_sizeof_expr_typename);
     CU_ADD_TEST(suite, test_parse_sizeof_expr_expr);
@@ -457,6 +463,52 @@ void test_parse_indirection_expr(void) {
 
     Ast* expected = new_ast(AST_INDIR_EXPR, 1, // non-terminal
                             new_identifier_ast(AST_IDENT_EXPR, new_string("ptr")));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_positive_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_PLUS));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_POS_EXPR, 1, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_negative_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_PLUS));
+    vector_push(input, new_ctoken(CTOKEN_MINUS));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_ADD_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_NEG_EXPR, 1, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_inversion_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_TILDE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("bits")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_INVERT_EXPR, 1, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("bits")));
 
     run_expr_parser_test(input, expected);
 

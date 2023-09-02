@@ -79,11 +79,14 @@ typedef enum AstType {
     AST_MUL_EXPR,
     AST_DIV_EXPR,
     AST_MOD_EXPR,
-    //   casr-expression
+    //   cast-expression
     AST_CAST_EXPR,
     //   unary-expression
     AST_ADDR_EXPR,
     AST_INDIR_EXPR,
+    AST_POS_EXPR,
+    AST_NEG_EXPR,
+    AST_INVERT_EXPR,
     AST_LNOT_EXPR,
     AST_SIZEOF_EXPR,
     //   postfix-expression
