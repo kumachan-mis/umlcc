@@ -86,7 +86,7 @@ typedef enum AstType {
     AST_INDIR_EXPR,
     AST_POS_EXPR,
     AST_NEG_EXPR,
-    AST_INVERT_EXPR,
+    AST_NOT_EXPR,
     AST_LNOT_EXPR,
     AST_SIZEOF_EXPR,
     //   postfix-expression

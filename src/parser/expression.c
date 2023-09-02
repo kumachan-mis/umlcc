@@ -406,7 +406,7 @@ ParserReturn* parse_unary_operator_expr(Parser* parser) {
             ast = new_ast(AST_NEG_EXPR, 1, ast);
             break;
         case CTOKEN_TILDE:
-            ast = new_ast(AST_INVERT_EXPR, 1, ast);
+            ast = new_ast(AST_NOT_EXPR, 1, ast);
             break;
         case CTOKEN_EXCLAM:
             ast = new_ast(AST_LNOT_EXPR, 1, ast);
