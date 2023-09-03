@@ -273,9 +273,13 @@ Vector* gen_multiplicative_expr_immcode(Immcgen* immcgen) {
 Vector* gen_unary_expr_immcode(Immcgen* immcgen) {
     Vector* codes = NULL;
     Srt* srt = immcgen->srt;
+
     Vector* gen_address_expr_immcode(Immcgen * immcgen);
     Vector* gen_indirection_expr_immcode(Immcgen * immcgen);
+    Vector* gen_positive_expr_immcode(Immcgen * immcgen);
+    Vector* gen_negative_expr_immcode(Immcgen * immcgen);
     Vector* gen_not_expr_immcode(Immcgen * immcgen);
+    Vector* gen_logical_not_expr_immcode(Immcgen * immcgen);
 
     switch (srt->type) {
         case SRT_ADDR_EXPR:
@@ -284,8 +288,17 @@ Vector* gen_unary_expr_immcode(Immcgen* immcgen) {
         case SRT_INDIR_EXPR:
             codes = gen_indirection_expr_immcode(immcgen);
             break;
-        case SRT_LNOT_EXPR:
+        case SRT_POS_EXPR:
+            codes = gen_positive_expr_immcode(immcgen);
+            break;
+        case SRT_NEG_EXPR:
+            codes = gen_negative_expr_immcode(immcgen);
+            break;
+        case SRT_NOT_EXPR:
             codes = gen_not_expr_immcode(immcgen);
+            break;
+        case SRT_LNOT_EXPR:
+            codes = gen_logical_not_expr_immcode(immcgen);
             break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
@@ -380,7 +393,40 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
     return codes;
 }
 
+Vector* gen_positive_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    ImmcOpe* dst = gen_child_reg_immcope(immcgen, codes, 0);
+
+    update_non_void_expr_register(immcgen, dst);
+    return codes;
+}
+
+Vector* gen_negative_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    ImmcOpe* src = gen_child_int_immcope(immcgen, codes, 0);
+    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
+
+    vector_push(codes, new_inst_immc(IMMC_INST_NEG, dst, src, NULL));
+
+    update_non_void_expr_register(immcgen, dst);
+    return codes;
+}
+
 Vector* gen_not_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    ImmcOpe* src = gen_child_int_immcope(immcgen, codes, 0);
+    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
+
+    vector_push(codes, new_inst_immc(IMMC_INST_NOT, dst, src, NULL));
+
+    update_non_void_expr_register(immcgen, dst);
+    return codes;
+}
+
+Vector* gen_logical_not_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = immcgen->srt;
 

@@ -74,6 +74,17 @@ typedef enum ImmcInstType {
     // - modulo fst_src by snd_src
     // mod dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_MOD,
+    // - nagate fst_src
+    // neg dst(reg), fst_src(int)
+    // - nagate fst_src
+    // neg dst(reg), fst_src(reg)
+    IMMC_INST_NEG,
+
+    // - bitwise not fst_src
+    // not dst(reg), fst_src(int)
+    // - bitwise not fst_src
+    // not dst(reg), fst_src(reg)
+    IMMC_INST_NOT,
 
     // - arithmetic shift-left fst_src to snd_src bit positions
     // sal dst(reg), fst_src(reg), snd_src(int)
@@ -90,7 +101,6 @@ typedef enum ImmcInstType {
     // setneq dst(reg), fst_src(reg), snd_src(int)
     // setneq dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_SETNEQ,
-
     // - set dst to 1 if fst_src is less than snd_src, 0 otherwise
     // setlt dst(reg), fst_src(reg), snd_src(int)
     // setlt dst(reg), fst_src(reg), snd_src(reg)
