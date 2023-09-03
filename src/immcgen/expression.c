@@ -399,6 +399,8 @@ Vector* gen_positive_expr_immcode(Immcgen* immcgen) {
     ImmcOpe* dst = gen_child_reg_immcope(immcgen, codes, 0);
 
     update_non_void_expr_register(immcgen, dst);
+
+    delete_immcope(dst);
     return codes;
 }
 
