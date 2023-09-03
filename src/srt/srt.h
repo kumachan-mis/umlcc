@@ -57,6 +57,9 @@ typedef enum SrtType {
     //   unary-expression
     SRT_ADDR_EXPR,
     SRT_INDIR_EXPR,
+    SRT_POS_EXPR,
+    SRT_NEG_EXPR,
+    SRT_NOT_EXPR,
     SRT_LNOT_EXPR,
     //   postfix-expression
     SRT_CALL_EXPR,

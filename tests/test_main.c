@@ -51,6 +51,7 @@
 #include "./x64gen/test_data.h"
 #include "./x64gen/test_datainst.h"
 #include "./x64gen/test_label.h"
+#include "./x64gen/test_logicinst.h"
 #include "./x64gen/test_shrotinst.h"
 #include "./x64gen/test_x64gen.h"
 
@@ -127,6 +128,7 @@ int main(void) {
     // x64gen tests
     add_test_suite_datainst_x64gen();
     add_test_suite_arithinst_x64gen();
+    add_test_suite_logicinst_x64gen();
     add_test_suite_shrotinst_x64gen();
     add_test_suite_bitinst_x64gen();
     add_test_suite_ctrlinst_x64gen();

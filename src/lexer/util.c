@@ -132,6 +132,7 @@ Map* new_punctuator_map(void) {
     ctoken_map_add(punctuator_map, "*", CTOKEN_ASTERISK);
     ctoken_map_add(punctuator_map, "+", CTOKEN_PLUS);
     ctoken_map_add(punctuator_map, "-", CTOKEN_MINUS);
+    ctoken_map_add(punctuator_map, "~", CTOKEN_TILDE);
     ctoken_map_add(punctuator_map, "!", CTOKEN_EXCLAM);
     ctoken_map_add(punctuator_map, "/", CTOKEN_SLASH);
     ctoken_map_add(punctuator_map, "%", CTOKEN_PERCENT);

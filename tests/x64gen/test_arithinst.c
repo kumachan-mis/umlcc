@@ -24,6 +24,8 @@ void test_x64gen_mod_unsigned_reg_int(void);
 void test_x64gen_mod_unsigned_reg_reg(void);
 void test_x64gen_mod_unsigned_rdx_inarg(void);
 void test_x64gen_mod_unsigned_rdx_inuse(void);
+void test_x64gen_neg_int(void);
+void test_x64gen_neg_reg(void);
 
 void run_arithinst_x64gen_test(Vector* input_immcs, Vector* input_liveseqs, Vector* expected);
 
@@ -51,6 +53,8 @@ CU_Suite* add_test_suite_arithinst_x64gen(void) {
     CU_ADD_TEST(suite, test_x64gen_mod_unsigned_reg_reg);
     CU_ADD_TEST(suite, test_x64gen_mod_unsigned_rdx_inarg);
     CU_ADD_TEST(suite, test_x64gen_mod_unsigned_rdx_inuse);
+    CU_ADD_TEST(suite, test_x64gen_neg_int);
+    CU_ADD_TEST(suite, test_x64gen_neg_reg);
     return suite;
 }
 
@@ -1501,6 +1505,78 @@ void test_x64gen_mod_unsigned_rdx_inuse(void) {
                 new_inst_x64(X64_INST_MOVX,                                            // inst
                              new_reg_x64ope(X64_SUFFIX_QUAD, CALLEE_SAVED_REG_IDS[0]), // src
                              new_reg_x64ope(X64_SUFFIX_QUAD, DX_REG_ID)));             // dst
+
+    run_arithinst_x64gen_test(input_immcs, input_liveseqs, expected);
+
+    delete_vector(expected);
+}
+
+void test_x64gen_neg_int(void) {
+    Vector* input_immcs = new_vector(&t_immc);
+    vector_push(input_immcs,
+                new_inst_immc(IMMC_INST_NEG,                                            // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 1), // fst_src
+                              NULL));                                                   // snd_src
+
+    Vector* input_liveseqs = new_vector(&t_liveseq);
+    vector_fill(input_liveseqs, 8, new_liveseq());
+
+    Liveseq* liveseq = NULL;
+    Liveness* liveness = NULL;
+    liveseq = vector_at(input_liveseqs, 0);
+    liveness = new_liveness(0);
+    liveness->last_use_index = 1;
+    vector_push(liveseq->livenesses, liveness);
+
+    Vector* expected = new_vector(&t_x64);
+    vector_push(expected,
+                new_inst_x64(X64_INST_MOVX,                                              // inst
+                             new_signed_int_x64ope(X64_SUFFIX_LONG, INTEGER_INT, 1),     // src
+                             new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
+    vector_push(expected,
+                new_inst_x64(X64_INST_NEGX,                                              // inst
+                             NULL,                                                       // src
+                             new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
+
+    run_arithinst_x64gen_test(input_immcs, input_liveseqs, expected);
+
+    delete_vector(expected);
+}
+
+void test_x64gen_neg_reg(void) {
+    Vector* input_immcs = new_vector(&t_immc);
+    vector_push(input_immcs,
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_mem_immcope(4),                          // fst_src
+                              NULL));                                      // snd_src
+    vector_push(input_immcs,
+                new_inst_immc(IMMC_INST_NEG,                               // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
+                              NULL));                                      // snd_src
+
+    Vector* input_liveseqs = new_vector(&t_liveseq);
+    vector_fill(input_liveseqs, 8, new_liveseq());
+    Liveseq* liveseq = NULL;
+    Liveness* liveness = NULL;
+    liveseq = vector_at(input_liveseqs, 0);
+    liveness = new_liveness(0);
+    liveness->last_use_index = 1;
+    vector_push(liveseq->livenesses, liveness);
+    liveness = new_liveness(1);
+    vector_push(liveseq->livenesses, liveness);
+
+    Vector* expected = new_vector(&t_x64);
+    vector_push(expected,
+                new_inst_x64(X64_INST_MOVX,                                              // inst
+                             new_mem_x64ope(4),                                          // src
+                             new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
+    vector_push(expected,
+                new_inst_x64(X64_INST_NEGX,                                              // inst
+                             NULL,                                                       // src
+                             new_reg_x64ope(X64_SUFFIX_LONG, CALLER_SAVED_REG_IDS[0]))); // dst
 
     run_arithinst_x64gen_test(input_immcs, input_liveseqs, expected);
 

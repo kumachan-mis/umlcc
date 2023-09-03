@@ -99,6 +99,9 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
             break;
         case SRT_ADDR_EXPR:
         case SRT_INDIR_EXPR:
+        case SRT_POS_EXPR:
+        case SRT_NEG_EXPR:
+        case SRT_NOT_EXPR:
         case SRT_LNOT_EXPR:
             codes = gen_unary_expr_immcode(immcgen);
             break;

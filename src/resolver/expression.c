@@ -44,6 +44,9 @@ ResolverReturn* resolve_expr(Resolver* resolver) {
             break;
         case AST_ADDR_EXPR:
         case AST_INDIR_EXPR:
+        case AST_POS_EXPR:
+        case AST_NEG_EXPR:
+        case AST_NOT_EXPR:
         case AST_LNOT_EXPR:
         case AST_SIZEOF_EXPR:
             resolverret_assign(&srt, &errs, resolve_unary_expr(resolver));
@@ -667,6 +670,8 @@ ResolverReturn* resolve_cast_expr(Resolver* resolver) {
 ResolverReturn* resolve_unary_expr(Resolver* resolver) {
     ResolverReturn* resolve_address_expr(Resolver * resolver);
     ResolverReturn* resolve_indirection_expr(Resolver * resolver);
+    ResolverReturn* resolve_sign_expr(Resolver * resolver, SrtType srt_type, char op);
+    ResolverReturn* resolve_bitwise_not_expr(Resolver * resolver);
     ResolverReturn* resolve_logical_not_expr(Resolver * resolver);
     ResolverReturn* resolve_sizeof_expr(Resolver * resolver);
 
@@ -680,6 +685,15 @@ ResolverReturn* resolve_unary_expr(Resolver* resolver) {
             break;
         case AST_INDIR_EXPR:
             resolverret_assign(&srt, &errs, resolve_indirection_expr(resolver));
+            break;
+        case AST_POS_EXPR:
+            resolverret_assign(&srt, &errs, resolve_sign_expr(resolver, SRT_POS_EXPR, '+'));
+            break;
+        case AST_NEG_EXPR:
+            resolverret_assign(&srt, &errs, resolve_sign_expr(resolver, SRT_NEG_EXPR, '-'));
+            break;
+        case AST_NOT_EXPR:
+            resolverret_assign(&srt, &errs, resolve_bitwise_not_expr(resolver));
             break;
         case AST_LNOT_EXPR:
             resolverret_assign(&srt, &errs, resolve_logical_not_expr(resolver));
@@ -757,6 +771,66 @@ ResolverReturn* resolve_indirection_expr(Resolver* resolver) {
 
     dtype = dtype_copy(child_srt->dtype->dpointer->to_dtype);
     srt = new_dtyped_srt(SRT_INDIR_EXPR, dtype, 1, child_srt);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_sign_expr(Resolver* resolver, SrtType srt_type, char op) {
+    Srt* srt = NULL;
+    DType* dtype = NULL;
+    Srt* child_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
+
+    if (!dtype_isarithmetic(child_srt->dtype)) {
+        errs = new_vector(&t_error);
+        err = new_error("operand of unary %c does not have arithmetic type\n", op);
+        vector_push(errs, err);
+        delete_srt(child_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    child_srt = perform_integer_promotion(child_srt);
+
+    dtype = dtype_copy(child_srt->dtype);
+    srt = new_dtyped_srt(srt_type, dtype, 1, child_srt);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_bitwise_not_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    DType* dtype = NULL;
+    Srt* child_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
+
+    if (!dtype_isinteger(child_srt->dtype)) {
+        errs = new_vector(&t_error);
+        err = new_error("operand of unary ~ does not have integer type\n");
+        vector_push(errs, err);
+        delete_srt(child_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    child_srt = perform_integer_promotion(child_srt);
+
+    dtype = dtype_copy(child_srt->dtype);
+    srt = new_dtyped_srt(SRT_NOT_EXPR, dtype, 1, child_srt);
     return new_resolverret(srt);
 }
 
