@@ -3,6 +3,7 @@
 #include "./bitinst.h"
 #include "./ctrlinst.h"
 #include "./datainst.h"
+#include "./logicinst.h"
 #include "./shrotinst.h"
 
 #include <stdio.h>
@@ -35,6 +36,10 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
             return gen_div_x64code(x64gen);
         case IMMC_INST_MOD:
             return gen_mod_x64code(x64gen);
+        case IMMC_INST_NEG:
+            return gen_neg_x64code(x64gen);
+        case IMMC_INST_NOT:
+            return gen_not_x64code(x64gen);
         case IMMC_INST_SAL:
             return gen_sal_x64code(x64gen);
         case IMMC_INST_SAR:

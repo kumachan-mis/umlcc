@@ -17,9 +17,9 @@ LinkedList* new_linkedlist(int value) {
 }
 
 int linkedlist_at(LinkedList* list, int n) {
-    int ret = 0 - 1;
-    ret == 0 - 1 && list != (LinkedList*)0 && n == 0 && (ret = list->value);
-    ret == 0 - 1 && list != (LinkedList*)0 && (ret = linkedlist_at(list->next, n - 1));
+    int ret = -1;
+    ret == -1 && list != (LinkedList*)0 && n == 0 && (ret = list->value);
+    ret == -1 && list != (LinkedList*)0 && (ret = linkedlist_at(list->next, n - 1));
     return ret;
 }
 

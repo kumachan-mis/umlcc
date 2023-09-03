@@ -10,9 +10,9 @@
 #include <string.h>
 
 char* x64_inst_formats[] = {"mov%c",  "movs%c%c", "movz%c%c", "movabs%c", "lea%c",  "c%ct%c", "c%ctd",  "cqto",
-                            "push%c", "pop%c",    "add%c",    "sub%c",    "imul%c", "div%c",  "idiv%c", "sal%c",
-                            "sar%c",  "cmp%c",    "sete",     "setne",    "setl",   "setg",   "setle",  "setge",
-                            "jmp",    "je",       "jne",      "call",     "ret"};
+                            "push%c", "pop%c",    "add%c",    "sub%c",    "imul%c", "div%c",  "idiv%c", "neg%c",
+                            "not%c",  "sal%c",    "sar%c",    "cmp%c",    "sete",   "setne",  "setl",   "setg",
+                            "setle",  "setge",    "jmp",      "je",       "jne",    "call",   "ret"};
 
 X64Inst* new_x64inst(X64InstType type, X64Ope* src, X64Ope* dst) {
     X64Inst* x64inst = malloc(sizeof(X64Inst));
@@ -99,6 +99,8 @@ char* x64instcode_tostring(X64Inst* x64inst) {
         case X64_INST_IMULX:
         case X64_INST_DIVX:
         case X64_INST_IDIVX:
+        case X64_INST_NEGX:
+        case X64_INST_NOTX:
         case X64_INST_SALX:
         case X64_INST_SARX:
         case X64_INST_CMPX: {
