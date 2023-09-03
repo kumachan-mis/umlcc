@@ -79,7 +79,7 @@ X64Ope* new_base_x64ope(X64OpeType type) {
     x64ope->type = type;
     x64ope->suffix = X64_SUFFIX_NONE;
     x64ope->reg_id = -1;
-    x64ope->mem_offset = -1;
+    x64ope->mem_offset = 0;
     x64ope->label_name = NULL;
     x64ope->iliteral = NULL;
     return x64ope;

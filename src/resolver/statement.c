@@ -90,12 +90,12 @@ ResolverReturn* resolve_return_stmt(Resolver* resolver) {
     int num_children = vector_size(ast->children);
     if (resolver->return_dtype->type == DTYPE_VOID && num_children > 0) {
         errs = new_vector(&t_error);
-        err = new_error("function returning void returns a value\n");
+        err = new_error("function returning void returns a value");
         vector_push(errs, err);
         return new_resolverret_errors(errs);
     } else if (resolver->return_dtype->type != DTYPE_VOID && num_children == 0) {
         errs = new_vector(&t_error);
-        err = new_error("function returning non-void returns no value\n");
+        err = new_error("function returning non-void returns no value");
         vector_push(errs, err);
         return new_resolverret_errors(errs);
     }
@@ -117,7 +117,7 @@ ResolverReturn* resolve_return_stmt(Resolver* resolver) {
 
     if (!dtype_isassignable(srt->dtype, resolver->return_dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("expression is not assignable to function return\n");
+        err = new_error("expression is not assignable to function return");
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);

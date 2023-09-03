@@ -104,7 +104,7 @@ ResolverReturn* resolve_assignment_expr(Resolver* resolver) {
 
     if (!srt_ismodifiable(lhs_srt)) {
         errs = new_vector(&t_error);
-        err = new_error("left operand of assignment should be modifiable lvalue\n");
+        err = new_error("left operand of assignment should be modifiable lvalue");
         vector_push(errs, err);
         delete_srt(lhs_srt);
         delete_srt(rhs_srt);
@@ -113,7 +113,7 @@ ResolverReturn* resolve_assignment_expr(Resolver* resolver) {
 
     if (!dtype_isassignable(lhs_srt->dtype, rhs_srt->dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("expression is not assignable to lvalue\n");
+        err = new_error("expression is not assignable to lvalue");
         vector_push(errs, err);
         delete_srt(lhs_srt);
         delete_srt(rhs_srt);
@@ -165,14 +165,14 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver) {
         case AST_LOR_EXPR:
             if (!dtype_isscalar(lhs_srt->dtype)) {
                 errs = new_vector(&t_error);
-                err = new_error("each of operands of || should have scalar type\n");
+                err = new_error("each of operands of || should have scalar type");
                 vector_push(errs, err);
             }
             if (!dtype_isscalar(rhs_srt->dtype)) {
                 if (errs == NULL) {
                     errs = new_vector(&t_error);
                 }
-                err = new_error("each of operands of || should have scalar type\n");
+                err = new_error("each of operands of || should have scalar type");
                 vector_push(errs, err);
             }
             if (errs == NULL) {
@@ -183,14 +183,14 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver) {
         case AST_LAND_EXPR:
             if (!dtype_isscalar(lhs_srt->dtype)) {
                 errs = new_vector(&t_error);
-                err = new_error("each of operands of && should have scalar type\n");
+                err = new_error("each of operands of && should have scalar type");
                 vector_push(errs, err);
             }
             if (!dtype_isscalar(rhs_srt->dtype)) {
                 if (errs == NULL) {
                     errs = new_vector(&t_error);
                 }
-                err = new_error("each of operands of && should have scalar type\n");
+                err = new_error("each of operands of && should have scalar type");
                 vector_push(errs, err);
             }
             if (errs == NULL) {
@@ -257,7 +257,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
         case AST_EQUAL_EXPR:
             if (errs != NULL) {
                 if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
-                    err = new_error("operands of pointer == pointer are not compatible\n");
+                    err = new_error("operands of pointer == pointer are not compatible");
                 } else {
                     err = new_error("binary == expression should be "
                                     "either arithmetic == arithmetic or pointer == pointer\n");
@@ -271,7 +271,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
         case AST_NEQUAL_EXPR:
             if (errs != NULL) {
                 if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
-                    err = new_error("operands of pointer != pointer are not compatible\n");
+                    err = new_error("operands of pointer != pointer are not compatible");
                 } else {
                     err = new_error("binary != expression should be "
                                     "either arithmetic != arithmetic or pointer != pointer\n");
@@ -341,7 +341,7 @@ ResolverReturn* resolve_relational_expr(Resolver* resolver) {
         case AST_LESS_EXPR:
             if (errs != NULL) {
                 if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
-                    err = new_error("operands of pointer < pointer are not compatible\n");
+                    err = new_error("operands of pointer < pointer are not compatible");
                 } else {
                     err = new_error("binary < expression should be "
                                     "either arithmetic < arithmetic or pointer < pointer\n");
@@ -355,7 +355,7 @@ ResolverReturn* resolve_relational_expr(Resolver* resolver) {
         case AST_GREATER_EXPR:
             if (errs != NULL) {
                 if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
-                    err = new_error("operands of pointer > pointer are not compatible\n");
+                    err = new_error("operands of pointer > pointer are not compatible");
                 } else {
                     err = new_error("binary > expression should be "
                                     "either arithmetic > arithmetic or pointer > pointer\n");
@@ -369,7 +369,7 @@ ResolverReturn* resolve_relational_expr(Resolver* resolver) {
         case AST_LESSEQ_EXPR:
             if (errs != NULL) {
                 if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
-                    err = new_error("operands of pointer <= pointer are not compatible\n");
+                    err = new_error("operands of pointer <= pointer are not compatible");
                 } else {
                     err = new_error("binary <= expression should be "
                                     "either arithmetic <= arithmetic or pointer <= pointer\n");
@@ -383,7 +383,7 @@ ResolverReturn* resolve_relational_expr(Resolver* resolver) {
         case AST_GREATEREQ_EXPR:
             if (errs != NULL) {
                 if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
-                    err = new_error("operands of pointer >= pointer are not compatible\n");
+                    err = new_error("operands of pointer >= pointer are not compatible");
                 } else {
                     err = new_error("binary >= expression should be "
                                     "either arithmetic >= arithmetic or pointer >= pointer\n");
@@ -541,7 +541,7 @@ ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
 
     errs = new_vector(&t_error);
     if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER) {
-        err = new_error("operands of pointer - pointer are not compatible\n");
+        err = new_error("operands of pointer - pointer are not compatible");
     } else {
         err = new_error("binary - expression should be either arithmetic - arithmetic, "
                         "pointer - integer, or pointer - pointer\n");
@@ -590,7 +590,7 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
         case AST_MUL_EXPR:
             if (!dtype_isarithmetic(lhs_srt->dtype) || !dtype_isarithmetic(rhs_srt->dtype)) {
                 errs = new_vector(&t_error);
-                err = new_error("binary * expression should be arithmetic * arithmetic\n");
+                err = new_error("binary * expression should be arithmetic * arithmetic");
                 vector_push(errs, err);
                 break;
             }
@@ -600,7 +600,7 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
         case AST_DIV_EXPR:
             if (!dtype_isarithmetic(lhs_srt->dtype) || !dtype_isarithmetic(rhs_srt->dtype)) {
                 errs = new_vector(&t_error);
-                err = new_error("binary / expression should be arithmetic / arithmetic\n");
+                err = new_error("binary / expression should be arithmetic / arithmetic");
                 vector_push(errs, err);
                 break;
             }
@@ -610,7 +610,7 @@ ResolverReturn* resolve_multiplicative_expr(Resolver* resolver) {
         case AST_MOD_EXPR:
             if (!dtype_isinteger(lhs_srt->dtype) || !dtype_isinteger(rhs_srt->dtype)) {
                 errs = new_vector(&t_error);
-                err = new_error("binary %% expression should be integer %% integer\n");
+                err = new_error("binary %% expression should be integer %% integer");
                 vector_push(errs, err);
                 break;
             }
@@ -656,7 +656,7 @@ ResolverReturn* resolve_cast_expr(Resolver* resolver) {
 
     if (dtype->type != DTYPE_VOID && (!dtype_isscalar(dtype) || !dtype_isscalar(child_srt->dtype))) {
         errs = new_vector(&t_error);
-        err = new_error("cast should be from an any type to void or from a scalar type to scalar type\n");
+        err = new_error("cast should be from an any type to void or from a scalar type to scalar type");
         vector_push(errs, err);
         delete_dtype(dtype);
         delete_srt(child_srt);
@@ -763,7 +763,7 @@ ResolverReturn* resolve_indirection_expr(Resolver* resolver) {
 
     if (child_srt->dtype->type != DTYPE_POINTER) {
         errs = new_vector(&t_error);
-        err = new_error("operand of unary * does not have pointer type\n");
+        err = new_error("operand of unary * does not have pointer type");
         vector_push(errs, err);
         delete_srt(child_srt);
         return new_resolverret_errors(errs);
@@ -791,7 +791,7 @@ ResolverReturn* resolve_sign_expr(Resolver* resolver, SrtType srt_type, char op)
 
     if (!dtype_isarithmetic(child_srt->dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("operand of unary %c does not have arithmetic type\n", op);
+        err = new_error("operand of unary %c does not have arithmetic type", op);
         vector_push(errs, err);
         delete_srt(child_srt);
         return new_resolverret_errors(errs);
@@ -821,7 +821,7 @@ ResolverReturn* resolve_bitwise_not_expr(Resolver* resolver) {
 
     if (!dtype_isinteger(child_srt->dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("operand of unary ~ does not have integer type\n");
+        err = new_error("operand of unary ~ does not have integer type");
         vector_push(errs, err);
         delete_srt(child_srt);
         return new_resolverret_errors(errs);
@@ -854,7 +854,7 @@ ResolverReturn* resolve_logical_not_expr(Resolver* resolver) {
 
     if (!dtype_isscalar(child_srt->dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("operand of unary ! does not have scalar type\n");
+        err = new_error("operand of unary ! does not have scalar type");
         vector_push(errs, err);
         delete_srt(child_srt);
         return new_resolverret_errors(errs);
@@ -891,7 +891,7 @@ ResolverReturn* resolve_sizeof_expr(Resolver* resolver) {
 
     if (child_dtype->type == DTYPE_FUNCTION || dtype_isincomplete(child_dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("operand of sizeof has neither function type nor an incomplete type\n");
+        err = new_error("operand of sizeof has neither function type nor an incomplete type");
         vector_push(errs, err);
         delete_dtype(child_dtype);
         return new_resolverret_errors(errs);
@@ -971,7 +971,7 @@ ResolverReturn* resolve_subscription_expr(Resolver* resolver) {
     if ((lhs_srt->dtype->type != DTYPE_POINTER || !dtype_isinteger(rhs_srt->dtype)) &&
         (!dtype_isinteger(lhs_srt->dtype) || rhs_srt->dtype->type != DTYPE_POINTER)) {
         errs = new_vector(&t_error);
-        err = new_error("subscription should be pointer[integer] or integer[pointer]\n");
+        err = new_error("subscription should be pointer[integer] or integer[pointer]");
         vector_push(errs, err);
         delete_srt(lhs_srt);
         delete_srt(rhs_srt);
@@ -986,7 +986,7 @@ ResolverReturn* resolve_subscription_expr(Resolver* resolver) {
 
     if (!dtype_isobject(lhs_srt->dtype->dpointer->to_dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("subscribed object should have pointer to object type\n");
+        err = new_error("subscribed object should have pointer to object type");
         vector_push(errs, err);
         delete_srt(lhs_srt);
         delete_srt(rhs_srt);
@@ -1020,7 +1020,7 @@ ResolverReturn* resolve_call_expr(Resolver* resolver) {
 
     if (lhs_srt->dtype->type != DTYPE_POINTER || lhs_srt->dtype->dpointer->to_dtype->type != DTYPE_FUNCTION) {
         errs = new_vector(&t_error);
-        err = new_error("called object is not a function or a function pointer\n");
+        err = new_error("called object is not a function or a function pointer");
         vector_push(errs, err);
         delete_srt(lhs_srt);
         return new_resolverret_errors(errs);
@@ -1064,7 +1064,7 @@ ResolverReturn* resolve_member_like_expr(Resolver* resolver) {
 
     if (ast->type == AST_MEMBER_EXPR && lhs_srt->dtype->type != DTYPE_STRUCT) {
         errs = new_vector(&t_error);
-        err = new_error("dot-accessed object is not a struct\n");
+        err = new_error("dot-accessed object is not a struct");
         vector_push(errs, err);
         delete_srt(lhs_srt);
         return new_resolverret_errors(errs);
@@ -1073,7 +1073,7 @@ ResolverReturn* resolve_member_like_expr(Resolver* resolver) {
     if (ast->type == AST_TOMEMBER_EXPR &&
         (lhs_srt->dtype->type != DTYPE_POINTER || lhs_srt->dtype->dpointer->to_dtype->type != DTYPE_STRUCT)) {
         errs = new_vector(&t_error);
-        err = new_error("arrow-accessed object is not a pointer to a struct\n");
+        err = new_error("arrow-accessed object is not a pointer to a struct");
         vector_push(errs, err);
         delete_srt(lhs_srt);
         return new_resolverret_errors(errs);
@@ -1092,7 +1092,7 @@ ResolverReturn* resolve_member_like_expr(Resolver* resolver) {
 
     if (resolver->expr_dtype == NULL) {
         errs = new_vector(&t_error);
-        err = new_error("struct '%s' is incomplete\n", lhs_srt->dtype->dpointer->to_dtype->dstruct->name);
+        err = new_error("struct '%s' is incomplete", lhs_srt->dtype->dpointer->to_dtype->dstruct->name);
         vector_push(errs, err);
         delete_srt(lhs_srt);
         return new_resolverret_errors(errs);
@@ -1126,7 +1126,7 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
 
     if (num_params != num_args) {
         errs = new_vector(&t_error);
-        err = new_error("function takes %d params, but passed %d arguments\n", num_params, num_args);
+        err = new_error("function takes %d params, but passed %d arguments", num_params, num_args);
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);
@@ -1156,7 +1156,7 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
             if (errs == NULL) {
                 errs = new_vector(&t_error);
             }
-            err = new_error("argument is not assignable to parameter\n");
+            err = new_error("argument is not assignable to parameter");
             vector_push(errs, err);
         }
         if (errs != NULL) {
@@ -1199,7 +1199,7 @@ ResolverReturn* resolve_member_name_expr(Resolver* resolver) {
 
     if (srt == NULL) {
         errs = new_vector(&t_error);
-        err = new_error("member '%s' does not exist in struct\n", ast->ident_name);
+        err = new_error("member '%s' does not exist in struct", ast->ident_name);
         vector_push(errs, err);
         return new_resolverret_errors(errs);
     }
@@ -1251,7 +1251,7 @@ ResolverReturn* resolve_identifier_expr(Resolver* resolver) {
     Symbol* symbol = symboltable_search(resolver->symbol_table, ast->ident_name);
     if (symbol == NULL) {
         errs = new_vector(&t_error);
-        err = new_error("identifier '%s' is used before declared\n", ast->ident_name);
+        err = new_error("identifier '%s' is used before declared", ast->ident_name);
         vector_push(errs, err);
         return new_resolverret_errors(errs);
     }

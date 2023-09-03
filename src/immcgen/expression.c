@@ -309,18 +309,6 @@ Vector* gen_unary_expr_immcode(Immcgen* immcgen) {
     return codes;
 }
 
-Vector* gen_indirection_expr_immcode(Immcgen* immcgen) {
-    Vector* codes = new_vector(&t_immc);
-
-    ImmcOpe* src = gen_child_ptr_immcope(immcgen, codes, 0);
-    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
-
-    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
-
-    update_non_void_expr_register(immcgen, dst);
-    return codes;
-}
-
 Vector* gen_address_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = immcgen->srt;
@@ -390,6 +378,18 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             exit(1);
     }
 
+    return codes;
+}
+
+Vector* gen_indirection_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    ImmcOpe* src = gen_child_ptr_immcope(immcgen, codes, 0);
+    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
+
+    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
+
+    update_non_void_expr_register(immcgen, dst);
     return codes;
 }
 

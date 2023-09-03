@@ -101,7 +101,7 @@ ResolverDTypeReturn* resolve_type_specifier_list(Resolver* resolver) {
     if (num_type_specifiers < 1 || num_type_specifiers > 4) {
         // The longest type specifiers are "signed long long int" and "unsigned long long int"
         errs = new_vector(&t_error);
-        err = new_error("combination of type specifiers is invalid\n");
+        err = new_error("combination of type specifiers is invalid");
         vector_push(errs, err);
         return new_resolverret_dtype_errors(errs);
     }
@@ -179,7 +179,7 @@ ResolverDTypeReturn* resolve_type_specifier_list(Resolver* resolver) {
         resolver->ast = ast;
     } else {
         errs = new_vector(&t_error);
-        err = new_error("combination of type specifiers is invalid\n");
+        err = new_error("combination of type specifiers is invalid");
         vector_push(errs, err);
     }
 
@@ -236,7 +236,7 @@ ResolverDTypeReturn* resolve_struct_specifier(Resolver* resolver) {
 
     if (!tagtable_can_define(resolver->tag_table, struct_name)) {
         errs = new_vector(&t_error);
-        err = new_error("tag '%s' is already declared\n", struct_name);
+        err = new_error("tag '%s' is already declared", struct_name);
         vector_push(errs, err);
         free(struct_name);
         delete_vector(members);
@@ -302,7 +302,7 @@ ResolverReturnDStructMembers* resolve_struct_decl_list(Resolver* resolver) {
         if (errs == NULL) {
             errs = new_vector(&t_error);
         }
-        err = new_error("struct member '%s' is already declared\n", member->name);
+        err = new_error("struct member '%s' is already declared", member->name);
         vector_push(errs, err);
     }
     delete_set(member_names_set);
@@ -394,7 +394,7 @@ ResolverReturnDStructMember* resolve_struct_declarator(Resolver* resolver) {
 
     if (dtype_isincomplete(srt->dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("struct member '%s' has incomplete type\n", srt->ident_name);
+        err = new_error("struct member '%s' has incomplete type", srt->ident_name);
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_dstructmember_errors(errs);
@@ -402,7 +402,7 @@ ResolverReturnDStructMember* resolve_struct_declarator(Resolver* resolver) {
 
     if (srt->dtype->type == DTYPE_FUNCTION) {
         errs = new_vector(&t_error);
-        err = new_error("struct member '%s' has function type\n", srt->ident_name);
+        err = new_error("struct member '%s' has function type", srt->ident_name);
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_dstructmember_errors(errs);
@@ -455,7 +455,7 @@ ResolverDTypeReturn* resolve_enum_specifier(Resolver* resolver) {
 
     if (!tagtable_can_define(resolver->tag_table, enum_name)) {
         errs = new_vector(&t_error);
-        err = new_error("tag '%s' is already declared\n", enum_name);
+        err = new_error("tag '%s' is already declared", enum_name);
         vector_push(errs, err);
         free(enum_name);
         delete_vector(members);
@@ -516,7 +516,7 @@ ResolverReturnDEnumMember* resolve_enumerator(Resolver* resolver) {
     Ast* child_ast = vector_at(ast->children, 0);
     if (!symboltable_can_define(resolver->symbol_table, child_ast->ident_name)) {
         errs = new_vector(&t_error);
-        err = new_error("identifier '%s' is already declared\n", child_ast->ident_name);
+        err = new_error("identifier '%s' is already declared", child_ast->ident_name);
         vector_push(errs, err);
         return new_resolverret_denummember_errors(errs);
     }
@@ -545,7 +545,7 @@ ResolverReturnDEnumMember* resolve_enumerator(Resolver* resolver) {
 
     if (enum_const_srt->type != SRT_INT_EXPR || iliteral_isunsigned(enum_const_srt->iliteral)) {
         errs = new_vector(&t_error);
-        err = new_error("only integer constant is supported as enumeration constant\n");
+        err = new_error("only integer constant is supported as enumeration constant");
         vector_push(errs, err);
         delete_srt(enum_const_srt);
         return new_resolverret_denummember_errors(errs);
@@ -663,7 +663,7 @@ ResolverReturn* resolve_init_declarator(Resolver* resolver) {
 
     if (!symboltable_can_define(resolver->symbol_table, child_srt->ident_name)) {
         errs = new_vector(&t_error);
-        err = new_error("identifier '%s' is already declared\n", child_srt->ident_name);
+        err = new_error("identifier '%s' is already declared", child_srt->ident_name);
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);
@@ -671,7 +671,7 @@ ResolverReturn* resolve_init_declarator(Resolver* resolver) {
 
     if (dtype_isincomplete(child_srt->dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("identifier '%s' has an incomplete type\n", child_srt->ident_name);
+        err = new_error("identifier '%s' has an incomplete type", child_srt->ident_name);
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);
@@ -735,7 +735,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
             case AST_ARRAY_DECLOR: {
                 if (socket_dtype != NULL && socket_dtype->type == DTYPE_FUNCTION) {
                     errs = new_vector(&t_error);
-                    err = new_error("function returning an array is invalid\n");
+                    err = new_error("function returning an array is invalid");
                     vector_push(errs, err);
                     break;
                 }
@@ -752,7 +752,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
 
                 if (array_size_srt->type != SRT_INT_EXPR || iliteral_isunsigned(array_size_srt->iliteral)) {
                     errs = new_vector(&t_error);
-                    err = new_error("only integer constant is supported as array size\n");
+                    err = new_error("only integer constant is supported as array size");
                     vector_push(errs, err);
                     delete_srt(array_size_srt);
                     break;
@@ -760,7 +760,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
 
                 if (array_size_srt->iliteral->signed_value <= 0) {
                     errs = new_vector(&t_error);
-                    err = new_error("array size should be a positive integer\n");
+                    err = new_error("array size should be a positive integer");
                     vector_push(errs, err);
                     delete_srt(array_size_srt);
                     break;
@@ -779,14 +779,14 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
             case AST_FUNC_DECLOR: {
                 if (socket_dtype != NULL && socket_dtype->type == DTYPE_ARRAY) {
                     errs = new_vector(&t_error);
-                    err = new_error("array of functions is invalid\n");
+                    err = new_error("array of functions is invalid");
                     vector_push(errs, err);
                     break;
                 }
 
                 if (socket_dtype != NULL && socket_dtype->type == DTYPE_FUNCTION) {
                     errs = new_vector(&t_error);
-                    err = new_error("function returning a function is invalid\n");
+                    err = new_error("function returning a function is invalid");
                     vector_push(errs, err);
                     break;
                 }
@@ -816,7 +816,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
 
                 if (socket_dtype != NULL && socket_dtype->type == DTYPE_ARRAY && dtype_isincomplete(plug_dtype)) {
                     errs = new_vector(&t_error);
-                    err = new_error("array of incomplete type is invalid\n");
+                    err = new_error("array of incomplete type is invalid");
                     vector_push(errs, err);
                     break;
                 }
@@ -824,7 +824,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                 if (socket_dtype != NULL && socket_dtype->type == DTYPE_FUNCTION && dtype_isincomplete(plug_dtype) &&
                     resolver->specifier_dtype->type != DTYPE_VOID) {
                     errs = new_vector(&t_error);
-                    err = new_error("function returning incomplete type other than void is invalid\n");
+                    err = new_error("function returning incomplete type other than void is invalid");
                     vector_push(errs, err);
                     break;
                 }
@@ -891,7 +891,7 @@ ResolverReturnDParams* resolve_parameter_list(Resolver* resolver) {
             if (errs == NULL) {
                 errs = new_vector(&t_error);
             }
-            err = new_error("function parameter '%s' is already declared\n", dparam->name);
+            err = new_error("function parameter '%s' is already declared", dparam->name);
             vector_push(errs, err);
         }
         if (errs != NULL) {
@@ -931,7 +931,7 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
 
     if (resolver->specifier_dtype->type == DTYPE_TYPEDEF) {
         errs = new_vector(&t_error);
-        err = new_error("storage specifiers are invalid for a function parameter\n");
+        err = new_error("storage specifiers are invalid for a function parameter");
         vector_push(errs, err);
         delete_dtype(resolver->specifier_dtype);
         resolver->specifier_dtype = original_specifier_dtype;
@@ -964,9 +964,9 @@ ResolverReturnDParam* resolve_parameter_decl(Resolver* resolver) {
     if (dtype_isincomplete(declarator_srt->dtype)) {
         errs = new_vector(&t_error);
         if (declarator_srt->ident_name == NULL) {
-            err = new_error("unnamed function parameter has an incomplete type\n");
+            err = new_error("unnamed function parameter has an incomplete type");
         } else {
-            err = new_error("function parameter '%s' has an incomplete type\n", declarator_srt->ident_name);
+            err = new_error("function parameter '%s' has an incomplete type", declarator_srt->ident_name);
         }
         vector_push(errs, err);
         delete_srt(declarator_srt);
@@ -1040,11 +1040,11 @@ ResolverReturn* resolve_initializer(Resolver* resolver) {
         resolverret_assign(&srt, &errs, resolve_aggregate_initializer(resolver));
     } else if (dtype->type == DTYPE_FUNCTION) {
         errs = new_vector(&t_error);
-        err = new_error("function cannot be initialized\n");
+        err = new_error("function cannot be initialized");
         vector_push(errs, err);
     } else if (dtype->type == DTYPE_TYPEDEF) {
         errs = new_vector(&t_error);
-        err = new_error("typedef-name cannot be initialized\n");
+        err = new_error("typedef-name cannot be initialized");
         vector_push(errs, err);
     } else {
         fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
@@ -1108,7 +1108,7 @@ ResolverReturn* resolve_scalar_initializer(Resolver* resolver) {
         int init_list_len = vector_size(ast->children);
         if (init_list_len > 1) {
             errs = new_vector(&t_error);
-            err = new_error("initializer list is too long\n");
+            err = new_error("initializer list is too long");
             vector_push(errs, err);
             return new_resolverret_errors(errs);
         }
@@ -1118,7 +1118,7 @@ ResolverReturn* resolve_scalar_initializer(Resolver* resolver) {
     if (!ast_isexpr(resolver->ast)) {
         resolver->ast = ast;
         errs = new_vector(&t_error);
-        err = new_error("expression or that enclosed with braces is required\n");
+        err = new_error("expression or that enclosed with braces is required");
         vector_push(errs, err);
         return new_resolverret_errors(errs);
     }
@@ -1134,7 +1134,7 @@ ResolverReturn* resolve_scalar_initializer(Resolver* resolver) {
 
     if (!dtype_isassignable(dtype, srt->dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("expression is not assignable to declared object\n");
+        err = new_error("expression is not assignable to declared object");
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);
@@ -1159,7 +1159,7 @@ ResolverReturn* resolve_aggregate_initializer(Resolver* resolver) {
 
     if (ast->type != AST_INIT_LIST) {
         errs = new_vector(&t_error);
-        err = new_error("initializer list is required\n");
+        err = new_error("initializer list is required");
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);
@@ -1227,7 +1227,7 @@ ResolverReturn* resolve_aggregate_initializer(Resolver* resolver) {
             delete_vector(errs);
         }
         errs = new_vector(&t_error);
-        err = new_error("initializer list is too long\n");
+        err = new_error("initializer list is too long");
         vector_push(errs, err);
     }
 
@@ -1257,7 +1257,7 @@ ResolverReturn* resolve_string_initializer(Resolver* resolver) {
 
     if (literal_ast->sliteral->size - 1 > dtype->darray->size) {
         errs = new_vector(&t_error);
-        err = new_error("initializer string literal is too long\n");
+        err = new_error("initializer string literal is too long");
         vector_push(errs, err);
         return new_resolverret_errors(errs);
     }

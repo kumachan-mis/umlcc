@@ -28,7 +28,7 @@ void test_parse_translation_unit_error_empty(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("one of declaration specifiers expected, but got EOF\n");
+    Error* expected = new_error("one of declaration specifiers expected, but got EOF");
 
     run_parser_error_test(input, expected);
 
@@ -43,7 +43,7 @@ void test_parse_external_decl_error(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token int\n");
+    Error* expected = new_error("unexpected token int");
 
     run_parser_error_test(input, expected);
 
@@ -61,7 +61,7 @@ void test_parse_function_definition_error_decl_specifier(void) {
 
     Vector* func_def_inpput = vector_copy(input);
 
-    Error* expected = new_error("one of declaration specifiers expected, but got identifier\n");
+    Error* expected = new_error("one of declaration specifiers expected, but got identifier");
 
     run_parser_error_test(input, expected);
     run_function_definition_parser_error_test(func_def_inpput, expected);
@@ -82,7 +82,7 @@ void test_parse_function_definition_error_empty_param_specifier(void) {
 
     Vector* func_def_inpput = vector_copy(input);
 
-    Error* expected = new_error("one of declaration specifiers expected, but got identifier\n");
+    Error* expected = new_error("one of declaration specifiers expected, but got identifier");
 
     run_parser_error_test(input, expected);
     run_function_definition_parser_error_test(func_def_inpput, expected);
@@ -101,7 +101,7 @@ void test_parse_function_definition_error_param_list(void) {
 
     Vector* func_def_inpput = vector_copy(input);
 
-    Error* expected = new_error("token ) expected, but got EOF\n");
+    Error* expected = new_error("token ) expected, but got EOF");
 
     run_parser_error_test(input, expected);
     run_function_definition_parser_error_test(func_def_inpput, expected);
@@ -128,7 +128,7 @@ void test_parse_function_definition_error_body(void) {
 
     Vector* func_def_inpput = vector_copy(input);
 
-    Error* expected = new_error("unexpected token EOF\n");
+    Error* expected = new_error("unexpected token EOF");
 
     run_parser_error_test(input, expected);
     run_function_definition_parser_error_test(func_def_inpput, expected);

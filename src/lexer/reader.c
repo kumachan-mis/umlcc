@@ -110,10 +110,10 @@ LexerReturnItem* read_character_constant(Lexer* lexer) {
             errint_assign(&c, &err, read_escape_seqence(lexer));
             break;
         case '\n':
-            err = new_error("newline appeared in character constant\n");
+            err = new_error("newline appeared in character constant");
             break;
         case '\'':
-            err = new_error("character constant is empty\n");
+            err = new_error("character constant is empty");
             break;
         default:
             break;
@@ -130,7 +130,7 @@ LexerReturnItem* read_character_constant(Lexer* lexer) {
                 errint_assign(&rest, &err, read_escape_seqence(lexer));
                 break;
             case '\n':
-                err = new_error("newline appeared in character constant\n");
+                err = new_error("newline appeared in character constant");
                 break;
             default:
                 break;
@@ -166,7 +166,7 @@ LexerReturnItem* read_string_literal(Lexer* lexer) {
                 errint_assign(&c, &err, read_escape_seqence(lexer));
                 break;
             case '\n':
-                err = new_error("newline appeared in string literal\n");
+                err = new_error("newline appeared in string literal");
                 break;
             default:
                 break;
@@ -237,7 +237,7 @@ LexerReturnItem* read_punctuator(Lexer* lexer) {
     free(ctoken_str);
 
     if (ctoken_type_ref == NULL) {
-        err = new_error("unexpected character '%c'\n", c);
+        err = new_error("unexpected character '%c'", c);
         return new_lexerret_item_error(err);
     }
 
@@ -253,7 +253,7 @@ ErrorableString* read_integer_constant_digits(Lexer* lexer, Map* digit_map) {
     int* digit_ref = map_get(digit_map, &c);
     if (digit_ref == NULL) {
         free(ctoken_str);
-        Error* err = new_error("integer constant digits are empty\n");
+        Error* err = new_error("integer constant digits are empty");
         return new_errstr_error(err);
     }
 
@@ -412,7 +412,7 @@ ErrorableInt* read_simple_escape_seqence(Lexer* lexer) {
         case 'v':
             return new_errint('\v');
         default:
-            err = new_error("invalid escape sequence \\%c\n", c);
+            err = new_error("invalid escape sequence \\%c", c);
             return new_errint_error(err);
     }
 }

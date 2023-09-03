@@ -63,7 +63,7 @@ void test_new_suffix_x64ope(void) {
         CU_ASSERT_EQUAL(ope->type, X64_OPERAND_SUFFIX);
         CU_ASSERT_EQUAL(ope->suffix, X64_SUFFIX_QUAD);
         CU_ASSERT_EQUAL(ope->reg_id, -1);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_PTR_NULL(ope->iliteral);
     }
@@ -83,7 +83,7 @@ void test_new_reg_x64ope(void) {
         CU_ASSERT_EQUAL(ope->type, X64_OPERAND_REG);
         CU_ASSERT_EQUAL(ope->suffix, X64_SUFFIX_WORD);
         CU_ASSERT_EQUAL(ope->reg_id, AX_REG_ID);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_PTR_NULL(ope->iliteral);
     }
@@ -103,7 +103,7 @@ void test_new_ptr_x64ope(void) {
         CU_ASSERT_EQUAL(ope->type, X64_OPERAND_PTR);
         CU_ASSERT_EQUAL(ope->suffix, X64_SUFFIX_QUAD);
         CU_ASSERT_EQUAL(ope->reg_id, SP_REG_ID);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_PTR_NULL(ope->iliteral);
     }
@@ -123,7 +123,7 @@ void test_new_jptr_x64ope(void) {
         CU_ASSERT_EQUAL(ope->type, X64_OPERAND_JPTR);
         CU_ASSERT_EQUAL(ope->suffix, X64_SUFFIX_QUAD);
         CU_ASSERT_EQUAL(ope->reg_id, DX_REG_ID);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_PTR_NULL(ope->iliteral);
     }
@@ -163,7 +163,7 @@ void test_new_label_x64ope(void) {
         CU_ASSERT_EQUAL(ope->type, X64_OPERAND_LABEL);
         CU_ASSERT_EQUAL(ope->suffix, X64_SUFFIX_NONE);
         CU_ASSERT_EQUAL(ope->reg_id, -1);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_STRING_EQUAL(ope->label_name, "global_variable");
         CU_ASSERT_PTR_NULL(ope->iliteral);
     }
@@ -183,7 +183,7 @@ void test_new_jlabel_x64ope(void) {
         CU_ASSERT_EQUAL(ope->type, X64_OPERAND_JLABEL);
         CU_ASSERT_EQUAL(ope->suffix, X64_SUFFIX_NONE);
         CU_ASSERT_EQUAL(ope->reg_id, -1);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_STRING_EQUAL(ope->label_name, "function");
         CU_ASSERT_PTR_NULL(ope->iliteral);
     }
@@ -203,7 +203,7 @@ void test_new_int_x64ope(void) {
         CU_ASSERT_EQUAL(ope->type, X64_OPERAND_INT);
         CU_ASSERT_EQUAL(ope->suffix, X64_SUFFIX_WORD);
         CU_ASSERT_EQUAL(ope->reg_id, -1);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_INT);
         CU_ASSERT_FALSE(iliteral_isunsigned(ope->iliteral));
@@ -226,7 +226,7 @@ void test_new_signed_int_x64ope(void) {
         CU_ASSERT_EQUAL(ope->type, X64_OPERAND_INT);
         CU_ASSERT_EQUAL(ope->suffix, X64_SUFFIX_BYTE);
         CU_ASSERT_EQUAL(ope->reg_id, -1);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_INT);
         CU_ASSERT_FALSE(iliteral_isunsigned(ope->iliteral));
@@ -249,7 +249,7 @@ void test_new_unsigned_int_x64ope(void) {
         CU_ASSERT_EQUAL(ope->type, X64_OPERAND_INT);
         CU_ASSERT_EQUAL(ope->suffix, X64_SUFFIX_LONG);
         CU_ASSERT_EQUAL(ope->reg_id, -1);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_UNSIGNED_INT);
         CU_ASSERT_TRUE(iliteral_isunsigned(ope->iliteral));

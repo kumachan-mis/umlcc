@@ -14,7 +14,7 @@ CU_Suite* add_test_suite_error(void) {
 }
 
 void test_new_error(void) {
-    Error* err = new_error("L%d:%d: %s raised an error\n", 10, 4, "test_function");
+    Error* err = new_error("L%d:%d: %s raised an error", 10, 4, "test_function");
 
     CU_ASSERT_STRING_EQUAL(err->message, "L10:4: test_function raised an error\n");
 
@@ -22,7 +22,7 @@ void test_new_error(void) {
 }
 
 void test_error_copy(void) {
-    Error* err = new_error("error is copied\n");
+    Error* err = new_error("error is copied");
     Error* copied_err = erorr_copy(err);
     delete_error(err);
 

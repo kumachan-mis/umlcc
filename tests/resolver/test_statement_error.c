@@ -48,8 +48,8 @@ void test_resolve_compound_stmt_error_child(void) {
                                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)))));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("identifier 'y' is used before declared\n"));
-    vector_push(expected, new_error("operand of unary * does not have pointer type\n"));
+    vector_push(expected, new_error("identifier 'y' is used before declared"));
+    vector_push(expected, new_error("operand of unary * does not have pointer type"));
 
     run_stmt_resolver_error_test(input, NULL, NULL, expected);
 
@@ -68,7 +68,7 @@ void test_resolve_return_stmt_error_child(void) {
     DType* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("identifier 'y' is used before declared\n"));
+    vector_push(expected, new_error("identifier 'y' is used before declared"));
 
     run_stmt_resolver_error_test(input, local_table, return_dtype, expected);
 
@@ -87,7 +87,7 @@ void test_resolve_return_stmt_error_unassignable(void) {
     DType* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("expression is not assignable to function return\n"));
+    vector_push(expected, new_error("expression is not assignable to function return"));
 
     run_stmt_resolver_error_test(input, local_table, return_dtype, expected);
 
@@ -100,7 +100,7 @@ void test_resolve_return_stmt_error_no_value_non_void(void) {
     DType* return_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_CHAR));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("function returning non-void returns no value\n"));
+    vector_push(expected, new_error("function returning non-void returns no value"));
 
     run_stmt_resolver_error_test(input, NULL, return_dtype, expected);
 
@@ -114,7 +114,7 @@ void test_resolve_return_stmt_error_value_void(void) {
     DType* return_dtype = new_void_dtype();
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("function returning void returns a value\n"));
+    vector_push(expected, new_error("function returning void returns a value"));
 
     run_stmt_resolver_error_test(input, NULL, return_dtype, expected);
 
@@ -133,7 +133,7 @@ void test_resolve_expression_stmt_error_child(void) {
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("identifier 'y' is used before declared\n"));
+    vector_push(expected, new_error("identifier 'y' is used before declared"));
 
     run_stmt_resolver_error_test(input, local_table, NULL, expected);
 

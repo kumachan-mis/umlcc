@@ -111,7 +111,7 @@ ParserReturn* parse_decl_specifiers(Parser* parser) {
     if (vector_size(ast->children) == 0) {
         delete_ast(ast);
         ctoken = vector_at(parser->ctokens, parser->index);
-        err = new_error("one of declaration specifiers expected, but got %s\n", ctoken_types[ctoken->type]);
+        err = new_error("one of declaration specifiers expected, but got %s", ctoken_types[ctoken->type]);
         return new_parserret_error(err);
     }
 
@@ -149,7 +149,7 @@ ParserReturn* parse_specifier_qualifier_list(Parser* parser) {
     if (vector_size(ast->children) == 0) {
         delete_ast(ast);
         ctoken = vector_at(parser->ctokens, parser->index);
-        err = new_error("one of type specifiers or type qualifiers expected, but got %s\n", ctoken_types[ctoken->type]);
+        err = new_error("one of type specifiers or type qualifiers expected, but got %s", ctoken_types[ctoken->type]);
         return new_parserret_error(err);
     }
 
@@ -265,7 +265,7 @@ ParserReturn* parse_struct_specifier(Parser* parser) {
     }
 
     if (vector_size(ast->children) == 0) {
-        err = new_error("identifier or { expected, but got %s\n", ctoken_types[ctoken->type]);
+        err = new_error("identifier or { expected, but got %s", ctoken_types[ctoken->type]);
         delete_ast(ast);
         return new_parserret_error(err);
     }
@@ -394,7 +394,7 @@ ParserReturn* parse_enum_specifier(Parser* parser) {
     }
 
     if (vector_size(ast->children) == 0) {
-        err = new_error("identifier or { expected, but got %s\n", ctoken_types[ctoken->type]);
+        err = new_error("identifier or { expected, but got %s", ctoken_types[ctoken->type]);
         delete_ast(ast);
         return new_parserret_error(err);
     }
@@ -443,7 +443,7 @@ ParserReturn* parse_enumerator(Parser* parser) {
 
     CToken* ctoken = ctoken = vector_at(parser->ctokens, parser->index);
     if (ctoken->type != CTOKEN_IDENT) {
-        err = new_error("identifier expected, but got %s\n", ctoken_types[ctoken->type]);
+        err = new_error("identifier expected, but got %s", ctoken_types[ctoken->type]);
         delete_ast(ast);
         return new_parserret_error(err);
     }
@@ -687,7 +687,7 @@ ParserReturn* parse_direct_declarator_common(Parser* parser, int abstract) {
             break;
         case CTOKEN_IDENT:
             if (abstract) {
-                err = new_error("unexpected token indentifier\n");
+                err = new_error("unexpected token indentifier");
                 return new_parserret_error(err);
             }
 
@@ -703,7 +703,7 @@ ParserReturn* parse_direct_declarator_common(Parser* parser, int abstract) {
                 break;
             }
 
-            err = new_error("unexpected token %s\n", ctoken_types[ctoken->type]);
+            err = new_error("unexpected token %s", ctoken_types[ctoken->type]);
             return new_parserret_error(err);
     }
 
