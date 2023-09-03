@@ -79,7 +79,7 @@ void test_parse_decl_error(void) {
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token ; expected, but got EOF\n");
+    Error* expected = new_error("token ; expected, but got EOF");
 
     run_decl_parser_error_test(input, expected);
 
@@ -92,7 +92,7 @@ void test_parse_decl_specifier_error_empty(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("one of declaration specifiers expected, but got identifier\n");
+    Error* expected = new_error("one of declaration specifiers expected, but got identifier");
 
     run_decl_parser_error_test(input, expected);
 
@@ -112,7 +112,7 @@ void test_parse_struct_specifier_error_name(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("identifier or { expected, but got string-literal\n");
+    Error* expected = new_error("identifier or { expected, but got string-literal");
 
     run_decl_parser_error_test(input, expected);
 
@@ -131,7 +131,7 @@ void test_parse_struct_specifier_error_braces(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("one of type specifiers or type qualifiers expected, but got identifier\n");
+    Error* expected = new_error("one of type specifiers or type qualifiers expected, but got identifier");
 
     run_decl_parser_error_test(input, expected);
 
@@ -148,7 +148,7 @@ void test_parse_struct_declaration_list_error_empty(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("one of type specifiers or type qualifiers expected, but got }\n");
+    Error* expected = new_error("one of type specifiers or type qualifiers expected, but got }");
 
     run_decl_parser_error_test(input, expected);
 
@@ -167,7 +167,7 @@ void test_parse_struct_declaration_error(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token ; expected, but got }\n");
+    Error* expected = new_error("token ; expected, but got }");
 
     run_decl_parser_error_test(input, expected);
 
@@ -186,7 +186,7 @@ void test_parse_specifier_qualifier_list_error_struct_empty(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("one of type specifiers or type qualifiers expected, but got identifier\n");
+    Error* expected = new_error("one of type specifiers or type qualifiers expected, but got identifier");
 
     run_decl_parser_error_test(input, expected);
 
@@ -208,7 +208,7 @@ void test_parse_specifier_qualifier_list_error_child(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("one of type specifiers or type qualifiers expected, but got }\n");
+    Error* expected = new_error("one of type specifiers or type qualifiers expected, but got }");
 
     run_decl_parser_error_test(input, expected);
 
@@ -229,7 +229,7 @@ void test_parse_struct_declarator_list_error_comma(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token ; expected, but got identifier\n");
+    Error* expected = new_error("token ; expected, but got identifier");
 
     run_decl_parser_error_test(input, expected);
 
@@ -249,7 +249,7 @@ void test_parse_struct_declarator_list_error_empty(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token ;\n");
+    Error* expected = new_error("unexpected token ;");
 
     run_decl_parser_error_test(input, expected);
 
@@ -270,7 +270,7 @@ void test_parse_struct_declarator_error(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token =\n");
+    Error* expected = new_error("unexpected token =");
 
     run_decl_parser_error_test(input, expected);
 
@@ -288,7 +288,7 @@ void test_parse_enum_specifier_error_name(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("identifier or { expected, but got integer-constant\n");
+    Error* expected = new_error("identifier or { expected, but got integer-constant");
 
     run_decl_parser_error_test(input, expected);
 
@@ -306,7 +306,7 @@ void test_parse_enumerator_list_error_braces(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("identifier expected, but got ,\n");
+    Error* expected = new_error("identifier expected, but got ,");
 
     run_decl_parser_error_test(input, expected);
 
@@ -323,7 +323,7 @@ void test_parse_enumerator_list_error_empty(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("identifier expected, but got }\n");
+    Error* expected = new_error("identifier expected, but got }");
 
     run_decl_parser_error_test(input, expected);
 
@@ -342,7 +342,7 @@ void test_parse_enumerator_list_error_comma(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token , expected, but got ;\n");
+    Error* expected = new_error("token , expected, but got ;");
 
     run_decl_parser_error_test(input, expected);
 
@@ -360,7 +360,7 @@ void test_parse_enum_constant_error(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("identifier expected, but got string-literal\n");
+    Error* expected = new_error("identifier expected, but got string-literal");
 
     run_decl_parser_error_test(input, expected);
 
@@ -379,7 +379,7 @@ void test_parse_enum_constant_expr_error(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token }\n");
+    Error* expected = new_error("unexpected token }");
 
     run_decl_parser_error_test(input, expected);
 
@@ -393,7 +393,7 @@ void test_parse_arithmetic_declarator_error(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token return\n");
+    Error* expected = new_error("unexpected token return");
 
     run_decl_parser_error_test(input, expected);
 
@@ -408,7 +408,7 @@ void test_parse_pointer_declarator_error(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token char\n");
+    Error* expected = new_error("unexpected token char");
 
     run_decl_parser_error_test(input, expected);
 
@@ -424,7 +424,7 @@ void test_parse_array_declarator_error_size(void) {
     vector_push(input, new_ctoken(CTOKEN_RBRACKET));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token =\n");
+    Error* expected = new_error("unexpected token =");
 
     run_decl_parser_error_test(input, expected);
 
@@ -440,7 +440,7 @@ void test_parse_array_declarator_error_bracket(void) {
     vector_push(input, new_ctoken(CTOKEN_RBRACE));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token ] expected, but got }\n");
+    Error* expected = new_error("token ] expected, but got }");
 
     run_decl_parser_error_test(input, expected);
 
@@ -456,7 +456,7 @@ void test_parse_function_declarator_error_return_type(void) {
     vector_push(input, new_ctoken(CTOKEN_RPALEN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("one of declaration specifiers expected, but got identifier\n");
+    Error* expected = new_error("one of declaration specifiers expected, but got identifier");
 
     run_decl_parser_error_test(input, expected);
 
@@ -473,7 +473,7 @@ void test_parse_function_declarator_error_param_decl(void) {
     vector_push(input, new_ctoken(CTOKEN_RPALEN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token )\n");
+    Error* expected = new_error("unexpected token )");
 
     run_decl_parser_error_test(input, expected);
 
@@ -489,7 +489,7 @@ void test_parse_function_declarator_error_param_list(void) {
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token ) expected, but got EOF\n");
+    Error* expected = new_error("token ) expected, but got EOF");
 
     run_decl_parser_error_test(input, expected);
 
@@ -504,7 +504,7 @@ void test_parse_function_declarator_error_empty_list(void) {
     vector_push(input, new_ctoken(CTOKEN_RPALEN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("one of declaration specifiers expected, but got )\n");
+    Error* expected = new_error("one of declaration specifiers expected, but got )");
 
     run_decl_parser_error_test(input, expected);
 
@@ -522,7 +522,7 @@ void test_parse_enclosed_decl_error_child(void) {
     vector_push(input, new_ctoken(CTOKEN_RBRACKET));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token )\n");
+    Error* expected = new_error("unexpected token )");
 
     run_decl_parser_error_test(input, expected);
 
@@ -540,7 +540,7 @@ void test_parse_enclosed_decl_error_paren(void) {
     vector_push(input, new_ctoken(CTOKEN_RBRACKET));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token ) expected, but got EOF\n");
+    Error* expected = new_error("token ) expected, but got EOF");
 
     run_decl_parser_error_test(input, expected);
 
@@ -555,7 +555,7 @@ void test_parse_init_expr_error(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token ;\n");
+    Error* expected = new_error("unexpected token ;");
 
     run_decl_parser_error_test(input, expected);
 
@@ -576,7 +576,7 @@ void test_parse_init_list_error_braces(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token ,\n");
+    Error* expected = new_error("unexpected token ,");
 
     run_decl_parser_error_test(input, expected);
 
@@ -592,7 +592,7 @@ void test_parse_init_list_error_empty(void) {
     vector_push(input, new_ctoken(CTOKEN_RBRACE));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token }\n");
+    Error* expected = new_error("unexpected token }");
 
     run_decl_parser_error_test(input, expected);
 
@@ -613,7 +613,7 @@ void test_parse_init_list_error_comma(void) {
     vector_push(input, new_ctoken(CTOKEN_RBRACE));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token , expected, but got integer-constant\n");
+    Error* expected = new_error("token , expected, but got integer-constant");
 
     run_decl_parser_error_test(input, expected);
 

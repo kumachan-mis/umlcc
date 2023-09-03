@@ -412,7 +412,7 @@ ParserReturn* parse_unary_operator_expr(Parser* parser) {
             ast = new_ast(AST_LNOT_EXPR, 1, ast);
             break;
         default:
-            err = new_error("unexpected token %s\n", ctoken_types[ctoken->type]);
+            err = new_error("unexpected token %s", ctoken_types[ctoken->type]);
             return new_parserret_error(err);
     }
 
@@ -493,7 +493,7 @@ ParserReturn* parse_postfix_expr(Parser* parser) {
                 parser->index++;
                 ctoken = vector_at(parser->ctokens, parser->index);
                 if (ctoken->type != CTOKEN_IDENT) {
-                    err = new_error("token identifier expected, but got %s\n", ctoken_types[ctoken->type]);
+                    err = new_error("token identifier expected, but got %s", ctoken_types[ctoken->type]);
                     break;
                 }
                 parser->index++;
@@ -504,7 +504,7 @@ ParserReturn* parse_postfix_expr(Parser* parser) {
                 parser->index++;
                 ctoken = vector_at(parser->ctokens, parser->index);
                 if (ctoken->type != CTOKEN_IDENT) {
-                    err = new_error("token identifier expected, but got %s\n", ctoken_types[ctoken->type]);
+                    err = new_error("token identifier expected, but got %s", ctoken_types[ctoken->type]);
                     break;
                 }
                 parser->index++;
@@ -559,7 +559,7 @@ ParserReturn* parse_primary_expr(Parser* parser) {
     switch (ctoken->type) {
         case CTOKEN_IDENT:
             if (set_contains(parser->typedef_names_set, ctoken->ident_name)) {
-                err = new_error("unexpected typedef name '%s'\n", ctoken->ident_name);
+                err = new_error("unexpected typedef name '%s'", ctoken->ident_name);
                 break;
             }
             parser->index++;
@@ -589,7 +589,7 @@ ParserReturn* parse_primary_expr(Parser* parser) {
             }
             break;
         default:
-            err = new_error("unexpected token %s\n", ctoken_types[ctoken->type]);
+            err = new_error("unexpected token %s", ctoken_types[ctoken->type]);
             break;
     }
 

@@ -58,7 +58,7 @@ void test_new_signed_arg_immcope(void) {
         CU_ASSERT_EQUAL(ope->suffix, IMMC_SUFFIX_WORD);
         CU_ASSERT_EQUAL(ope->reg->reg_id, 1);
         CU_ASSERT_EQUAL(ope->reg->is_unsigned, 0);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_PTR_NULL(ope->iliteral);
         CU_ASSERT_PTR_NULL(ope->sliteral);
@@ -80,7 +80,7 @@ void test_new_signed_reg_immcope(void) {
         CU_ASSERT_EQUAL(ope->suffix, IMMC_SUFFIX_LONG);
         CU_ASSERT_EQUAL(ope->reg->reg_id, 8);
         CU_ASSERT_EQUAL(ope->reg->is_unsigned, 0);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_PTR_NULL(ope->iliteral);
         CU_ASSERT_PTR_NULL(ope->sliteral);
@@ -102,7 +102,7 @@ void test_new_ptr_immcope(void) {
         CU_ASSERT_EQUAL(ope->suffix, IMMC_SUFFIX_QUAD);
         CU_ASSERT_EQUAL(ope->reg->reg_id, 3);
         CU_ASSERT_EQUAL(ope->reg->is_unsigned, 0);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_PTR_NULL(ope->iliteral);
         CU_ASSERT_PTR_NULL(ope->sliteral);
@@ -144,7 +144,7 @@ void test_new_label_immcope(void) {
         CU_ASSERT_EQUAL(ope->type, IMMC_OPERAND_LABEL);
         CU_ASSERT_EQUAL(ope->suffix, IMMC_SUFFIX_NONE);
         CU_ASSERT_PTR_NULL(ope->reg);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_STRING_EQUAL(ope->label_name, "sample_label");
         CU_ASSERT_PTR_NULL(ope->iliteral);
         CU_ASSERT_PTR_NULL(ope->sliteral);
@@ -165,7 +165,7 @@ void test_new_int_immcope(void) {
         CU_ASSERT_EQUAL(ope->type, IMMC_OPERAND_INT);
         CU_ASSERT_EQUAL(ope->suffix, IMMC_SUFFIX_BYTE);
         CU_ASSERT_PTR_NULL(ope->reg);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_INT);
         CU_ASSERT_FALSE(iliteral_isunsigned(ope->iliteral));
@@ -189,7 +189,7 @@ void test_new_signed_int_immcope(void) {
         CU_ASSERT_EQUAL(ope->type, IMMC_OPERAND_INT);
         CU_ASSERT_EQUAL(ope->suffix, IMMC_SUFFIX_LONG);
         CU_ASSERT_PTR_NULL(ope->reg);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_INT);
         CU_ASSERT_FALSE(iliteral_isunsigned(ope->iliteral));
@@ -213,7 +213,7 @@ void test_new_unsigned_int_immcope(void) {
         CU_ASSERT_EQUAL(ope->type, IMMC_OPERAND_INT);
         CU_ASSERT_EQUAL(ope->suffix, IMMC_SUFFIX_LONG);
         CU_ASSERT_PTR_NULL(ope->reg);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(ope->iliteral->type, INTEGER_UNSIGNED_INT);
         CU_ASSERT_TRUE(iliteral_isunsigned(ope->iliteral));
@@ -244,7 +244,7 @@ void test_new_str_immcope(void) {
         CU_ASSERT_EQUAL(ope->type, IMMC_OPERAND_STR);
         CU_ASSERT_EQUAL(ope->suffix, IMMC_SUFFIX_NONE);
         CU_ASSERT_PTR_NULL(ope->reg);
-        CU_ASSERT_EQUAL(ope->mem_offset, -1);
+        CU_ASSERT_EQUAL(ope->mem_offset, 0);
         CU_ASSERT_PTR_NULL(ope->label_name);
         CU_ASSERT_EQUAL(memcmp(ope->sliteral->value, sliteral_const, sliteral_size), 0);
         CU_ASSERT_PTR_NULL(ope->iliteral);

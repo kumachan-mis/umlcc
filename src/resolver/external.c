@@ -71,7 +71,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
 
     if (resolver->specifier_dtype->type == DTYPE_TYPEDEF) {
         errs = new_vector(&t_error);
-        err = new_error("storage specifiers are invalid for a function definition\n");
+        err = new_error("storage specifiers are invalid for a function definition");
         vector_push(errs, err);
         delete_dtype(resolver->specifier_dtype);
         resolver->specifier_dtype = original_specifier_dtype;
@@ -92,7 +92,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
 
     if (declarator_srt->dtype->type != DTYPE_FUNCTION) {
         errs = new_vector(&t_error);
-        err = new_error("non-function declaration has a function body\n");
+        err = new_error("non-function declaration has a function body");
         vector_push(errs, err);
         delete_srt(declarator_srt);
         return new_resolverret_errors(errs);
@@ -100,7 +100,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
 
     if (!symboltable_can_define(resolver->symbol_table, declarator_srt->ident_name)) {
         errs = new_vector(&t_error);
-        err = new_error("identifier '%s' is already declared\n", declarator_srt->ident_name);
+        err = new_error("identifier '%s' is already declared", declarator_srt->ident_name);
         vector_push(errs, err);
         delete_srt(declarator_srt);
         return new_resolverret_errors(errs);
@@ -116,7 +116,7 @@ ResolverReturn* resolve_function_definition(Resolver* resolver) {
         if (errs == NULL) {
             errs = new_vector(&t_error);
         }
-        err = new_error("parameter name is required in a function definition\n");
+        err = new_error("parameter name is required in a function definition");
         vector_push(errs, err);
     }
 

@@ -32,7 +32,7 @@ void test_parse_compound_stmt_error_child(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token ; expected, but got integer-constant\n");
+    Error* expected = new_error("token ; expected, but got integer-constant");
 
     run_stmt_parser_error_test(input, expected);
 
@@ -51,7 +51,7 @@ void test_parse_compound_stmt_error_braces(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token EOF\n");
+    Error* expected = new_error("unexpected token EOF");
 
     run_stmt_parser_error_test(input, expected);
 
@@ -66,7 +66,7 @@ void test_parse_return_stmt_error(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token ; expected, but got integer-constant\n");
+    Error* expected = new_error("token ; expected, but got integer-constant");
 
     run_stmt_parser_error_test(input, expected);
 
@@ -82,7 +82,7 @@ void test_parse_expression_stmt_error(void) {
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("token ; expected, but got identifier\n");
+    Error* expected = new_error("token ; expected, but got identifier");
 
     run_stmt_parser_error_test(input, expected);
 

@@ -106,7 +106,7 @@ ImmcOpe* new_base_immcope(ImmcOpeType type) {
     immcope->type = type;
     immcope->suffix = IMMC_SUFFIX_NONE;
     immcope->reg = NULL;
-    immcope->mem_offset = -1;
+    immcope->mem_offset = 0;
     immcope->label_name = NULL;
     immcope->iliteral = NULL;
     immcope->sliteral = NULL;

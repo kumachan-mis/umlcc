@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 
     if (err != NULL) {
         fprintf(stderr, "\x1b[0;36m@@@@@ Error occured in lexer @@@@@\x1b[0m\n");
-        fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s", err->message);
+        fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s\n", err->message);
         delete_error(err);
         return 1;
     }
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 
     if (err != NULL) {
         fprintf(stderr, "\x1b[0;36m@@@@@ Error occured in parser @@@@@\x1b[0m\n");
-        fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s", err->message);
+        fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s\n", err->message);
         delete_error(err);
         return 1;
     }
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
         int num_errs = vector_size(errs);
         for (int i = 0; i < num_errs; i++) {
             err = vector_at(errs, i);
-            fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s", err->message);
+            fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s\n", err->message);
         }
         delete_vector(errs);
         return 1;
