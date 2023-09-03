@@ -344,7 +344,7 @@ ResolverReturn* resolve_relational_expr(Resolver* resolver) {
                     err = new_error("operands of pointer < pointer are not compatible");
                 } else {
                     err = new_error("binary < expression should be "
-                                    "either arithmetic < arithmetic or pointer < pointer\n");
+                                    "either arithmetic < arithmetic or pointer < pointer");
                 }
                 vector_push(errs, err);
                 break;
@@ -358,7 +358,7 @@ ResolverReturn* resolve_relational_expr(Resolver* resolver) {
                     err = new_error("operands of pointer > pointer are not compatible");
                 } else {
                     err = new_error("binary > expression should be "
-                                    "either arithmetic > arithmetic or pointer > pointer\n");
+                                    "either arithmetic > arithmetic or pointer > pointer");
                 }
                 vector_push(errs, err);
                 break;
@@ -372,7 +372,7 @@ ResolverReturn* resolve_relational_expr(Resolver* resolver) {
                     err = new_error("operands of pointer <= pointer are not compatible");
                 } else {
                     err = new_error("binary <= expression should be "
-                                    "either arithmetic <= arithmetic or pointer <= pointer\n");
+                                    "either arithmetic <= arithmetic or pointer <= pointer");
                 }
                 vector_push(errs, err);
                 break;
@@ -386,7 +386,7 @@ ResolverReturn* resolve_relational_expr(Resolver* resolver) {
                     err = new_error("operands of pointer >= pointer are not compatible");
                 } else {
                     err = new_error("binary >= expression should be "
-                                    "either arithmetic >= arithmetic or pointer >= pointer\n");
+                                    "either arithmetic >= arithmetic or pointer >= pointer");
                 }
                 vector_push(errs, err);
                 break;
