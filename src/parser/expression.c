@@ -101,7 +101,7 @@ ParserReturn* parse_logical_and_expr(Parser* parser) {
     Ast* child_ast = NULL;
     Error* err = NULL;
 
-    parserret_assign(&ast, &err, parse_equality_expr(parser));
+    parserret_assign(&ast, &err, parse_bitwise_inclusive_or_expr(parser));
     if (err != NULL) {
         return new_parserret_error(err);
     }
@@ -111,11 +111,101 @@ ParserReturn* parse_logical_and_expr(Parser* parser) {
         switch (ctoken->type) {
             case CTOKEN_AND_AND:
                 parser->index++;
-                parserret_assign(&child_ast, &err, parse_equality_expr(parser));
+                parserret_assign(&child_ast, &err, parse_bitwise_inclusive_or_expr(parser));
                 if (err != NULL) {
                     break;
                 }
                 ast = new_ast(AST_LAND_EXPR, 2, ast, child_ast);
+                break;
+            default:
+                return new_parserret(ast);
+        }
+    }
+
+    delete_ast(ast);
+    return new_parserret_error(err);
+}
+
+ParserReturn* parse_bitwise_inclusive_or_expr(Parser* parser) {
+    Ast* ast = NULL;
+    Ast* child_ast = NULL;
+    Error* err = NULL;
+
+    parserret_assign(&ast, &err, parse_bitwise_exclusive_or_expr(parser));
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
+
+    while (err == NULL) {
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_VBAR:
+                parser->index++;
+                parserret_assign(&child_ast, &err, parse_bitwise_exclusive_or_expr(parser));
+                if (err != NULL) {
+                    break;
+                }
+                ast = new_ast(AST_OR_EXPR, 2, ast, child_ast);
+                break;
+            default:
+                return new_parserret(ast);
+        }
+    }
+
+    delete_ast(ast);
+    return new_parserret_error(err);
+}
+
+ParserReturn* parse_bitwise_exclusive_or_expr(Parser* parser) {
+    Ast* ast = NULL;
+    Ast* child_ast = NULL;
+    Error* err = NULL;
+
+    parserret_assign(&ast, &err, parse_bitwise_and_expr(parser));
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
+
+    while (err == NULL) {
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_CARET:
+                parser->index++;
+                parserret_assign(&child_ast, &err, parse_bitwise_and_expr(parser));
+                if (err != NULL) {
+                    break;
+                }
+                ast = new_ast(AST_XOR_EXPR, 2, ast, child_ast);
+                break;
+            default:
+                return new_parserret(ast);
+        }
+    }
+
+    delete_ast(ast);
+    return new_parserret_error(err);
+}
+
+ParserReturn* parse_bitwise_and_expr(Parser* parser) {
+    Ast* ast = NULL;
+    Ast* child_ast = NULL;
+    Error* err = NULL;
+
+    parserret_assign(&ast, &err, parse_equality_expr(parser));
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
+
+    while (err == NULL) {
+        CToken* ctoken = vector_at(parser->ctokens, parser->index);
+        switch (ctoken->type) {
+            case CTOKEN_AND:
+                parser->index++;
+                parserret_assign(&child_ast, &err, parse_equality_expr(parser));
+                if (err != NULL) {
+                    break;
+                }
+                ast = new_ast(AST_AND_EXPR, 2, ast, child_ast);
                 break;
             default:
                 return new_parserret(ast);
