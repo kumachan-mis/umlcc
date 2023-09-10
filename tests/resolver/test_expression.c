@@ -5,6 +5,9 @@
 void test_resolve_assignment_expr(void);
 void test_resolve_logical_or_expr(void);
 void test_resolve_logical_and_expr(void);
+void test_resolve_bitwise_inclusive_or_expr(void);
+void test_resolve_bitwise_exclusive_or_expr(void);
+void test_resolve_bitwise_and_expr(void);
 void test_resolve_equal_expr(void);
 void test_resolve_not_equal_expr(void);
 void test_resolve_less_expr(void);
@@ -58,6 +61,9 @@ CU_Suite* add_test_suite_expr_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_assignment_expr);
     CU_ADD_TEST(suite, test_resolve_logical_or_expr);
     CU_ADD_TEST(suite, test_resolve_logical_and_expr);
+    CU_ADD_TEST(suite, test_resolve_bitwise_inclusive_or_expr);
+    CU_ADD_TEST(suite, test_resolve_bitwise_exclusive_or_expr);
+    CU_ADD_TEST(suite, test_resolve_bitwise_and_expr);
     CU_ADD_TEST(suite, test_resolve_equal_expr);
     CU_ADD_TEST(suite, test_resolve_not_equal_expr);
     CU_ADD_TEST(suite, test_resolve_less_expr);
@@ -189,17 +195,18 @@ void test_resolve_logical_or_expr(void) {
 }
 
 void test_resolve_logical_and_expr(void) {
-    Ast* input = new_ast(AST_LAND_EXPR, 2,           // non-terminal
-                         new_ast(AST_NEQUAL_EXPR, 2, // non-terminal
-                                 new_identifier_ast(AST_IDENT_EXPR, new_string("check")),
-                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
+    Ast* input = new_ast(AST_LAND_EXPR, 2,       // non-terminal
+                         new_ast(AST_OR_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("check1")),
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("check2"))),
                          new_ast(AST_CALL_EXPR, 2, // non-terminal
                                  new_identifier_ast(AST_IDENT_EXPR, new_string("validate")),
                                  new_ast(AST_ARG_LIST, 1, // non-terminal
                                          new_identifier_ast(AST_IDENT_EXPR, new_string("object")))));
 
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("check"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("check1"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("check2"), new_integer_dtype(DTYPE_CHAR));
 
     DType* arg_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6);
     symboltable_define_memory(local_table, new_string("object"), arg_dtype);
@@ -213,9 +220,10 @@ void test_resolve_logical_and_expr(void) {
     Srt* expected = new_dtyped_srt(
         SRT_LAND_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
         new_dtyped_srt(
-            SRT_NEQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("check")),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+            SRT_OR_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("check1")),
+            new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("check2")))),
         new_dtyped_srt(
             SRT_CALL_EXPR, new_integer_dtype(DTYPE_INT), 2,                             // non-terminal
             new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(func_dtype)), 1, // non-terminal
@@ -223,6 +231,84 @@ void test_resolve_logical_and_expr(void) {
             new_srt(SRT_ARG_LIST, 1,                                          // non-terminal
                     new_dtyped_srt(SRT_ADDR_EXPR, dtype_copy(param_dtype), 1, // non-terminal
                                    new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(arg_dtype), new_string("object"))))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_bitwise_inclusive_or_expr(void) {
+    Ast* input = new_ast(AST_OR_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_ast(AST_XOR_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_CHAR));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("z"), new_integer_dtype(DTYPE_INT));
+
+    // The usual arithmetic conversions should be performed
+    Srt* expected = new_dtyped_srt(
+        SRT_OR_EXPR, new_integer_dtype(DTYPE_INT), 2,                  // non-terminal
+        new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("x"))),
+        new_dtyped_srt(SRT_XOR_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("y")),
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("z"))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_bitwise_exclusive_or_expr(void) {
+    Ast* input = new_ast(AST_XOR_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_ast(AST_AND_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_CHAR));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("z"), new_integer_dtype(DTYPE_INT));
+
+    // The usual arithmetic conversions should be performed
+    Srt* expected = new_dtyped_srt(
+        SRT_XOR_EXPR, new_integer_dtype(DTYPE_INT), 2,                 // non-terminal
+        new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("x"))),
+        new_dtyped_srt(SRT_AND_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("y")),
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("z"))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_bitwise_and_expr(void) {
+    Ast* input = new_ast(AST_AND_EXPR, 2,           // non-terminal
+                         new_ast(AST_EQUAL_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_CHAR));
+
+    // The usual arithmetic conversions should be performed
+    Srt* expected = new_dtyped_srt(
+        SRT_AND_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+        new_dtyped_srt(
+            SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1))),
+        new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("y"))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 

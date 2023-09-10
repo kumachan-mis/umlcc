@@ -6,6 +6,7 @@
 ResolverReturn* resolve_expr(Resolver* resolver);
 ResolverReturn* resolve_assignment_expr(Resolver* resolver);
 ResolverReturn* resolve_logical_expr(Resolver* resolver);
+ResolverReturn* resolve_bitwise_expr(Resolver* resolver);
 ResolverReturn* resolve_equality_expr(Resolver* resolver);
 ResolverReturn* resolve_relational_expr(Resolver* resolver);
 ResolverReturn* resolve_additive_expr(Resolver* resolver);

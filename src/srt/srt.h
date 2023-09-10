@@ -34,6 +34,12 @@ typedef enum SrtType {
     SRT_LOR_EXPR,
     //   logical-AND-expression
     SRT_LAND_EXPR,
+    //   inclusive-OR-expression
+    SRT_OR_EXPR,
+    //   exclusive-OR-expression
+    SRT_XOR_EXPR,
+    //   AND-expression
+    SRT_AND_EXPR,
     //   equality-expression
     SRT_EQUAL_EXPR,
     SRT_NEQUAL_EXPR,
