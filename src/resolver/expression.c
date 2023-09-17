@@ -20,6 +20,11 @@ ResolverReturn* resolve_expr(Resolver* resolver) {
         case AST_LAND_EXPR:
             resolverret_assign(&srt, &errs, resolve_logical_expr(resolver));
             break;
+        case AST_OR_EXPR:
+        case AST_XOR_EXPR:
+        case AST_AND_EXPR:
+            resolverret_assign(&srt, &errs, resolve_bitwise_expr(resolver));
+            break;
         case AST_EQUAL_EXPR:
         case AST_NEQUAL_EXPR:
             resolverret_assign(&srt, &errs, resolve_equality_expr(resolver));
@@ -201,6 +206,85 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver) {
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
                             "unreachable statement (in resolve_logical_expr)\n");
+            exit(1);
+    }
+
+    if (errs != NULL) {
+        delete_srt(lhs_srt);
+        delete_srt(rhs_srt);
+        return new_resolverret_errors(errs);
+    }
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_bitwise_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    DType* dtype = NULL;
+    Srt* lhs_srt = NULL;
+    Srt* rhs_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
+
+    lhs_srt = convert_to_ptr_if_array(lhs_srt);
+    lhs_srt = convert_to_ptr_if_function(lhs_srt);
+
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_assign(&rhs_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(lhs_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    rhs_srt = convert_to_ptr_if_array(rhs_srt);
+    rhs_srt = convert_to_ptr_if_function(rhs_srt);
+
+    Pair* srt_pair = new_pair(&t_srt, &t_srt);
+    pair_set(srt_pair, lhs_srt, rhs_srt);
+    pair_assign((void**)&lhs_srt, (void**)&rhs_srt, perform_usual_arithmetic_conversion(srt_pair));
+
+    switch (ast->type) {
+        case AST_OR_EXPR:
+            if (!dtype_isinteger(lhs_srt->dtype) || !dtype_isinteger(rhs_srt->dtype)) {
+                errs = new_vector(&t_error);
+                err = new_error("binary | expression should be integer | integer");
+                vector_push(errs, err);
+                break;
+            }
+            dtype = dtype_copy(lhs_srt->dtype);
+            srt = new_dtyped_srt(SRT_OR_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            break;
+        case AST_XOR_EXPR:
+            if (!dtype_isinteger(lhs_srt->dtype) || !dtype_isinteger(rhs_srt->dtype)) {
+                errs = new_vector(&t_error);
+                err = new_error("binary ^ expression should be integer ^ integer");
+                vector_push(errs, err);
+                break;
+            }
+            dtype = dtype_copy(lhs_srt->dtype);
+            srt = new_dtyped_srt(SRT_XOR_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            break;
+        case AST_AND_EXPR:
+            if (!dtype_isinteger(lhs_srt->dtype) || !dtype_isinteger(rhs_srt->dtype)) {
+                errs = new_vector(&t_error);
+                err = new_error("binary & expression should be integer & integer");
+                vector_push(errs, err);
+                break;
+            }
+            dtype = dtype_copy(lhs_srt->dtype);
+            srt = new_dtyped_srt(SRT_AND_EXPR, dtype, 2, lhs_srt, rhs_srt);
+            break;
+        default:
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_bitwise_expr)\n");
             exit(1);
     }
 

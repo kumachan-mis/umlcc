@@ -64,6 +64,12 @@ typedef enum AstType {
     AST_LOR_EXPR,
     //   logical-AND-expression
     AST_LAND_EXPR,
+    //   inclusive-OR-expression
+    AST_OR_EXPR,
+    //   exclusive-OR-expression
+    AST_XOR_EXPR,
+    //   AND-expression
+    AST_AND_EXPR,
     //   equality-expression
     AST_EQUAL_EXPR,
     AST_NEQUAL_EXPR,

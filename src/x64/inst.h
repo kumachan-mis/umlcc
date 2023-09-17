@@ -25,7 +25,10 @@ typedef enum X64InstType {
     X64_INST_NEGX,
 
     // logical instructions
+    X64_INST_ANDX,
     X64_INST_NOTX,
+    X64_INST_ORX,
+    X64_INST_XORX,
 
     // shift/rotate instructions
     X64_INST_SALX,

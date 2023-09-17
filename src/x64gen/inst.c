@@ -38,8 +38,14 @@ Vector* gen_inst_x64code(X64gen* x64gen) {
             return gen_mod_x64code(x64gen);
         case IMMC_INST_NEG:
             return gen_neg_x64code(x64gen);
+        case IMMC_INST_AND:
+            return gen_and_x64code(x64gen);
         case IMMC_INST_NOT:
             return gen_not_x64code(x64gen);
+        case IMMC_INST_OR:
+            return gen_or_x64code(x64gen);
+        case IMMC_INST_XOR:
+            return gen_xor_x64code(x64gen);
         case IMMC_INST_SAL:
             return gen_sal_x64code(x64gen);
         case IMMC_INST_SAR:

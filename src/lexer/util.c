@@ -142,6 +142,8 @@ Map* new_punctuator_map(void) {
     ctoken_map_add(punctuator_map, ">=", CTOKEN_GREATER_EQUAL);
     ctoken_map_add(punctuator_map, "==", CTOKEN_EQUAL_EQUAL);
     ctoken_map_add(punctuator_map, "!=", CTOKEN_EXCLAM_EQUAL);
+    ctoken_map_add(punctuator_map, "^", CTOKEN_CARET);
+    ctoken_map_add(punctuator_map, "|", CTOKEN_VBAR);
     ctoken_map_add(punctuator_map, "&&", CTOKEN_AND_AND);
     ctoken_map_add(punctuator_map, "||", CTOKEN_VBAR_VBAR);
     ctoken_map_add(punctuator_map, ";", CTOKEN_SEMICOLON);

@@ -6,6 +6,9 @@
 void test_parse_assignment_expr(void);
 void test_parse_logical_or_expr(void);
 void test_parse_logical_and_expr(void);
+void test_parse_bitwise_inclusive_or_expr(void);
+void test_parse_bitwise_exclusive_or_expr(void);
+void test_parse_bitwise_and_expr(void);
 void test_parse_equal_expr(void);
 void test_parse_not_equal_expr(void);
 void test_parse_less_expr(void);
@@ -43,6 +46,9 @@ CU_Suite* add_test_suite_expr_parser(void) {
     CU_ADD_TEST(suite, test_parse_assignment_expr);
     CU_ADD_TEST(suite, test_parse_logical_or_expr);
     CU_ADD_TEST(suite, test_parse_logical_and_expr);
+    CU_ADD_TEST(suite, test_parse_bitwise_inclusive_or_expr);
+    CU_ADD_TEST(suite, test_parse_bitwise_exclusive_or_expr);
+    CU_ADD_TEST(suite, test_parse_bitwise_and_expr);
     CU_ADD_TEST(suite, test_parse_equal_expr);
     CU_ADD_TEST(suite, test_parse_not_equal_expr);
     CU_ADD_TEST(suite, test_parse_less_expr);
@@ -153,9 +159,9 @@ void test_parse_logical_or_expr(void) {
 
 void test_parse_logical_and_expr(void) {
     Vector* input = new_vector(&t_ctoken);
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("check")));
-    vector_push(input, new_ctoken(CTOKEN_EXCLAM_EQUAL));
-    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("check1")));
+    vector_push(input, new_ctoken(CTOKEN_VBAR));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("check2")));
     vector_push(input, new_ctoken(CTOKEN_AND_AND));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("validate")));
     vector_push(input, new_ctoken(CTOKEN_LPALEN));
@@ -163,14 +169,74 @@ void test_parse_logical_and_expr(void) {
     vector_push(input, new_ctoken(CTOKEN_RPALEN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected = new_ast(AST_LAND_EXPR, 2,           // non-terminal
-                            new_ast(AST_NEQUAL_EXPR, 2, // non-terminal
-                                    new_identifier_ast(AST_IDENT_EXPR, new_string("check")),
-                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
+    Ast* expected = new_ast(AST_LAND_EXPR, 2,       // non-terminal
+                            new_ast(AST_OR_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("check1")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("check2"))),
                             new_ast(AST_CALL_EXPR, 2, // non-terminal
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("validate")),
                                     new_ast(AST_ARG_LIST, 1, // non-terminal
                                             new_identifier_ast(AST_IDENT_EXPR, new_string("object")))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_bitwise_inclusive_or_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_VBAR));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_CARET));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_OR_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_XOR_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_bitwise_exclusive_or_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_CARET));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_AND));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_XOR_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_AND_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_bitwise_and_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input, new_ctoken(CTOKEN_AND));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_AND_EXPR, 2,           // non-terminal
+                            new_ast(AST_EQUAL_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))),
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
 
     run_expr_parser_test(input, expected);
 
