@@ -73,6 +73,11 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
         case SRT_LAND_EXPR:
             codes = gen_logical_and_expr_immcode(immcgen);
             break;
+        case SRT_OR_EXPR:
+        case SRT_XOR_EXPR:
+        case SRT_AND_EXPR:
+            codes = gen_bitwise_expr_immcode(immcgen);
+            break;
         case SRT_EQUAL_EXPR:
         case SRT_NEQUAL_EXPR:
             codes = gen_equality_expr_immcode(immcgen);

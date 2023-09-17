@@ -7,9 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* immc_insts[] = {"load", "addr", "str",  "store", "ldarg", "starg", "stret",  "add",   "sub",   "mul",    "div",
-                      "mod",  "neg",  "not",  "sal",   "sar",   "seteq", "setneq", "setlt", "setgt", "setleq", "setgeq",
-                      "jmp",  "jeq",  "jneq", "call",  "enter", "leave", "prep",   "clean", "free"};
+char* immc_insts[] = {"load", "addr",  "str",    "store", "ldarg", "starg",  "stret",  "add", "sub",
+                      "mul",  "div",   "mod",    "neg",   "and",   "not",    "or",     "xor", "sal",
+                      "sar",  "seteq", "setneq", "setlt", "setgt", "setleq", "setgeq", "jmp", "jeq",
+                      "jneq", "call",  "enter",  "leave", "prep",  "clean",  "free"};
 
 ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* snd_src) {
     ImmcInst* immcinst = malloc(sizeof(ImmcInst));

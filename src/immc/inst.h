@@ -80,11 +80,26 @@ typedef enum ImmcInstType {
     // neg dst(reg), fst_src(reg)
     IMMC_INST_NEG,
 
+    // - bitwise and fst_src and snd_src
+    // and dst(reg), fst_src(reg), snd_src(int)
+    // - bitwise and fst_src and snd_src
+    // and dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_AND,
     // - bitwise not fst_src
     // not dst(reg), fst_src(int)
     // - bitwise not fst_src
     // not dst(reg), fst_src(reg)
     IMMC_INST_NOT,
+    // - bitwise or fst_src and snd_src
+    // or dst(reg), fst_src(reg), snd_src(int)
+    // - bitwise or fst_src and snd_src
+    // or dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_OR,
+    // - bitwise xor fst_src and snd_src
+    // xor dst(reg), fst_src(reg), snd_src(int)
+    // - bitwise xor fst_src and snd_src
+    // xor dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_XOR,
 
     // - arithmetic shift-left fst_src to snd_src bit positions
     // sal dst(reg), fst_src(reg), snd_src(int)
