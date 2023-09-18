@@ -632,7 +632,7 @@ ParserReturn* parse_direct_declarator_common(Parser* parser, int abstract) {
     int index = parser->index;
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     switch (ctoken->type) {
-        case CTOKEN_LPALEN:
+        case CTOKEN_LPAREN:
             parser->index++;
             if (abstract) {
                 parserret_assign(&enclosed_head_ast, &err, parse_abstract_declarator(parser));
@@ -650,7 +650,7 @@ ParserReturn* parse_direct_declarator_common(Parser* parser, int abstract) {
                     break;
                 }
 
-                err = consume_ctoken(parser, CTOKEN_RPALEN);
+                err = consume_ctoken(parser, CTOKEN_RPAREN);
                 if (err != NULL) {
                     delete_ast(enclosed_head_ast);
                     return new_parserret_error(err);
@@ -661,7 +661,7 @@ ParserReturn* parse_direct_declarator_common(Parser* parser, int abstract) {
                     return new_parserret_error(err);
                 }
 
-                err = consume_ctoken(parser, CTOKEN_RPALEN);
+                err = consume_ctoken(parser, CTOKEN_RPAREN);
                 if (err != NULL) {
                     delete_ast(enclosed_head_ast);
                     return new_parserret_error(err);
@@ -728,7 +728,7 @@ ParserReturn* parse_direct_declarator_common(Parser* parser, int abstract) {
                 err = consume_ctoken(parser, CTOKEN_RBRACKET);
                 break;
             }
-            case CTOKEN_LPALEN: {
+            case CTOKEN_LPAREN: {
                 Ast* child_ast = NULL;
                 parser->index++;
                 parserret_assign(&child_ast, &err, parse_parameter_list(parser));
@@ -744,7 +744,7 @@ ParserReturn* parse_direct_declarator_common(Parser* parser, int abstract) {
                     vector_insert(tail_ast->children, 0, declarator_ast);
                 }
                 tail_ast = declarator_ast;
-                err = consume_ctoken(parser, CTOKEN_RPALEN);
+                err = consume_ctoken(parser, CTOKEN_RPAREN);
                 break;
             }
             default:
