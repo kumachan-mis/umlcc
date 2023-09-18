@@ -356,11 +356,11 @@ void test_read_statement_if_else(void) {
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_IF));
-    vector_push(expected, new_ctoken(CTOKEN_LPALEN));
+    vector_push(expected, new_ctoken(CTOKEN_LPAREN));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(expected, new_ctoken(CTOKEN_EQUAL_EQUAL));
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
-    vector_push(expected, new_ctoken(CTOKEN_RPALEN));
+    vector_push(expected, new_ctoken(CTOKEN_RPAREN));
     vector_push(expected, new_ctoken(CTOKEN_LBRACE));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
     vector_push(expected, new_ctoken(CTOKEN_EQUAL));
