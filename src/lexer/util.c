@@ -124,8 +124,8 @@ Map* new_punctuator_map(void) {
 
     ctoken_map_add(punctuator_map, "[", CTOKEN_LBRACKET);
     ctoken_map_add(punctuator_map, "]", CTOKEN_RBRACKET);
-    ctoken_map_add(punctuator_map, "(", CTOKEN_LPALEN);
-    ctoken_map_add(punctuator_map, ")", CTOKEN_RPALEN);
+    ctoken_map_add(punctuator_map, "(", CTOKEN_LPAREN);
+    ctoken_map_add(punctuator_map, ")", CTOKEN_RPAREN);
     ctoken_map_add(punctuator_map, "{", CTOKEN_LBRACE);
     ctoken_map_add(punctuator_map, "}", CTOKEN_RBRACE);
     ctoken_map_add(punctuator_map, ".", CTOKEN_DOT);

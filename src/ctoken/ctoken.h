@@ -31,8 +31,8 @@ typedef enum CTokenType {
     // punctuator
     CTOKEN_LBRACKET,
     CTOKEN_RBRACKET,
-    CTOKEN_LPALEN,
-    CTOKEN_RPALEN,
+    CTOKEN_LPAREN,
+    CTOKEN_RPAREN,
     CTOKEN_LBRACE,
     CTOKEN_RBRACE,
     CTOKEN_DOT,
