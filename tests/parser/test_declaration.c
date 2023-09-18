@@ -312,24 +312,24 @@ void test_parse_function_decl(void) {
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_COMMA));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("g")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_COMMA));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("h")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("b")));
     vector_push(input, new_ctoken(CTOKEN_COMMA));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("c")));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
@@ -377,7 +377,7 @@ void test_parse_non_scalar_parameter_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("func")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
     vector_push(input, new_ctoken(CTOKEN_LBRACKET));
@@ -387,11 +387,11 @@ void test_parse_non_scalar_parameter_decl(void) {
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("p")));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
@@ -433,27 +433,27 @@ void test_parse_unnamed_parameter_decl(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_COMMA));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("g")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
     vector_push(input, new_ctoken(CTOKEN_COMMA));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_COMMA));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("h")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_COMMA));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
@@ -852,9 +852,9 @@ void test_parse_typedef_name_decl(void) {
 void test_parse_enclosed_decl_int(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
@@ -873,10 +873,10 @@ void test_parse_enclosed_decl_int(void) {
 void test_parse_enclosed_decl_pointer(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_CHAR));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("p")));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
@@ -896,14 +896,14 @@ void test_parse_enclosed_decl_pointer(void) {
 void test_parse_enclosed_decl_array(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("apfi")));
     vector_push(input, new_ctoken(CTOKEN_LBRACKET));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
     vector_push(input, new_ctoken(CTOKEN_RBRACKET));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
@@ -911,7 +911,7 @@ void test_parse_enclosed_decl_array(void) {
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
@@ -949,26 +949,26 @@ void test_parse_enclosed_decl_array(void) {
 void test_parse_enclosed_decl_function(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("signal")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("sig")));
     vector_push(input, new_ctoken(CTOKEN_COMMA));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("func")));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
@@ -1013,24 +1013,24 @@ void test_parse_enclosed_decl_function(void) {
 void test_parse_enclosed_decl_abstract_params(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("signal")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_ctoken(CTOKEN_COMMA));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 

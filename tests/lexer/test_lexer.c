@@ -71,14 +71,14 @@ void test_read_function_definition(void) {
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("test_read_function_definition")));
-    vector_push(expected, new_ctoken(CTOKEN_LPALEN));
+    vector_push(expected, new_ctoken(CTOKEN_LPAREN));
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_VOID));
-    vector_push(expected, new_ctoken(CTOKEN_RPALEN));
+    vector_push(expected, new_ctoken(CTOKEN_RPAREN));
     vector_push(expected, new_ctoken(CTOKEN_LBRACE));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("printf")));
-    vector_push(expected, new_ctoken(CTOKEN_LPALEN));
+    vector_push(expected, new_ctoken(CTOKEN_LPAREN));
     vector_push(expected, new_sliteral_ctoken(CTOKEN_STRING, new_sliteral(new_string("OK\n"), 4)));
-    vector_push(expected, new_ctoken(CTOKEN_RPALEN));
+    vector_push(expected, new_ctoken(CTOKEN_RPAREN));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_RETURN));
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
@@ -180,9 +180,9 @@ void test_read_declaration_function_without_init(void) {
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_VOID));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("put_int")));
-    vector_push(expected, new_ctoken(CTOKEN_LPALEN));
+    vector_push(expected, new_ctoken(CTOKEN_LPAREN));
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(expected, new_ctoken(CTOKEN_RPALEN));
+    vector_push(expected, new_ctoken(CTOKEN_RPAREN));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
@@ -540,11 +540,11 @@ void test_read_postfix_expr(void) {
     vector_push(expected, new_ctoken(CTOKEN_RBRACKET));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("exec_process")));
-    vector_push(expected, new_ctoken(CTOKEN_LPALEN));
+    vector_push(expected, new_ctoken(CTOKEN_LPAREN));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
     vector_push(expected, new_ctoken(CTOKEN_COMMA));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("b")));
-    vector_push(expected, new_ctoken(CTOKEN_RPALEN));
+    vector_push(expected, new_ctoken(CTOKEN_RPAREN));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("s")));
     vector_push(expected, new_ctoken(CTOKEN_DOT));

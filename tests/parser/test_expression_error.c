@@ -256,7 +256,7 @@ void test_parse_add_expr_error(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_PLUS));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
     vector_push(input, new_ctoken(CTOKEN_RBRACKET));
     vector_push(input, new_ctoken(CTOKEN_EOF));
@@ -272,7 +272,7 @@ void test_parse_subtract_expr_error(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_MINUS));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_ctoken(CTOKEN_EOF));
@@ -328,7 +328,7 @@ void test_parse_modulo_expr_error(void) {
 
 void test_parse_cast_expr_error_paren(void) {
     Vector* input = new_vector(&t_ctoken);
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
@@ -343,13 +343,13 @@ void test_parse_cast_expr_error_paren(void) {
 
 void test_parse_cast_expr_error_type_name(void) {
     Vector* input = new_vector(&t_ctoken);
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("type")));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("variable")));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
@@ -450,9 +450,9 @@ void test_parse_sizeof_expr_error_paren(void) {
 void test_parse_sizeof_expr_error_type_name(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_SIZEOF));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
     vector_push(input, new_ctoken(CTOKEN_RBRACKET));
     vector_push(input, new_ctoken(CTOKEN_EOF));
@@ -468,9 +468,9 @@ void test_parse_sizeof_expr_error_type_name(void) {
 void test_parse_call_expr_error_arg_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_COMMA));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("unexpected token ,");
@@ -483,7 +483,7 @@ void test_parse_call_expr_error_arg_expr(void) {
 void test_parse_call_expr_error_arg_list(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
     vector_push(input, new_ctoken(CTOKEN_EXCLAM));
     vector_push(input, new_ctoken(CTOKEN_EOF));
@@ -570,9 +570,9 @@ void test_parse_ident_expr_error_typedef_name(void) {
 
 void test_parse_parenthesized_expr_error_child(void) {
     Vector* input = new_vector(&t_ctoken);
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("unexpected token ;");
@@ -584,7 +584,7 @@ void test_parse_parenthesized_expr_error_child(void) {
 
 void test_parse_parenthesized_expr_error_paren(void) {
     Vector* input = new_vector(&t_ctoken);
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 

@@ -164,9 +164,9 @@ void test_parse_logical_and_expr(void) {
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("check2")));
     vector_push(input, new_ctoken(CTOKEN_AND_AND));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("validate")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("object")));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Ast* expected = new_ast(AST_LAND_EXPR, 2,       // non-terminal
@@ -463,18 +463,18 @@ void test_parse_modulo_expr(void) {
 
 void test_parse_cast_expr(void) {
     Vector* input = new_vector(&t_ctoken);
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_VOID));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("f")));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
@@ -600,10 +600,10 @@ void test_parse_logical_not_expr(void) {
 void test_parse_sizeof_expr_typename(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_SIZEOF));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
     vector_push(input, new_ctoken(CTOKEN_ASTERISK));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Ast* expected = new_ast(AST_SIZEOF_EXPR, 1,                    // non-terminal
@@ -635,13 +635,13 @@ void test_parse_sizeof_expr_expr(void) {
 void test_parse_call_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("function")));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 7)));
     vector_push(input, new_ctoken(CTOKEN_COMMA));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Ast* expected = new_ast(AST_CALL_EXPR, 2, // non-terminal
@@ -770,11 +770,11 @@ void test_parse_sliteral_expr(void) {
 void test_parse_parenthesized_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_EXCLAM));
-    vector_push(input, new_ctoken(CTOKEN_LPALEN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL));
     vector_push(input, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, 88)));
-    vector_push(input, new_ctoken(CTOKEN_RPALEN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Ast* expected = new_ast(AST_LNOT_EXPR, 1,           // non-terminal
