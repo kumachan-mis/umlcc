@@ -25,6 +25,9 @@ ResolverReturn* resolve_stmt(Resolver* resolver) {
         case AST_EXPR_STMT:
             resolverret_assign(&srt, &errs, resolve_expression_stmt(resolver));
             break;
+        case AST_IF_STMT:
+            resolverret_assign(&srt, &errs, resolve_if_else_stmt(resolver));
+            break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
                             "unreachable statement (in resolve_stmt)\n");
@@ -147,5 +150,57 @@ ResolverReturn* resolve_expression_stmt(Resolver* resolver) {
     srt = convert_to_ptr_if_function(srt);
 
     srt = new_srt(SRT_EXPR_STMT, 1, srt);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_if_else_stmt(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_IF_STMT, 0);
+    Srt* child_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    child_srt = convert_to_ptr_if_array(child_srt);
+    child_srt = convert_to_ptr_if_function(child_srt);
+    vector_push(srt->children, child_srt);
+
+    if (!dtype_isscalar(child_srt->dtype)) {
+        errs = new_vector(&t_error);
+        err = new_error("if-else condition should be scalar");
+        vector_push(errs, err);
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+    vector_push(srt->children, child_srt);
+
+    if (vector_size(ast->children) == 2) {
+        return new_resolverret(srt);
+    }
+
+    resolver->ast = vector_at(ast->children, 2);
+    resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+    vector_push(srt->children, child_srt);
+
     return new_resolverret(srt);
 }

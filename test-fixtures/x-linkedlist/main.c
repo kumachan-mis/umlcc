@@ -12,25 +12,31 @@ typedef struct LinkedList {
 LinkedList* new_linkedlist(int value) {
     LinkedList* list = malloc(sizeof(LinkedList));
     list->value = value;
-    list->next = (void*)0;
+    list->next = (LinkedList*)0;
     return list;
 }
 
 int linkedlist_at(LinkedList* list, int n) {
-    int ret = -1;
-    ret == -1 && list != (LinkedList*)0 && n == 0 && (ret = list->value);
-    ret == -1 && list != (LinkedList*)0 && (ret = linkedlist_at(list->next, n - 1));
-    return ret;
+    if (!list) {
+        return -1;
+    }
+    if (n == 0) {
+        return list->value;
+    }
+    return linkedlist_at(list->next, n - 1);
 }
 
 int linkedlist_length(LinkedList* list) {
-    int ret = 0;
-    list && (ret = linkedlist_length(list->next) + 1);
-    return ret;
+    if (!list) {
+        return 0;
+    }
+    return linkedlist_length(list->next) + 1;
 }
 
 int delete_linkedlist(LinkedList* list) {
-    list->next&& delete_linkedlist(list->next);
+    if (list->next) {
+        delete_linkedlist(list->next);
+    }
     free(list);
     return 0;
 }
@@ -56,7 +62,7 @@ int main(void) {
     put_int(linkedlist_at(list, 4));
     put_int(linkedlist_at(list, 5));
 
-    free(list);
+    delete_linkedlist(list);
 
     return 0;
 }
