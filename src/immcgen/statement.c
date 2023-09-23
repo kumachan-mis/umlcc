@@ -54,19 +54,23 @@ Vector* gen_if_else_stmt_immcode(Immcgen* immcgen) {
 Vector* gen_if_without_else_stmt_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
 
-    ImmcOpe* label = NULL;
-    ImmcOpe* fst_src = NULL;
-    ImmcOpe* snd_src = NULL;
-
     immcgen->label_id++;
     int end_label_id = immcgen->label_id;
 
-    label = new_label_immcope_from_id(end_label_id);
-    fst_src = gen_child_reg_immcope(immcgen, codes, 0);
-    snd_src = new_signed_int_immcope(fst_src->suffix, INTEGER_INT, 0);
-    vector_push(codes, new_inst_immc(IMMC_INST_JEQ, label, fst_src, snd_src));
+    ImmcOpe* end_label = new_label_immcope_from_id(end_label_id);
+    ImmcOpe* fst_src = gen_child_reg_immcope(immcgen, codes, 0);
+    ImmcOpe* snd_src = new_signed_int_immcope(fst_src->suffix, INTEGER_INT, 0);
+    vector_push(codes, new_inst_immc(IMMC_INST_JEQ, end_label, fst_src, snd_src));
 
     append_child_immcode(immcgen, codes, 1);
+
+    Immc* end_code = vector_at(codes, vector_size(codes) - 1);
+    if (end_code->type == IMMC_LABEL) {
+        // reuse label created by child
+        free(end_label->label_name);
+        end_label->label_name = new_string(end_code->label->name);
+        return codes;
+    }
 
     vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, end_label_id));
 
@@ -76,28 +80,32 @@ Vector* gen_if_without_else_stmt_immcode(Immcgen* immcgen) {
 Vector* gen_if_with_else_stmt_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
 
-    ImmcOpe* label = NULL;
-    ImmcOpe* fst_src = NULL;
-    ImmcOpe* snd_src = NULL;
-
     immcgen->label_id++;
     int else_label_id = immcgen->label_id;
     immcgen->label_id++;
     int end_label_id = immcgen->label_id;
 
-    label = new_label_immcope_from_id(else_label_id);
-    fst_src = gen_child_reg_immcope(immcgen, codes, 0);
-    snd_src = new_signed_int_immcope(fst_src->suffix, INTEGER_INT, 0);
-    vector_push(codes, new_inst_immc(IMMC_INST_JEQ, label, fst_src, snd_src));
+    ImmcOpe* else_label = new_label_immcope_from_id(else_label_id);
+    ImmcOpe* fst_src = gen_child_reg_immcope(immcgen, codes, 0);
+    ImmcOpe* snd_src = new_signed_int_immcope(fst_src->suffix, INTEGER_INT, 0);
+    vector_push(codes, new_inst_immc(IMMC_INST_JEQ, else_label, fst_src, snd_src));
 
     append_child_immcode(immcgen, codes, 1);
 
-    label = new_label_immcope_from_id(end_label_id);
-    vector_push(codes, new_inst_immc(IMMC_INST_JMP, label, NULL, NULL));
+    ImmcOpe* end_label = new_label_immcope_from_id(end_label_id);
+    vector_push(codes, new_inst_immc(IMMC_INST_JMP, end_label, NULL, NULL));
 
     vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, else_label_id));
 
     append_child_immcode(immcgen, codes, 2);
+
+    Immc* end_code = vector_at(codes, vector_size(codes) - 1);
+    if (end_code->type == IMMC_LABEL) {
+        // reuse label created by child
+        free(end_label->label_name);
+        end_label->label_name = new_string(end_code->label->name);
+        return codes;
+    }
 
     vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, end_label_id));
 
