@@ -148,6 +148,8 @@ Map* new_punctuator_map(void) {
     ctoken_map_add(punctuator_map, "|", CTOKEN_VBAR);
     ctoken_map_add(punctuator_map, "&&", CTOKEN_AND_AND);
     ctoken_map_add(punctuator_map, "||", CTOKEN_VBAR_VBAR);
+    ctoken_map_add(punctuator_map, "?", CTOKEN_QUESTION);
+    ctoken_map_add(punctuator_map, ":", CTOKEN_COLON);
     ctoken_map_add(punctuator_map, ";", CTOKEN_SEMICOLON);
     ctoken_map_add(punctuator_map, "=", CTOKEN_EQUAL);
     ctoken_map_add(punctuator_map, ",", CTOKEN_COMMA);
