@@ -174,7 +174,7 @@ ResolverReturn* resolve_if_else_stmt(Resolver* resolver) {
 
     if (!dtype_isscalar(child_srt->dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("if-else condition should be scalar");
+        err = new_error("condition of if-else statement should have scalar type");
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);
