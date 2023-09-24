@@ -12,7 +12,8 @@
 char* x64_inst_formats[] = {"mov%c", "movs%c%c", "movz%c%c", "movabs%c", "lea%c", "c%ct%c", "c%ctd", "cqto",  "push%c",
                             "pop%c", "add%c",    "sub%c",    "imul%c",   "div%c", "idiv%c", "neg%c", "and%c", "not%c",
                             "or%c",  "xor%c",    "sal%c",    "sar%c",    "cmp%c", "sete",   "setne", "setl",  "setg",
-                            "setle", "setge",    "jmp",      "je",       "jne",   "call",   "ret"};
+                            "setle", "setge",    "jmp",      "je",       "jne",   "ja",     "jae",   "jb",    "jbe",
+                            "jg",    "jge",      "jl",       "jle",      "call",  "ret"};
 
 X64Inst* new_x64inst(X64InstType type, X64Ope* src, X64Ope* dst) {
     X64Inst* x64inst = malloc(sizeof(X64Inst));
