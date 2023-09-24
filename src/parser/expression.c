@@ -12,7 +12,7 @@ ParserReturn* parse_expr(Parser* parser) {
 }
 
 ParserReturn* parse_constant_expr(Parser* parser) {
-    ParserReturn* parserret = parse_logical_or_expr(parser);
+    ParserReturn* parserret = parse_conditional_expr(parser);
     return parserret;
 }
 
@@ -47,7 +47,7 @@ ParserReturn* parse_assignment_expr(Parser* parser) {
         }
     }
 
-    parserret_assign(&ast, &err, parse_logical_or_expr(parser));
+    parserret_assign(&ast, &err, parse_conditional_expr(parser));
     if (err != NULL) {
         delete_vector(stack);
         return new_parserret_error(err);
@@ -63,6 +63,47 @@ ParserReturn* parse_assignment_expr(Parser* parser) {
     }
 
     delete_vector(stack);
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_conditional_expr(Parser* parser) {
+    Ast* ast = NULL;
+    Ast* child_ast = NULL;
+    Error* err = NULL;
+
+    parserret_assign(&ast, &err, parse_logical_or_expr(parser));
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
+
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+    if (ctoken->type != CTOKEN_QUESTION) {
+        return new_parserret(ast);
+    }
+    parser->index++;
+
+    ast = new_ast(AST_COND_EXPR, 1, ast);
+
+    parserret_assign(&child_ast, &err, parse_expr(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    vector_push(ast->children, child_ast);
+
+    err = consume_ctoken(parser, CTOKEN_COLON);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    parserret_assign(&child_ast, &err, parse_conditional_expr(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    vector_push(ast->children, child_ast);
+
     return new_parserret(ast);
 }
 

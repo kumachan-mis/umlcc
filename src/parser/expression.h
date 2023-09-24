@@ -6,6 +6,7 @@
 ParserReturn* parse_expr(Parser* parser);
 ParserReturn* parse_constant_expr(Parser* parser);
 ParserReturn* parse_assignment_expr(Parser* parser);
+ParserReturn* parse_conditional_expr(Parser* parser);
 ParserReturn* parse_logical_or_expr(Parser* parser);
 ParserReturn* parse_logical_and_expr(Parser* parser);
 ParserReturn* parse_bitwise_inclusive_or_expr(Parser* parser);

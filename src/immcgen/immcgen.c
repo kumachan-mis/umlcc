@@ -70,6 +70,9 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
         case SRT_ASSIGN_EXPR:
             codes = gen_assignment_expr_immcode(immcgen);
             break;
+        case SRT_COND_EXPR:
+            codes = gen_conditional_expr_immcode(immcgen);
+            break;
         case SRT_LOR_EXPR:
             codes = gen_logical_or_expr_immcode(immcgen);
             break;

@@ -28,6 +28,43 @@ Vector* gen_assignment_expr_immcode(Immcgen* immcgen) {
     return codes;
 }
 
+Vector* gen_conditional_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    ImmcOpe* label = NULL;
+    ImmcOpe* reg = NULL;
+    ImmcOpe* fst_src = NULL;
+    ImmcOpe* snd_src = NULL;
+
+    immcgen->label_id++;
+    int false_label_id = immcgen->label_id;
+    immcgen->label_id++;
+    int end_label_id = immcgen->label_id;
+
+    label = new_label_immcope_from_id(false_label_id);
+    fst_src = gen_child_reg_immcope(immcgen, codes, 0);
+    snd_src = new_signed_int_immcope(fst_src->suffix, INTEGER_INT, 0);
+    vector_push(codes, new_inst_immc(IMMC_INST_JEQ, label, fst_src, snd_src));
+
+    reg = create_dest_reg_immcope(immcgen);
+    fst_src = gen_child_reg_immcope(immcgen, codes, 1);
+    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, reg, fst_src, NULL));
+
+    label = new_label_immcope_from_id(end_label_id);
+    vector_push(codes, new_inst_immc(IMMC_INST_JMP, label, NULL, NULL));
+
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, false_label_id));
+
+    reg = immcope_copy(reg);
+    fst_src = gen_child_reg_immcope(immcgen, codes, 2);
+    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, reg, fst_src, NULL));
+
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, end_label_id));
+
+    update_non_void_expr_register(immcgen, reg);
+    return codes;
+}
+
 Vector* gen_logical_or_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
 

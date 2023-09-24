@@ -4,6 +4,7 @@
 #include "./immcgen.h"
 
 Vector* gen_assignment_expr_immcode(Immcgen* immcgen);
+Vector* gen_conditional_expr_immcode(Immcgen* immcgen);
 Vector* gen_logical_or_expr_immcode(Immcgen* immcgen);
 Vector* gen_logical_and_expr_immcode(Immcgen* immcgen);
 Vector* gen_bitwise_expr_immcode(Immcgen* immcgen);

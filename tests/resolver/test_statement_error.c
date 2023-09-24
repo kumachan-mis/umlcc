@@ -181,7 +181,7 @@ void test_resolve_if_else_stmt_error_condition_non_scalar(void) {
     symboltable_define_memory(local_table, new_string("x"), new_unnamed_struct_dtype(members));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("if-else condition should be scalar"));
+    vector_push(expected, new_error("condition of if-else statement should have scalar type"));
 
     run_stmt_resolver_error_test(input, local_table, NULL, expected);
 

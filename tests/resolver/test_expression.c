@@ -3,6 +3,9 @@
 #include "../testlib/testlib.h"
 
 void test_resolve_assignment_expr(void);
+void test_resolve_conditional_expr_arithmetic(void);
+void test_resolve_conditional_expr_pointer(void);
+void test_resolve_conditional_expr_struct(void);
 void test_resolve_logical_or_expr(void);
 void test_resolve_logical_and_expr(void);
 void test_resolve_bitwise_inclusive_or_expr(void);
@@ -59,6 +62,9 @@ void run_local_expr_resolver_test(Ast* input, SymbolTable* symbol_table, TagTabl
 CU_Suite* add_test_suite_expr_resolver(void) {
     CU_Suite* suite = CU_add_suite("test_suite_expr_resolver", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_assignment_expr);
+    CU_ADD_TEST(suite, test_resolve_conditional_expr_arithmetic);
+    CU_ADD_TEST(suite, test_resolve_conditional_expr_pointer);
+    CU_ADD_TEST(suite, test_resolve_conditional_expr_struct);
     CU_ADD_TEST(suite, test_resolve_logical_or_expr);
     CU_ADD_TEST(suite, test_resolve_logical_and_expr);
     CU_ADD_TEST(suite, test_resolve_bitwise_inclusive_or_expr);
@@ -190,6 +196,106 @@ void test_resolve_logical_or_expr(void) {
                            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("n")))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_conditional_expr_arithmetic(void) {
+    Ast* input = new_ast(AST_COND_EXPR, 3,            // non-terminal
+                         new_ast(AST_GREATER_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("ul")),
+                         new_ast(AST_COND_EXPR, 3,         // non-terminal
+                                 new_ast(AST_LESS_EXPR, 2, // non-terminal
+                                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))),
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("c")),
+                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("c"), new_integer_dtype(DTYPE_CHAR));
+    symboltable_define_memory(local_table, new_string("ul"), new_integer_dtype(DTYPE_UNSIGNED_LONG));
+
+    // The usual arithmetic conversions should be performed
+    Srt* expected = new_dtyped_srt(
+        SRT_COND_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), 3, // non-terminal
+        new_dtyped_srt(
+            SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), new_string("ul")),
+        new_dtyped_srt(
+            SRT_CAST_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), 1, // non-terminal
+            new_dtyped_srt(
+                SRT_COND_EXPR, new_integer_dtype(DTYPE_INT), 3, // non-terminal
+                new_dtyped_srt(
+                    SRT_LESS_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                    new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+                    new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("c"))),
+                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_conditional_expr_pointer(void) {
+    Ast* input = new_ast(AST_COND_EXPR, 3, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_COND_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 3, // non-terminal
+        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("p")),
+        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("p")),
+        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("q")));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_conditional_expr_struct(void) {
+    Ast* input = new_ast(AST_MEMBER_EXPR, 2,
+                         new_ast(AST_COND_EXPR, 3, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("should_use_s")),
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("s")),
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("t"))),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("a")));
+
+    DType* struct_dtype = new_named_struct_dtype(new_string("X"), 12, 12);
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("should_use_s"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("s"), dtype_copy(struct_dtype));
+    symboltable_define_memory(local_table, new_string("t"), dtype_copy(struct_dtype));
+
+    TagTable* tag_table = new_tagtable();
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("a"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("b"), new_integer_dtype(DTYPE_INT)));
+    vector_push(members, new_dstructmember(new_string("c"), new_integer_dtype(DTYPE_INT)));
+    tagtable_define_struct(tag_table, new_string("X"), members);
+
+    Srt* expected = new_dtyped_srt(
+        SRT_TOMEMBER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+        new_dtyped_srt(
+            SRT_ADDR_EXPR, new_pointer_dtype(struct_dtype), 1,
+            new_dtyped_srt(SRT_COND_EXPR, dtype_copy(struct_dtype), 3, // non-terminal
+                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("should_use_s")),
+                           new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(struct_dtype), new_string("s")),
+                           new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(struct_dtype), new_string("t")))),
+        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("a")));
+
+    run_local_expr_resolver_test(input, local_table, tag_table, expected, NULL);
 
     delete_srt(expected);
 }

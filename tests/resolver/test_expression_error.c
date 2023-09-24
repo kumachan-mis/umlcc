@@ -7,6 +7,13 @@ void test_resolve_assign_expr_error_void(void);
 void test_resolve_assign_expr_error_unmodifiable(void);
 void test_resolve_assign_expr_error_lhs(void);
 void test_resolve_assign_expr_error_rhs(void);
+void test_resolve_conditional_expr_error_condition_child(void);
+void test_resolve_conditional_expr_error_condition_non_scalar(void);
+void test_resolve_conditional_expr_error_lhs(void);
+void test_resolve_conditional_expr_error_rhs(void);
+void test_resolve_conditional_expr_error_incompatible_dtype(void);
+void test_resolve_conditional_expr_error_incompatible_pointer(void);
+void test_resolve_conditional_expr_error_different_struct(void);
 void test_resolve_logical_or_expr_error_non_scalar_lhs(void);
 void test_resolve_logical_or_expr_error_non_scalar_rhs(void);
 void test_resolve_logical_or_expr_error_lhs(void);
@@ -112,6 +119,13 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_assign_expr_error_unmodifiable);
     CU_ADD_TEST(suite, test_resolve_assign_expr_error_lhs);
     CU_ADD_TEST(suite, test_resolve_assign_expr_error_rhs);
+    CU_ADD_TEST(suite, test_resolve_conditional_expr_error_condition_child);
+    CU_ADD_TEST(suite, test_resolve_conditional_expr_error_condition_non_scalar);
+    CU_ADD_TEST(suite, test_resolve_conditional_expr_error_lhs);
+    CU_ADD_TEST(suite, test_resolve_conditional_expr_error_rhs);
+    CU_ADD_TEST(suite, test_resolve_conditional_expr_error_incompatible_dtype);
+    CU_ADD_TEST(suite, test_resolve_conditional_expr_error_incompatible_pointer);
+    CU_ADD_TEST(suite, test_resolve_conditional_expr_error_different_struct);
     CU_ADD_TEST(suite, test_resolve_logical_or_expr_error_non_scalar_lhs);
     CU_ADD_TEST(suite, test_resolve_logical_or_expr_error_non_scalar_rhs);
     CU_ADD_TEST(suite, test_resolve_logical_or_expr_error_lhs);
@@ -289,6 +303,144 @@ void test_resolve_assign_expr_error_rhs(void) {
     vector_push(expected, new_error("identifier 'y' is used before declared"));
 
     run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_conditional_expr_error_condition_child(void) {
+    Ast* input = new_ast(AST_COND_EXPR, 3, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("z")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("z"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'x' is used before declared"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_conditional_expr_error_condition_non_scalar(void) {
+    Ast* input = new_ast(AST_COND_EXPR, 3, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("z")));
+
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("structure"), new_unnamed_struct_dtype(members));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("z"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("condition of conditional expression should have scalar type"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_conditional_expr_error_lhs(void) {
+    Ast* input = new_ast(AST_COND_EXPR, 3, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("z")));
+
+    SymbolTable* local_teble = new_symboltable();
+    symboltable_define_memory(local_teble, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_teble, new_string("z"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'y' is used before declared"));
+
+    run_expr_resolver_error_test(input, local_teble, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_conditional_expr_error_rhs(void) {
+    Ast* input = new_ast(AST_COND_EXPR, 3, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("z")));
+
+    SymbolTable* local_teble = new_symboltable();
+    symboltable_define_memory(local_teble, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_teble, new_string("y"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'z' is used before declared"));
+
+    run_expr_resolver_error_test(input, local_teble, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_conditional_expr_error_incompatible_dtype(void) {
+    Ast* input = new_ast(AST_COND_EXPR, 3, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("z")));
+
+    SymbolTable* local_teble = new_symboltable();
+    symboltable_define_memory(local_teble, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_teble, new_string("y"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_teble, new_string("z"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operands of conditional expression are not compatible"));
+
+    run_expr_resolver_error_test(input, local_teble, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_conditional_expr_error_incompatible_pointer(void) {
+    Ast* input = new_ast(AST_COND_EXPR, 3, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("z")));
+
+    SymbolTable* local_teble = new_symboltable();
+    symboltable_define_memory(local_teble, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_teble, new_string("y"), new_pointer_dtype(new_integer_dtype(DTYPE_LONG)));
+    symboltable_define_memory(local_teble, new_string("z"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operands of conditional expression are not compatible"));
+
+    run_expr_resolver_error_test(input, local_teble, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_conditional_expr_error_different_struct(void) {
+    Ast* input = new_ast(AST_COND_EXPR, 3, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("z")));
+
+    Vector* members_y = new_vector(&t_dstructmember);
+    vector_push(members_y, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_LONG)));
+    Vector* members_z = new_vector(&t_dstructmember);
+    vector_push(members_z, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+
+    SymbolTable* local_teble = new_symboltable();
+    symboltable_define_memory(local_teble, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_teble, new_string("y"), new_unnamed_struct_dtype(members_y));
+    symboltable_define_memory(local_teble, new_string("z"), new_unnamed_struct_dtype(members_z));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operands of conditional expression are not compatible"));
+
+    run_expr_resolver_error_test(input, local_teble, NULL, expected);
 
     delete_vector(expected);
 }
