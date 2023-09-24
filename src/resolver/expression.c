@@ -16,6 +16,9 @@ ResolverReturn* resolve_expr(Resolver* resolver) {
         case AST_ASSIGN_EXPR:
             resolverret_assign(&srt, &errs, resolve_assignment_expr(resolver));
             break;
+        case AST_COND_EXPR:
+            resolverret_assign(&srt, &errs, resolve_conditional_expr(resolver));
+            break;
         case AST_LOR_EXPR:
         case AST_LAND_EXPR:
             resolverret_assign(&srt, &errs, resolve_logical_expr(resolver));
@@ -133,6 +136,77 @@ ResolverReturn* resolve_assignment_expr(Resolver* resolver) {
     lhs_srt = convert_to_ptr(lhs_srt);
 
     srt = new_dtyped_srt(SRT_ASSIGN_EXPR, dtype, 2, lhs_srt, rhs_srt);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_conditional_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    Srt* condition_srt = NULL;
+    Srt* lhs_srt = NULL;
+    Srt* rhs_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&condition_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
+    condition_srt = convert_to_ptr_if_array(condition_srt);
+    condition_srt = convert_to_ptr_if_function(condition_srt);
+
+    if (!dtype_isscalar(condition_srt->dtype)) {
+        errs = new_vector(&t_error);
+        err = new_error("condition of conditional expression should have scalar type");
+        vector_push(errs, err);
+        delete_srt(condition_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_assign(&lhs_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(condition_srt);
+        return new_resolverret_errors(errs);
+    }
+    lhs_srt = convert_to_ptr_if_array(lhs_srt);
+    lhs_srt = convert_to_ptr_if_function(lhs_srt);
+
+    resolver->ast = vector_at(ast->children, 2);
+    resolverret_assign(&rhs_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(condition_srt);
+        delete_srt(lhs_srt);
+        return new_resolverret_errors(errs);
+    }
+    rhs_srt = convert_to_ptr_if_array(rhs_srt);
+    rhs_srt = convert_to_ptr_if_function(rhs_srt);
+
+    if (dtype_isarithmetic(lhs_srt->dtype) && dtype_isarithmetic(rhs_srt->dtype)) {
+        Pair* srt_pair = new_pair(&t_srt, &t_srt);
+        pair_set(srt_pair, lhs_srt, rhs_srt);
+        pair_assign((void**)&lhs_srt, (void**)&rhs_srt, perform_usual_arithmetic_conversion(srt_pair));
+    } else if (lhs_srt->dtype->type == DTYPE_POINTER && rhs_srt->dtype->type == DTYPE_POINTER &&
+               dtype_iscompatible(lhs_srt->dtype, rhs_srt->dtype)) {
+        // do nothing
+    } else if (lhs_srt->dtype->type == DTYPE_STRUCT && rhs_srt->dtype->type == DTYPE_STRUCT &&
+               dtype_equals(lhs_srt->dtype, rhs_srt->dtype)) {
+        // do nothing
+    } else {
+        errs = new_vector(&t_error);
+        err = new_error("operands of conditional expression are not compatible");
+        vector_push(errs, err);
+        delete_srt(condition_srt);
+        delete_srt(lhs_srt);
+        delete_srt(rhs_srt);
+        return new_resolverret_errors(errs);
+    }
+
+    srt = new_dtyped_srt(SRT_COND_EXPR, dtype_copy(lhs_srt->dtype), 3, condition_srt, lhs_srt, rhs_srt);
     return new_resolverret(srt);
 }
 
