@@ -5,30 +5,28 @@
 #include <stdio.h>
 
 void append_children_immcode(Immcgen* immcgen, Vector* codes) {
-    Vector* sub_codes = NULL;
     Srt* srt = immcgen->srt;
 
     int num_children = vector_size(srt->children);
     for (int i = 0; i < num_children; i++) {
         immcgen->srt = vector_at(srt->children, i);
-        sub_codes = immcgen_generate_immcode(immcgen);
+        Vector* sub_codes = immcgen_generate_immcode(immcgen);
+        immcgen->srt = srt;
+
         vector_extend(codes, sub_codes);
         delete_vector(sub_codes);
     }
-
-    immcgen->srt = srt;
 }
 
 void append_child_immcode(Immcgen* immcgen, Vector* codes, int index) {
-    Vector* sub_codes = NULL;
     Srt* srt = immcgen->srt;
 
     immcgen->srt = vector_at(srt->children, index);
-    sub_codes = immcgen_generate_immcode(immcgen);
+    Vector* sub_codes = immcgen_generate_immcode(immcgen);
+    immcgen->srt = srt;
+
     vector_extend(codes, sub_codes);
     delete_vector(sub_codes);
-
-    immcgen->srt = srt;
 }
 
 void update_non_void_expr_register(Immcgen* immcgen, ImmcOpe* dst) {
