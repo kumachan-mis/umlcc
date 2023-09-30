@@ -909,6 +909,12 @@ void test_parse_while_stmt(void) {
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 10)));
     vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_PLUS));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
@@ -923,7 +929,13 @@ void test_parse_while_stmt(void) {
                 new_ast(AST_LESS_EXPR, 2, // non-terminal
                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 10))),
-                new_ast(AST_CMPD_STMT, 1,                   // non-terminal
+                new_ast(AST_CMPD_STMT, 2,                   // non-terminal
+                        new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                        new_ast(AST_ADD_EXPR, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))),
                         new_ast(AST_EXPR_STMT, 1,           // non-terminal
                                 new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")),

@@ -386,7 +386,7 @@ void test_read_statement_if_else(void) {
 }
 
 void test_read_statement_while(void) {
-    char* input = "while (x < 10) { y = 2 * y; }";
+    char* input = "while (x < 10) { x = x + 1; y = 2 * y; }";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_ctoken(CTOKEN_KEYWORD_WHILE));
@@ -396,6 +396,12 @@ void test_read_statement_while(void) {
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 10)));
     vector_push(expected, new_ctoken(CTOKEN_RPAREN));
     vector_push(expected, new_ctoken(CTOKEN_LBRACE));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(expected, new_ctoken(CTOKEN_EQUAL));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(expected, new_ctoken(CTOKEN_PLUS));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
     vector_push(expected, new_ctoken(CTOKEN_EQUAL));
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
