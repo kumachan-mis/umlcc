@@ -6,6 +6,8 @@
 
 void append_children_immcode(Immcgen* immcgen, Vector* codes);
 void append_child_immcode(Immcgen* immcgen, Vector* codes, int index);
+void append_child_jmp_true_immcode(Immcgen* immcgen, Vector* codes, int index, ImmcOpe* label);
+void append_child_jmp_false_immcode(Immcgen* immcgen, Vector* codes, int index, ImmcOpe* label);
 void update_non_void_expr_register(Immcgen* immcgen, ImmcOpe* dst);
 void update_void_expr_register(Immcgen* immcgen);
 ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index);
