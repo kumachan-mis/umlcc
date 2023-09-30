@@ -23,6 +23,7 @@ void test_resolve_expression_stmt_function(void);
 void test_resolve_if_stmt(void);
 void test_resolve_if_else_stmt(void);
 void test_resolve_if_else_stmt_chain(void);
+void test_resolve_while_stmt(void);
 
 void run_stmt_resolver_test(Ast* input, SymbolTable* local_table, DType* return_dtype, Srt* expected);
 
@@ -49,6 +50,7 @@ CU_Suite* add_test_suite_stmt_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_if_stmt);
     CU_ADD_TEST(suite, test_resolve_if_else_stmt);
     CU_ADD_TEST(suite, test_resolve_if_else_stmt_chain);
+    CU_ADD_TEST(suite, test_resolve_while_stmt);
     return suite;
 }
 
@@ -1070,6 +1072,65 @@ void test_resolve_if_else_stmt_chain(void) {
                                     new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("y"))),
                                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
                                                  new_signed_iliteral(INTEGER_INT, 0)))))));
+
+    run_stmt_resolver_test(input, local_table, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_while_stmt(void) {
+    Ast* input =
+        new_ast(AST_WHILE_STMT, 2,        // non-terminal
+                new_ast(AST_LESS_EXPR, 2, // non-terminal
+                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 10))),
+                new_ast(AST_CMPD_STMT, 2,                   // non-terminal
+                        new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                        new_ast(AST_ADD_EXPR, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))),
+                        new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                        new_ast(AST_MUL_EXPR, 2, // non-terminal
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)),
+                                                new_identifier_ast(AST_IDENT_EXPR, new_string("y")))))));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_srt(
+        SRT_WHILE_STMT, 2, // non-terminal
+        new_dtyped_srt(
+            SRT_LESS_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 10))),
+        new_srt(SRT_CMPD_STMT, 2,                                                        // non-terminal
+                new_srt(SRT_EXPR_STMT, 1,                                                // non-terminal
+                        new_dtyped_srt(SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                                                      1, // non-terminal
+                                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                         new_string("x"))),
+                                       new_dtyped_srt(SRT_ADD_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                         new_string("x")),
+                                                      new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                       new_signed_iliteral(INTEGER_INT, 1))))),
+                new_srt(SRT_EXPR_STMT, 1,                                                // non-terminal
+                        new_dtyped_srt(SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                                                      1, // non-terminal
+                                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                         new_string("y"))),
+                                       new_dtyped_srt(SRT_MUL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                                      new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                       new_signed_iliteral(INTEGER_INT, 2)),
+                                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                         new_string("y")))))));
 
     run_stmt_resolver_test(input, local_table, NULL, expected);
 

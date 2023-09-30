@@ -27,6 +27,7 @@ typedef enum SrtType {
     SRT_RET_STMT,
     SRT_EXPR_STMT,
     SRT_IF_STMT,
+    SRT_WHILE_STMT,
 
     // expression
     //   assignment-expression
