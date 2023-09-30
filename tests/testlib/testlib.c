@@ -176,6 +176,9 @@ void testlib_assert_immcreg_equal(ImmcRegister* actual, ImmcRegister* expected) 
     }
 
     CU_ASSERT_EQUAL(actual->reg_id, expected->reg_id);
+    if (actual->reg_id != expected->reg_id) {
+        printf("actual: %d, expected: %d\n", actual->reg_id, expected->reg_id);
+    }
     CU_ASSERT_EQUAL(actual->is_unsigned, expected->is_unsigned);
 }
 
