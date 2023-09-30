@@ -1,34 +1,90 @@
 #include "./util.h"
+#include "../error/errint.h"
 #include "../immc/immc.h"
 
 #include <stdarg.h>
 #include <stdio.h>
 
+void append_child_jmp_cond_immcode(Immcgen* immcgen, Vector* codes, int index, ImmcOpe* label, int jmp_true);
+ErrorableInt* get_cjmp_inst_type(Srt* srt, int index, int jmp_true);
+
 void append_children_immcode(Immcgen* immcgen, Vector* codes) {
-    Vector* sub_codes = NULL;
     Srt* srt = immcgen->srt;
 
     int num_children = vector_size(srt->children);
     for (int i = 0; i < num_children; i++) {
         immcgen->srt = vector_at(srt->children, i);
-        sub_codes = immcgen_generate_immcode(immcgen);
+        Vector* sub_codes = immcgen_generate_immcode(immcgen);
+        immcgen->srt = srt;
+
         vector_extend(codes, sub_codes);
         delete_vector(sub_codes);
     }
+}
+
+void append_child_immcode(Immcgen* immcgen, Vector* codes, int index) {
+    Srt* srt = immcgen->srt;
+
+    immcgen->srt = vector_at(srt->children, index);
+    Vector* sub_codes = immcgen_generate_immcode(immcgen);
+    immcgen->srt = srt;
+
+    vector_extend(codes, sub_codes);
+    delete_vector(sub_codes);
+}
+
+void append_child_jmp_true_immcode(Immcgen* immcgen, Vector* codes, int index, ImmcOpe* label) {
+    append_child_jmp_cond_immcode(immcgen, codes, index, label, 1);
+}
+
+void append_child_jmp_false_immcode(Immcgen* immcgen, Vector* codes, int index, ImmcOpe* label) {
+    append_child_jmp_cond_immcode(immcgen, codes, index, label, 0);
+}
+
+void append_child_jmp_cond_immcode(Immcgen* immcgen, Vector* codes, int index, ImmcOpe* label, int jmp_true) {
+    Srt* srt = immcgen->srt;
+
+    ImmcInstType cjmp_inst_type = IMMC_INST_JMP;
+    Error* err = NULL;
+    errint_assign((int*)&cjmp_inst_type, &err, get_cjmp_inst_type(srt, index, jmp_true));
+
+    if (err != NULL) {
+        delete_error(err);
+        ImmcOpe* fst_src = gen_child_reg_immcope(immcgen, codes, index);
+        ImmcOpe* snd_src = new_signed_int_immcope(fst_src->suffix, INTEGER_INT, 0);
+        ImmcInstType inst_type = jmp_true ? IMMC_INST_JNEQ : IMMC_INST_JEQ;
+        vector_push(codes, new_inst_immc(inst_type, label, fst_src, snd_src));
+        return;
+    }
+
+    immcgen->srt = vector_at(srt->children, index);
+
+    ImmcOpe* fst_src = gen_child_reg_immcope(immcgen, codes, 0);
+    ImmcOpe* snd_src = gen_child_int_immcope(immcgen, codes, 1);
+    vector_push(codes, new_inst_immc(cjmp_inst_type, label, fst_src, snd_src));
 
     immcgen->srt = srt;
 }
 
-void append_child_immcode(Immcgen* immcgen, Vector* codes, int index) {
-    Vector* sub_codes = NULL;
-    Srt* srt = immcgen->srt;
+ErrorableInt* get_cjmp_inst_type(Srt* srt, int index, int jmp_true) {
+    Srt* conditon_srt = vector_at(srt->children, index);
 
-    immcgen->srt = vector_at(srt->children, index);
-    sub_codes = immcgen_generate_immcode(immcgen);
-    vector_extend(codes, sub_codes);
-    delete_vector(sub_codes);
-
-    immcgen->srt = srt;
+    switch (conditon_srt->type) {
+        case SRT_EQUAL_EXPR:
+            return new_errint(jmp_true ? IMMC_INST_JEQ : IMMC_INST_JNEQ);
+        case SRT_NEQUAL_EXPR:
+            return new_errint(jmp_true ? IMMC_INST_JNEQ : IMMC_INST_JEQ);
+        case SRT_LESS_EXPR:
+            return new_errint(jmp_true ? IMMC_INST_JLT : IMMC_INST_JGEQ);
+        case SRT_GREATER_EXPR:
+            return new_errint(jmp_true ? IMMC_INST_JGT : IMMC_INST_JLEQ);
+        case SRT_LESSEQ_EXPR:
+            return new_errint(jmp_true ? IMMC_INST_JLEQ : IMMC_INST_JGT);
+        case SRT_GREATEREQ_EXPR:
+            return new_errint(jmp_true ? IMMC_INST_JGEQ : IMMC_INST_JLT);
+        default:
+            return new_errint_error(new_error("expression is not a condition"));
+    }
 }
 
 void update_non_void_expr_register(Immcgen* immcgen, ImmcOpe* dst) {

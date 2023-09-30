@@ -110,26 +110,32 @@ typedef enum ImmcInstType {
 
     // - set dst to 1 if fst_src equals to snd_src, 0 otherwise
     // seteq dst(reg), fst_src(reg), snd_src(int)
+    // - set dst to 1 if fst_src equals to snd_src, 0 otherwise
     // seteq dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_SETEQ,
     // - set dst to 1 if fst_src does not equal to snd_src, 0 otherwise
     // setneq dst(reg), fst_src(reg), snd_src(int)
+    // - set dst to 1 if fst_src does not equal to snd_src, 0 otherwise
     // setneq dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_SETNEQ,
     // - set dst to 1 if fst_src is less than snd_src, 0 otherwise
     // setlt dst(reg), fst_src(reg), snd_src(int)
+    // - set dst to 1 if fst_src is less than snd_src, 0 otherwise
     // setlt dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_SETLT,
     // - set dst to 1 if fst_src is greater than snd_src, 0 otherwise
     // setgt dst(reg), fst_src(reg), snd_src(int)
+    // - set dst to 1 if fst_src is greater than snd_src, 0 otherwise
     // setgt dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_SETGT,
     // - set dst to 1 if fst_src is less than or equal to snd_src, 0 otherwise
     // setleq dst(reg), fst_src(reg), snd_src(int)
+    // - set dst to 1 if fst_src is less than or equal to snd_src, 0 otherwise
     // setleq dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_SETLEQ,
     // - set dst to 1 if fst_src is greater than or equal to snd_src, 0 otherwise
     // setgeq dst(reg), fst_src(reg), snd_src(int)
+    // - set dst to 1 if fst_src is greater than or equal to snd_src, 0 otherwise
     // setgeq dst(reg), fst_src(reg), snd_src(reg)
     IMMC_INST_SETGEQ,
 
@@ -138,12 +144,34 @@ typedef enum ImmcInstType {
     IMMC_INST_JMP,
     // - jump to dst label if fst_src equals to snd_src
     // jeq dst(label), fst_src(reg), snd_src(int)
+    // - jump to dst label if fst_src equals to snd_src
     // jeq dst(label), fst_src(reg), snd_src(reg)
     IMMC_INST_JEQ,
     // - jump to dst label if fst_src does not equal to snd_src
     // jneq dst(label), fst_src(reg), snd_src(int)
+    // - jump to dst label if fst_src does not equal to snd_src
     // jneq dst(label), fst_src(reg), snd_src(reg)
     IMMC_INST_JNEQ,
+    // - jump to dst label if fst_src is greater than snd_src
+    // jgt dst(reg), fst_src(reg), snd_src(int)
+    // - jump to dst label if fst_src is greater than snd_src
+    // jgt dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_JGT,
+    // - jump to dst label if fst_src is greater than or equal to snd_src
+    // jgeq dst(reg), fst_src(reg), snd_src(int)
+    // - jump to dst label if fst_src is greater than or equal to snd_src
+    // jgeq dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_JGEQ,
+    // - jump to dst label if fst_src is less than snd_src
+    // jlt dst(reg), fst_src(reg), snd_src(int)
+    // - jump to dst label if fst_src is less than snd_src
+    // jlt dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_JLT,
+    // - jump to dst label if fst_src is less than or equal to snd_src
+    // jleq dst(reg), fst_src(reg), snd_src(int)
+    // - jump to dst label if fst_src is less than or equal to snd_src
+    // jleq dst(reg), fst_src(reg), snd_src(reg)
+    IMMC_INST_JLEQ,
     // - call function at address of fst_src, which takes snd_src-params
     //   (return value is stored to dst)
     // call dst(reg), fst_src(ptr), snd_src(int)

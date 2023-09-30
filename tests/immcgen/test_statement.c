@@ -773,7 +773,7 @@ void test_immcgen_if_stmt(void) {
     Srt* input = new_srt(
         SRT_IF_STMT, 2, // non-terminal
         new_dtyped_srt(
-            SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+            SRT_LESSEQ_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
             new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
             new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
         new_srt(
@@ -796,24 +796,19 @@ void test_immcgen_if_stmt(void) {
                               new_mem_immcope(4),                          // fst_src
                               NULL));                                      // snd_src
     vector_push(expected,
-                new_inst_immc(IMMC_INST_SETEQ,                                            // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1),                // dst
+                new_inst_immc(IMMC_INST_JGT,                                              // inst
+                              new_label_immcope(new_string(".L0")),                       // dst
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                // fst_src
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
     vector_push(expected,
-                new_inst_immc(IMMC_INST_JEQ,                                              // inst
-                              new_label_immcope(new_string(".L0")),                       // dst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1),                // fst_src
-                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
-    vector_push(expected,
                 new_inst_immc(IMMC_INST_LOAD,                                           // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2),              // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1),              // dst
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 1), // fst_src
                               NULL));                                                   // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_STORE,                             // inst
                               new_mem_immcope(8),                          // dst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2), // fst_src
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1), // fst_src
                               NULL));                                      // snd_src
     vector_push(expected, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
 
@@ -861,24 +856,19 @@ void test_immcgen_if_else_stmt(void) {
                               new_mem_immcope(4),                          // fst_src
                               NULL));                                      // snd_src
     vector_push(expected,
-                new_inst_immc(IMMC_INST_SETEQ,                                            // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1),                // dst
+                new_inst_immc(IMMC_INST_JNEQ,                                             // inst
+                              new_label_immcope(new_string(".L0")),                       // dst
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                // fst_src
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
     vector_push(expected,
-                new_inst_immc(IMMC_INST_JEQ,                                              // inst
-                              new_label_immcope(new_string(".L0")),                       // dst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1),                // fst_src
-                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
-    vector_push(expected,
                 new_inst_immc(IMMC_INST_LOAD,                                           // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2),              // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1),              // dst
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 1), // fst_src
                               NULL));                                                   // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_STORE,                             // inst
                               new_mem_immcope(8),                          // dst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2), // fst_src
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1), // fst_src
                               NULL));                                      // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_JMP,                        // inst
@@ -888,13 +878,13 @@ void test_immcgen_if_else_stmt(void) {
     vector_push(expected, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(expected,
                 new_inst_immc(IMMC_INST_LOAD,                                           // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 3),              // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2),              // dst
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2), // fst_src
                               NULL));                                                   // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_STORE,                             // inst
                               new_mem_immcope(8),                          // dst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 3), // fst_src
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2), // fst_src
                               NULL));                                      // snd_src
     vector_push(expected, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L1")));
 
@@ -957,30 +947,25 @@ void test_immcgen_if_else_stmt_chain(void) {
                               new_mem_immcope(4),                          // fst_src
                               NULL));                                      // snd_src
     vector_push(expected,
-                new_inst_immc(IMMC_INST_SETLT,                                            // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1),                // dst
+                new_inst_immc(IMMC_INST_JGEQ,                                             // inst
+                              new_label_immcope(new_string(".L0")),                       // dst
                               new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                // fst_src
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
     vector_push(expected,
-                new_inst_immc(IMMC_INST_JEQ,                                              // inst
-                              new_label_immcope(new_string(".L0")),                       // dst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1),                // fst_src
-                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
-    vector_push(expected,
                 new_inst_immc(IMMC_INST_LOAD,                              // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2), // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1), // dst
                               new_mem_immcope(4),                          // fst_src
                               NULL));                                      // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_NEG,                               // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 3), // dst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2), // fst_src
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2), // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1), // fst_src
                               NULL));                                      // snd_src
 
     vector_push(expected,
                 new_inst_immc(IMMC_INST_STORE,                             // inst
                               new_mem_immcope(8),                          // dst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 3), // fst_src
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2), // fst_src
                               NULL));                                      // snd_src
     // .L1 is replaced by .L3 (end of if-else chain)
     vector_push(expected,
@@ -991,28 +976,23 @@ void test_immcgen_if_else_stmt_chain(void) {
     vector_push(expected, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
     vector_push(expected,
                 new_inst_immc(IMMC_INST_LOAD,                              // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 4), // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 3), // dst
                               new_mem_immcope(4),                          // fst_src
                               NULL));                                      // snd_src
     vector_push(expected,
-                new_inst_immc(IMMC_INST_SETGT,                                            // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 5),                // dst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 4),                // fst_src
-                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
-    vector_push(expected,
-                new_inst_immc(IMMC_INST_JEQ,                                              // inst
+                new_inst_immc(IMMC_INST_JLEQ,                                             // inst
                               new_label_immcope(new_string(".L2")),                       // dst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 5),                // fst_src
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 3),                // fst_src
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0))); // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_LOAD,                              // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 6), // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 4), // dst
                               new_mem_immcope(4),                          // fst_src
                               NULL));                                      // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_STORE,                             // inst
                               new_mem_immcope(8),                          // dst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 6), // fst_src
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 4), // fst_src
                               NULL));                                      // snd_src
     vector_push(expected,
                 new_inst_immc(IMMC_INST_JMP,                        // inst
@@ -1022,14 +1002,14 @@ void test_immcgen_if_else_stmt_chain(void) {
     vector_push(expected, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L2")));
     vector_push(expected,
                 new_inst_immc(IMMC_INST_LOAD,                                           // inst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 7),              // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 5),              // dst
                               new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 0), // fst_src
                               NULL));                                                   // snd_src
     // .L1 is merged with .L3 (end of if-else chain)
     vector_push(expected,
                 new_inst_immc(IMMC_INST_STORE,                             // inst
                               new_mem_immcope(8),                          // dst
-                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 7), // fst_src
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 5), // fst_src
                               NULL));                                      // snd_src
     vector_push(expected, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L3")));
 

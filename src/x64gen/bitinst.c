@@ -15,20 +15,44 @@ Vector* gen_setneq_x64code(X64gen* x64gen) {
     return gen_setcmp_common_x64code(x64gen, X64_INST_SETNE);
 }
 
-Vector* gen_setlt_x64code(X64gen* x64gen) {
-    return gen_setcmp_common_x64code(x64gen, X64_INST_SETL);
-}
-
 Vector* gen_setgt_x64code(X64gen* x64gen) {
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    ImmcOpe* immc_fst_src = immc->inst->fst_src;
+
+    if (immc_fst_src->reg->is_unsigned) {
+        return gen_setcmp_common_x64code(x64gen, X64_INST_SETA);
+    }
     return gen_setcmp_common_x64code(x64gen, X64_INST_SETG);
 }
 
-Vector* gen_setleq_x64code(X64gen* x64gen) {
-    return gen_setcmp_common_x64code(x64gen, X64_INST_SETLE);
+Vector* gen_setgeq_x64code(X64gen* x64gen) {
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    ImmcOpe* immc_fst_src = immc->inst->fst_src;
+
+    if (immc_fst_src->reg->is_unsigned) {
+        return gen_setcmp_common_x64code(x64gen, X64_INST_SETAE);
+    }
+    return gen_setcmp_common_x64code(x64gen, X64_INST_SETGE);
 }
 
-Vector* gen_setgeq_x64code(X64gen* x64gen) {
-    return gen_setcmp_common_x64code(x64gen, X64_INST_SETGE);
+Vector* gen_setlt_x64code(X64gen* x64gen) {
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    ImmcOpe* immc_fst_src = immc->inst->fst_src;
+
+    if (immc_fst_src->reg->is_unsigned) {
+        return gen_setcmp_common_x64code(x64gen, X64_INST_SETB);
+    }
+    return gen_setcmp_common_x64code(x64gen, X64_INST_SETL);
+}
+
+Vector* gen_setleq_x64code(X64gen* x64gen) {
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    ImmcOpe* immc_fst_src = immc->inst->fst_src;
+
+    if (immc_fst_src->reg->is_unsigned) {
+        return gen_setcmp_common_x64code(x64gen, X64_INST_SETBE);
+    }
+    return gen_setcmp_common_x64code(x64gen, X64_INST_SETLE);
 }
 
 Vector* gen_setcmp_common_x64code(X64gen* x64gen, X64InstType type) {

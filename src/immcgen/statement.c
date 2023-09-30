@@ -58,9 +58,7 @@ Vector* gen_if_without_else_stmt_immcode(Immcgen* immcgen) {
     int end_label_id = immcgen->label_id;
 
     ImmcOpe* end_label = new_label_immcope_from_id(end_label_id);
-    ImmcOpe* fst_src = gen_child_reg_immcope(immcgen, codes, 0);
-    ImmcOpe* snd_src = new_signed_int_immcope(fst_src->suffix, INTEGER_INT, 0);
-    vector_push(codes, new_inst_immc(IMMC_INST_JEQ, end_label, fst_src, snd_src));
+    append_child_jmp_false_immcode(immcgen, codes, 0, end_label);
 
     append_child_immcode(immcgen, codes, 1);
 
@@ -86,9 +84,7 @@ Vector* gen_if_with_else_stmt_immcode(Immcgen* immcgen) {
     int end_label_id = immcgen->label_id;
 
     ImmcOpe* else_label = new_label_immcope_from_id(else_label_id);
-    ImmcOpe* fst_src = gen_child_reg_immcope(immcgen, codes, 0);
-    ImmcOpe* snd_src = new_signed_int_immcope(fst_src->suffix, INTEGER_INT, 0);
-    vector_push(codes, new_inst_immc(IMMC_INST_JEQ, else_label, fst_src, snd_src));
+    append_child_jmp_false_immcode(immcgen, codes, 0, else_label);
 
     append_child_immcode(immcgen, codes, 1);
 

@@ -30,6 +30,46 @@ Vector* gen_jneq_x64code(X64gen* x64gen) {
     return gen_jcmp_common_x64code(x64gen, X64_INST_JNE);
 }
 
+Vector* gen_jgt_x64code(X64gen* x64gen) {
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    ImmcOpe* immc_fst_src = immc->inst->fst_src;
+
+    if (immc_fst_src->reg->is_unsigned) {
+        return gen_jcmp_common_x64code(x64gen, X64_INST_JA);
+    }
+    return gen_jcmp_common_x64code(x64gen, X64_INST_JG);
+}
+
+Vector* gen_jgeq_x64code(X64gen* x64gen) {
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    ImmcOpe* immc_fst_src = immc->inst->fst_src;
+
+    if (immc_fst_src->reg->is_unsigned) {
+        return gen_jcmp_common_x64code(x64gen, X64_INST_JAE);
+    }
+    return gen_jcmp_common_x64code(x64gen, X64_INST_JGE);
+}
+
+Vector* gen_jlt_x64code(X64gen* x64gen) {
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    ImmcOpe* immc_fst_src = immc->inst->fst_src;
+
+    if (immc_fst_src->reg->is_unsigned) {
+        return gen_jcmp_common_x64code(x64gen, X64_INST_JB);
+    }
+    return gen_jcmp_common_x64code(x64gen, X64_INST_JL);
+}
+
+Vector* gen_jleq_x64code(X64gen* x64gen) {
+    Immc* immc = vector_at(x64gen->immcs, x64gen->index);
+    ImmcOpe* immc_fst_src = immc->inst->fst_src;
+
+    if (immc_fst_src->reg->is_unsigned) {
+        return gen_jcmp_common_x64code(x64gen, X64_INST_JBE);
+    }
+    return gen_jcmp_common_x64code(x64gen, X64_INST_JLE);
+}
+
 Vector* gen_jcmp_common_x64code(X64gen* x64gen, X64InstType type) {
     Vector* codes = new_vector(&t_x64);
     Immc* immc = vector_at(x64gen->immcs, x64gen->index);

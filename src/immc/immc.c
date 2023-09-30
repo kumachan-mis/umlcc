@@ -73,7 +73,7 @@ Immc* immc_copy(Immc* immc) {
 }
 
 int immc_isjumpinst(Immc* immc) {
-    return immc->type == IMMC_INST && (IMMC_INST_JMP <= immc->inst->type && immc->inst->type <= IMMC_INST_JNEQ);
+    return immc->type == IMMC_INST && (IMMC_INST_JMP <= immc->inst->type && immc->inst->type <= IMMC_INST_JGEQ);
 }
 
 char* immc_tostring(Immc* immc) {
