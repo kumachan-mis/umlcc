@@ -57,6 +57,7 @@ typedef enum AstType {
     AST_RET_STMT,
     AST_EXPR_STMT,
     AST_IF_STMT,
+    AST_WHILE_STMT,
 
     // expression
     //   assignment-expression

@@ -9,8 +9,8 @@
 
 char* immc_insts[] = {"load",   "addr",  "str",    "store", "ldarg",  "starg", "stret", "add",  "sub", "mul",
                       "div",    "mod",   "neg",    "and",   "not",    "or",    "xor",   "sal",  "sar", "seteq",
-                      "setneq", "setgt", "setgeq", "setlt", "setleq", "jmp",   "jeq",   "jneq", "jlt", "jgt",
-                      "jleq",   "jgeq",  "call",   "enter", "leave",  "prep",  "clean", "free"};
+                      "setneq", "setgt", "setgeq", "setlt", "setleq", "jmp",   "jeq",   "jneq", "jgt", "jgeq",
+                      "jlt",    "jleq",  "call",   "enter", "leave",  "prep",  "clean"};
 
 ImmcInst* new_immcinst(ImmcInstType type, ImmcOpe* dst, ImmcOpe* fst_src, ImmcOpe* snd_src) {
     ImmcInst* immcinst = malloc(sizeof(ImmcInst));

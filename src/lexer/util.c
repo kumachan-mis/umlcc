@@ -21,6 +21,7 @@ Map* new_keyword_map(void) {
     ctoken_map_add(keyword_map, "typedef", CTOKEN_KEYWORD_TYPEDEF);
     ctoken_map_add(keyword_map, "unsigned", CTOKEN_KEYWORD_UNSIGNED);
     ctoken_map_add(keyword_map, "void", CTOKEN_KEYWORD_VOID);
+    ctoken_map_add(keyword_map, "while", CTOKEN_KEYWORD_WHILE);
 
     return keyword_map;
 }

@@ -7,6 +7,7 @@ void test_regalloc_single_register(void);
 void test_regalloc_multiple_register(void);
 void test_regalloc_longlife_register(void);
 void test_regalloc_jump(void);
+void test_regalloc_loop(void);
 void test_regalloc_global_variable(void);
 void test_regalloc_function_variable_mixed(void);
 
@@ -19,6 +20,7 @@ CU_Suite* add_test_suite_regalloc(void) {
     CU_ADD_TEST(suite, test_regalloc_multiple_register);
     CU_ADD_TEST(suite, test_regalloc_longlife_register);
     CU_ADD_TEST(suite, test_regalloc_jump);
+    CU_ADD_TEST(suite, test_regalloc_loop);
     CU_ADD_TEST(suite, test_regalloc_global_variable);
     CU_ADD_TEST(suite, test_regalloc_function_variable_mixed);
     return suite;
@@ -605,6 +607,173 @@ void test_regalloc_jump(void) {
     liveness->last_use_index = 10;
     vector_push(liveseq->livenesses, liveness);
     liveness = new_liveness(11);
+    vector_push(liveseq->livenesses, liveness);
+
+    run_regalloc_test(input, num_regs, expected_immcs, expected_liveseqs);
+
+    delete_vector(expected_immcs);
+    delete_vector(expected_liveseqs);
+}
+
+void test_regalloc_loop(void) {
+    Vector* input = new_vector(&t_immc);
+    vector_push(input, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("loop")));
+    vector_push(input,
+                new_inst_immc(IMMC_INST_ENTER,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 8), // fst_src
+                              NULL));                                                   // snd_src
+    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L1")));
+    vector_push(input,
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_mem_immcope(4),                          // fst_src
+                              NULL));                                      // snd_src
+    vector_push(input,
+                new_inst_immc(IMMC_INST_JGEQ,                                              // inst
+                              new_label_immcope(new_string(".L2")),                        // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                 // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 10))); // snd_src
+    vector_push(input,
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1), // dst
+                              new_mem_immcope(4),                          // fst_src
+                              NULL));                                      // snd_src
+    vector_push(input,
+                new_inst_immc(IMMC_INST_ADD,                                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2),                // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1),                // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 1))); // snd_src
+    vector_push(input,
+                new_inst_immc(IMMC_INST_STORE,                             // inst
+                              new_mem_immcope(4),                          // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 2), // fst_src
+                              NULL));                                      // snd_src
+    vector_push(input,
+                new_inst_immc(IMMC_INST_LOAD,                                           // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 3),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2), // fst_src
+                              NULL));                                                   // snd_src
+    vector_push(input,
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 4), // dst
+                              new_mem_immcope(8),                          // fst_src
+                              NULL));                                      // snd_src
+    vector_push(input,
+                new_inst_immc(IMMC_INST_MUL,                                 // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 5),   // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 3),   // fst_src
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 4))); // snd_src
+    vector_push(input,
+                new_inst_immc(IMMC_INST_STORE,                             // inst
+                              new_mem_immcope(8),                          // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 5), // fst_src
+                              NULL));                                      // snd_src
+    vector_push(input,
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L1")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L2")));
+    vector_push(input, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
+    vector_push(input,
+                new_inst_immc(IMMC_INST_LEAVE,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 8), // fst_src
+                              NULL));                                                   // snd_src
+
+    int num_regs = 8;
+
+    Vector* expected_immcs = new_vector(&t_immc);
+    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_FUNCTION, IMMC_VIS_GLOBAL, new_string("loop")));
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_ENTER,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 8), // fst_src
+                              NULL));                                                   // snd_src
+    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L1")));
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_mem_immcope(4),                          // fst_src
+                              NULL));                                      // snd_src
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_JGEQ,                                              // inst
+                              new_label_immcope(new_string(".L2")),                        // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                 // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 10))); // snd_src
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // dst
+                              new_mem_immcope(4),                          // fst_src
+                              NULL));                                      // snd_src
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_ADD,                                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),                // fst_src
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 1))); // snd_src
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_STORE,                             // inst
+                              new_mem_immcope(4),                          // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
+                              NULL));                                      // snd_src
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_LOAD,                                           // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),              // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_LONG, INTEGER_INT, 2), // fst_src
+                              NULL));                                                   // snd_src
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_LOAD,                              // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1), // dst
+                              new_mem_immcope(8),                          // fst_src
+                              NULL));                                      // snd_src
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_MUL,                                 // inst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),   // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0),   // fst_src
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 1))); // snd_src
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_STORE,                             // inst
+                              new_mem_immcope(8),                          // dst
+                              new_signed_reg_immcope(IMMC_SUFFIX_LONG, 0), // fst_src
+                              NULL));                                      // snd_src
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_JMP,                        // inst
+                              new_label_immcope(new_string(".L1")), // dst
+                              NULL,                                 // fst_src
+                              NULL));                               // snd_src
+    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L2")));
+    vector_push(expected_immcs, new_label_immc(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, new_string(".L0")));
+    vector_push(expected_immcs,
+                new_inst_immc(IMMC_INST_LEAVE,                                          // inst
+                              NULL,                                                     // dst
+                              new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, 8), // fst_src
+                              NULL));                                                   // snd_src
+
+    Vector* expected_liveseqs = new_vector(&t_liveseq);
+    vector_fill(expected_liveseqs, num_regs, new_liveseq());
+
+    Liveseq* liveseq = NULL;
+    Liveness* liveness = NULL;
+    liveseq = vector_at(expected_liveseqs, 0);
+    liveness = new_liveness(3);
+    liveness->last_use_index = 4;
+    vector_push(liveseq->livenesses, liveness);
+    liveness = new_liveness(5);
+    liveness->last_use_index = 6;
+    vector_push(liveseq->livenesses, liveness);
+    liveness = new_liveness(6);
+    liveness->last_use_index = 7;
+    vector_push(liveseq->livenesses, liveness);
+    liveness = new_liveness(8);
+    liveness->last_use_index = 10;
+    vector_push(liveseq->livenesses, liveness);
+    liveness = new_liveness(10);
+    liveness->last_use_index = 11;
+    vector_push(liveseq->livenesses, liveness);
+    liveseq = vector_at(expected_liveseqs, 1);
+    liveness = new_liveness(9);
+    liveness->last_use_index = 10;
     vector_push(liveseq->livenesses, liveness);
 
     run_regalloc_test(input, num_regs, expected_immcs, expected_liveseqs);

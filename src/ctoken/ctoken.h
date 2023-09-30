@@ -19,6 +19,7 @@ typedef enum CTokenType {
     CTOKEN_KEYWORD_TYPEDEF,
     CTOKEN_KEYWORD_UNSIGNED,
     CTOKEN_KEYWORD_VOID,
+    CTOKEN_KEYWORD_WHILE,
 
     // identifier
     CTOKEN_IDENT,
