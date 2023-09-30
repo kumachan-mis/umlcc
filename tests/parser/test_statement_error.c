@@ -12,6 +12,10 @@ void test_parse_if_else_stmt_error_controlling_expr(void);
 void test_parse_if_else_stmt_error_controlling_rparen(void);
 void test_parse_if_else_stmt_error_then_stmt(void);
 void test_parse_if_else_stmt_error_else_stmt(void);
+void test_parse_while_stmt_error_controlling_lparen(void);
+void test_parse_while_stmt_error_controlling_expr(void);
+void test_parse_while_stmt_error_controlling_rparen(void);
+void test_parse_while_stmt_error_body(void);
 
 void run_stmt_parser_error_test(Vector* input, Error* expected);
 
@@ -26,6 +30,10 @@ CU_Suite* add_test_suite_stmt_parser_error(void) {
     CU_ADD_TEST(suite, test_parse_if_else_stmt_error_controlling_rparen);
     CU_ADD_TEST(suite, test_parse_if_else_stmt_error_then_stmt);
     CU_ADD_TEST(suite, test_parse_if_else_stmt_error_else_stmt);
+    CU_ADD_TEST(suite, test_parse_while_stmt_error_controlling_lparen);
+    CU_ADD_TEST(suite, test_parse_while_stmt_error_controlling_expr);
+    CU_ADD_TEST(suite, test_parse_while_stmt_error_controlling_rparen);
+    CU_ADD_TEST(suite, test_parse_while_stmt_error_body);
     return suite;
 }
 
@@ -180,6 +188,75 @@ void test_parse_if_else_stmt_error_else_stmt(void) {
     vector_push(input, new_ctoken(CTOKEN_LBRACE));
     vector_push(input, new_ctoken(CTOKEN_RBRACE));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_ELSE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token EOF");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_while_stmt_error_controlling_lparen(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_WHILE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token ( expected, but got identifier");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_while_stmt_error_controlling_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_WHILE));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token ==");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_while_stmt_error_controlling_rparen(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_WHILE));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token ) expected, but got {");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_while_stmt_error_body(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_WHILE));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("unexpected token EOF");
