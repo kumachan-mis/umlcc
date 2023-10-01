@@ -79,8 +79,10 @@ void test_resolve_cast_expr_error_child(void);
 void test_resolve_cast_expr_error_non_scalar(void);
 void test_resolve_preinc_expr_error_unmodifiable(void);
 void test_resolve_preinc_expr_error_operand_dtype(void);
+void test_resolve_preinc_expr_error_child(void);
 void test_resolve_predec_expr_error_unmodifiable(void);
 void test_resolve_predec_expr_error_operand_dtype(void);
+void test_resolve_predec_expr_error_child(void);
 void test_resolve_address_expr_error_operand_dtype(void);
 void test_resolve_address_expr_error_child(void);
 void test_resolve_indirection_expr_error_non_pointer(void);
@@ -100,7 +102,8 @@ void test_resolve_sizeof_expr_error_function(void);
 void test_resolve_call_expr_error_non_func(void);
 void test_resolve_call_expr_error_num_params(void);
 void test_resolve_call_expr_error_param_dtype(void);
-void test_resolve_call_expr_error_child(void);
+void test_resolve_call_expr_error_callee_child(void);
+void test_resolve_call_expr_error_param_child(void);
 void test_resolve_subscription_expr_error_non_obj_pointer(void);
 void test_resolve_subscription_expr_error_non_pointer(void);
 void test_resolve_subscription_expr_error_non_integer(void);
@@ -109,13 +112,17 @@ void test_resolve_subscription_expr_error_rhs(void);
 void test_resolve_member_expr_error_non_struct(void);
 void test_resolve_member_expr_error_unknown_member(void);
 void test_resolve_member_expr_error_incomplete_struct(void);
+void test_resolve_member_expr_error_accessee_child(void);
 void test_resolve_tomember_expr_error_non_pointer_to_struct(void);
 void test_resolve_tomember_expr_error_unknown_member(void);
 void test_resolve_tomember_expr_error_incomplete_struct(void);
+void test_resolve_tomember_expr_error_accessee_child(void);
 void test_resolve_postinc_expr_error_unmodifiable(void);
 void test_resolve_postinc_expr_error_operand_dtype(void);
+void test_resolve_postinc_expr_error_child(void);
 void test_resolve_postdec_expr_error_unmodifiable(void);
 void test_resolve_postdec_expr_error_operand_dtype(void);
+void test_resolve_postdec_expr_error_child(void);
 void test_resolve_ident_expr_error(void);
 
 void run_expr_resolver_error_test(Ast* input, SymbolTable* symbol_table, TagTable* tag_table, Vector* expected);
@@ -199,8 +206,10 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_cast_expr_error_non_scalar);
     CU_ADD_TEST(suite, test_resolve_preinc_expr_error_unmodifiable);
     CU_ADD_TEST(suite, test_resolve_preinc_expr_error_operand_dtype);
+    CU_ADD_TEST(suite, test_resolve_preinc_expr_error_child);
     CU_ADD_TEST(suite, test_resolve_predec_expr_error_unmodifiable);
     CU_ADD_TEST(suite, test_resolve_predec_expr_error_operand_dtype);
+    CU_ADD_TEST(suite, test_resolve_predec_expr_error_child);
     CU_ADD_TEST(suite, test_resolve_address_expr_error_operand_dtype);
     CU_ADD_TEST(suite, test_resolve_address_expr_error_child);
     CU_ADD_TEST(suite, test_resolve_indirection_expr_error_non_pointer);
@@ -220,7 +229,8 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_call_expr_error_non_func);
     CU_ADD_TEST(suite, test_resolve_call_expr_error_num_params);
     CU_ADD_TEST(suite, test_resolve_call_expr_error_param_dtype);
-    CU_ADD_TEST(suite, test_resolve_call_expr_error_child);
+    CU_ADD_TEST(suite, test_resolve_call_expr_error_callee_child);
+    CU_ADD_TEST(suite, test_resolve_call_expr_error_param_child);
     CU_ADD_TEST(suite, test_resolve_subscription_expr_error_non_obj_pointer);
     CU_ADD_TEST(suite, test_resolve_subscription_expr_error_non_pointer);
     CU_ADD_TEST(suite, test_resolve_subscription_expr_error_non_integer);
@@ -229,13 +239,17 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_member_expr_error_non_struct);
     CU_ADD_TEST(suite, test_resolve_member_expr_error_unknown_member);
     CU_ADD_TEST(suite, test_resolve_member_expr_error_incomplete_struct);
+    CU_ADD_TEST(suite, test_resolve_member_expr_error_accessee_child);
     CU_ADD_TEST(suite, test_resolve_tomember_expr_error_non_pointer_to_struct);
     CU_ADD_TEST(suite, test_resolve_tomember_expr_error_unknown_member);
     CU_ADD_TEST(suite, test_resolve_tomember_expr_error_incomplete_struct);
+    CU_ADD_TEST(suite, test_resolve_tomember_expr_error_accessee_child);
     CU_ADD_TEST(suite, test_resolve_postinc_expr_error_unmodifiable);
     CU_ADD_TEST(suite, test_resolve_postinc_expr_error_operand_dtype);
+    CU_ADD_TEST(suite, test_resolve_postinc_expr_error_child);
     CU_ADD_TEST(suite, test_resolve_postdec_expr_error_unmodifiable);
     CU_ADD_TEST(suite, test_resolve_postdec_expr_error_operand_dtype);
+    CU_ADD_TEST(suite, test_resolve_postdec_expr_error_child);
     CU_ADD_TEST(suite, test_resolve_ident_expr_error);
     return suite;
 }
@@ -1483,6 +1497,18 @@ void test_resolve_preinc_expr_error_unmodifiable(void) {
     delete_vector(expected);
 }
 
+void test_resolve_preinc_expr_error_child(void) {
+    Ast* input = new_ast(AST_PREINC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'x' is used before declared"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
 void test_resolve_preinc_expr_error_operand_dtype(void) {
     Ast* input = new_ast(AST_PREINC_EXPR, 1, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
@@ -1529,6 +1555,18 @@ void test_resolve_predec_expr_error_operand_dtype(void) {
     vector_push(expected, new_error("operand of -- should be either integer or pointer"));
 
     run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_predec_expr_error_child(void) {
+    Ast* input = new_ast(AST_PREDEC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'x' is used before declared"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
@@ -1831,7 +1869,25 @@ void test_resolve_call_expr_error_param_dtype(void) {
     delete_vector(expected);
 }
 
-void test_resolve_call_expr_error_child(void) {
+void test_resolve_call_expr_error_callee_child(void) {
+    Ast* input = new_ast(AST_CALL_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("function")),
+                         new_ast(AST_ARG_LIST, 1, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("x"))));
+
+    SymbolTable* local_table = new_symboltable();
+    Vector* params = new_vector(&t_dparam);
+    vector_push(params, new_named_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'function' is used before declared"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_call_expr_error_param_child(void) {
     Ast* input = new_ast(AST_CALL_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("function")),
                          new_ast(AST_ARG_LIST, 3, // non-terminal
@@ -2002,6 +2058,19 @@ void test_resolve_member_expr_error_unknown_member(void) {
     delete_vector(expected);
 }
 
+void test_resolve_member_expr_error_accessee_child(void) {
+    Ast* input = new_ast(AST_MEMBER_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'structure' is used before declared"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
 void test_resolve_tomember_expr_error_non_pointer_to_struct(void) {
     Ast* input = new_ast(AST_TOMEMBER_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
@@ -2065,6 +2134,19 @@ void test_resolve_tomember_expr_error_unknown_member(void) {
     delete_vector(expected);
 }
 
+void test_resolve_tomember_expr_error_accessee_child(void) {
+    Ast* input = new_ast(AST_TOMEMBER_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("structure")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("member")));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'structure' is used before declared"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
 void test_resolve_postinc_expr_error_unmodifiable(void) {
     Ast* input = new_ast(AST_POSTINC_EXPR, 1, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("f")));
@@ -2100,6 +2182,18 @@ void test_resolve_postinc_expr_error_operand_dtype(void) {
     delete_vector(expected);
 }
 
+void test_resolve_postinc_expr_error_child(void) {
+    Ast* input = new_ast(AST_POSTINC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'x' is used before declared"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
 void test_resolve_postdec_expr_error_unmodifiable(void) {
     Ast* input = new_ast(AST_POSTDEC_EXPR, 1, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3)));
@@ -2125,6 +2219,18 @@ void test_resolve_postdec_expr_error_operand_dtype(void) {
     vector_push(expected, new_error("operand of -- should be either integer or pointer"));
 
     run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_postdec_expr_error_child(void) {
+    Ast* input = new_ast(AST_POSTDEC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'x' is used before declared"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
 
     delete_vector(expected);
 }
