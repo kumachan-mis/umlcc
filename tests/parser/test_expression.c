@@ -22,6 +22,8 @@ void test_parse_multiply_expr(void);
 void test_parse_division_expr(void);
 void test_parse_modulo_expr(void);
 void test_parse_cast_expr(void);
+void test_parse_preinc_expr(void);
+void test_parse_predec_expr(void);
 void test_parse_address_expr(void);
 void test_parse_indirection_expr(void);
 void test_parse_positive_expr(void);
@@ -34,6 +36,8 @@ void test_parse_call_expr(void);
 void test_parse_subscription_expr(void);
 void test_parse_member_expr(void);
 void test_parse_tomember_expr(void);
+void test_parse_postinc_expr(void);
+void test_parse_postdec_expr(void);
 void test_parse_ident_expr(void);
 void test_parse_iliteral_expr_char(void);
 void test_parse_iliteral_expr_int(void);
@@ -63,6 +67,8 @@ CU_Suite* add_test_suite_expr_parser(void) {
     CU_ADD_TEST(suite, test_parse_division_expr);
     CU_ADD_TEST(suite, test_parse_modulo_expr);
     CU_ADD_TEST(suite, test_parse_cast_expr);
+    CU_ADD_TEST(suite, test_parse_preinc_expr);
+    CU_ADD_TEST(suite, test_parse_predec_expr);
     CU_ADD_TEST(suite, test_parse_address_expr);
     CU_ADD_TEST(suite, test_parse_indirection_expr);
     CU_ADD_TEST(suite, test_parse_positive_expr);
@@ -75,6 +81,8 @@ CU_Suite* add_test_suite_expr_parser(void) {
     CU_ADD_TEST(suite, test_parse_subscription_expr);
     CU_ADD_TEST(suite, test_parse_member_expr);
     CU_ADD_TEST(suite, test_parse_tomember_expr);
+    CU_ADD_TEST(suite, test_parse_postinc_expr);
+    CU_ADD_TEST(suite, test_parse_postdec_expr);
     CU_ADD_TEST(suite, test_parse_ident_expr);
     CU_ADD_TEST(suite, test_parse_iliteral_expr_char);
     CU_ADD_TEST(suite, test_parse_iliteral_expr_int);
@@ -541,6 +549,39 @@ void test_parse_cast_expr(void) {
     delete_ast(expected);
 }
 
+void test_parse_preinc_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_PLUS_PLUS));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("a")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACKET));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_RBRACKET));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_PREINC_EXPR, 1,        // non-terminal
+                            new_ast(AST_SUBSC_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("i"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_predec_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_MINUS_MINUS));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("j")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_PREDEC_EXPR, 1, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("j")));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
 void test_parse_address_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_AND));
@@ -752,6 +793,39 @@ void test_parse_tomember_expr(void) {
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("node")),
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("next"))),
                             new_identifier_ast(AST_IDENT_EXPR, new_string("next")));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_postinc_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_PLUS_PLUS));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_POSTINC_EXPR, 1, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_postdec_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("b")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACKET));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_RBRACKET));
+    vector_push(input, new_ctoken(CTOKEN_MINUS_MINUS));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_POSTDEC_EXPR, 1,       // non-terminal
+                            new_ast(AST_SUBSC_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("b")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("i"))));
 
     run_expr_parser_test(input, expected);
 
