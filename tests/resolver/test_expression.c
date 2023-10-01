@@ -28,6 +28,10 @@ void test_resolve_multiply_expr(void);
 void test_resolve_division_expr(void);
 void test_resolve_modulo_expr(void);
 void test_resolve_cast_expr(void);
+void test_resolve_preinc_expr(void);
+void test_resolve_predec_expr(void);
+void test_resolve_pointer_preinc_expr(void);
+void test_resolve_pointer_predec_expr(void);
 void test_resolve_address_expr(void);
 void test_resolve_indirection_expr(void);
 void test_resolve_positive_expr(void);
@@ -41,6 +45,10 @@ void test_resolve_subscription_expr(void);
 void test_resolve_reversed_subscription_expr(void);
 void test_resolve_member_expr(void);
 void test_resolve_tomember_expr(void);
+void test_resolve_postinc_expr(void);
+void test_resolve_postdec_expr(void);
+void test_resolve_pointer_postinc_expr(void);
+void test_resolve_pointer_postdec_expr(void);
 void test_resolve_ident_expr_local(void);
 void test_resolve_ident_expr_global(void);
 void test_resolve_enum_ident_expr_local(void);
@@ -86,6 +94,10 @@ CU_Suite* add_test_suite_expr_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_division_expr);
     CU_ADD_TEST(suite, test_resolve_modulo_expr);
     CU_ADD_TEST(suite, test_resolve_cast_expr);
+    CU_ADD_TEST(suite, test_resolve_preinc_expr);
+    CU_ADD_TEST(suite, test_resolve_predec_expr);
+    CU_ADD_TEST(suite, test_resolve_pointer_preinc_expr);
+    CU_ADD_TEST(suite, test_resolve_pointer_predec_expr);
     CU_ADD_TEST(suite, test_resolve_address_expr);
     CU_ADD_TEST(suite, test_resolve_indirection_expr);
     CU_ADD_TEST(suite, test_resolve_positive_expr);
@@ -99,6 +111,10 @@ CU_Suite* add_test_suite_expr_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_reversed_subscription_expr);
     CU_ADD_TEST(suite, test_resolve_member_expr);
     CU_ADD_TEST(suite, test_resolve_tomember_expr);
+    CU_ADD_TEST(suite, test_resolve_postinc_expr);
+    CU_ADD_TEST(suite, test_resolve_postdec_expr);
+    CU_ADD_TEST(suite, test_resolve_pointer_postinc_expr);
+    CU_ADD_TEST(suite, test_resolve_pointer_postdec_expr);
     CU_ADD_TEST(suite, test_resolve_ident_expr_local);
     CU_ADD_TEST(suite, test_resolve_ident_expr_global);
     CU_ADD_TEST(suite, test_resolve_enum_ident_expr_local);
@@ -782,6 +798,77 @@ void test_resolve_cast_expr(void) {
     delete_srt(expected);
 }
 
+void test_resolve_preinc_expr(void) {
+    Ast* input = new_ast(AST_PREINC_EXPR, 1,        // non-terminal
+                         new_ast(AST_SUBSC_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("a")),
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("i"))));
+
+    SymbolTable* local_table = new_symboltable();
+    DType* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("a"), array_dtype);
+    symboltable_define_memory(local_table, new_string("i"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_PREINC_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+        new_dtyped_srt(
+            SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1,               // non-terminal
+            new_dtyped_srt(SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2,    // non-terminal
+                           new_dtyped_srt(SRT_ADDR_EXPR, pointer_dtype, 1, // non-terminal
+                                          new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("a"))),
+                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_predec_expr(void) {
+    Ast* input = new_ast(AST_PREDEC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("j")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("j"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_dtyped_srt(SRT_PREDEC_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                                   new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+}
+
+void test_resolve_pointer_preinc_expr(void) {
+    Ast* input = new_ast(AST_PREINC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("p")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_PPREINC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("p")));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_pointer_predec_expr(void) {
+    Ast* input = new_ast(AST_PREDEC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_PPREDEC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("q")));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
 void test_resolve_address_expr(void) {
     Ast* input = new_ast(AST_ADDR_EXPR, 1,          // non-terminal
                          new_ast(AST_SUBSC_EXPR, 2, // non-terminal
@@ -1039,6 +1126,79 @@ void test_resolve_tomember_expr(void) {
         new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("member")));
 
     run_local_expr_resolver_test(input, local_table, local_tag_table, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_postinc_expr(void) {
+    Ast* input = new_ast(AST_POSTINC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("i"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_dtyped_srt(SRT_POSTINC_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                                   new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_postdec_expr(void) {
+    Ast* input = new_ast(AST_POSTDEC_EXPR, 1,       // non-terminal
+                         new_ast(AST_SUBSC_EXPR, 2, // non-terminal
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("b")),
+                                 new_identifier_ast(AST_IDENT_EXPR, new_string("j"))));
+
+    SymbolTable* local_table = new_symboltable();
+    DType* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("b"), array_dtype);
+    symboltable_define_memory(local_table, new_string("j"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_POSTDEC_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+        new_dtyped_srt(
+            SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1,               // non-terminal
+            new_dtyped_srt(SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2,    // non-terminal
+                           new_dtyped_srt(SRT_ADDR_EXPR, pointer_dtype, 1, // non-terminal
+                                          new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("b"))),
+                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_pointer_postinc_expr(void) {
+    Ast* input = new_ast(AST_POSTINC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("p")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_PPOSTINC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("p")));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_pointer_postdec_expr(void) {
+    Ast* input = new_ast(AST_POSTDEC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_PPOSTDEC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("q")));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
     delete_srt(expected);
 }

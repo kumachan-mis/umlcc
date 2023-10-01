@@ -817,7 +817,7 @@ void test_parse_postdec_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("b")));
     vector_push(input, new_ctoken(CTOKEN_LBRACKET));
-    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("j")));
     vector_push(input, new_ctoken(CTOKEN_RBRACKET));
     vector_push(input, new_ctoken(CTOKEN_MINUS_MINUS));
     vector_push(input, new_ctoken(CTOKEN_EOF));
@@ -825,7 +825,7 @@ void test_parse_postdec_expr(void) {
     Ast* expected = new_ast(AST_POSTDEC_EXPR, 1,       // non-terminal
                             new_ast(AST_SUBSC_EXPR, 2, // non-terminal
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("b")),
-                                    new_identifier_ast(AST_IDENT_EXPR, new_string("i"))));
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("j"))));
 
     run_expr_parser_test(input, expected);
 

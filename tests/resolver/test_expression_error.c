@@ -77,6 +77,10 @@ void test_resolve_modulo_expr_error_rhs(void);
 void test_resolve_cast_expr_error_type_name(void);
 void test_resolve_cast_expr_error_child(void);
 void test_resolve_cast_expr_error_non_scalar(void);
+void test_resolve_preinc_expr_error_unmodifiable(void);
+void test_resolve_preinc_expr_error_operand_dtype(void);
+void test_resolve_predec_expr_error_unmodifiable(void);
+void test_resolve_predec_expr_error_operand_dtype(void);
 void test_resolve_address_expr_error_operand_dtype(void);
 void test_resolve_address_expr_error_child(void);
 void test_resolve_indirection_expr_error_non_pointer(void);
@@ -108,6 +112,10 @@ void test_resolve_member_expr_error_incomplete_struct(void);
 void test_resolve_tomember_expr_error_non_pointer_to_struct(void);
 void test_resolve_tomember_expr_error_unknown_member(void);
 void test_resolve_tomember_expr_error_incomplete_struct(void);
+void test_resolve_postinc_expr_error_unmodifiable(void);
+void test_resolve_postinc_expr_error_operand_dtype(void);
+void test_resolve_postdec_expr_error_unmodifiable(void);
+void test_resolve_postdec_expr_error_operand_dtype(void);
 void test_resolve_ident_expr_error(void);
 
 void run_expr_resolver_error_test(Ast* input, SymbolTable* symbol_table, TagTable* tag_table, Vector* expected);
@@ -189,6 +197,10 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_cast_expr_error_type_name);
     CU_ADD_TEST(suite, test_resolve_cast_expr_error_child);
     CU_ADD_TEST(suite, test_resolve_cast_expr_error_non_scalar);
+    CU_ADD_TEST(suite, test_resolve_preinc_expr_error_unmodifiable);
+    CU_ADD_TEST(suite, test_resolve_preinc_expr_error_operand_dtype);
+    CU_ADD_TEST(suite, test_resolve_predec_expr_error_unmodifiable);
+    CU_ADD_TEST(suite, test_resolve_predec_expr_error_operand_dtype);
     CU_ADD_TEST(suite, test_resolve_address_expr_error_operand_dtype);
     CU_ADD_TEST(suite, test_resolve_address_expr_error_child);
     CU_ADD_TEST(suite, test_resolve_indirection_expr_error_non_pointer);
@@ -220,6 +232,10 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_tomember_expr_error_non_pointer_to_struct);
     CU_ADD_TEST(suite, test_resolve_tomember_expr_error_unknown_member);
     CU_ADD_TEST(suite, test_resolve_tomember_expr_error_incomplete_struct);
+    CU_ADD_TEST(suite, test_resolve_postinc_expr_error_unmodifiable);
+    CU_ADD_TEST(suite, test_resolve_postinc_expr_error_operand_dtype);
+    CU_ADD_TEST(suite, test_resolve_postdec_expr_error_unmodifiable);
+    CU_ADD_TEST(suite, test_resolve_postdec_expr_error_operand_dtype);
     CU_ADD_TEST(suite, test_resolve_ident_expr_error);
     return suite;
 }
@@ -1455,6 +1471,68 @@ void test_resolve_cast_expr_error_non_scalar(void) {
     delete_vector(expected);
 }
 
+void test_resolve_preinc_expr_error_unmodifiable(void) {
+    Ast* input = new_ast(AST_PREINC_EXPR, 1, // non-terminal
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3)));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operand of ++ is not modifiable"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_preinc_expr_error_operand_dtype(void) {
+    Ast* input = new_ast(AST_PREINC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
+
+    SymbolTable* local_table = new_symboltable();
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("i"), new_unnamed_struct_dtype(members));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operand of ++ should be either integer or pointer"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_predec_expr_error_unmodifiable(void) {
+    Ast* input = new_ast(AST_PREDEC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("b")));
+
+    SymbolTable* local_table = new_symboltable();
+    DType* array_dtype = new_array_dtype(new_integer_dtype(DTYPE_INT), 5);
+    symboltable_define_memory(local_table, new_string("b"), array_dtype);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operand of -- is not modifiable"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_predec_expr_error_operand_dtype(void) {
+    Ast* input = new_ast(AST_PREDEC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("j")));
+
+    SymbolTable* local_table = new_symboltable();
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("j"), new_unnamed_struct_dtype(members));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operand of -- should be either integer or pointer"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
 void test_resolve_address_expr_error_operand_dtype(void) {
     Ast* input = new_ast(AST_ADDR_EXPR, 1, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6)));
@@ -1983,6 +2061,70 @@ void test_resolve_tomember_expr_error_unknown_member(void) {
     vector_push(expected, new_error("member 'unknown' does not exist in struct"));
 
     run_expr_resolver_error_test(input, local_table, local_tag_table, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_postinc_expr_error_unmodifiable(void) {
+    Ast* input = new_ast(AST_POSTINC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("f")));
+
+    SymbolTable* local_table = new_symboltable();
+    Vector* params = new_vector(&t_dparam);
+    vector_push(params, new_named_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("f"), func_dtype);
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operand of ++ is not modifiable"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_postinc_expr_error_operand_dtype(void) {
+    Ast* input = new_ast(AST_POSTINC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("i")));
+
+    SymbolTable* local_table = new_symboltable();
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("i"), new_unnamed_struct_dtype(members));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operand of ++ should be either integer or pointer"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_postdec_expr_error_unmodifiable(void) {
+    Ast* input = new_ast(AST_POSTDEC_EXPR, 1, // non-terminal
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3)));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operand of -- is not modifiable"));
+
+    run_expr_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_postdec_expr_error_operand_dtype(void) {
+    Ast* input = new_ast(AST_POSTDEC_EXPR, 1, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("j")));
+
+    SymbolTable* local_table = new_symboltable();
+    Vector* members = new_vector(&t_dstructmember);
+    vector_push(members, new_dstructmember(new_string("member"), new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("j"), new_unnamed_struct_dtype(members));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("operand of -- should be either integer or pointer"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
