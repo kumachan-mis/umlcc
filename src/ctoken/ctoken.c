@@ -12,7 +12,7 @@ char* ctoken_types[] = {
     "char", "else", "enum", "if", "int", "long", "return", "sizeof", "struct", "typedef", "unsigned", "void", "while",
     "identifier", "integer-constant", "character-constant", "string-literal",
     // punctuators
-    "[", "]", "(", ")", "{", "}", ".", "->", "&", "*", "+", "-", "~", "!", "/", "%", "<", ">",
+    "[", "]", "(", ")", "{", "}", ".", "->", "++", "--", "&", "*", "+", "-", "~", "!", "/", "%", "<", ">",
     "<=", ">=", "==", "!=", "^", "|", "&&", "||", "?", ":", ";", "=", ",", "EOF"};
 
 CToken* new_base_ctoken(CTokenType type);
