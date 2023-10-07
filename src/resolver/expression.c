@@ -1292,39 +1292,36 @@ ResolverReturn* resolve_member_like_expr(Resolver* resolver) {
 ResolverReturn* resolve_incdec_expr(Resolver* resolver, SrtType srt_type, char* op) {
     Srt* srt = NULL;
     DType* dtype = NULL;
-    Srt* child_srt = NULL;
     Vector* errs = NULL;
     Error* err = NULL;
     Ast* ast = resolver->ast;
 
     resolver->ast = vector_at(ast->children, 0);
-    resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
+    resolverret_assign(&srt, &errs, resolve_expr(resolver));
     resolver->ast = ast;
     if (errs != NULL) {
         return new_resolverret_errors(errs);
     }
 
-    if (!srt_ismodifiable(child_srt)) {
+    if (!srt_ismodifiable(srt)) {
         errs = new_vector(&t_error);
         err = new_error("operand of %s is not modifiable", op);
         vector_push(errs, err);
-        delete_srt(child_srt);
+        delete_srt(srt);
         return new_resolverret_errors(errs);
     }
 
-    if (!dtype_isinteger(child_srt->dtype) && child_srt->dtype->type != DTYPE_POINTER) {
+    if (!dtype_isinteger(srt->dtype) && srt->dtype->type != DTYPE_POINTER) {
         errs = new_vector(&t_error);
         err = new_error("operand of %s should be either integer or pointer", op);
         vector_push(errs, err);
-        delete_srt(child_srt);
+        delete_srt(srt);
         return new_resolverret_errors(errs);
     }
 
-    dtype = new_pointer_dtype(dtype_copy(child_srt->dtype));
-    child_srt = new_dtyped_srt(SRT_ADDR_EXPR, dtype, 1, child_srt);
-
-    dtype = dtype_copy(dtype->dpointer->to_dtype);
-    srt = new_dtyped_srt(srt_type, dtype, 1, child_srt);
+    dtype = dtype_copy(srt->dtype);
+    srt = convert_to_ptr(srt);
+    srt = new_dtyped_srt(srt_type, dtype, 1, srt);
 
     return new_resolverret(srt);
 }
