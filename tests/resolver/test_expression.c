@@ -813,11 +813,14 @@ void test_resolve_preinc_expr(void) {
     Srt* expected = new_dtyped_srt(
         SRT_PREINC_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
         new_dtyped_srt(
-            SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1,               // non-terminal
-            new_dtyped_srt(SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2,    // non-terminal
-                           new_dtyped_srt(SRT_ADDR_EXPR, pointer_dtype, 1, // non-terminal
-                                          new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("a"))),
-                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")))));
+            SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+            new_dtyped_srt(
+                SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                new_dtyped_srt(
+                    SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2,    // non-terminal
+                    new_dtyped_srt(SRT_ADDR_EXPR, pointer_dtype, 1, // non-terminal
+                                   new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("a"))),
+                    new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i"))))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -831,8 +834,10 @@ void test_resolve_predec_expr(void) {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("j"), new_integer_dtype(DTYPE_INT));
 
-    Srt* expected = new_dtyped_srt(SRT_PREDEC_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
-                                   new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")));
+    Srt* expected = new_dtyped_srt(
+        SRT_PREDEC_EXPR, new_integer_dtype(DTYPE_INT), 1,                                 // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j"))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 }
@@ -841,12 +846,14 @@ void test_resolve_pointer_preinc_expr(void) {
     Ast* input = new_ast(AST_PREINC_EXPR, 1, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")));
 
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("p"), pointer_dtype);
 
-    Srt* expected = new_dtyped_srt(
-        SRT_PREINC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
-        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("p")));
+    Srt* expected =
+        new_dtyped_srt(SRT_PREINC_EXPR, dtype_copy(pointer_dtype), 1,                                 // non-terminal
+                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(pointer_dtype)), 1, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("p"))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -857,12 +864,14 @@ void test_resolve_pointer_predec_expr(void) {
     Ast* input = new_ast(AST_PREDEC_EXPR, 1, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
 
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("q"), pointer_dtype);
 
-    Srt* expected = new_dtyped_srt(
-        SRT_PREDEC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
-        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("q")));
+    Srt* expected =
+        new_dtyped_srt(SRT_PREDEC_EXPR, dtype_copy(pointer_dtype), 1,                                 // non-terminal
+                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(pointer_dtype)), 1, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("q"))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -1137,8 +1146,10 @@ void test_resolve_postinc_expr(void) {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("i"), new_integer_dtype(DTYPE_INT));
 
-    Srt* expected = new_dtyped_srt(SRT_POSTINC_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
-                                   new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")));
+    Srt* expected = new_dtyped_srt(
+        SRT_POSTINC_EXPR, new_integer_dtype(DTYPE_INT), 1,                                // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i"))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -1160,11 +1171,14 @@ void test_resolve_postdec_expr(void) {
     Srt* expected = new_dtyped_srt(
         SRT_POSTDEC_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
         new_dtyped_srt(
-            SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1,               // non-terminal
-            new_dtyped_srt(SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2,    // non-terminal
-                           new_dtyped_srt(SRT_ADDR_EXPR, pointer_dtype, 1, // non-terminal
-                                          new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("b"))),
-                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")))));
+            SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+            new_dtyped_srt(
+                SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                new_dtyped_srt(
+                    SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2,    // non-terminal
+                    new_dtyped_srt(SRT_ADDR_EXPR, pointer_dtype, 1, // non-terminal
+                                   new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("b"))),
+                    new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j"))))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -1175,12 +1189,14 @@ void test_resolve_pointer_postinc_expr(void) {
     Ast* input = new_ast(AST_POSTINC_EXPR, 1, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")));
 
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("p"), pointer_dtype);
 
-    Srt* expected = new_dtyped_srt(
-        SRT_POSTINC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
-        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("p")));
+    Srt* expected =
+        new_dtyped_srt(SRT_POSTINC_EXPR, dtype_copy(pointer_dtype), 1,                                // non-terminal
+                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(pointer_dtype)), 1, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("p"))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -1191,12 +1207,14 @@ void test_resolve_pointer_postdec_expr(void) {
     Ast* input = new_ast(AST_POSTDEC_EXPR, 1, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
 
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     SymbolTable* local_table = new_symboltable();
-    symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("q"), pointer_dtype);
 
-    Srt* expected = new_dtyped_srt(
-        SRT_POSTDEC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
-        new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("q")));
+    Srt* expected =
+        new_dtyped_srt(SRT_POSTDEC_EXPR, dtype_copy(pointer_dtype), 1,                                // non-terminal
+                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(pointer_dtype)), 1, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("q"))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 

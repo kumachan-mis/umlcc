@@ -1320,7 +1320,10 @@ ResolverReturn* resolve_incdec_expr(Resolver* resolver, SrtType srt_type, char* 
         return new_resolverret_errors(errs);
     }
 
-    dtype = dtype_copy(child_srt->dtype);
+    dtype = new_pointer_dtype(dtype_copy(child_srt->dtype));
+    child_srt = new_dtyped_srt(SRT_ADDR_EXPR, dtype, 1, child_srt);
+
+    dtype = dtype_copy(dtype->dpointer->to_dtype);
     srt = new_dtyped_srt(srt_type, dtype, 1, child_srt);
 
     return new_resolverret(srt);
