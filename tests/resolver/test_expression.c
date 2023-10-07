@@ -813,7 +813,7 @@ void test_resolve_preinc_expr(void) {
     Srt* expected = new_dtyped_srt(
         SRT_PREINC_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
         new_dtyped_srt(
-            SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+            SRT_ADDR_EXPR, dtype_copy(pointer_dtype), 1, // non-terminal
             new_dtyped_srt(
                 SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                 new_dtyped_srt(
@@ -1171,7 +1171,7 @@ void test_resolve_postdec_expr(void) {
     Srt* expected = new_dtyped_srt(
         SRT_POSTDEC_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
         new_dtyped_srt(
-            SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+            SRT_ADDR_EXPR, dtype_copy(pointer_dtype), 1, // non-terminal
             new_dtyped_srt(
                 SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                 new_dtyped_srt(
