@@ -10,14 +10,14 @@ int main(void) {
     int x = 0;
     while (x < 5) {
         put_int(x);
-        x = x + 1;
+        x++;
     }
 
     int y = 0;
     int z = 1;
     while (y < 10) {
         z = 2 * z;
-        y = y + 1;
+        y++;
     }
     put_int(z);
 

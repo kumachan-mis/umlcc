@@ -26,6 +26,8 @@ void test_parse_division_expr_error(void);
 void test_parse_modulo_expr_error(void);
 void test_parse_cast_expr_error_paren(void);
 void test_parse_cast_expr_error_type_name(void);
+void test_parse_preinc_expr_error(void);
+void test_parse_predec_expr_error(void);
 void test_parse_address_expr_error(void);
 void test_parse_indirection_expr_error(void);
 void test_parse_logical_not_expr_error(void);
@@ -71,6 +73,8 @@ CU_Suite* add_test_suite_expr_parser_error(void) {
     CU_ADD_TEST(suite, test_parse_modulo_expr_error);
     CU_ADD_TEST(suite, test_parse_cast_expr_error_paren);
     CU_ADD_TEST(suite, test_parse_cast_expr_error_type_name);
+    CU_ADD_TEST(suite, test_parse_preinc_expr_error);
+    CU_ADD_TEST(suite, test_parse_predec_expr_error);
     CU_ADD_TEST(suite, test_parse_address_expr_error);
     CU_ADD_TEST(suite, test_parse_indirection_expr_error);
     CU_ADD_TEST(suite, test_parse_logical_not_expr_error);
@@ -432,6 +436,32 @@ void test_parse_cast_expr_error_type_name(void) {
 
     // given "(int(*type))variable", parsing fails at "(int(*type", then goes back to "(int", expects ")", but got "("
     Error* expected = new_error("token ) expected, but got (");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_preinc_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_PLUS_PLUS));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token =");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_predec_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_MINUS_MINUS));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token =");
 
     run_expr_parser_error_test(input, NULL, expected);
 

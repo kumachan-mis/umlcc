@@ -131,6 +131,8 @@ Map* new_punctuator_map(void) {
     ctoken_map_add(punctuator_map, "}", CTOKEN_RBRACE);
     ctoken_map_add(punctuator_map, ".", CTOKEN_DOT);
     ctoken_map_add(punctuator_map, "->", CTOKEN_ARROW);
+    ctoken_map_add(punctuator_map, "++", CTOKEN_PLUS_PLUS);
+    ctoken_map_add(punctuator_map, "--", CTOKEN_MINUS_MINUS);
     ctoken_map_add(punctuator_map, "&", CTOKEN_AND);
     ctoken_map_add(punctuator_map, "*", CTOKEN_ASTERISK);
     ctoken_map_add(punctuator_map, "+", CTOKEN_PLUS);

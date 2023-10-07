@@ -111,6 +111,8 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
         case SRT_MOD_EXPR:
             codes = gen_multiplicative_expr_immcode(immcgen);
             break;
+        case SRT_PREDEC_EXPR:
+        case SRT_PREINC_EXPR:
         case SRT_ADDR_EXPR:
         case SRT_INDIR_EXPR:
         case SRT_POS_EXPR:
@@ -121,6 +123,8 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
             break;
         case SRT_CALL_EXPR:
         case SRT_TOMEMBER_EXPR:
+        case SRT_POSTINC_EXPR:
+        case SRT_POSTDEC_EXPR:
             codes = gen_postfix_expr_immcode(immcgen);
             break;
         case SRT_IDENT_EXPR:

@@ -326,6 +326,7 @@ Vector* gen_unary_expr_immcode(Immcgen* immcgen) {
     Vector* codes = NULL;
     Srt* srt = immcgen->srt;
 
+    Vector* gen_incdec_expr_immcode(Immcgen * immcgen);
     Vector* gen_address_expr_immcode(Immcgen * immcgen);
     Vector* gen_indirection_expr_immcode(Immcgen * immcgen);
     Vector* gen_positive_expr_immcode(Immcgen * immcgen);
@@ -334,6 +335,10 @@ Vector* gen_unary_expr_immcode(Immcgen* immcgen) {
     Vector* gen_logical_not_expr_immcode(Immcgen * immcgen);
 
     switch (srt->type) {
+        case SRT_PREINC_EXPR:
+        case SRT_PREDEC_EXPR:
+            codes = gen_incdec_expr_immcode(immcgen);
+            break;
         case SRT_ADDR_EXPR:
             codes = gen_address_expr_immcode(immcgen);
             break;
@@ -506,6 +511,7 @@ Vector* gen_logical_not_expr_immcode(Immcgen* immcgen) {
 Vector* gen_postfix_expr_immcode(Immcgen* immcgen) {
     Vector* gen_call_expr_immcode(Immcgen * immcgen);
     Vector* gen_tomember_expr_immcode(Immcgen * immcgen);
+    Vector* gen_incdec_expr_immcode(Immcgen * immcgen);
 
     Vector* codes = NULL;
     Srt* srt = immcgen->srt;
@@ -516,6 +522,10 @@ Vector* gen_postfix_expr_immcode(Immcgen* immcgen) {
             break;
         case SRT_TOMEMBER_EXPR:
             codes = gen_tomember_expr_immcode(immcgen);
+            break;
+        case SRT_POSTINC_EXPR:
+        case SRT_POSTDEC_EXPR:
+            codes = gen_incdec_expr_immcode(immcgen);
             break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
@@ -599,6 +609,63 @@ Vector* gen_tomember_expr_immcode(Immcgen* immcgen) {
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
 
     update_non_void_expr_register(immcgen, dst);
+    return codes;
+}
+
+Vector* gen_incdec_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    ImmcOpe* ptr_src = gen_child_ptr_immcope(immcgen, codes, 0);
+    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
+
+    vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, ptr_src, NULL));
+
+    ImmcOpe* reg_src = immcope_copy(dst);
+    ImmcOpe* int_src = NULL;
+    if (dtype_issignedinteger(immcgen->srt->dtype)) {
+        int_src = new_signed_int_immcope(dst->suffix, INTEGER_INT, 1);
+    } else if (dtype_isunsignedinteger(immcgen->srt->dtype)) {
+        int_src = new_unsigned_int_immcope(dst->suffix, INTEGER_UNSIGNED_INT, 1u);
+    } else {
+        int pointer_nbytes = dtype_nbytes(immcgen->srt->dtype->dpointer->to_dtype);
+        int incdec_value = pointer_nbytes > 0 ? pointer_nbytes : 1;
+        int_src = new_signed_int_immcope(dst->suffix, INTEGER_INT, incdec_value);
+    }
+    dst = immcope_copy(dst);
+
+    ImmcOpe* expr_reg = NULL;
+    switch (immcgen->srt->type) {
+        case SRT_PREINC_EXPR:
+            vector_push(codes, new_inst_immc(IMMC_INST_ADD, dst, reg_src, int_src));
+            expr_reg = dst;
+            break;
+        case SRT_PREDEC_EXPR:
+            vector_push(codes, new_inst_immc(IMMC_INST_SUB, dst, reg_src, int_src));
+            expr_reg = dst;
+            break;
+        case SRT_POSTINC_EXPR:
+            expr_reg = create_dest_reg_immcope(immcgen);
+            vector_push(codes, new_inst_immc(IMMC_INST_LOAD, expr_reg, dst, NULL));
+            dst = immcope_copy(dst);
+            vector_push(codes, new_inst_immc(IMMC_INST_ADD, dst, reg_src, int_src));
+            break;
+        case SRT_POSTDEC_EXPR:
+            expr_reg = create_dest_reg_immcope(immcgen);
+            vector_push(codes, new_inst_immc(IMMC_INST_LOAD, expr_reg, dst, NULL));
+            dst = immcope_copy(dst);
+            vector_push(codes, new_inst_immc(IMMC_INST_SUB, dst, reg_src, int_src));
+            break;
+        default:
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_incdec_expr_immcode)\n");
+            exit(1);
+    }
+
+    dst = immcope_copy(dst);
+    ptr_src = immcope_copy(ptr_src);
+    vector_push(codes, new_inst_immc(IMMC_INST_STORE, ptr_src, dst, NULL));
+
+    update_non_void_expr_register(immcgen, expr_reg);
     return codes;
 }
 

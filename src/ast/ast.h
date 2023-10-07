@@ -92,6 +92,8 @@ typedef enum AstType {
     //   cast-expression
     AST_CAST_EXPR,
     //   unary-expression
+    AST_PREINC_EXPR,
+    AST_PREDEC_EXPR,
     AST_ADDR_EXPR,
     AST_INDIR_EXPR,
     AST_POS_EXPR,
@@ -104,6 +106,8 @@ typedef enum AstType {
     AST_CALL_EXPR,
     AST_MEMBER_EXPR,
     AST_TOMEMBER_EXPR,
+    AST_POSTINC_EXPR,
+    AST_POSTDEC_EXPR,
     AST_ARG_LIST,
     //   primary-expression
     AST_IDENT_EXPR,

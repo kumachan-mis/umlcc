@@ -481,6 +481,7 @@ ParserReturn* parse_cast_expr(Parser* parser) {
 }
 
 ParserReturn* parse_unary_expr(Parser* parser) {
+    ParserReturn* parse_preinc_predec(Parser * parser);
     ParserReturn* parse_unary_operator_expr(Parser * parser);
     ParserReturn* parse_sizeof_operator_expr(Parser * parser);
 
@@ -489,6 +490,10 @@ ParserReturn* parse_unary_expr(Parser* parser) {
 
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     switch (ctoken->type) {
+        case CTOKEN_PLUS_PLUS:
+        case CTOKEN_MINUS_MINUS:
+            parserret_assign(&ast, &err, parse_preinc_predec(parser));
+            break;
         case CTOKEN_AND:
         case CTOKEN_ASTERISK:
         case CTOKEN_PLUS:
@@ -508,6 +513,33 @@ ParserReturn* parse_unary_expr(Parser* parser) {
     if (err != NULL) {
         return new_parserret_error(err);
     }
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_preinc_predec(Parser* parser) {
+    Ast* ast = NULL;
+    Error* err = NULL;
+
+    CToken* ctoken = vector_at(parser->ctokens, parser->index);
+
+    parser->index++;
+    parserret_assign(&ast, &err, parse_unary_expr(parser));
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
+
+    switch (ctoken->type) {
+        case CTOKEN_PLUS_PLUS:
+            ast = new_ast(AST_PREINC_EXPR, 1, ast);
+            break;
+        case CTOKEN_MINUS_MINUS:
+            ast = new_ast(AST_PREDEC_EXPR, 1, ast);
+            break;
+        default:
+            err = new_error("unexpected token %s", ctoken_types[ctoken->type]);
+            return new_parserret_error(err);
+    }
+
     return new_parserret(ast);
 }
 
@@ -641,6 +673,14 @@ ParserReturn* parse_postfix_expr(Parser* parser) {
                 parser->index++;
                 child_ast = new_identifier_ast(AST_IDENT_EXPR, new_string(ctoken->ident_name));
                 ast = new_ast(AST_TOMEMBER_EXPR, 2, ast, child_ast);
+                break;
+            case CTOKEN_PLUS_PLUS:
+                parser->index++;
+                ast = new_ast(AST_POSTINC_EXPR, 1, ast);
+                break;
+            case CTOKEN_MINUS_MINUS:
+                parser->index++;
+                ast = new_ast(AST_POSTDEC_EXPR, 1, ast);
                 break;
             default:
                 return new_parserret(ast);

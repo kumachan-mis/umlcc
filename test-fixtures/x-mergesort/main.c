@@ -19,32 +19,32 @@ void merge_sort(int* array, int left, int right) {
     while (i <= mid && j <= right) {
         if (array[i] < array[j]) {
             temp[k] = array[i];
-            i = i + 1;
+            ++i;
         } else {
             temp[k] = array[j];
-            j = j + 1;
+            ++j;
         }
-        k = k + 1;
+        ++k;
     }
 
     while (i <= mid) {
         temp[k] = array[i];
-        i = i + 1;
-        k = k + 1;
+        ++i;
+        ++k;
     }
 
     while (j <= right) {
         temp[k] = array[j];
-        j = j + 1;
-        k = k + 1;
+        ++j;
+        ++k;
     }
 
     i = left;
     k = 0;
     while (i <= right) {
         array[i] = temp[k];
-        i = i + 1;
-        k = k + 1;
+        ++i;
+        ++k;
     }
 
     free(temp);
@@ -57,7 +57,7 @@ int main(void) {
     int i = 0;
     while (i < 10) {
         put_int(array[i]);
-        i = i + 1;
+        i++;
     }
 
     return 0;

@@ -615,7 +615,7 @@ void test_read_unary_expr(void) {
 }
 
 void test_read_postfix_expr(void) {
-    char* input = "arr[10][4]; exec_process(a,  b); s.x = t->y;";
+    char* input = "arr[10][4]; exec_process(a,  b); s.x = t->y; i++; i--; --j; ++j;";
 
     Vector* expected = new_vector(&t_ctoken);
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("arr")));
@@ -640,6 +640,18 @@ void test_read_postfix_expr(void) {
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("t")));
     vector_push(expected, new_ctoken(CTOKEN_ARROW));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(expected, new_ctoken(CTOKEN_PLUS_PLUS));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(expected, new_ctoken(CTOKEN_MINUS_MINUS));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_MINUS_MINUS));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("j")));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_PLUS_PLUS));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("j")));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
