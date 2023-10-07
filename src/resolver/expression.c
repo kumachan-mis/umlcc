@@ -830,7 +830,7 @@ ResolverReturn* resolve_cast_expr(Resolver* resolver) {
 }
 
 ResolverReturn* resolve_unary_expr(Resolver* resolver) {
-    ResolverReturn* resolve_incdec_expr(Resolver * resolver, SrtType srt_type, SrtType ptr_srt_type, char* op);
+    ResolverReturn* resolve_incdec_expr(Resolver * resolver, SrtType srt_type, char* op);
     ResolverReturn* resolve_address_expr(Resolver * resolver);
     ResolverReturn* resolve_indirection_expr(Resolver * resolver);
     ResolverReturn* resolve_sign_expr(Resolver * resolver, SrtType srt_type, char op);
@@ -844,10 +844,10 @@ ResolverReturn* resolve_unary_expr(Resolver* resolver) {
 
     switch (ast->type) {
         case AST_PREINC_EXPR:
-            resolverret_assign(&srt, &errs, resolve_incdec_expr(resolver, SRT_PREINC_EXPR, SRT_PPREINC_EXPR, "++"));
+            resolverret_assign(&srt, &errs, resolve_incdec_expr(resolver, SRT_PREINC_EXPR, "++"));
             break;
         case AST_PREDEC_EXPR:
-            resolverret_assign(&srt, &errs, resolve_incdec_expr(resolver, SRT_PREDEC_EXPR, SRT_PPREDEC_EXPR, "--"));
+            resolverret_assign(&srt, &errs, resolve_incdec_expr(resolver, SRT_PREDEC_EXPR, "--"));
             break;
         case AST_ADDR_EXPR:
             resolverret_assign(&srt, &errs, resolve_address_expr(resolver));
@@ -1078,7 +1078,7 @@ ResolverReturn* resolve_postfix_expr(Resolver* resolver) {
     ResolverReturn* resolve_subscription_expr(Resolver * resolver);
     ResolverReturn* resolve_call_expr(Resolver * resolver);
     ResolverReturn* resolve_member_like_expr(Resolver * resolver);
-    ResolverReturn* resolve_incdec_expr(Resolver * resolver, SrtType srt_type, SrtType ptr_srt_type, char* op);
+    ResolverReturn* resolve_incdec_expr(Resolver * resolver, SrtType srt_type, char* op);
 
     Srt* srt = NULL;
     Vector* errs = NULL;
@@ -1096,10 +1096,10 @@ ResolverReturn* resolve_postfix_expr(Resolver* resolver) {
             resolverret_assign(&srt, &errs, resolve_member_like_expr(resolver));
             break;
         case AST_POSTINC_EXPR:
-            resolverret_assign(&srt, &errs, resolve_incdec_expr(resolver, SRT_POSTINC_EXPR, SRT_PPOSTINC_EXPR, "++"));
+            resolverret_assign(&srt, &errs, resolve_incdec_expr(resolver, SRT_POSTINC_EXPR, "++"));
             break;
         case AST_POSTDEC_EXPR:
-            resolverret_assign(&srt, &errs, resolve_incdec_expr(resolver, SRT_POSTDEC_EXPR, SRT_PPOSTDEC_EXPR, "--"));
+            resolverret_assign(&srt, &errs, resolve_incdec_expr(resolver, SRT_POSTDEC_EXPR, "--"));
             break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
@@ -1289,7 +1289,7 @@ ResolverReturn* resolve_member_like_expr(Resolver* resolver) {
     return new_resolverret(srt);
 }
 
-ResolverReturn* resolve_incdec_expr(Resolver* resolver, SrtType srt_type, SrtType ptr_srt_type, char* op) {
+ResolverReturn* resolve_incdec_expr(Resolver* resolver, SrtType srt_type, char* op) {
     Srt* srt = NULL;
     DType* dtype = NULL;
     Srt* child_srt = NULL;
@@ -1312,22 +1312,18 @@ ResolverReturn* resolve_incdec_expr(Resolver* resolver, SrtType srt_type, SrtTyp
         return new_resolverret_errors(errs);
     }
 
-    dtype = dtype_copy(child_srt->dtype);
-
-    if (dtype_isinteger(child_srt->dtype)) {
-        srt = new_dtyped_srt(srt_type, dtype, 1, child_srt);
-        return new_resolverret(srt);
-    } else if (child_srt->dtype->type == DTYPE_POINTER) {
-        srt = new_dtyped_srt(ptr_srt_type, dtype, 1, child_srt);
-        return new_resolverret(srt);
+    if (!dtype_isinteger(child_srt->dtype) && child_srt->dtype->type != DTYPE_POINTER) {
+        errs = new_vector(&t_error);
+        err = new_error("operand of %s should be either integer or pointer", op);
+        vector_push(errs, err);
+        delete_srt(child_srt);
+        return new_resolverret_errors(errs);
     }
 
-    errs = new_vector(&t_error);
-    err = new_error("operand of %s should be either integer or pointer", op);
-    vector_push(errs, err);
+    dtype = dtype_copy(child_srt->dtype);
+    srt = new_dtyped_srt(srt_type, dtype, 1, child_srt);
 
-    delete_srt(child_srt);
-    return new_resolverret_errors(errs);
+    return new_resolverret(srt);
 }
 
 ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {

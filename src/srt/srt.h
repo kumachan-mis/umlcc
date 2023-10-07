@@ -67,8 +67,6 @@ typedef enum SrtType {
     //   unary-expression
     SRT_PREINC_EXPR,
     SRT_PREDEC_EXPR,
-    SRT_PPREINC_EXPR,
-    SRT_PPREDEC_EXPR,
     SRT_ADDR_EXPR,
     SRT_INDIR_EXPR,
     SRT_POS_EXPR,
@@ -80,8 +78,6 @@ typedef enum SrtType {
     SRT_TOMEMBER_EXPR,
     SRT_POSTINC_EXPR,
     SRT_POSTDEC_EXPR,
-    SRT_PPOSTINC_EXPR,
-    SRT_PPOSTDEC_EXPR,
     SRT_ARG_LIST,
     //   primary-expression
     SRT_IDENT_EXPR,

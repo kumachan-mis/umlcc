@@ -845,7 +845,7 @@ void test_resolve_pointer_preinc_expr(void) {
     symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     Srt* expected = new_dtyped_srt(
-        SRT_PPREINC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+        SRT_PREINC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("p")));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
@@ -861,7 +861,7 @@ void test_resolve_pointer_predec_expr(void) {
     symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     Srt* expected = new_dtyped_srt(
-        SRT_PPREDEC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+        SRT_PREDEC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("q")));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
@@ -1179,7 +1179,7 @@ void test_resolve_pointer_postinc_expr(void) {
     symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     Srt* expected = new_dtyped_srt(
-        SRT_PPOSTINC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+        SRT_POSTINC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("p")));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
@@ -1195,7 +1195,7 @@ void test_resolve_pointer_postdec_expr(void) {
     symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
 
     Srt* expected = new_dtyped_srt(
-        SRT_PPOSTDEC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+        SRT_POSTDEC_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("q")));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
