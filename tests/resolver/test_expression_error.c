@@ -1876,8 +1876,7 @@ void test_resolve_call_expr_error_callee_child(void) {
                                  new_identifier_ast(AST_IDENT_EXPR, new_string("x"))));
 
     SymbolTable* local_table = new_symboltable();
-    Vector* params = new_vector(&t_dparam);
-    vector_push(params, new_named_dparam(new_string("x"), new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("identifier 'function' is used before declared"));

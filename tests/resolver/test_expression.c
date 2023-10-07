@@ -840,6 +840,8 @@ void test_resolve_predec_expr(void) {
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j"))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
 }
 
 void test_resolve_pointer_preinc_expr(void) {
