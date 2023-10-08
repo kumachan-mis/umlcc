@@ -4,6 +4,14 @@
 #include "../testlib/testlib.h"
 
 void test_parse_assignment_expr_error(void);
+void test_parse_multiply_assignment_expr_error(void);
+void test_parse_division_assignment_expr_error(void);
+void test_parse_modulo_assignment_expr_error(void);
+void test_parse_add_assignment_expr_error(void);
+void test_parse_subtract_assignment_expr_error(void);
+void test_parse_bitwise_inclusive_or_assignment_expr_error(void);
+void test_parse_bitwise_exclusive_or_assignment_expr_error(void);
+void test_parse_bitwise_and_assignment_expr_error(void);
 void test_parse_conditional_expr_error_condition(void);
 void test_parse_conditional_expr_error_lhs(void);
 void test_parse_conditional_expr_error_colon(void);
@@ -51,6 +59,14 @@ void run_expr_parser_error_test(Vector* input, Set* typedef_names_set, Error* ex
 CU_Suite* add_test_suite_expr_parser_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_expr_parser_error", NULL, NULL);
     CU_ADD_TEST(suite, test_parse_assignment_expr_error);
+    CU_ADD_TEST(suite, test_parse_multiply_assignment_expr_error);
+    CU_ADD_TEST(suite, test_parse_division_assignment_expr_error);
+    CU_ADD_TEST(suite, test_parse_modulo_assignment_expr_error);
+    CU_ADD_TEST(suite, test_parse_add_assignment_expr_error);
+    CU_ADD_TEST(suite, test_parse_subtract_assignment_expr_error);
+    CU_ADD_TEST(suite, test_parse_bitwise_inclusive_or_assignment_expr_error);
+    CU_ADD_TEST(suite, test_parse_bitwise_exclusive_or_assignment_expr_error);
+    CU_ADD_TEST(suite, test_parse_bitwise_and_assignment_expr_error);
     CU_ADD_TEST(suite, test_parse_conditional_expr_error_condition);
     CU_ADD_TEST(suite, test_parse_conditional_expr_error_lhs);
     CU_ADD_TEST(suite, test_parse_conditional_expr_error_colon);
@@ -103,6 +119,118 @@ void test_parse_assignment_expr_error(void) {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("unexpected token =");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_multiply_assignment_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token *=");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_division_assignment_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_SLASH_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_SLASH_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token /=");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_modulo_assignment_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_PERCENT_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_PERCENT_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token %=");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_add_assignment_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_PLUS_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_PLUS_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token +=");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_subtract_assignment_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_MINUS_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_MINUS_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token -=");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_bitwise_inclusive_or_assignment_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_VBAR_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_VBAR_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token |=");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_bitwise_exclusive_or_assignment_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_CARET_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_CARET_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token ^=");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_bitwise_and_assignment_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_AND_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_AND_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token &=");
 
     run_expr_parser_error_test(input, NULL, expected);
 

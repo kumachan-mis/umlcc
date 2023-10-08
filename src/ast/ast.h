@@ -62,6 +62,14 @@ typedef enum AstType {
     // expression
     //   assignment-expression
     AST_ASSIGN_EXPR,
+    AST_MUL_ASSIGN_EXPR,
+    AST_DIV_ASSIGN_EXPR,
+    AST_MOD_ASSIGN_EXPR,
+    AST_ADD_ASSIGN_EXPR,
+    AST_SUB_ASSIGN_EXPR,
+    AST_AND_ASSIGN_EXPR,
+    AST_XOR_ASSIGN_EXPR,
+    AST_OR_ASSIGN_EXPR,
     //   conditional-expression
     AST_COND_EXPR,
     //   logical-OR-expression
