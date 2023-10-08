@@ -155,6 +155,14 @@ Map* new_punctuator_map(void) {
     ctoken_map_add(punctuator_map, ":", CTOKEN_COLON);
     ctoken_map_add(punctuator_map, ";", CTOKEN_SEMICOLON);
     ctoken_map_add(punctuator_map, "=", CTOKEN_EQUAL);
+    ctoken_map_add(punctuator_map, "*=", CTOKEN_ASTERISK_EQUAL);
+    ctoken_map_add(punctuator_map, "/=", CTOKEN_SLASH_EQUAL);
+    ctoken_map_add(punctuator_map, "%=", CTOKEN_PERCENT_EQUAL);
+    ctoken_map_add(punctuator_map, "+=", CTOKEN_PLUS_EQUAL);
+    ctoken_map_add(punctuator_map, "-=", CTOKEN_MINUS_EQUAL);
+    ctoken_map_add(punctuator_map, "&=", CTOKEN_AND_EQUAL);
+    ctoken_map_add(punctuator_map, "^=", CTOKEN_CARET_EQUAL);
+    ctoken_map_add(punctuator_map, "|=", CTOKEN_VBAR_EQUAL);
     ctoken_map_add(punctuator_map, ",", CTOKEN_COMMA);
 
     return punctuator_map;
