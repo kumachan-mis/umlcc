@@ -2,11 +2,11 @@
 #include "../../src/resolver/expression.h"
 #include "../testlib/testlib.h"
 
-void test_resolve_assign_expr_error_unassignable(void);
-void test_resolve_assign_expr_error_void(void);
-void test_resolve_assign_expr_error_unmodifiable(void);
-void test_resolve_assign_expr_error_lhs(void);
-void test_resolve_assign_expr_error_rhs(void);
+void test_resolve_assignment_expr_error_unassignable(void);
+void test_resolve_assignment_expr_error_void(void);
+void test_resolve_assignment_expr_error_unmodifiable(void);
+void test_resolve_assignment_expr_error_lhs(void);
+void test_resolve_assignment_expr_error_rhs(void);
 void test_resolve_conditional_expr_error_condition_child(void);
 void test_resolve_conditional_expr_error_condition_non_scalar(void);
 void test_resolve_conditional_expr_error_lhs(void);
@@ -129,11 +129,11 @@ void run_expr_resolver_error_test(Ast* input, SymbolTable* symbol_table, TagTabl
 
 CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_expr_resolver_error", NULL, NULL);
-    CU_ADD_TEST(suite, test_resolve_assign_expr_error_unassignable);
-    CU_ADD_TEST(suite, test_resolve_assign_expr_error_void);
-    CU_ADD_TEST(suite, test_resolve_assign_expr_error_unmodifiable);
-    CU_ADD_TEST(suite, test_resolve_assign_expr_error_lhs);
-    CU_ADD_TEST(suite, test_resolve_assign_expr_error_rhs);
+    CU_ADD_TEST(suite, test_resolve_assignment_expr_error_unassignable);
+    CU_ADD_TEST(suite, test_resolve_assignment_expr_error_void);
+    CU_ADD_TEST(suite, test_resolve_assignment_expr_error_unmodifiable);
+    CU_ADD_TEST(suite, test_resolve_assignment_expr_error_lhs);
+    CU_ADD_TEST(suite, test_resolve_assignment_expr_error_rhs);
     CU_ADD_TEST(suite, test_resolve_conditional_expr_error_condition_child);
     CU_ADD_TEST(suite, test_resolve_conditional_expr_error_condition_non_scalar);
     CU_ADD_TEST(suite, test_resolve_conditional_expr_error_lhs);
@@ -254,7 +254,7 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     return suite;
 }
 
-void test_resolve_assign_expr_error_unassignable(void) {
+void test_resolve_assignment_expr_error_unassignable(void) {
     Ast* input = new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -271,7 +271,7 @@ void test_resolve_assign_expr_error_unassignable(void) {
     delete_vector(expected);
 }
 
-void test_resolve_assign_expr_error_void(void) {
+void test_resolve_assignment_expr_error_void(void) {
     Ast* input = new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_ast(AST_CALL_EXPR, 2, // non-terminal
@@ -291,7 +291,7 @@ void test_resolve_assign_expr_error_void(void) {
     delete_vector(expected);
 }
 
-void test_resolve_assign_expr_error_unmodifiable(void) {
+void test_resolve_assignment_expr_error_unmodifiable(void) {
     Ast* input = new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -308,7 +308,7 @@ void test_resolve_assign_expr_error_unmodifiable(void) {
     delete_vector(expected);
 }
 
-void test_resolve_assign_expr_error_lhs(void) {
+void test_resolve_assignment_expr_error_lhs(void) {
     Ast* input = new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
@@ -321,7 +321,7 @@ void test_resolve_assign_expr_error_lhs(void) {
     delete_vector(expected);
 }
 
-void test_resolve_assign_expr_error_rhs(void) {
+void test_resolve_assignment_expr_error_rhs(void) {
     Ast* input = new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
