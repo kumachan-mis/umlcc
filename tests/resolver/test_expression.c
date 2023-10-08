@@ -3,6 +3,16 @@
 #include "../testlib/testlib.h"
 
 void test_resolve_assignment_expr(void);
+void test_resolve_multiply_assignment_expr(void);
+void test_resolve_division_assignment_expr(void);
+void test_resolve_modulo_assignment_expr(void);
+void test_resolve_add_assignment_expr(void);
+void test_resolve_pointer_add_assignment_expr(void);
+void test_resolve_subtract_assignment_expr(void);
+void test_resolve_pointer_subtract_assignment_expr(void);
+void test_resolve_bitwise_inclusive_or_assignment_expr(void);
+void test_resolve_bitwise_exclusive_or_assignment_expr(void);
+void test_resolve_bitwise_and_assignment_expr(void);
 void test_resolve_conditional_expr_arithmetic(void);
 void test_resolve_conditional_expr_pointer(void);
 void test_resolve_conditional_expr_struct(void);
@@ -20,8 +30,7 @@ void test_resolve_greater_equal_expr(void);
 void test_resolve_add_expr(void);
 void test_resolve_subtract_expr(void);
 void test_resolve_pointer_add_expr(void);
-void test_resolve_reversed_pointer_add_expr(void);
-void test_resolve_pointer_subtract_expr(void);
+void test_resolve_pointer_add_expr_reversed(void);
 void test_resolve_pointer_subtract_expr(void);
 void test_resolve_pointer_difference_expr(void);
 void test_resolve_multiply_expr(void);
@@ -70,6 +79,16 @@ void run_local_expr_resolver_test(Ast* input, SymbolTable* symbol_table, TagTabl
 CU_Suite* add_test_suite_expr_resolver(void) {
     CU_Suite* suite = CU_add_suite("test_suite_expr_resolver", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_assignment_expr);
+    CU_ADD_TEST(suite, test_resolve_multiply_assignment_expr);
+    CU_ADD_TEST(suite, test_resolve_division_assignment_expr);
+    CU_ADD_TEST(suite, test_resolve_modulo_assignment_expr);
+    CU_ADD_TEST(suite, test_resolve_add_assignment_expr);
+    CU_ADD_TEST(suite, test_resolve_pointer_add_assignment_expr);
+    CU_ADD_TEST(suite, test_resolve_subtract_assignment_expr);
+    CU_ADD_TEST(suite, test_resolve_pointer_subtract_assignment_expr);
+    CU_ADD_TEST(suite, test_resolve_bitwise_inclusive_or_assignment_expr);
+    CU_ADD_TEST(suite, test_resolve_bitwise_exclusive_or_assignment_expr);
+    CU_ADD_TEST(suite, test_resolve_bitwise_and_assignment_expr);
     CU_ADD_TEST(suite, test_resolve_conditional_expr_arithmetic);
     CU_ADD_TEST(suite, test_resolve_conditional_expr_pointer);
     CU_ADD_TEST(suite, test_resolve_conditional_expr_struct);
@@ -87,7 +106,7 @@ CU_Suite* add_test_suite_expr_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_add_expr);
     CU_ADD_TEST(suite, test_resolve_subtract_expr);
     CU_ADD_TEST(suite, test_resolve_pointer_add_expr);
-    CU_ADD_TEST(suite, test_resolve_reversed_pointer_add_expr);
+    CU_ADD_TEST(suite, test_resolve_pointer_add_expr_reversed);
     CU_ADD_TEST(suite, test_resolve_pointer_subtract_expr);
     CU_ADD_TEST(suite, test_resolve_pointer_difference_expr);
     CU_ADD_TEST(suite, test_resolve_multiply_expr);
@@ -156,6 +175,250 @@ void test_resolve_assignment_expr(void) {
                 new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("y"))),
                 new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_multiply_assignment_expr(void) {
+    Ast* input = new_ast(AST_MUL_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_CHAR));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2,                                 // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))),
+        new_dtyped_srt(
+            SRT_MUL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+            new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("y")))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_division_assignment_expr(void) {
+    Ast* input = new_ast(AST_DIV_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_CHAR));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_CHAR), 2,                                 // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("x"))),
+        new_dtyped_srt(
+            SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+            new_dtyped_srt(
+                SRT_DIV_EXPR, new_integer_dtype(DTYPE_INT), 2,                 // non-terminal
+                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("x"))),
+                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("y")))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_modulo_assignment_expr(void) {
+    Ast* input = new_ast(AST_MOD_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2,                                 // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))),
+        new_dtyped_srt(SRT_MOD_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("y"))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_add_assignment_expr(void) {
+    Ast* input = new_ast(AST_ADD_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_CHAR));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2,                                 // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))),
+        new_dtyped_srt(
+            SRT_ADD_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+            new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("y")))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_pointer_add_assignment_expr(void) {
+    Ast* input = new_ast(AST_ADD_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 4)));
+
+    SymbolTable* local_table = new_symboltable();
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("p"), pointer_dtype);
+
+    Srt* expected =
+        new_dtyped_srt(SRT_ASSIGN_EXPR, dtype_copy(pointer_dtype), 2,                                 // non-terminal
+                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(pointer_dtype)), 1, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("p"))),
+                       new_dtyped_srt(SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("p")),
+                                      new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                       new_signed_iliteral(INTEGER_INT, 4))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_subtract_assignment_expr(void) {
+    Ast* input = new_ast(AST_SUB_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2,                                 // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))),
+        new_dtyped_srt(
+            SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_pointer_subtract_assignment_expr(void) {
+    Ast* input = new_ast(AST_SUB_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
+                         new_ast(AST_NEG_EXPR, 1, // non-terminal
+                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 8))));
+
+    SymbolTable* local_table = new_symboltable();
+    DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("p"), pointer_dtype);
+
+    Srt* expected =
+        new_dtyped_srt(SRT_ASSIGN_EXPR, dtype_copy(pointer_dtype), 2,                                 // non-terminal
+                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(pointer_dtype)), 1, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("p"))),
+                       new_dtyped_srt(SRT_PSUB_EXPR, dtype_copy(pointer_dtype), 2, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("p")),
+                                      new_dtyped_srt(SRT_NEG_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                                                     new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                                      new_signed_iliteral(INTEGER_INT, 8)))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_bitwise_inclusive_or_assignment_expr(void) {
+    Ast* input = new_ast(AST_OR_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_CHAR));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_CHAR), 2,                                 // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("x"))),
+        new_dtyped_srt(
+            SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+            new_dtyped_srt(
+                SRT_OR_EXPR, new_integer_dtype(DTYPE_INT), 2,                  // non-terminal
+                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("x"))),
+                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("y")))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_bitwise_exclusive_or_assignment_expr(void) {
+    Ast* input = new_ast(AST_XOR_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 0xFFFF)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2,                                 // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))),
+        new_dtyped_srt(
+            SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+            new_dtyped_srt(
+                SRT_XOR_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 2,                 // non-terminal
+                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 1, // non-terminal
+                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))),
+                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT),
+                                 new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 0xFFFF)))));
+
+    run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
+
+    delete_srt(expected);
+}
+
+void test_resolve_bitwise_and_assignment_expr(void) {
+    Ast* input = new_ast(AST_AND_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_CHAR));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+
+    Srt* expected = new_dtyped_srt(
+        SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_CHAR), 2,                                 // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("x"))),
+        new_dtyped_srt(
+            SRT_CAST_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
+            new_dtyped_srt(
+                SRT_AND_EXPR, new_integer_dtype(DTYPE_INT), 2,                 // non-terminal
+                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("x"))),
+                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("y")))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -643,7 +906,7 @@ void test_resolve_pointer_add_expr(void) {
     delete_srt(expected);
 }
 
-void test_resolve_reversed_pointer_add_expr(void) {
+void test_resolve_pointer_add_expr_reversed(void) {
     Ast* input = new_ast(AST_ADD_EXPR, 2, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("ptr")));
