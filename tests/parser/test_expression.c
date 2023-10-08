@@ -4,6 +4,14 @@
 #include "../testlib/testlib.h"
 
 void test_parse_assignment_expr(void);
+void test_parse_multiply_assignment_expr(void);
+void test_parse_division_assignment_expr(void);
+void test_parse_modulo_assignment_expr(void);
+void test_parse_add_assignment_expr(void);
+void test_parse_subtract_assignment_expr(void);
+void test_parse_bitwise_inclusive_or_assignment_expr(void);
+void test_parse_bitwise_exclusive_or_assignment_expr(void);
+void test_parse_bitwise_and_assignment_expr(void);
 void test_parse_conditional_expr(void);
 void test_parse_logical_or_expr(void);
 void test_parse_logical_and_expr(void);
@@ -49,6 +57,14 @@ void run_expr_parser_test(Vector* input, Ast* expected);
 CU_Suite* add_test_suite_expr_parser(void) {
     CU_Suite* suite = CU_add_suite("test_suite_expr_parser", NULL, NULL);
     CU_ADD_TEST(suite, test_parse_assignment_expr);
+    CU_ADD_TEST(suite, test_parse_multiply_assignment_expr);
+    CU_ADD_TEST(suite, test_parse_division_assignment_expr);
+    CU_ADD_TEST(suite, test_parse_modulo_assignment_expr);
+    CU_ADD_TEST(suite, test_parse_add_assignment_expr);
+    CU_ADD_TEST(suite, test_parse_subtract_assignment_expr);
+    CU_ADD_TEST(suite, test_parse_bitwise_inclusive_or_assignment_expr);
+    CU_ADD_TEST(suite, test_parse_bitwise_exclusive_or_assignment_expr);
+    CU_ADD_TEST(suite, test_parse_bitwise_and_assignment_expr);
     CU_ADD_TEST(suite, test_parse_conditional_expr);
     CU_ADD_TEST(suite, test_parse_logical_or_expr);
     CU_ADD_TEST(suite, test_parse_logical_and_expr);
@@ -99,7 +115,9 @@ void test_parse_assignment_expr(void) {
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
     vector_push(input, new_ctoken(CTOKEN_EQUAL));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("p")));
-    vector_push(input, new_ctoken(CTOKEN_VBAR_VBAR));
+    vector_push(input, new_ctoken(CTOKEN_QUESTION));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("p")));
+    vector_push(input, new_ctoken(CTOKEN_COLON));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("q")));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
@@ -109,9 +127,170 @@ void test_parse_assignment_expr(void) {
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("x"))),
                             new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
-                                    new_ast(AST_LOR_EXPR, 2, // non-terminal
+                                    new_ast(AST_COND_EXPR, 3, // non-terminal
+                                            new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
                                             new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
                                             new_identifier_ast(AST_IDENT_EXPR, new_string("q")))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_multiply_assignment_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_MUL_ASSIGN_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_MUL_ASSIGN_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_division_assignment_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_SLASH_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_SLASH_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_DIV_ASSIGN_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_DIV_ASSIGN_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_modulo_assignment_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_PERCENT_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_PERCENT_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_MOD_ASSIGN_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_MOD_ASSIGN_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_add_assignment_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_PLUS_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_PLUS_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_ADD_ASSIGN_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_ADD_ASSIGN_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_subtract_assignment_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_MINUS_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_MINUS_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_SUB_ASSIGN_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_SUB_ASSIGN_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_bitwise_inclusive_or_assignment_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_VBAR_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_VBAR_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_OR_ASSIGN_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_OR_ASSIGN_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_bitwise_exclusive_or_assignment_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_CARET_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_CARET_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_XOR_ASSIGN_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_XOR_ASSIGN_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_bitwise_and_assignment_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_AND_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_AND_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_AND_ASSIGN_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_AND_ASSIGN_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
 
     run_expr_parser_test(input, expected);
 

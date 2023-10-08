@@ -39,6 +39,38 @@ ParserReturn* parse_assignment_expr(Parser* parser) {
                 parser->index++;
                 vector_push(stack, new_ast(AST_ASSIGN_EXPR, 1, ast));
                 break;
+            case CTOKEN_ASTERISK_EQUAL:
+                parser->index++;
+                vector_push(stack, new_ast(AST_MUL_ASSIGN_EXPR, 1, ast));
+                break;
+            case CTOKEN_SLASH_EQUAL:
+                parser->index++;
+                vector_push(stack, new_ast(AST_DIV_ASSIGN_EXPR, 1, ast));
+                break;
+            case CTOKEN_PERCENT_EQUAL:
+                parser->index++;
+                vector_push(stack, new_ast(AST_MOD_ASSIGN_EXPR, 1, ast));
+                break;
+            case CTOKEN_PLUS_EQUAL:
+                parser->index++;
+                vector_push(stack, new_ast(AST_ADD_ASSIGN_EXPR, 1, ast));
+                break;
+            case CTOKEN_MINUS_EQUAL:
+                parser->index++;
+                vector_push(stack, new_ast(AST_SUB_ASSIGN_EXPR, 1, ast));
+                break;
+            case CTOKEN_AND_EQUAL:
+                parser->index++;
+                vector_push(stack, new_ast(AST_AND_ASSIGN_EXPR, 1, ast));
+                break;
+            case CTOKEN_CARET_EQUAL:
+                parser->index++;
+                vector_push(stack, new_ast(AST_XOR_ASSIGN_EXPR, 1, ast));
+                break;
+            case CTOKEN_VBAR_EQUAL:
+                parser->index++;
+                vector_push(stack, new_ast(AST_OR_ASSIGN_EXPR, 1, ast));
+                break;
             default:
                 parser->index = index;
                 delete_ast(ast);

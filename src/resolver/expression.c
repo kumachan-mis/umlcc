@@ -16,6 +16,16 @@ ResolverReturn* resolve_expr(Resolver* resolver) {
         case AST_ASSIGN_EXPR:
             resolverret_assign(&srt, &errs, resolve_assignment_expr(resolver));
             break;
+        case AST_MUL_ASSIGN_EXPR:
+        case AST_DIV_ASSIGN_EXPR:
+        case AST_MOD_ASSIGN_EXPR:
+        case AST_ADD_ASSIGN_EXPR:
+        case AST_SUB_ASSIGN_EXPR:
+        case AST_OR_ASSIGN_EXPR:
+        case AST_XOR_ASSIGN_EXPR:
+        case AST_AND_ASSIGN_EXPR:
+            resolverret_assign(&srt, &errs, resolve_compound_assignment_expr(resolver));
+            break;
         case AST_COND_EXPR:
             resolverret_assign(&srt, &errs, resolve_conditional_expr(resolver));
             break;
@@ -140,6 +150,60 @@ ResolverReturn* resolve_assignment_expr(Resolver* resolver) {
     lhs_srt = convert_to_ptr(lhs_srt);
 
     srt = new_dtyped_srt(SRT_ASSIGN_EXPR, dtype, 2, lhs_srt, rhs_srt);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_compound_assignment_expr(Resolver* resolver) {
+    Srt* srt = NULL;
+    Vector* errs = NULL;
+
+    Ast* ast = resolver->ast;
+    Ast* lhs_ast = vector_at(ast->children, 0);
+    Ast* rhs_ast = vector_at(ast->children, 1);
+
+    Ast* binop_ast = NULL;
+    switch (ast->type) {
+        case AST_MUL_ASSIGN_EXPR:
+            binop_ast = new_ast(AST_MUL_EXPR, 0);
+            break;
+        case AST_DIV_ASSIGN_EXPR:
+            binop_ast = new_ast(AST_DIV_EXPR, 0);
+            break;
+        case AST_MOD_ASSIGN_EXPR:
+            binop_ast = new_ast(AST_MOD_EXPR, 0);
+            break;
+        case AST_ADD_ASSIGN_EXPR:
+            binop_ast = new_ast(AST_ADD_EXPR, 0);
+            break;
+        case AST_SUB_ASSIGN_EXPR:
+            binop_ast = new_ast(AST_SUB_EXPR, 0);
+            break;
+        case AST_OR_ASSIGN_EXPR:
+            binop_ast = new_ast(AST_OR_EXPR, 0);
+            break;
+        case AST_XOR_ASSIGN_EXPR:
+            binop_ast = new_ast(AST_XOR_EXPR, 0);
+            break;
+        case AST_AND_ASSIGN_EXPR:
+            binop_ast = new_ast(AST_AND_EXPR, 0);
+            break;
+        default:
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in resolve_compound_assignment_expr)\n");
+            exit(1);
+    }
+
+    vector_push(binop_ast->children, ast_copy(lhs_ast));
+    vector_push(binop_ast->children, ast_copy(rhs_ast));
+
+    resolver->ast = new_ast(AST_ASSIGN_EXPR, 2, ast_copy(lhs_ast), binop_ast);
+    resolverret_assign(&srt, &errs, resolve_assignment_expr(resolver));
+    delete_ast(resolver->ast);
+    resolver->ast = ast;
+    if (errs != NULL) {
+        return new_resolverret_errors(errs);
+    }
+
     return new_resolverret(srt);
 }
 
@@ -422,7 +486,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
                     err = new_error("operands of pointer == pointer are not compatible");
                 } else {
                     err = new_error("binary == expression should be "
-                                    "either arithmetic == arithmetic or pointer == pointer\n");
+                                    "either arithmetic == arithmetic or pointer == pointer");
                 }
                 vector_push(errs, err);
                 break;
@@ -436,7 +500,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
                     err = new_error("operands of pointer != pointer are not compatible");
                 } else {
                     err = new_error("binary != expression should be "
-                                    "either arithmetic != arithmetic or pointer != pointer\n");
+                                    "either arithmetic != arithmetic or pointer != pointer");
                 }
                 vector_push(errs, err);
                 break;
@@ -446,7 +510,7 @@ ResolverReturn* resolve_equality_expr(Resolver* resolver) {
             break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
-                            "unreachable statement (in resolve_equality_expr)\n");
+                            "unreachable statement (in resolve_equality_expr)");
             exit(1);
     }
 
@@ -646,7 +710,7 @@ ResolverReturn* resolve_add_expr(Resolver* resolver) {
 
     errs = new_vector(&t_error);
     err = new_error("binary + expression should be either arithmetic + arithmetic, "
-                    "pointer + integer, or integer + pointer\n");
+                    "pointer + integer, or integer + pointer");
     vector_push(errs, err);
 
     delete_srt(lhs_srt);
@@ -706,7 +770,7 @@ ResolverReturn* resolve_subtract_expr(Resolver* resolver) {
         err = new_error("operands of pointer - pointer are not compatible");
     } else {
         err = new_error("binary - expression should be either arithmetic - arithmetic, "
-                        "pointer - integer, or pointer - pointer\n");
+                        "pointer - integer, or pointer - pointer");
     }
     vector_push(errs, err);
 
@@ -901,7 +965,7 @@ ResolverReturn* resolve_address_expr(Resolver* resolver) {
         (child_srt->type != SRT_IDENT_EXPR || !dtype_isobject(child_srt->dtype))) {
         errs = new_vector(&t_error);
         err = new_error("operand of unary & is neither a function designator, "
-                        "a indirection, nor an object lvalue\n");
+                        "a indirection, nor an object lvalue");
         vector_push(errs, err);
         delete_srt(child_srt);
         return new_resolverret_errors(errs);

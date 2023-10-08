@@ -10,19 +10,11 @@
 
 Vector* gen_assignment_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
-    Srt* srt = immcgen->srt;
 
     ImmcOpe* src = gen_child_reg_immcope(immcgen, codes, 1);
     ImmcOpe* dst = gen_child_ptr_immcope(immcgen, codes, 0);
 
-    switch (srt->type) {
-        case SRT_ASSIGN_EXPR:
-            vector_push(codes, new_inst_immc(IMMC_INST_STORE, dst, src, NULL));
-            break;
-        default:
-            fprintf(stderr, "unexpected srt type %d\n", srt->type);
-            exit(1);
-    }
+    vector_push(codes, new_inst_immc(IMMC_INST_STORE, dst, src, NULL));
 
     update_non_void_expr_register(immcgen, src);
     return codes;

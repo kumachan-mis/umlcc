@@ -488,11 +488,6 @@ void testlib_assert_error_equal(Error* actual, Error* expected) {
     }
 
     testlib_assert_string_equal(actual->message, expected->message);
-    if (strcmp(actual->message, expected->message) != 0) {
-        printf("actual: %s\n", actual->message);
-        printf("expected: %s\n", expected->message);
-        return;
-    }
 }
 
 void testlib_assert_string_equal(char* actual, char* expected) {
