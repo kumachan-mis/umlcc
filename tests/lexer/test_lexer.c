@@ -14,6 +14,7 @@ void test_read_declaration_pointer_with_init(void);
 void test_read_declaration_aggregate_with_init(void);
 void test_read_statement_if_else(void);
 void test_read_statement_while(void);
+void test_read_statement_for(void);
 void test_read_assignment_expr(void);
 void test_read_conditional_expr(void);
 void test_read_logical_expr(void);
@@ -48,6 +49,7 @@ CU_Suite* add_test_suite_lexer(void) {
     CU_ADD_TEST(suite, test_read_declaration_aggregate_with_init);
     CU_ADD_TEST(suite, test_read_statement_if_else);
     CU_ADD_TEST(suite, test_read_statement_while);
+    CU_ADD_TEST(suite, test_read_statement_for);
     CU_ADD_TEST(suite, test_read_assignment_expr);
     CU_ADD_TEST(suite, test_read_conditional_expr);
     CU_ADD_TEST(suite, test_read_decimal_integer_constant);
@@ -407,6 +409,41 @@ void test_read_statement_while(void) {
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
     vector_push(expected, new_ctoken(CTOKEN_ASTERISK));
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_RBRACE));
+    vector_push(expected, new_ctoken(CTOKEN_EOF));
+
+    run_lexer_test(input, expected);
+
+    delete_vector(expected);
+}
+
+void test_read_statement_for(void) {
+    char* input = "for (int i = 0; i < 10; i++) { x += 1; y *= 2; }";
+
+    Vector* expected = new_vector(&t_ctoken);
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_FOR));
+    vector_push(expected, new_ctoken(CTOKEN_LPAREN));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(expected, new_ctoken(CTOKEN_EQUAL));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(expected, new_ctoken(CTOKEN_LESS));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 10)));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(expected, new_ctoken(CTOKEN_PLUS_PLUS));
+    vector_push(expected, new_ctoken(CTOKEN_RPAREN));
+    vector_push(expected, new_ctoken(CTOKEN_LBRACE));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(expected, new_ctoken(CTOKEN_PLUS_EQUAL));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(expected, new_ctoken(CTOKEN_ASTERISK_EQUAL));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_RBRACE));
     vector_push(expected, new_ctoken(CTOKEN_EOF));

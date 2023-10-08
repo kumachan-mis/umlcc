@@ -12,6 +12,7 @@ Map* new_keyword_map(void) {
     ctoken_map_add(keyword_map, "char", CTOKEN_KEYWORD_CHAR);
     ctoken_map_add(keyword_map, "else", CTOKEN_KEYWORD_ELSE);
     ctoken_map_add(keyword_map, "enum", CTOKEN_KEYWORD_ENUM);
+    ctoken_map_add(keyword_map, "for", CTOKEN_KEYWORD_FOR);
     ctoken_map_add(keyword_map, "if", CTOKEN_KEYWORD_IF);
     ctoken_map_add(keyword_map, "int", CTOKEN_KEYWORD_INT);
     ctoken_map_add(keyword_map, "long", CTOKEN_KEYWORD_LONG);
