@@ -21,6 +21,12 @@ void test_parse_if_stmt(void);
 void test_parse_if_else_stmt(void);
 void test_parse_if_else_stmt_chain(void);
 void test_parse_while_stmt(void);
+void test_parse_for_stmt_init_declaration(void);
+void test_parse_for_stmt_init_expression(void);
+void test_parse_for_stmt_init_null(void);
+void test_parse_for_stmt_condition_null(void);
+void test_parse_for_stmt_expression_null(void);
+void test_parse_for_stmt_all_null(void);
 
 void run_stmt_parser_test(Vector* input, Ast* expected);
 
@@ -44,6 +50,12 @@ CU_Suite* add_test_suite_stmt_parser(void) {
     CU_ADD_TEST(suite, test_parse_if_else_stmt);
     CU_ADD_TEST(suite, test_parse_if_else_stmt_chain);
     CU_ADD_TEST(suite, test_parse_while_stmt);
+    CU_ADD_TEST(suite, test_parse_for_stmt_init_declaration);
+    CU_ADD_TEST(suite, test_parse_for_stmt_init_expression);
+    CU_ADD_TEST(suite, test_parse_for_stmt_init_null);
+    CU_ADD_TEST(suite, test_parse_for_stmt_condition_null);
+    CU_ADD_TEST(suite, test_parse_for_stmt_expression_null);
+    CU_ADD_TEST(suite, test_parse_for_stmt_all_null);
     return suite;
 }
 
@@ -956,6 +968,221 @@ void test_parse_while_stmt(void) {
                                         new_ast(AST_MUL_EXPR, 2, // non-terminal
                                                 new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)),
                                                 new_identifier_ast(AST_IDENT_EXPR, new_string("y")))))));
+
+    run_stmt_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_for_stmt_init_declaration(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_FOR));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_INT));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_LESS));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 10)));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_PLUS_PLUS));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_ASTERISK_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected =
+        new_ast(AST_FOR_STMT, 4,                   // non-terminal
+                new_ast(AST_DECL, 2,               // non-terminal
+                        new_ast(AST_DECL_SPECS, 1, // non-terminal
+                                new_ast(AST_TYPE_INT, 0)),
+                        new_ast(AST_INIT_DECLOR_LIST, 1,    // non-terminal
+                                new_ast(AST_INIT_DECLOR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_DECLOR, new_string("i")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0))))),
+                new_ast(AST_EXPR_STMT, 1,         // non-terminal
+                        new_ast(AST_LESS_EXPR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 10)))),
+                new_ast(AST_EXPR_STMT, 1,            // non-terminal
+                        new_ast(AST_POSTINC_EXPR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("i")))),
+                new_ast(AST_CMPD_STMT, 1,                       // non-terminal
+                        new_ast(AST_EXPR_STMT, 1,               // non-terminal
+                                new_ast(AST_MUL_ASSIGN_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
+
+    run_stmt_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_for_stmt_init_expression(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_FOR));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("n")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_MINUS_MINUS));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_SLASH_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected =
+        new_ast(AST_FOR_STMT, 4,                    // non-terminal
+                new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                        new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("n")))),
+                new_ast(AST_EXPR_STMT, 1,            // non-terminal
+                        new_ast(AST_GREATER_EXPR, 2, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)))),
+                new_ast(AST_EXPR_STMT, 1,            // non-terminal
+                        new_ast(AST_POSTDEC_EXPR, 1, // non-terminal
+                                new_identifier_ast(AST_IDENT_EXPR, new_string("i")))),
+                new_ast(AST_CMPD_STMT, 1,
+                        new_ast(AST_EXPR_STMT, 1,               // non-terminal
+                                new_ast(AST_DIV_ASSIGN_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2))))));
+
+    run_stmt_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_for_stmt_init_null(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_FOR));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_LESS));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 10)));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_PLUS_PLUS));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_FOR_STMT, 4, // non-terminal
+                            new_ast(AST_NULL_STMT, 0),
+                            new_ast(AST_EXPR_STMT, 1,         // non-terminal
+                                    new_ast(AST_LESS_EXPR, 2, // non-terminal
+                                            new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 10)))),
+                            new_ast(AST_EXPR_STMT, 1,            // non-terminal
+                                    new_ast(AST_POSTINC_EXPR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_EXPR, new_string("i")))),
+                            new_ast(AST_CMPD_STMT, 0));
+
+    run_stmt_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_for_stmt_condition_null(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_FOR));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_PLUS_PLUS));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_FOR_STMT, 4,                    // non-terminal
+                            new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                    new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                            new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)))),
+                            new_ast(AST_NULL_STMT, 0),
+                            new_ast(AST_EXPR_STMT, 1,            // non-terminal
+                                    new_ast(AST_POSTINC_EXPR, 1, // non-terminal
+                                            new_identifier_ast(AST_IDENT_EXPR, new_string("i")))),
+                            new_ast(AST_CMPD_STMT, 0));
+
+    run_stmt_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_for_stmt_expression_null(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_FOR));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
+    vector_push(input, new_ctoken(CTOKEN_LESS));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 10)));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_FOR_STMT, 4,                    // non-terminal
+                            new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                    new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                            new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)))),
+                            new_ast(AST_EXPR_STMT, 1,         // non-terminal
+                                    new_ast(AST_LESS_EXPR, 2, // non-terminal
+                                            new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
+                                            new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 10)))),
+                            new_ast(AST_NULL_STMT, 0), new_ast(AST_CMPD_STMT, 0));
+
+    run_stmt_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_for_stmt_all_null(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_FOR));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_FOR_STMT, 4, // non-terminal
+                            new_ast(AST_NULL_STMT, 0), new_ast(AST_NULL_STMT, 0), new_ast(AST_NULL_STMT, 0),
+                            new_ast(AST_CMPD_STMT, 0));
 
     run_stmt_parser_test(input, expected);
 
