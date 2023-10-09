@@ -64,6 +64,9 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
         case SRT_EXPR_STMT:
             codes = gen_expression_stmt_immcode(immcgen);
             break;
+        case SRT_NULL_STMT:
+            codes = gen_null_stmt_immcode();
+            break;
         case SRT_IF_STMT:
             codes = gen_if_else_stmt_immcode(immcgen);
             break;

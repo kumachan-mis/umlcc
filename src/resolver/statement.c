@@ -25,6 +25,9 @@ ResolverReturn* resolve_stmt(Resolver* resolver) {
         case AST_EXPR_STMT:
             resolverret_assign(&srt, &errs, resolve_expression_stmt(resolver));
             break;
+        case AST_NULL_STMT:
+            resolverret_assign(&srt, &errs, resolve_null_stmt());
+            break;
         case AST_IF_STMT:
             resolverret_assign(&srt, &errs, resolve_if_else_stmt(resolver));
             break;
@@ -153,6 +156,11 @@ ResolverReturn* resolve_expression_stmt(Resolver* resolver) {
     srt = convert_to_ptr_if_function(srt);
 
     srt = new_srt(SRT_EXPR_STMT, 1, srt);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_null_stmt(void) {
+    Srt* srt = new_srt(SRT_NULL_STMT, 0);
     return new_resolverret(srt);
 }
 

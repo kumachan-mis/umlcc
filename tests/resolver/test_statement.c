@@ -20,6 +20,7 @@ void test_resolve_return_stmt_void(void);
 void test_resolve_expression_stmt_scalar(void);
 void test_resolve_expression_stmt_array(void);
 void test_resolve_expression_stmt_function(void);
+void test_resolve_null_stmt(void);
 void test_resolve_if_stmt(void);
 void test_resolve_if_else_stmt(void);
 void test_resolve_if_else_stmt_chain(void);
@@ -47,6 +48,7 @@ CU_Suite* add_test_suite_stmt_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_expression_stmt_scalar);
     CU_ADD_TEST(suite, test_resolve_expression_stmt_array);
     CU_ADD_TEST(suite, test_resolve_expression_stmt_function);
+    CU_ADD_TEST(suite, test_resolve_null_stmt);
     CU_ADD_TEST(suite, test_resolve_if_stmt);
     CU_ADD_TEST(suite, test_resolve_if_else_stmt);
     CU_ADD_TEST(suite, test_resolve_if_else_stmt_chain);
@@ -894,6 +896,16 @@ void test_resolve_expression_stmt_function(void) {
                                new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(func_dtype), new_string("func"))));
 
     run_stmt_resolver_test(input, local_table, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_null_stmt(void) {
+    Ast* input = new_ast(AST_NULL_STMT, 0);
+
+    Srt* expected = new_srt(SRT_NULL_STMT, 0);
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
 
     delete_srt(expected);
 }
