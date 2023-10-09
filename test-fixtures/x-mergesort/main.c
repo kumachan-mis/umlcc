@@ -54,10 +54,8 @@ int main(void) {
     int array[10] = {13, 3, 9, 8, 5, 1, 4, 11, 2, 7};
     merge_sort(array, 0, 9);
 
-    int i = 0;
-    while (i < 10) {
+    for (int i = 0; i < 10; ++i) {
         put_int(array[i]);
-        i++;
     }
 
     return 0;
