@@ -38,6 +38,10 @@ Vector* gen_expression_stmt_immcode(Immcgen* immcgen) {
     return codes;
 }
 
+Vector* gen_null_stmt_immcode(void) {
+    return new_vector(&t_immc);
+}
+
 Vector* gen_if_else_stmt_immcode(Immcgen* immcgen) {
     Vector* gen_if_without_else_stmt_immcode(Immcgen * immcgen);
     Vector* gen_if_with_else_stmt_immcode(Immcgen * immcgen);

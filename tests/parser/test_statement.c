@@ -16,6 +16,7 @@ void test_parse_compound_stmt_empty(void);
 void test_parse_return_stmt_non_void(void);
 void test_parse_return_stmt_void(void);
 void test_parse_expression_stmt(void);
+void test_parse_null_stmt(void);
 void test_parse_if_stmt(void);
 void test_parse_if_else_stmt(void);
 void test_parse_if_else_stmt_chain(void);
@@ -38,6 +39,7 @@ CU_Suite* add_test_suite_stmt_parser(void) {
     CU_ADD_TEST(suite, test_parse_return_stmt_non_void);
     CU_ADD_TEST(suite, test_parse_return_stmt_void);
     CU_ADD_TEST(suite, test_parse_expression_stmt);
+    CU_ADD_TEST(suite, test_parse_null_stmt);
     CU_ADD_TEST(suite, test_parse_if_stmt);
     CU_ADD_TEST(suite, test_parse_if_else_stmt);
     CU_ADD_TEST(suite, test_parse_if_else_stmt_chain);
@@ -738,6 +740,18 @@ void test_parse_expression_stmt(void) {
                             new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                                     new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 12))));
+
+    run_stmt_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_null_stmt(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_NULL_STMT, 0);
 
     run_stmt_parser_test(input, expected);
 
