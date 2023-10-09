@@ -147,11 +147,10 @@ Vector* gen_for_stmt_immcode(Immcgen* immcgen) {
 
     vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, begin_label_id));
 
-    ImmcOpe* end_label = new_label_immcope_from_id(end_label_id);
-
     Srt* srt = immcgen->srt;
     Srt* controling_stmt_srt = vector_at(immcgen->srt->children, 1);
     if (controling_stmt_srt->type == SRT_EXPR_STMT) {
+        ImmcOpe* end_label = new_label_immcope_from_id(end_label_id);
         immcgen->srt = controling_stmt_srt;
         append_child_jmp_false_immcode(immcgen, codes, 0, end_label);
         immcgen->srt = srt;
