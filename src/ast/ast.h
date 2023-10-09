@@ -54,6 +54,8 @@ typedef enum AstType {
 
     // statement
     AST_CMPD_STMT,
+    AST_CONTINUE_STMT,
+    AST_BREAK_STMT,
     AST_RET_STMT,
     AST_EXPR_STMT,
     AST_NULL_STMT,

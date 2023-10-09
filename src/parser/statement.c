@@ -10,6 +10,10 @@ ParserReturn* parse_stmt(Parser* parser) {
     switch (ctoken->type) {
         case CTOKEN_LBRACE:
             return parse_compound_stmt(parser);
+        case CTOKEN_KEYWORD_CONTINUE:
+            return parse_continue_stmt(parser);
+        case CTOKEN_KEYWORD_BREAK:
+            return parse_break_stmt(parser);
         case CTOKEN_KEYWORD_RETURN:
             return parse_return_stmt(parser);
         case CTOKEN_KEYWORD_IF:
@@ -62,6 +66,42 @@ ParserReturn* parse_compound_stmt(Parser* parser) {
         delete_ast(ast);
         return new_parserret_error(err);
     }
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_continue_stmt(Parser* parser) {
+    Ast* ast = NULL;
+    Error* err = NULL;
+
+    err = consume_ctoken(parser, CTOKEN_KEYWORD_CONTINUE);
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
+
+    err = consume_ctoken(parser, CTOKEN_SEMICOLON);
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
+
+    ast = new_ast(AST_CONTINUE_STMT, 0);
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_break_stmt(Parser* parser) {
+    Ast* ast = NULL;
+    Error* err = NULL;
+
+    err = consume_ctoken(parser, CTOKEN_KEYWORD_BREAK);
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
+
+    err = consume_ctoken(parser, CTOKEN_SEMICOLON);
+    if (err != NULL) {
+        return new_parserret_error(err);
+    }
+
+    ast = new_ast(AST_BREAK_STMT, 0);
     return new_parserret(ast);
 }
 

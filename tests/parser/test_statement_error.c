@@ -5,6 +5,8 @@
 
 void test_parse_compound_stmt_error_child(void);
 void test_parse_compound_stmt_error_braces(void);
+void test_parse_continue_stmt_error(void);
+void test_parse_break_stmt_error(void);
 void test_parse_return_stmt_error(void);
 void test_parse_expression_stmt_error(void);
 void test_parse_if_else_stmt_error_controlling_lparen(void);
@@ -32,6 +34,8 @@ CU_Suite* add_test_suite_stmt_parser_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_parser_error", NULL, NULL);
     CU_ADD_TEST(suite, test_parse_compound_stmt_error_child);
     CU_ADD_TEST(suite, test_parse_compound_stmt_error_braces);
+    CU_ADD_TEST(suite, test_parse_continue_stmt_error);
+    CU_ADD_TEST(suite, test_parse_break_stmt_error);
     CU_ADD_TEST(suite, test_parse_return_stmt_error);
     CU_ADD_TEST(suite, test_parse_expression_stmt_error);
     CU_ADD_TEST(suite, test_parse_if_else_stmt_error_controlling_lparen);
@@ -103,6 +107,34 @@ void test_parse_return_stmt_error(void) {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("token ; expected, but got integer-constant");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_continue_stmt_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CONTINUE));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("L0")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token ; expected, but got identifier");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_break_stmt_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_BREAK));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("L0")));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token ; expected, but got identifier");
 
     run_stmt_parser_error_test(input, expected);
 
