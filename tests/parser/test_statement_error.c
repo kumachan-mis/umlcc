@@ -424,6 +424,8 @@ void test_parse_for_stmt_error_expr(void) {
     Error* expected = new_error("unexpected token ;");
 
     run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
 }
 
 void test_parse_for_stmt_error_expr_rparen(void) {

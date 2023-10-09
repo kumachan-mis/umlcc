@@ -160,7 +160,7 @@ void test_parse_modulo_assignment_expr_error(void) {
     vector_push(input, new_ctoken(CTOKEN_PERCENT_EQUAL));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Error* expected = new_error("unexpected token %=");
+    Error* expected = new_error("unexpected token %%=");
 
     run_expr_parser_error_test(input, NULL, expected);
 
