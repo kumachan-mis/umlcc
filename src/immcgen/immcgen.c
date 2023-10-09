@@ -73,6 +73,9 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
         case SRT_WHILE_STMT:
             codes = gen_while_stmt_immcode(immcgen);
             break;
+        case SRT_FOR_STMT:
+            codes = gen_for_stmt_immcode(immcgen);
+            break;
         case SRT_ASSIGN_EXPR:
             codes = gen_assignment_expr_immcode(immcgen);
             break;

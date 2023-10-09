@@ -130,13 +130,39 @@ Vector* gen_while_stmt_immcode(Immcgen* immcgen) {
     ImmcOpe* begin_label = new_label_immcope_from_id(begin_label_id);
     vector_push(codes, new_inst_immc(IMMC_INST_JMP, begin_label, NULL, NULL));
 
-    Immc* end_code = vector_at(codes, vector_size(codes) - 1);
-    if (end_code->type == IMMC_LABEL) {
-        // reuse label created by child
-        free(end_label->label_name);
-        end_label->label_name = new_string(end_code->label->name);
-        return codes;
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, end_label_id));
+
+    return codes;
+}
+
+Vector* gen_for_stmt_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    immcgen->label_id++;
+    int begin_label_id = immcgen->label_id;
+    immcgen->label_id++;
+    int end_label_id = immcgen->label_id;
+
+    append_child_immcode(immcgen, codes, 0);
+
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, begin_label_id));
+
+    ImmcOpe* end_label = new_label_immcope_from_id(end_label_id);
+
+    Srt* srt = immcgen->srt;
+    Srt* controling_stmt_srt = vector_at(immcgen->srt->children, 1);
+    if (controling_stmt_srt->type == SRT_EXPR_STMT) {
+        immcgen->srt = controling_stmt_srt;
+        append_child_jmp_false_immcode(immcgen, codes, 0, end_label);
+        immcgen->srt = srt;
     }
+
+    append_child_immcode(immcgen, codes, 3);
+
+    append_child_immcode(immcgen, codes, 2);
+
+    ImmcOpe* begin_label = new_label_immcope_from_id(begin_label_id);
+    vector_push(codes, new_inst_immc(IMMC_INST_JMP, begin_label, NULL, NULL));
 
     vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, end_label_id));
 
