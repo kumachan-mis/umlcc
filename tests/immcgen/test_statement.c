@@ -14,6 +14,7 @@ void test_immcgen_compound_stmt_empty(void);
 void test_immcgen_return_stmt_non_void(void);
 void test_immcgen_return_stmt_void(void);
 void test_immcgen_expression_stmt(void);
+void test_immcgen_null_stmt(void);
 void test_immcgen_if_stmt(void);
 void test_immcgen_if_else_stmt(void);
 void test_immcgen_if_else_stmt_chain(void);
@@ -35,6 +36,7 @@ CU_Suite* add_test_suite_stmt_immcgen(void) {
     CU_ADD_TEST(suite, test_immcgen_return_stmt_non_void);
     CU_ADD_TEST(suite, test_immcgen_return_stmt_void);
     CU_ADD_TEST(suite, test_immcgen_expression_stmt);
+    CU_ADD_TEST(suite, test_immcgen_null_stmt);
     CU_ADD_TEST(suite, test_immcgen_if_stmt);
     CU_ADD_TEST(suite, test_immcgen_if_else_stmt);
     CU_ADD_TEST(suite, test_immcgen_if_else_stmt_chain);
@@ -767,6 +769,16 @@ void test_immcgen_expression_stmt(void) {
                               NULL));                                      // snd_src
 
     run_stmt_immcgen_test(input, local_table, -1, expected);
+
+    delete_vector(expected);
+}
+
+void test_immcgen_null_stmt(void) {
+    Srt* input = new_srt(SRT_NULL_STMT, 0);
+
+    Vector* expected = new_vector(&t_immc);
+
+    run_stmt_immcgen_test(input, NULL, -1, expected);
 
     delete_vector(expected);
 }
