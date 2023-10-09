@@ -34,6 +34,13 @@ ResolverReturn* resolve_stmt(Resolver* resolver) {
         case AST_WHILE_STMT:
             resolverret_assign(&srt, &errs, resolve_while_stmt(resolver));
             break;
+        case AST_FOR_STMT:
+            resolver->symbol_table = symboltable_enter_scope(resolver->symbol_table);
+            resolver->tag_table = tagtable_enter_scope(resolver->tag_table);
+            resolverret_assign(&srt, &errs, resolve_for_stmt(resolver));
+            resolver->symbol_table = symboltable_exit_scope(resolver->symbol_table);
+            resolver->tag_table = tagtable_exit_scope(resolver->tag_table);
+            break;
         default:
             fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
                             "unreachable statement (in resolve_stmt)\n");
@@ -250,6 +257,89 @@ ResolverReturn* resolve_while_stmt(Resolver* resolver) {
         delete_srt(srt);
         return new_resolverret_errors(errs);
     }
+    vector_push(srt->children, child_srt);
+
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_for_stmt(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_FOR_STMT, 0);
+    Srt* child_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    int decl_init = resolver->ast->type == AST_DECL;
+    if (decl_init) {
+        resolverret_assign(&child_srt, &errs, resolve_decl(resolver));
+    } else {
+        resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
+    }
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    vector_push(srt->children, child_srt);
+
+    if (decl_init) {
+        int num_children = vector_size(child_srt->children);
+        for (int i = 0; i < num_children; i++) {
+            Srt* init_decl_srt = vector_at(child_srt->children, i);
+            Srt* decl_srt = vector_at(init_decl_srt->children, 0);
+            if (decl_srt->dtype->type != DTYPE_TYPEDEF) {
+                continue;
+            }
+
+            errs = new_vector(&t_error);
+            err = new_error("typedef in for statement initializer is not allowed");
+            vector_push(errs, err);
+            delete_srt(srt);
+            return new_resolverret_errors(errs);
+        }
+    }
+
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    vector_push(srt->children, child_srt);
+
+    if (child_srt->type == SRT_EXPR_STMT) {
+        Srt* controling_expr_srt = vector_at(child_srt->children, 0);
+        if (!dtype_isscalar(controling_expr_srt->dtype)) {
+            errs = new_vector(&t_error);
+            err = new_error("condition of for statement should have scalar type");
+            vector_push(errs, err);
+            delete_srt(srt);
+            return new_resolverret_errors(errs);
+        }
+    }
+
+    resolver->ast = vector_at(ast->children, 2);
+    resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    vector_push(srt->children, child_srt);
+
+    resolver->ast = vector_at(ast->children, 3);
+    resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
     vector_push(srt->children, child_srt);
 
     return new_resolverret(srt);

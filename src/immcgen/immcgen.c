@@ -73,6 +73,13 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
         case SRT_WHILE_STMT:
             codes = gen_while_stmt_immcode(immcgen);
             break;
+        case SRT_FOR_STMT:
+            immcgen->symbol_table = symboltable_enter_scope(immcgen->symbol_table);
+            immcgen->tag_table = tagtable_enter_scope(immcgen->tag_table);
+            codes = gen_for_stmt_immcode(immcgen);
+            immcgen->tag_table = tagtable_exit_scope(immcgen->tag_table);
+            immcgen->symbol_table = symboltable_exit_scope(immcgen->symbol_table);
+            break;
         case SRT_ASSIGN_EXPR:
             codes = gen_assignment_expr_immcode(immcgen);
             break;

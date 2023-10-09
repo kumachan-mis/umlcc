@@ -9,5 +9,6 @@ Vector* gen_expression_stmt_immcode(Immcgen* immcgen);
 Vector* gen_null_stmt_immcode(void);
 Vector* gen_if_else_stmt_immcode(Immcgen* immcgen);
 Vector* gen_while_stmt_immcode(Immcgen* immcgen);
+Vector* gen_for_stmt_immcode(Immcgen* immcgen);
 
 #endif

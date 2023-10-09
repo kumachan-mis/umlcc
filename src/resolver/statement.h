@@ -10,5 +10,6 @@ ResolverReturn* resolve_expression_stmt(Resolver* resolver);
 ResolverReturn* resolve_null_stmt(void);
 ResolverReturn* resolve_if_else_stmt(Resolver* resolver);
 ResolverReturn* resolve_while_stmt(Resolver* resolver);
+ResolverReturn* resolve_for_stmt(Resolver* resolver);
 
 #endif
