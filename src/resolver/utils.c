@@ -10,7 +10,7 @@ void sort_ast_type(AstType* ast_types, int begin, int end) {
     AstType pivot = ast_types[begin];
 
     while (i < j) {
-        while (i < j && ast_types[j] >= pivot) {
+        while (i < j && ast_types[j] > pivot) {
             j--;
         }
         ast_types[i] = ast_types[j];
@@ -23,7 +23,7 @@ void sort_ast_type(AstType* ast_types, int begin, int end) {
     ast_types[i] = pivot;
 
     sort_ast_type(ast_types, begin, i - 1);
-    sort_ast_type(ast_types, i + 1, end);
+    sort_ast_type(ast_types, j + 1, end);
 }
 
 int ast_is_void_parameter_list(Ast* ast) {

@@ -162,6 +162,8 @@ Vector* gen_for_stmt_immcode(Immcgen* immcgen) {
     immcgen->label_id++;
     int begin_label_id = immcgen->label_id;
     immcgen->label_id++;
+    int continue_label_id = immcgen->label_id;
+    immcgen->label_id++;
     int end_label_id = immcgen->label_id;
 
     append_child_immcode(immcgen, codes, 0);
@@ -180,11 +182,13 @@ Vector* gen_for_stmt_immcode(Immcgen* immcgen) {
     int original_continue_label_id = immcgen->continue_label_id;
     int original_break_label_id = immcgen->break_label_id;
 
-    immcgen->continue_label_id = begin_label_id;
+    immcgen->continue_label_id = continue_label_id;
     immcgen->break_label_id = end_label_id;
     append_child_immcode(immcgen, codes, 3);
     immcgen->continue_label_id = original_continue_label_id;
     immcgen->break_label_id = original_break_label_id;
+
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, continue_label_id));
 
     append_child_immcode(immcgen, codes, 2);
 
