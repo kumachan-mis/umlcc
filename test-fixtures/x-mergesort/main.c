@@ -51,10 +51,10 @@ void merge_sort(int* array, int left, int right) {
 }
 
 int main(void) {
-    int array[10] = {13, 3, 9, 8, 5, 1, 4, 11, 2, 7};
-    merge_sort(array, 0, 9);
+    int array[13] = {13, 3, 9, 8, 5, 1, 4, 11, 2, 7, 2, 4, 6};
+    merge_sort(array, 0, 12);
 
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 13; ++i) {
         put_int(array[i]);
     }
 

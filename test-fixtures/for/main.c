@@ -17,6 +17,23 @@ int main(void) {
         z = 2 * z;
         put_int(z);
     }
+    put_blank_line();
+
+    for (int i = 0;; i += 2) {
+        if (i > 10) {
+            break;
+        }
+        put_int(i);
+    }
+    put_blank_line();
+
+    for (int i = 0; i < 5; i++) {
+        if (i == 3) {
+            continue;
+        }
+        put_int(i);
+    }
+    put_blank_line();
 
     return 0;
 }
