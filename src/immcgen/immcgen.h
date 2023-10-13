@@ -16,6 +16,8 @@ typedef struct Immcgen {
     int next_reg_id;
     DType* initialized_dtype;
     int initialized_offset;
+    int continue_label_id;
+    int break_label_id;
     int return_label_id;
     int label_id;
 } Immcgen;

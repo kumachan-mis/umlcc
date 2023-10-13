@@ -12,6 +12,10 @@ void test_resolve_compound_stmt_long_long(void);
 void test_resolve_compound_stmt_unsigned_long_long(void);
 void test_resolve_compound_stmt_void_pointer(void);
 void test_resolve_compound_stmt_empty(void);
+void test_resolve_continue_stmt(void);
+void test_resolve_continue_stmt_nested(void);
+void test_resolve_break_stmt(void);
+void test_resolve_break_stmt_nested(void);
 void test_resolve_return_stmt_without_cast(void);
 void test_resolve_return_stmt_with_cast(void);
 void test_resolve_return_stmt_array(void);
@@ -51,6 +55,10 @@ CU_Suite* add_test_suite_stmt_resolver(void) {
     CU_ADD_TEST(suite, test_resolve_return_stmt_array);
     CU_ADD_TEST(suite, test_resolve_return_stmt_function);
     CU_ADD_TEST(suite, test_resolve_return_stmt_void);
+    CU_ADD_TEST(suite, test_resolve_continue_stmt);
+    CU_ADD_TEST(suite, test_resolve_continue_stmt_nested);
+    CU_ADD_TEST(suite, test_resolve_break_stmt);
+    CU_ADD_TEST(suite, test_resolve_break_stmt_nested);
     CU_ADD_TEST(suite, test_resolve_expression_stmt_scalar);
     CU_ADD_TEST(suite, test_resolve_expression_stmt_array);
     CU_ADD_TEST(suite, test_resolve_expression_stmt_function);
@@ -763,6 +771,94 @@ void test_resolve_compound_stmt_empty(void) {
     Ast* input = new_ast(AST_CMPD_STMT, 0);
 
     Srt* expected = new_srt(SRT_CMPD_STMT, 0);
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_continue_stmt(void) {
+    Ast* input = new_ast(AST_WHILE_STMT, 2, // non-terminal
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
+                         new_ast(AST_CMPD_STMT, 1, // non-terminal
+                                 new_ast(AST_CONTINUE_STMT, 0)));
+
+    Srt* expected =
+        new_srt(SRT_WHILE_STMT, 2, // non-terminal
+                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1)),
+                new_srt(SRT_CMPD_STMT, 1, // non-terminal
+                        new_srt(SRT_CONTINUE_STMT, 0)));
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_continue_stmt_nested(void) {
+    Ast* input =
+        new_ast(AST_WHILE_STMT, 2, // non-terminal
+                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
+                new_ast(AST_CMPD_STMT, 3, // non-terminal
+                        new_ast(AST_CONTINUE_STMT, 0),
+                        new_ast(AST_FOR_STMT, 4, // non-terminal
+                                new_ast(AST_NULL_STMT, 0), new_ast(AST_NULL_STMT, 0), new_ast(AST_NULL_STMT, 0),
+                                new_ast(AST_CMPD_STMT, 1, // non-terminal
+                                        new_ast(AST_CONTINUE_STMT, 0))),
+                        new_ast(AST_CONTINUE_STMT, 0)));
+
+    Srt* expected =
+        new_srt(SRT_WHILE_STMT, 2, // non-terminal
+                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1)),
+                new_srt(SRT_CMPD_STMT, 3, // non-terminal
+                        new_srt(SRT_CONTINUE_STMT, 0),
+                        new_srt(SRT_FOR_STMT, 4, // non-terminal
+                                new_srt(SRT_NULL_STMT, 0), new_srt(SRT_NULL_STMT, 0), new_srt(SRT_NULL_STMT, 0),
+                                new_srt(SRT_CMPD_STMT, 1, // non-terminal
+                                        new_srt(SRT_CONTINUE_STMT, 0))),
+                        new_srt(SRT_CONTINUE_STMT, 0)));
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_break_stmt(void) {
+    Ast* input = new_ast(AST_FOR_STMT, 4, // non-terminal
+                         new_ast(AST_NULL_STMT, 0), new_ast(AST_NULL_STMT, 0), new_ast(AST_NULL_STMT, 0),
+                         new_ast(AST_CMPD_STMT, 1, // non-terminal
+                                 new_ast(AST_BREAK_STMT, 0)));
+
+    Srt* expected = new_srt(SRT_FOR_STMT, 4, // non-terminal
+                            new_srt(SRT_NULL_STMT, 0), new_srt(SRT_NULL_STMT, 0), new_srt(SRT_NULL_STMT, 0),
+                            new_srt(SRT_CMPD_STMT, 1, // non-terminal
+                                    new_srt(SRT_BREAK_STMT, 0)));
+
+    run_stmt_resolver_test(input, NULL, NULL, expected);
+
+    delete_srt(expected);
+}
+
+void test_resolve_break_stmt_nested(void) {
+    Ast* input = new_ast(AST_FOR_STMT, 4, // non-terminal
+                         new_ast(AST_NULL_STMT, 0), new_ast(AST_NULL_STMT, 0), new_ast(AST_NULL_STMT, 0),
+                         new_ast(AST_CMPD_STMT, 3, // non-terminal
+                                 new_ast(AST_BREAK_STMT, 0),
+                                 new_ast(AST_WHILE_STMT, 2, // non-terminal
+                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
+                                         new_ast(AST_CMPD_STMT, 1, // non-terminal
+                                                 new_ast(AST_BREAK_STMT, 0))),
+                                 new_ast(AST_BREAK_STMT, 0)));
+
+    Srt* expected = new_srt(SRT_FOR_STMT, 4, // non-terminal
+                            new_srt(SRT_NULL_STMT, 0), new_srt(SRT_NULL_STMT, 0), new_srt(SRT_NULL_STMT, 0),
+                            new_srt(SRT_CMPD_STMT, 3, // non-terminal
+                                    new_srt(SRT_BREAK_STMT, 0),
+                                    new_srt(SRT_WHILE_STMT, 2, // non-terminal
+                                            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                             new_signed_iliteral(INTEGER_INT, 1)),
+                                            new_srt(SRT_CMPD_STMT, 1, // non-terminal
+                                                    new_srt(SRT_BREAK_STMT, 0))),
+                                    new_srt(SRT_BREAK_STMT, 0)));
 
     run_stmt_resolver_test(input, NULL, NULL, expected);
 

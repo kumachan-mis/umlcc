@@ -17,6 +17,8 @@ Immcgen* new_immcgen(Srt* srt) {
     immcgen->next_reg_id = -1;
     immcgen->initialized_dtype = NULL;
     immcgen->initialized_offset = -1;
+    immcgen->continue_label_id = -1;
+    immcgen->break_label_id = -1;
     immcgen->return_label_id = -1;
     immcgen->label_id = -1;
     return immcgen;
@@ -57,6 +59,12 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
             codes = gen_compound_stmt_immcode(immcgen);
             immcgen->tag_table = tagtable_exit_scope(immcgen->tag_table);
             immcgen->symbol_table = symboltable_exit_scope(immcgen->symbol_table);
+            break;
+        case SRT_CONTINUE_STMT:
+            codes = gen_continue_stmt_immcode(immcgen);
+            break;
+        case SRT_BREAK_STMT:
+            codes = gen_break_stmt_immcode(immcgen);
             break;
         case SRT_RET_STMT:
             codes = gen_return_stmt_immcode(immcgen);

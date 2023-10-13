@@ -12,9 +12,12 @@ void test_read_declaration_long_with_init(void);
 void test_read_declaration_long_long_with_init(void);
 void test_read_declaration_pointer_with_init(void);
 void test_read_declaration_aggregate_with_init(void);
-void test_read_statement_if_else(void);
-void test_read_statement_while(void);
-void test_read_statement_for(void);
+void test_read_if_else_statement(void);
+void test_read_while_statement(void);
+void test_read_for_statement(void);
+void test_read_continue_stmt(void);
+void test_read_break_stmt(void);
+void test_read_return_stmt(void);
 void test_read_assignment_expr(void);
 void test_read_conditional_expr(void);
 void test_read_logical_expr(void);
@@ -47,9 +50,12 @@ CU_Suite* add_test_suite_lexer(void) {
     CU_ADD_TEST(suite, test_read_declaration_long_long_with_init);
     CU_ADD_TEST(suite, test_read_declaration_pointer_with_init);
     CU_ADD_TEST(suite, test_read_declaration_aggregate_with_init);
-    CU_ADD_TEST(suite, test_read_statement_if_else);
-    CU_ADD_TEST(suite, test_read_statement_while);
-    CU_ADD_TEST(suite, test_read_statement_for);
+    CU_ADD_TEST(suite, test_read_if_else_statement);
+    CU_ADD_TEST(suite, test_read_while_statement);
+    CU_ADD_TEST(suite, test_read_for_statement);
+    CU_ADD_TEST(suite, test_read_continue_stmt);
+    CU_ADD_TEST(suite, test_read_break_stmt);
+    CU_ADD_TEST(suite, test_read_return_stmt);
     CU_ADD_TEST(suite, test_read_assignment_expr);
     CU_ADD_TEST(suite, test_read_conditional_expr);
     CU_ADD_TEST(suite, test_read_decimal_integer_constant);
@@ -357,7 +363,7 @@ void test_read_declaration_aggregate_with_init(void) {
     delete_vector(expected);
 }
 
-void test_read_statement_if_else(void) {
+void test_read_if_else_statement(void) {
     char* input = "if (x == 0) { y = 1; } else { y = 2; }";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -387,7 +393,7 @@ void test_read_statement_if_else(void) {
     delete_vector(expected);
 }
 
-void test_read_statement_while(void) {
+void test_read_while_statement(void) {
     char* input = "while (x < 10) { x = x + 1; y = 2 * y; }";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -418,7 +424,7 @@ void test_read_statement_while(void) {
     delete_vector(expected);
 }
 
-void test_read_statement_for(void) {
+void test_read_for_statement(void) {
     char* input = "for (int i = 0; i < 10; i++) { x += 1; y *= 2; }";
 
     Vector* expected = new_vector(&t_ctoken);
@@ -446,6 +452,46 @@ void test_read_statement_for(void) {
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_RBRACE));
+    vector_push(expected, new_ctoken(CTOKEN_EOF));
+
+    run_lexer_test(input, expected);
+
+    delete_vector(expected);
+}
+
+void test_read_continue_stmt(void) {
+    char* input = "continue;";
+
+    Vector* expected = new_vector(&t_ctoken);
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_CONTINUE));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_EOF));
+
+    run_lexer_test(input, expected);
+
+    delete_vector(expected);
+}
+
+void test_read_break_stmt(void) {
+    char* input = "break;";
+
+    Vector* expected = new_vector(&t_ctoken);
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_BREAK));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_EOF));
+
+    run_lexer_test(input, expected);
+
+    delete_vector(expected);
+}
+
+void test_read_return_stmt(void) {
+    char* input = "return 0;";
+
+    Vector* expected = new_vector(&t_ctoken);
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_RETURN));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_EOF));
 
     run_lexer_test(input, expected);

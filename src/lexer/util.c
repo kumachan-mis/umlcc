@@ -9,7 +9,9 @@ void ctoken_map_add(Map* ctoken_map, char* ctoken_str, CTokenType type);
 Map* new_keyword_map(void) {
     Map* keyword_map = new_map(&t_hashable_string, &t_integer);
 
+    ctoken_map_add(keyword_map, "break", CTOKEN_KEYWORD_BREAK);
     ctoken_map_add(keyword_map, "char", CTOKEN_KEYWORD_CHAR);
+    ctoken_map_add(keyword_map, "continue", CTOKEN_KEYWORD_CONTINUE);
     ctoken_map_add(keyword_map, "else", CTOKEN_KEYWORD_ELSE);
     ctoken_map_add(keyword_map, "enum", CTOKEN_KEYWORD_ENUM);
     ctoken_map_add(keyword_map, "for", CTOKEN_KEYWORD_FOR);

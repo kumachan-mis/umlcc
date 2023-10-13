@@ -4,6 +4,8 @@
 #include "./immcgen.h"
 
 Vector* gen_compound_stmt_immcode(Immcgen* immcgen);
+Vector* gen_continue_stmt_immcode(Immcgen* immcgen);
+Vector* gen_break_stmt_immcode(Immcgen* immcgen);
 Vector* gen_return_stmt_immcode(Immcgen* immcgen);
 Vector* gen_expression_stmt_immcode(Immcgen* immcgen);
 Vector* gen_null_stmt_immcode(void);

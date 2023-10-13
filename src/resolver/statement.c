@@ -19,6 +19,12 @@ ResolverReturn* resolve_stmt(Resolver* resolver) {
             resolver->tag_table = tagtable_exit_scope(resolver->tag_table);
             resolver->symbol_table = symboltable_exit_scope(resolver->symbol_table);
             break;
+        case AST_CONTINUE_STMT:
+            resolverret_assign(&srt, &errs, resolve_continue_stmt(resolver));
+            break;
+        case AST_BREAK_STMT:
+            resolverret_assign(&srt, &errs, resolve_break_stmt(resolver));
+            break;
         case AST_RET_STMT:
             resolverret_assign(&srt, &errs, resolve_return_stmt(resolver));
             break;
@@ -147,6 +153,30 @@ ResolverReturn* resolve_return_stmt(Resolver* resolver) {
     return new_resolverret(srt);
 }
 
+ResolverReturn* resolve_continue_stmt(Resolver* resolver) {
+    if (!resolver->continueable) {
+        Vector* errs = new_vector(&t_error);
+        Error* err = new_error("continue statement is not allowed here");
+        vector_push(errs, err);
+        return new_resolverret_errors(errs);
+    }
+
+    Srt* srt = new_srt(SRT_CONTINUE_STMT, 0);
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_break_stmt(Resolver* resolver) {
+    if (!resolver->breakable) {
+        Vector* errs = new_vector(&t_error);
+        Error* err = new_error("break statement is not allowed here");
+        vector_push(errs, err);
+        return new_resolverret_errors(errs);
+    }
+
+    Srt* srt = new_srt(SRT_BREAK_STMT, 0);
+    return new_resolverret(srt);
+}
+
 ResolverReturn* resolve_expression_stmt(Resolver* resolver) {
     Srt* srt = NULL;
     Vector* errs = NULL;
@@ -250,9 +280,17 @@ ResolverReturn* resolve_while_stmt(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
+    int original_continueable = resolver->continueable;
+    int original_breakable = resolver->breakable;
+
+    resolver->continueable = 1;
+    resolver->breakable = 1;
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
     resolver->ast = ast;
+    resolver->continueable = original_continueable;
+    resolver->breakable = original_breakable;
+
     if (errs != NULL) {
         delete_srt(srt);
         return new_resolverret_errors(errs);
@@ -332,9 +370,17 @@ ResolverReturn* resolve_for_stmt(Resolver* resolver) {
 
     vector_push(srt->children, child_srt);
 
+    int original_continueable = resolver->continueable;
+    int original_breakable = resolver->breakable;
+
+    resolver->continueable = 1;
+    resolver->breakable = 1;
     resolver->ast = vector_at(ast->children, 3);
     resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
     resolver->ast = ast;
+    resolver->continueable = original_continueable;
+    resolver->breakable = original_breakable;
+
     if (errs != NULL) {
         delete_srt(srt);
         return new_resolverret_errors(errs);

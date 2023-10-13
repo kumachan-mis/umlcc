@@ -11,6 +11,20 @@ Vector* gen_compound_stmt_immcode(Immcgen* immcgen) {
     return codes;
 }
 
+Vector* gen_continue_stmt_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+    ImmcOpe* continue_label = new_label_immcope_from_id(immcgen->continue_label_id);
+    vector_push(codes, new_inst_immc(IMMC_INST_JMP, continue_label, NULL, NULL));
+    return codes;
+}
+
+Vector* gen_break_stmt_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+    ImmcOpe* break_label = new_label_immcope_from_id(immcgen->break_label_id);
+    vector_push(codes, new_inst_immc(IMMC_INST_JMP, break_label, NULL, NULL));
+    return codes;
+}
+
 Vector* gen_return_stmt_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     Srt* srt = immcgen->srt;
@@ -125,7 +139,14 @@ Vector* gen_while_stmt_immcode(Immcgen* immcgen) {
     ImmcOpe* end_label = new_label_immcope_from_id(end_label_id);
     append_child_jmp_false_immcode(immcgen, codes, 0, end_label);
 
+    int original_continue_label_id = immcgen->continue_label_id;
+    int original_break_label_id = immcgen->break_label_id;
+
+    immcgen->continue_label_id = begin_label_id;
+    immcgen->break_label_id = end_label_id;
     append_child_immcode(immcgen, codes, 1);
+    immcgen->continue_label_id = original_continue_label_id;
+    immcgen->break_label_id = original_break_label_id;
 
     ImmcOpe* begin_label = new_label_immcope_from_id(begin_label_id);
     vector_push(codes, new_inst_immc(IMMC_INST_JMP, begin_label, NULL, NULL));
@@ -140,6 +161,8 @@ Vector* gen_for_stmt_immcode(Immcgen* immcgen) {
 
     immcgen->label_id++;
     int begin_label_id = immcgen->label_id;
+    immcgen->label_id++;
+    int continue_label_id = immcgen->label_id;
     immcgen->label_id++;
     int end_label_id = immcgen->label_id;
 
@@ -156,7 +179,16 @@ Vector* gen_for_stmt_immcode(Immcgen* immcgen) {
         immcgen->srt = srt;
     }
 
+    int original_continue_label_id = immcgen->continue_label_id;
+    int original_break_label_id = immcgen->break_label_id;
+
+    immcgen->continue_label_id = continue_label_id;
+    immcgen->break_label_id = end_label_id;
     append_child_immcode(immcgen, codes, 3);
+    immcgen->continue_label_id = original_continue_label_id;
+    immcgen->break_label_id = original_break_label_id;
+
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, continue_label_id));
 
     append_child_immcode(immcgen, codes, 2);
 

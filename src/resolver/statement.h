@@ -5,6 +5,8 @@
 
 ResolverReturn* resolve_stmt(Resolver* resolver);
 ResolverReturn* resolve_compound_stmt(Resolver* resolver);
+ResolverReturn* resolve_continue_stmt(Resolver* resolver);
+ResolverReturn* resolve_break_stmt(Resolver* resolver);
 ResolverReturn* resolve_return_stmt(Resolver* resolver);
 ResolverReturn* resolve_expression_stmt(Resolver* resolver);
 ResolverReturn* resolve_null_stmt(void);
