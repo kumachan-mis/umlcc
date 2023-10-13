@@ -3,6 +3,8 @@
 #include "./test_external_error.h"
 
 void test_resolve_compound_stmt_error_child(void);
+void test_resolve_continue_stmt_error(void);
+void test_resolve_break_stmt_error(void);
 void test_resolve_return_stmt_error_child(void);
 void test_resolve_return_stmt_error_unassignable(void);
 void test_resolve_return_stmt_error_no_value_non_void(void);
@@ -29,6 +31,8 @@ void run_stmt_resolver_error_test(Ast* input, SymbolTable* local_table, DType* r
 CU_Suite* add_test_suite_stmt_resolver_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_resolver_error", NULL, NULL);
     CU_ADD_TEST(suite, test_resolve_compound_stmt_error_child);
+    CU_ADD_TEST(suite, test_resolve_continue_stmt_error);
+    CU_ADD_TEST(suite, test_resolve_break_stmt_error);
     CU_ADD_TEST(suite, test_resolve_return_stmt_error_child);
     CU_ADD_TEST(suite, test_resolve_return_stmt_error_unassignable);
     CU_ADD_TEST(suite, test_resolve_return_stmt_error_no_value_non_void);
@@ -80,6 +84,36 @@ void test_resolve_compound_stmt_error_child(void) {
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("identifier 'y' is used before declared"));
     vector_push(expected, new_error("operand of unary * does not have pointer type"));
+
+    run_stmt_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_continue_stmt_error(void) {
+    Ast* input =
+        new_ast(AST_CMPD_STMT, 2,          // non-terminal
+                new_ast(AST_WHILE_STMT, 2, // non-terminal
+                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)), new_ast(AST_CMPD_STMT, 0)),
+                new_ast(AST_CONTINUE_STMT, 0));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("continue statement is not allowed here"));
+
+    run_stmt_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_break_stmt_error(void) {
+    Ast* input = new_ast(AST_CMPD_STMT, 2,        // non-terminal
+                         new_ast(AST_FOR_STMT, 4, // non-terminal
+                                 new_ast(AST_NULL_STMT, 0), new_ast(AST_NULL_STMT, 0), new_ast(AST_NULL_STMT, 0),
+                                 new_ast(AST_CMPD_STMT, 0)),
+                         new_ast(AST_BREAK_STMT, 0));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("break statement is not allowed here"));
 
     run_stmt_resolver_error_test(input, NULL, NULL, expected);
 
