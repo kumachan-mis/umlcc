@@ -858,7 +858,7 @@ void test_resolve_break_stmt_nested(void) {
                                                              new_signed_iliteral(INTEGER_INT, 1)),
                                             new_srt(SRT_CMPD_STMT, 1, // non-terminal
                                                     new_srt(SRT_BREAK_STMT, 0))),
-                                    new_srt(SRT_BREAK_STMT, 0))); // non-terminal
+                                    new_srt(SRT_BREAK_STMT, 0)));
 
     run_stmt_resolver_test(input, NULL, NULL, expected);
 
