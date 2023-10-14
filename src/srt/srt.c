@@ -45,22 +45,22 @@ Srt* new_identifier_srt(SrtType type, DType* dtype, char* ident_name) {
     return srt;
 }
 
-Srt* new_sliteral_identifier_srt(SrtType type, DType* dtype, int sliteral_id) {
+Srt* new_string_srt(SrtType type, DType* dtype, int sliteral_id) {
     Srt* srt = new_base_srt(type);
     srt->dtype = dtype;
     srt->sliteral_id = sliteral_id;
     return srt;
 }
 
-Srt* new_iliteral_srt(SrtType type, DType* dtype, IntegerLiteral* iliteral) {
-    Srt* srt = new_base_srt(type);
+Srt* new_iliteral_srt(DType* dtype, IntegerLiteral* iliteral) {
+    Srt* srt = new_base_srt(SRT_ILITERAL_EXPR);
     srt->dtype = dtype;
     srt->iliteral = iliteral;
     return srt;
 }
 
-Srt* new_sliteral_srt(SrtType type, DType* dtype, StringLiteral* sliteral) {
-    Srt* srt = new_base_srt(type);
+Srt* new_sliteral_srt(DType* dtype, StringLiteral* sliteral) {
+    Srt* srt = new_base_srt(SRT_SLITERAL_EXPR);
     srt->dtype = dtype;
     srt->sliteral = sliteral;
     return srt;

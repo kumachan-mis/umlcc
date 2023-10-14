@@ -6,9 +6,8 @@
 void test_new_srt(void);
 void test_new_dtyped_srt(void);
 void test_new_identifier_srt(void);
-void test_new_sliteral_identifier_srt(void);
-void test_new_iliteral_srt_int(void);
-void test_new_iliteral_srt_char(void);
+void test_new_string_srt(void);
+void test_new_iliteral_srt(void);
 void test_new_sliteral_srt(void);
 
 CU_Suite* add_test_suite_srt(void) {
@@ -16,15 +15,14 @@ CU_Suite* add_test_suite_srt(void) {
     CU_ADD_TEST(suite, test_new_srt);
     CU_ADD_TEST(suite, test_new_dtyped_srt);
     CU_ADD_TEST(suite, test_new_identifier_srt);
-    CU_ADD_TEST(suite, test_new_sliteral_identifier_srt);
-    CU_ADD_TEST(suite, test_new_iliteral_srt_int);
-    CU_ADD_TEST(suite, test_new_iliteral_srt_char);
+    CU_ADD_TEST(suite, test_new_string_srt);
+    CU_ADD_TEST(suite, test_new_iliteral_srt);
     CU_ADD_TEST(suite, test_new_sliteral_srt);
     return suite;
 }
 
 void test_new_srt(void) {
-    Srt* srt = new_srt(SRT_TRAS_UNIT, 2, new_srt(SRT_DECL, 0), new_srt(SRT_FUNC_DEF, 0));
+    Srt* srt = new_srt(SRT_TRAS_UNIT, 2, new_srt(SRT_IDENT_DECL, 0), new_srt(SRT_FUNC_DEF, 0));
     Srt* child_srt = NULL;
 
     for (int i = 0; i < 2; i++) {
@@ -42,7 +40,7 @@ void test_new_srt(void) {
         CU_ASSERT_EQUAL(vector_size(srt->children), 2);
 
         child_srt = vector_at(srt->children, 0);
-        CU_ASSERT_EQUAL(child_srt->type, SRT_DECL);
+        CU_ASSERT_EQUAL(child_srt->type, SRT_IDENT_DECL);
         CU_ASSERT_PTR_NULL(child_srt->dtype);
         CU_ASSERT_PTR_NULL(child_srt->ident_name);
         CU_ASSERT_EQUAL(child_srt->sliteral_id, -1);
@@ -69,8 +67,8 @@ void test_new_dtyped_srt(void) {
     DType* rhs_dtype = new_integer_dtype(DTYPE_INT);
     IntegerLiteral* lhs_iliteral = new_signed_iliteral(INTEGER_INT, 6);
     IntegerLiteral* rhs_iliteral = new_signed_iliteral(INTEGER_INT, 3);
-    Srt* srt = new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, new_iliteral_srt(SRT_INT_EXPR, lhs_dtype, lhs_iliteral),
-                              new_iliteral_srt(SRT_INT_EXPR, rhs_dtype, rhs_iliteral));
+    Srt* srt = new_dtyped_srt(SRT_ADD_EXPR, dtype, 2, new_iliteral_srt(lhs_dtype, lhs_iliteral),
+                              new_iliteral_srt(rhs_dtype, rhs_iliteral));
     Srt* child_srt = NULL;
 
     for (int i = 0; i < 2; i++) {
@@ -97,7 +95,7 @@ void test_new_dtyped_srt(void) {
         CU_ASSERT_EQUAL(vector_size(srt->children), 2);
 
         child_srt = vector_at(srt->children, 0);
-        CU_ASSERT_EQUAL(child_srt->type, SRT_INT_EXPR);
+        CU_ASSERT_EQUAL(child_srt->type, SRT_ILITERAL_EXPR);
         CU_ASSERT_PTR_EQUAL(child_srt->dtype, lhs_dtype);
         CU_ASSERT_PTR_NULL(child_srt->ident_name);
         CU_ASSERT_EQUAL(child_srt->sliteral_id, -1);
@@ -109,7 +107,7 @@ void test_new_dtyped_srt(void) {
         CU_ASSERT_EQUAL(vector_size(child_srt->children), 0);
 
         child_srt = vector_at(srt->children, 1);
-        CU_ASSERT_EQUAL(child_srt->type, SRT_INT_EXPR);
+        CU_ASSERT_EQUAL(child_srt->type, SRT_ILITERAL_EXPR);
         CU_ASSERT_PTR_EQUAL(child_srt->dtype, rhs_dtype);
         CU_ASSERT_PTR_NULL(child_srt->ident_name);
         CU_ASSERT_EQUAL(child_srt->sliteral_id, -1);
@@ -147,9 +145,9 @@ void test_new_identifier_srt(void) {
     delete_srt(srt);
 }
 
-void test_new_sliteral_identifier_srt(void) {
+void test_new_string_srt(void) {
     DType* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), 15);
-    Srt* srt = new_sliteral_identifier_srt(SRT_STRIDENT_EXPR, dtype, 0);
+    Srt* srt = new_string_srt(SRT_STR_EXPR, dtype, 0);
 
     for (int i = 0; i < 2; i++) {
         if (i > 0) {
@@ -158,7 +156,7 @@ void test_new_sliteral_identifier_srt(void) {
             srt = copied_srt;
             dtype = copied_srt->dtype;
         }
-        CU_ASSERT_EQUAL(srt->type, SRT_STRIDENT_EXPR);
+        CU_ASSERT_EQUAL(srt->type, SRT_STR_EXPR);
         CU_ASSERT_PTR_EQUAL(srt->dtype, dtype);
         CU_ASSERT_PTR_NULL(srt->ident_name);
         CU_ASSERT_EQUAL(srt->sliteral_id, 0);
@@ -170,10 +168,10 @@ void test_new_sliteral_identifier_srt(void) {
     delete_srt(srt);
 }
 
-void test_new_iliteral_srt_int(void) {
+void test_new_iliteral_srt(void) {
     DType* dtype = new_integer_dtype(DTYPE_INT);
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 6);
-    Srt* srt = new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
+    Srt* srt = new_iliteral_srt(dtype, iliteral);
 
     for (int i = 0; i < 2; i++) {
         if (i > 0) {
@@ -182,41 +180,13 @@ void test_new_iliteral_srt_int(void) {
             srt = copied_srt;
             dtype = copied_srt->dtype;
         }
-        CU_ASSERT_EQUAL(srt->type, SRT_INT_EXPR);
+        CU_ASSERT_EQUAL(srt->type, SRT_ILITERAL_EXPR);
         CU_ASSERT_PTR_EQUAL(srt->dtype, dtype);
         CU_ASSERT_PTR_NULL(srt->ident_name);
         CU_ASSERT_EQUAL(srt->sliteral_id, -1);
         CU_ASSERT_EQUAL(srt->iliteral->type, INTEGER_INT);
         CU_ASSERT_FALSE(iliteral_isunsigned(srt->iliteral));
         CU_ASSERT_EQUAL(srt->iliteral->signed_value, 6);
-        CU_ASSERT_EQUAL(srt->iliteral->unsigned_value, 0ull);
-        CU_ASSERT_PTR_NULL(srt->sliteral);
-        CU_ASSERT_EQUAL(vector_size(srt->children), 0);
-    }
-
-    delete_srt(srt);
-}
-
-void test_new_iliteral_srt_char(void) {
-    DType* dtype = new_integer_dtype(DTYPE_INT);
-    IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 89);
-    Srt* srt = new_iliteral_srt(SRT_CHAR_EXPR, dtype, iliteral);
-
-    for (int i = 0; i < 2; i++) {
-        if (i > 0) {
-            Srt* copied_srt = srt_copy(srt);
-            delete_srt(srt);
-            srt = copied_srt;
-            dtype = copied_srt->dtype;
-            iliteral = copied_srt->iliteral;
-        }
-        CU_ASSERT_EQUAL(srt->type, SRT_CHAR_EXPR);
-        CU_ASSERT_PTR_EQUAL(srt->dtype, dtype);
-        CU_ASSERT_PTR_NULL(srt->ident_name);
-        CU_ASSERT_EQUAL(srt->sliteral_id, -1);
-        CU_ASSERT_EQUAL(srt->iliteral->type, INTEGER_INT);
-        CU_ASSERT_FALSE(iliteral_isunsigned(srt->iliteral));
-        CU_ASSERT_EQUAL(srt->iliteral->signed_value, 89);
         CU_ASSERT_EQUAL(srt->iliteral->unsigned_value, 0ull);
         CU_ASSERT_PTR_NULL(srt->sliteral);
         CU_ASSERT_EQUAL(vector_size(srt->children), 0);
@@ -234,7 +204,7 @@ void test_new_sliteral_srt(void) {
 
     DType* dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), sliteral_size);
     StringLiteral* sliteral = new_sliteral(sliteral_value, sliteral_size);
-    Srt* srt = new_sliteral_srt(SRT_STRING_EXPR, dtype, sliteral);
+    Srt* srt = new_sliteral_srt(dtype, sliteral);
 
     for (int i = 0; i < 2; i++) {
         if (i > 0) {
@@ -243,7 +213,7 @@ void test_new_sliteral_srt(void) {
             srt = copied_srt;
             dtype = copied_srt->dtype;
         }
-        CU_ASSERT_EQUAL(srt->type, SRT_STRING_EXPR);
+        CU_ASSERT_EQUAL(srt->type, SRT_SLITERAL_EXPR);
         CU_ASSERT_PTR_EQUAL(srt->dtype, dtype);
         CU_ASSERT_PTR_NULL(srt->ident_name);
         CU_ASSERT_EQUAL(srt->sliteral_id, -1);

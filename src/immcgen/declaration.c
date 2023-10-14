@@ -46,7 +46,7 @@ Vector* gen_global_init_decl_immcode(Immcgen* immcgen) {
 
     Symbol* decl_symbol = NULL;
     char* label_name = NULL;
-    if (decl_srt->type == SRT_STRDECL) {
+    if (decl_srt->type == SRT_STR_DECL) {
         label_name = create_sliteral_label(decl_srt->sliteral_id);
         decl_symbol = symboltable_search(immcgen->symbol_table, label_name);
     } else {
@@ -95,7 +95,7 @@ Vector* gen_local_init_decl_immcode(Immcgen* immcgen) {
     return codes;
 }
 
-Vector* gen_decl_immcode(Immcgen* immcgen) {
+Vector* gen_identifier_decl_immcode(Immcgen* immcgen) {
     Srt* srt = immcgen->srt;
 
     char* symbol_name = new_string(srt->ident_name);
@@ -148,7 +148,7 @@ Vector* gen_array_initializer_immcode(Immcgen* immcgen) {
     Vector* gen_local_string_initializer_immcode(Immcgen * immcgen);
 
     Srt* srt = vector_at(immcgen->srt->children, 0);
-    if (srt->type == SRT_STRING_EXPR) {
+    if (srt->type == SRT_SLITERAL_EXPR) {
         if (immcgen->symbol_table->outer_scope == NULL) {
             return gen_global_string_initializer_immcode(immcgen);
         } else {

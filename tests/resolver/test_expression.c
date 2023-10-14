@@ -174,7 +174,7 @@ void test_resolve_assignment_expr(void) {
                 SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2,                                 // non-terminal
                 new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("y"))),
-                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)))));
+                new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -286,14 +286,13 @@ void test_resolve_pointer_add_assignment_expr(void) {
     DType* pointer_dtype = new_pointer_dtype(new_integer_dtype(DTYPE_INT));
     symboltable_define_memory(local_table, new_string("p"), pointer_dtype);
 
-    Srt* expected =
-        new_dtyped_srt(SRT_ASSIGN_EXPR, dtype_copy(pointer_dtype), 2,                                 // non-terminal
-                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(pointer_dtype)), 1, // non-terminal
-                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("p"))),
-                       new_dtyped_srt(SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2, // non-terminal
-                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("p")),
-                                      new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                       new_signed_iliteral(INTEGER_INT, 4))));
+    Srt* expected = new_dtyped_srt(
+        SRT_ASSIGN_EXPR, dtype_copy(pointer_dtype), 2,                                 // non-terminal
+        new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(pointer_dtype)), 1, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("p"))),
+        new_dtyped_srt(SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("p")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -312,10 +311,9 @@ void test_resolve_subtract_assignment_expr(void) {
         SRT_ASSIGN_EXPR, new_integer_dtype(DTYPE_INT), 2,                                 // non-terminal
         new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))),
-        new_dtyped_srt(
-            SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2))));
+        new_dtyped_srt(SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -339,7 +337,7 @@ void test_resolve_pointer_subtract_assignment_expr(void) {
                        new_dtyped_srt(SRT_PSUB_EXPR, dtype_copy(pointer_dtype), 2, // non-terminal
                                       new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("p")),
                                       new_dtyped_srt(SRT_NEG_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
-                                                     new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
+                                                     new_iliteral_srt(new_integer_dtype(DTYPE_INT),
                                                                       new_signed_iliteral(INTEGER_INT, 8)))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
@@ -391,7 +389,7 @@ void test_resolve_bitwise_exclusive_or_assignment_expr(void) {
                 SRT_XOR_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 2,                 // non-terminal
                 new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 1, // non-terminal
                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))),
-                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT),
+                new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_INT),
                                  new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 0xFFFF)))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
@@ -454,20 +452,18 @@ void test_resolve_logical_or_expr(void) {
         new_dtyped_srt(
             SRT_LOR_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
             new_dtyped_srt(
-                SRT_LOR_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                new_dtyped_srt(
-                    SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                    new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
-                    new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+                SRT_LOR_EXPR, new_integer_dtype(DTYPE_INT), 2,                  // non-terminal
+                new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
+                               new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
                 new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
                                new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR),
                                                                  new_string("m"))))),
-            new_dtyped_srt(
-                SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
-                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)))),
+            new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
+                           new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)))),
         new_dtyped_srt(
             SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
             new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
@@ -499,23 +495,21 @@ void test_resolve_conditional_expr_arithmetic(void) {
 
     // The usual arithmetic conversions should be performed
     Srt* expected = new_dtyped_srt(
-        SRT_COND_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), 3, // non-terminal
-        new_dtyped_srt(
-            SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+        SRT_COND_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), 3,         // non-terminal
+        new_dtyped_srt(SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
         new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), new_string("ul")),
         new_dtyped_srt(
             SRT_CAST_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), 1, // non-terminal
             new_dtyped_srt(
-                SRT_COND_EXPR, new_integer_dtype(DTYPE_INT), 3, // non-terminal
-                new_dtyped_srt(
-                    SRT_LESS_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                    new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
-                    new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+                SRT_COND_EXPR, new_integer_dtype(DTYPE_INT), 3,                // non-terminal
+                new_dtyped_srt(SRT_LESS_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                               new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+                               new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
                 new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("c"))),
-                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)))));
+                new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -687,11 +681,10 @@ void test_resolve_bitwise_and_expr(void) {
 
     // The usual arithmetic conversions should be performed
     Srt* expected = new_dtyped_srt(
-        SRT_AND_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_dtyped_srt(
-            SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1))),
+        SRT_AND_EXPR, new_integer_dtype(DTYPE_INT), 2,                  // non-terminal
+        new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1))),
         new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("y"))));
 
@@ -733,12 +726,11 @@ void test_resolve_not_equal_expr(void) {
     symboltable_define_memory(local_table, new_string("zero_flag"), new_integer_dtype(DTYPE_INT));
 
     Srt* expected = new_dtyped_srt(
-        SRT_NEQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_dtyped_srt(
-            SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("zero_flag")),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
+        SRT_NEQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2,               // non-terminal
+        new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("zero_flag")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -774,10 +766,9 @@ void test_resolve_greater_expr(void) {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("j"), new_integer_dtype(DTYPE_INT));
 
-    Srt* expected = new_dtyped_srt(
-        SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
+    Srt* expected = new_dtyped_srt(SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                   new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
+                                   new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -799,17 +790,16 @@ void test_resolve_less_equal_expr(void) {
     symboltable_define_memory(local_table, new_string("m"), new_integer_dtype(DTYPE_CHAR));
 
     // The usual arithmetic conversions should be performed
-    Srt* expected =
-        new_dtyped_srt(SRT_LESSEQ_EXPR, new_integer_dtype(DTYPE_INT), 2,              // non-terminal
-                       new_dtyped_srt(SRT_LESS_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
-                                      new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
-                                                     new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR),
-                                                                        new_string("m")))),
-                       new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
-                                      new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                       new_signed_iliteral(INTEGER_INT, 0))));
+    Srt* expected = new_dtyped_srt(
+        SRT_LESSEQ_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+        new_dtyped_srt(
+            SRT_LESS_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
+            new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("m")))),
+        new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -831,17 +821,16 @@ void test_resolve_greater_equal_expr(void) {
     symboltable_define_memory(local_table, new_string("n"), new_integer_dtype(DTYPE_CHAR));
 
     // The usual arithmetic conversions should be performed
-    Srt* expected =
-        new_dtyped_srt(SRT_GREATEREQ_EXPR, new_integer_dtype(DTYPE_INT), 2,              // non-terminal
-                       new_dtyped_srt(SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
-                                      new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
-                                                     new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR),
-                                                                        new_string("n")))),
-                       new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
-                                      new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                       new_signed_iliteral(INTEGER_INT, 0))));
+    Srt* expected = new_dtyped_srt(
+        SRT_GREATEREQ_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+        new_dtyped_srt(
+            SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
+            new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("n")))),
+        new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -861,7 +850,7 @@ void test_resolve_add_expr(void) {
         SRT_ADD_EXPR, new_integer_dtype(DTYPE_INT), 2,                 // non-terminal
         new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("n"))),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3)));
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3)));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -876,12 +865,11 @@ void test_resolve_subtract_expr(void) {
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 6)));
 
     Srt* expected = new_dtyped_srt(
-        SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_dtyped_srt(
-            SRT_ADD_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3)),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4))),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 6)));
+        SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2,                // non-terminal
+        new_dtyped_srt(SRT_ADD_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3)),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4))),
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 6)));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
 
@@ -899,7 +887,7 @@ void test_resolve_pointer_add_expr(void) {
     Srt* expected = new_dtyped_srt(
         SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("ptr")),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)));
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -919,7 +907,7 @@ void test_resolve_pointer_add_expr_reversed(void) {
     Srt* expected = new_dtyped_srt(
         SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 2, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("ptr")),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)));
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -937,7 +925,7 @@ void test_resolve_pointer_subtract_expr(void) {
     Srt* expected = new_dtyped_srt(
         SRT_PSUB_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("ptr")),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4)));
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4)));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -971,10 +959,9 @@ void test_resolve_multiply_expr(void) {
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("n"), new_integer_dtype(DTYPE_INT));
 
-    Srt* expected = new_dtyped_srt(
-        SRT_MUL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4)),
-        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("n")));
+    Srt* expected = new_dtyped_srt(SRT_MUL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                   new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4)),
+                                   new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("n")));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -994,7 +981,7 @@ void test_resolve_division_expr(void) {
         SRT_DIV_EXPR, new_integer_dtype(DTYPE_INT), 2,                 // non-terminal
         new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("amount"))),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)));
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -1018,8 +1005,8 @@ void test_resolve_modulo_expr(void) {
             SRT_MUL_EXPR, new_integer_dtype(DTYPE_INT), 2,                 // non-terminal
             new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("value"))),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 9))),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 5)));
+            new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 9))),
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 5)));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -1157,12 +1144,11 @@ void test_resolve_address_expr(void) {
     Srt* expected = new_dtyped_srt(
         SRT_ADDR_EXPR, pointer_dtype, 1, // non-terminal
         new_dtyped_srt(
-            SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
-            new_dtyped_srt(
-                SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2,                // non-terminal
-                new_dtyped_srt(SRT_ADDR_EXPR, dtype_copy(pointer_dtype), 1, // non-terminal
-                               new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("a"))),
-                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1)))));
+            SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1,                           // non-terminal
+            new_dtyped_srt(SRT_PADD_EXPR, dtype_copy(pointer_dtype), 2,                // non-terminal
+                           new_dtyped_srt(SRT_ADDR_EXPR, dtype_copy(pointer_dtype), 1, // non-terminal
+                                          new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("a"))),
+                           new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1)))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -1262,7 +1248,7 @@ void test_resolve_sizeof_expr_typename(void) {
                                  new_ast(AST_PTR_DECLOR, 1, // non-terminal
                                          new_ast(AST_ABS_DECLOR, 0))));
 
-    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 8));
+    Srt* expected = new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 8));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
 
@@ -1273,7 +1259,7 @@ void test_resolve_sizeof_expr_expr(void) {
     Ast* input = new_ast(AST_SIZEOF_EXPR, 1, // non-terminal
                          new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)));
 
-    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4));
+    Srt* expected = new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
 
@@ -1302,7 +1288,7 @@ void test_resolve_call_expr(void) {
         new_srt(SRT_ARG_LIST, 2,                                               // non-terminal
                 new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("a"))),
-                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3))));
+                new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -1319,12 +1305,11 @@ void test_resolve_subscription_expr(void) {
     symboltable_define_memory(local_table, new_string("array"), array_dtype);
 
     Srt* expected = new_dtyped_srt(
-        SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
-        new_dtyped_srt(
-            SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2,                // non-terminal
-            new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
-                           new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("array"))),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))));
+        SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1,                                                 // non-terminal
+        new_dtyped_srt(SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2,                // non-terminal
+                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("array"))),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -1343,12 +1328,12 @@ void test_resolve_reversed_subscription_expr(void) {
     // In current implementation,
     // if a pointer is placed on the right side of subscription operator, the operands will be swaped
     Srt* expected = new_dtyped_srt(
-        SRT_INDIR_EXPR, new_integer_dtype(DTYPE_CHAR), 1, // non-terminal
-        new_dtyped_srt(
-            SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 2,                // non-terminal
-            new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 1, // non-terminal
-                           new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("array"))),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))));
+        SRT_INDIR_EXPR, new_integer_dtype(DTYPE_CHAR), 1,                                  // non-terminal
+        new_dtyped_srt(SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 2, // non-terminal
+                       new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)),
+                                      1, // non-terminal
+                                      new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("array"))),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -1519,7 +1504,7 @@ void test_resolve_enum_ident_expr_local(void) {
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 4);
     symboltable_define_integer(local_table, new_string("LOCAL_MEMBER"), new_integer_dtype(DTYPE_INT), iliteral);
 
-    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4));
+    Srt* expected = new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4));
 
     run_local_expr_resolver_test(input, local_table, NULL, expected, NULL);
 
@@ -1533,7 +1518,7 @@ void test_resolve_enum_ident_expr_global(void) {
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, 1);
     symboltable_define_integer(global_table, new_string("GLOBAL_MEMBER"), new_integer_dtype(DTYPE_INT), iliteral);
 
-    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1));
+    Srt* expected = new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1));
 
     run_global_expr_resolver_test(input, global_table, NULL, expected, NULL);
 
@@ -1543,7 +1528,7 @@ void test_resolve_enum_ident_expr_global(void) {
 void test_resolve_iliteral_expr_char(void) {
     Ast* input = new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, 89));
 
-    Srt* expected = new_iliteral_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 89));
+    Srt* expected = new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 89));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
 
@@ -1553,7 +1538,7 @@ void test_resolve_iliteral_expr_char(void) {
 void test_resolve_iliteral_expr_int(void) {
     Ast* input = new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 3));
 
-    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3));
+    Srt* expected = new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
 
@@ -1563,8 +1548,8 @@ void test_resolve_iliteral_expr_int(void) {
 void test_resolve_iliteral_expr_unsigned_int(void) {
     Ast* input = new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 16u));
 
-    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT),
-                                     new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 16u));
+    Srt* expected =
+        new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_INT), new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 16u));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
 
@@ -1574,8 +1559,7 @@ void test_resolve_iliteral_expr_unsigned_int(void) {
 void test_resolve_iliteral_expr_long(void) {
     Ast* input = new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_LONG, 4l));
 
-    Srt* expected =
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_LONG), new_signed_iliteral(INTEGER_LONG, 4l));
+    Srt* expected = new_iliteral_srt(new_integer_dtype(DTYPE_LONG), new_signed_iliteral(INTEGER_LONG, 4l));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
 
@@ -1585,8 +1569,8 @@ void test_resolve_iliteral_expr_long(void) {
 void test_resolve_iliteral_expr_unsigned_long(void) {
     Ast* input = new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 9ul));
 
-    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG),
-                                     new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 9ul));
+    Srt* expected =
+        new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_LONG), new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 9ul));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
 
@@ -1596,8 +1580,7 @@ void test_resolve_iliteral_expr_unsigned_long(void) {
 void test_resolve_iliteral_expr_long_long(void) {
     Ast* input = new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_LONGLONG, 8ll));
 
-    Srt* expected =
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_LONGLONG), new_signed_iliteral(INTEGER_LONGLONG, 8ll));
+    Srt* expected = new_iliteral_srt(new_integer_dtype(DTYPE_LONGLONG), new_signed_iliteral(INTEGER_LONGLONG, 8ll));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
 
@@ -1607,7 +1590,7 @@ void test_resolve_iliteral_expr_long_long(void) {
 void test_resolve_iliteral_expr_unsigned_long_long(void) {
     Ast* input = new_iliteral_ast(AST_INT_EXPR, new_unsigned_iliteral(INTEGER_UNSIGNED_LONGLONG, 20ull));
 
-    Srt* expected = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG),
+    Srt* expected = new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_LONGLONG),
                                      new_unsigned_iliteral(INTEGER_UNSIGNED_LONGLONG, 20ull));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, NULL);
@@ -1618,17 +1601,16 @@ void test_resolve_iliteral_expr_unsigned_long_long(void) {
 void test_resolve_sliteral_expr(void) {
     Ast* input = new_sliteral_ast(AST_STRING_EXPR, new_sliteral(new_string("Hello"), 6));
 
-    Srt* expected =
-        new_sliteral_identifier_srt(SRT_STRIDENT_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), 0);
+    Srt* expected = new_string_srt(SRT_STR_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), 0);
 
-    Srt* expected_trans_unit = new_srt(
-        SRT_TRAS_UNIT, 1,                 // non-terminal
-        new_srt(SRT_DECL_LIST, 1,         // non-terminal
-                new_srt(SRT_INIT_DECL, 2, // non-terminal
-                        new_sliteral_identifier_srt(SRT_STRDECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), 0),
-                        new_srt(SRT_INIT, 1, // non-terminal
-                                new_sliteral_srt(SRT_STRING_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6),
-                                                 new_sliteral(new_string("Hello"), 6))))));
+    Srt* expected_trans_unit =
+        new_srt(SRT_TRAS_UNIT, 1,                 // non-terminal
+                new_srt(SRT_DECL_LIST, 1,         // non-terminal
+                        new_srt(SRT_INIT_DECL, 2, // non-terminal
+                                new_string_srt(SRT_STR_DECL, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), 0),
+                                new_srt(SRT_INIT, 1, // non-terminal
+                                        new_sliteral_srt(new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6),
+                                                         new_sliteral(new_string("Hello"), 6))))));
 
     run_local_expr_resolver_test(input, NULL, NULL, expected, expected_trans_unit);
 

@@ -543,7 +543,7 @@ ResolverReturnDEnumMember* resolve_enumerator(Resolver* resolver) {
     enum_const_srt = convert_to_ptr_if_array(enum_const_srt);
     enum_const_srt = convert_to_ptr_if_function(enum_const_srt);
 
-    if (enum_const_srt->type != SRT_INT_EXPR || iliteral_isunsigned(enum_const_srt->iliteral)) {
+    if (enum_const_srt->type != SRT_ILITERAL_EXPR || iliteral_isunsigned(enum_const_srt->iliteral)) {
         errs = new_vector(&t_error);
         err = new_error("only integer constant is supported as enumeration constant");
         vector_push(errs, err);
@@ -750,7 +750,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                 array_size_srt = convert_to_ptr_if_array(array_size_srt);
                 array_size_srt = convert_to_ptr_if_function(array_size_srt);
 
-                if (array_size_srt->type != SRT_INT_EXPR || iliteral_isunsigned(array_size_srt->iliteral)) {
+                if (array_size_srt->type != SRT_ILITERAL_EXPR || iliteral_isunsigned(array_size_srt->iliteral)) {
                     errs = new_vector(&t_error);
                     err = new_error("only integer constant is supported as array size");
                     vector_push(errs, err);
@@ -830,9 +830,9 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
                 }
 
                 if (ast_ptr->type == AST_IDENT_DECLOR) {
-                    srt = new_identifier_srt(SRT_DECL, dtype, new_string(ast_ptr->ident_name));
+                    srt = new_identifier_srt(SRT_IDENT_DECL, dtype, new_string(ast_ptr->ident_name));
                 } else {
-                    srt = new_dtyped_srt(SRT_DECL, dtype, 0);
+                    srt = new_dtyped_srt(SRT_IDENT_DECL, dtype, 0);
                 }
                 break;
             }
@@ -1263,7 +1263,7 @@ ResolverReturn* resolve_string_initializer(Resolver* resolver) {
     }
 
     StringLiteral* sliteral = sliteral_zero_padding_copy(literal_ast->sliteral, dtype->darray->size);
-    srt = new_sliteral_srt(SRT_STRING_EXPR, dtype_copy(dtype), sliteral);
+    srt = new_sliteral_srt(dtype_copy(dtype), sliteral);
     srt = new_srt(SRT_INIT, 1, srt);
     return new_resolverret(srt);
 }
@@ -1273,7 +1273,7 @@ ResolverReturn* resolve_zero_scalar_initializer(Resolver* resolver) {
     DType* dtype = resolver->initialized_dtype;
 
     IntegerLiteral* zero_iliteral = new_signed_iliteral(INTEGER_INT, 0);
-    srt = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), zero_iliteral);
+    srt = new_iliteral_srt(new_integer_dtype(DTYPE_INT), zero_iliteral);
     if (!dtype_equals(dtype, srt->dtype)) {
         srt = new_dtyped_srt(SRT_CAST_EXPR, dtype_copy(dtype), 1, srt);
     }
