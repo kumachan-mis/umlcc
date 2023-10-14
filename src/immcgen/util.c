@@ -117,7 +117,7 @@ ImmcOpe* gen_child_int_immcope(Immcgen* immcgen, Vector* codes, int index) {
         child_srt = vector_at(child_srt->children, index);
     }
 
-    if (child_srt->type == SRT_INT_EXPR || child_srt->type == SRT_CHAR_EXPR) {
+    if (child_srt->type == SRT_ILITERAL_EXPR) {
         immcgen->srt = srt;
         DType* iliteral_dtype = cast_dtype == NULL ? child_srt->dtype : cast_dtype;
         IntegerLiteral* iliteral = create_dtyped_iliteral(iliteral_dtype, child_srt->iliteral);

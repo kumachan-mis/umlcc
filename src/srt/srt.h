@@ -18,8 +18,8 @@ typedef enum SrtType {
     SRT_DECL_LIST,
     SRT_TAG_DECL,
     SRT_INIT_DECL,
-    SRT_DECL,
-    SRT_STRDECL,
+    SRT_IDENT_DECL,
+    SRT_STR_DECL,
     SRT_INIT,
 
     // statement
@@ -85,10 +85,9 @@ typedef enum SrtType {
     SRT_ARG_LIST,
     //   primary-expression
     SRT_IDENT_EXPR,
-    SRT_STRIDENT_EXPR,
-    SRT_INT_EXPR,
-    SRT_CHAR_EXPR,
-    SRT_STRING_EXPR,
+    SRT_STR_EXPR,
+    SRT_ILITERAL_EXPR,
+    SRT_SLITERAL_EXPR,
 } SrtType;
 
 typedef struct Srt {
@@ -106,9 +105,9 @@ extern BaseType t_srt;
 Srt* new_srt(SrtType type, int num_children, ...);
 Srt* new_dtyped_srt(SrtType type, DType* dtype, int num_children, ...);
 Srt* new_identifier_srt(SrtType type, DType* dtype, char* ident_name);
-Srt* new_sliteral_identifier_srt(SrtType type, DType* dtype, int sliteral_id);
-Srt* new_iliteral_srt(SrtType type, DType* dtype, IntegerLiteral* iliteral);
-Srt* new_sliteral_srt(SrtType type, DType* dtype, StringLiteral* sliteral);
+Srt* new_string_srt(SrtType type, DType* dtype, int sliteral_id);
+Srt* new_iliteral_srt(DType* dtype, IntegerLiteral* iliteral);
+Srt* new_sliteral_srt(DType* dtype, StringLiteral* sliteral);
 Srt* srt_copy(Srt* srt);
 int srt_ismodifiable(Srt* srt);
 void delete_srt(Srt* srt);

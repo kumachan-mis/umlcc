@@ -57,7 +57,7 @@ void test_immcgen_postdec_expr_completed_pointer(void);
 void test_immcgen_postdec_expr_void_pointer(void);
 void test_immcgen_ident_expr_local(void);
 void test_immcgen_ident_expr_global(void);
-void test_immcgen_strident_expr(void);
+void test_immcgen_string_expr(void);
 void test_immcgen_iliteral_expr_char(void);
 void test_immcgen_iliteral_expr_int(void);
 void test_immcgen_iliteral_expr_unsigned_int(void);
@@ -126,7 +126,7 @@ CU_Suite* add_test_suite_expr_immcgen(void) {
     CU_ADD_TEST(suite, test_immcgen_postdec_expr_void_pointer);
     CU_ADD_TEST(suite, test_immcgen_ident_expr_local);
     CU_ADD_TEST(suite, test_immcgen_ident_expr_global);
-    CU_ADD_TEST(suite, test_immcgen_strident_expr);
+    CU_ADD_TEST(suite, test_immcgen_string_expr);
     CU_ADD_TEST(suite, test_immcgen_iliteral_expr_char);
     CU_ADD_TEST(suite, test_immcgen_iliteral_expr_int);
     CU_ADD_TEST(suite, test_immcgen_iliteral_expr_unsigned_int);
@@ -147,12 +147,11 @@ void test_immcgen_assignment_expr(void) {
                        new_dtyped_srt(SRT_INDIR_EXPR, dtype_copy(pointer_dtype->dpointer->to_dtype), 1, // non-terminal
                                       new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(pointer_dtype), new_string("x")))),
         new_dtyped_srt(
-            SRT_CAST_EXPR, dtype_copy(pointer_dtype->dpointer->to_dtype), 1, // non-terminal
-            new_dtyped_srt(
-                SRT_ASSIGN_EXPR, dtype_copy(int_dtype), 2,                                 // non-terminal
-                new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(int_dtype)), 1, // non-terminal
-                               new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(int_dtype), new_string("y"))),
-                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)))));
+            SRT_CAST_EXPR, dtype_copy(pointer_dtype->dpointer->to_dtype), 1,                          // non-terminal
+            new_dtyped_srt(SRT_ASSIGN_EXPR, dtype_copy(int_dtype), 2,                                 // non-terminal
+                           new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(int_dtype)), 1, // non-terminal
+                                          new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(int_dtype), new_string("y"))),
+                           new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)))));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), pointer_dtype);
@@ -192,11 +191,10 @@ void test_immcgen_assignment_expr(void) {
 
 void test_immcgen_conditional_expr(void) {
     Srt* input = new_dtyped_srt(
-        SRT_COND_EXPR, new_integer_dtype(DTYPE_INT), 3, // non-terminal
-        new_dtyped_srt(
-            SRT_GREATEREQ_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+        SRT_COND_EXPR, new_integer_dtype(DTYPE_INT), 3,                     // non-terminal
+        new_dtyped_srt(SRT_GREATEREQ_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
         new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
         new_dtyped_srt(SRT_NEG_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))));
@@ -255,21 +253,19 @@ void test_immcgen_conditional_expr(void) {
 
 void test_immcgen_conditional_expr_chain(void) {
     Srt* input = new_dtyped_srt(
-        SRT_COND_EXPR, new_integer_dtype(DTYPE_INT), 3, // non-terminal
-        new_dtyped_srt(
-            SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+        SRT_COND_EXPR, new_integer_dtype(DTYPE_INT), 3,                   // non-terminal
+        new_dtyped_srt(SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
         new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
         new_dtyped_srt(
-            SRT_COND_EXPR, new_integer_dtype(DTYPE_INT), 3, // non-terminal
-            new_dtyped_srt(
-                SRT_LESS_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
-                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+            SRT_COND_EXPR, new_integer_dtype(DTYPE_INT), 3,                // non-terminal
+            new_dtyped_srt(SRT_LESS_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+                           new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
             new_dtyped_srt(SRT_NEG_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x"))),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))));
+            new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
@@ -356,17 +352,16 @@ void test_immcgen_conditional_expr_chain(void) {
 }
 
 void test_immcgen_logical_or_expr(void) {
-    Srt* input =
-        new_dtyped_srt(SRT_LOR_EXPR, new_integer_dtype(DTYPE_INT), 2,                  // non-terminal
-                       new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
-                                      new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT),
-                                                       new_signed_iliteral(INTEGER_INT, 0))),
-                       new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-                                      new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
-                                      new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
-                                                     new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR),
-                                                                        new_string("n")))));
+    Srt* input = new_dtyped_srt(
+        SRT_LOR_EXPR, new_integer_dtype(DTYPE_INT), 2,                  // non-terminal
+        new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+        new_dtyped_srt(
+            SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("i")),
+            new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
+                           new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("n")))));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("i"), new_integer_dtype(DTYPE_INT));
@@ -435,11 +430,10 @@ void test_immcgen_logical_and_expr(void) {
     DType* func_dtype = new_function_dtype(params, new_integer_dtype(DTYPE_INT));
 
     Srt* input = new_dtyped_srt(
-        SRT_LAND_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_dtyped_srt(
-            SRT_NEQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("check")),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+        SRT_LAND_EXPR, new_integer_dtype(DTYPE_INT), 2,                  // non-terminal
+        new_dtyped_srt(SRT_NEQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("check")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
         new_dtyped_srt(
             SRT_CALL_EXPR, new_integer_dtype(DTYPE_INT), 2,                             // non-terminal
             new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(func_dtype)), 1, // non-terminal
@@ -621,11 +615,10 @@ void test_immcgen_bitwise_exclusive_or_expr(void) {
 
 void test_immcgen_bitwise_and_expr(void) {
     Srt* input = new_dtyped_srt(
-        SRT_AND_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_dtyped_srt(
-            SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1))),
+        SRT_AND_EXPR, new_integer_dtype(DTYPE_INT), 2,                  // non-terminal
+        new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("x")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1))),
         new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("y"))));
 
@@ -711,12 +704,11 @@ void test_immcgen_equal_expr(void) {
 
 void test_immcgen_not_equal_expr(void) {
     Srt* input = new_dtyped_srt(
-        SRT_NEQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_dtyped_srt(
-            SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("zero_flag")),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
+        SRT_NEQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2,               // non-terminal
+        new_dtyped_srt(SRT_EQUAL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("zero_flag")),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0))),
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("zero_flag"), new_integer_dtype(DTYPE_INT));
@@ -782,10 +774,9 @@ void test_immcgen_less_expr(void) {
 }
 
 void test_immcgen_greater_expr(void) {
-    Srt* input = new_dtyped_srt(
-        SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
+    Srt* input = new_dtyped_srt(SRT_GREATER_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
+                                new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("j"), new_integer_dtype(DTYPE_INT));
@@ -846,10 +837,9 @@ void test_immcgen_less_equal_expr(void) {
 }
 
 void test_immcgen_greater_equal_expr(void) {
-    Srt* input = new_dtyped_srt(
-        SRT_GREATEREQ_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
+    Srt* input = new_dtyped_srt(SRT_GREATEREQ_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("j")),
+                                new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 0)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("j"), new_integer_dtype(DTYPE_INT));
@@ -876,7 +866,7 @@ void test_immcgen_add_expr(void) {
         SRT_ADD_EXPR, new_integer_dtype(DTYPE_INT), 2,                 // non-terminal
         new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("n"))),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3)));
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("n"), new_integer_dtype(DTYPE_CHAR));
@@ -905,12 +895,11 @@ void test_immcgen_add_expr(void) {
 
 void test_immcgen_subtract_expr(void) {
     Srt* input = new_dtyped_srt(
-        SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_dtyped_srt(
-            SRT_ADD_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3)),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4))),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 6)));
+        SRT_SUB_EXPR, new_integer_dtype(DTYPE_INT), 2,                // non-terminal
+        new_dtyped_srt(SRT_ADD_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3)),
+                       new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4))),
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 6)));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -938,7 +927,7 @@ void test_immcgen_pointer_add_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 2, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), new_string("ptr")),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)));
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("ptr"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
@@ -974,7 +963,7 @@ void test_immcgen_pointer_subtract_expr(void) {
     Srt* input = new_dtyped_srt(
         SRT_PSUB_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2, // non-terminal
         new_identifier_srt(SRT_IDENT_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), new_string("ptr")),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4)));
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("ptr"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
@@ -1044,10 +1033,9 @@ void test_immcgen_pointer_difference_expr(void) {
 }
 
 void test_immcgen_signed_multiply_expr(void) {
-    Srt* input = new_dtyped_srt(
-        SRT_MUL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4)),
-        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("n")));
+    Srt* input = new_dtyped_srt(SRT_MUL_EXPR, new_integer_dtype(DTYPE_INT), 2, // non-terminal
+                                new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 4)),
+                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_INT), new_string("n")));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("n"), new_integer_dtype(DTYPE_INT));
@@ -1075,14 +1063,13 @@ void test_immcgen_signed_multiply_expr(void) {
 }
 
 void test_immcgen_unsigned_multiply_expr(void) {
-    Srt* input = new_dtyped_srt(SRT_ADD_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 2,                // non-terminal
-                                new_dtyped_srt(SRT_MUL_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 2, // non-terminal
-                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT),
-                                                                new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 3u)),
-                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT),
-                                                                new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 5u))),
-                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT),
-                                                 new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 2u)));
+    Srt* input = new_dtyped_srt(
+        SRT_ADD_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 2, // non-terminal
+        new_dtyped_srt(
+            SRT_MUL_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 2, // non-terminal
+            new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_INT), new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 3u)),
+            new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_INT), new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 5u))),
+        new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_INT), new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 2u)));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -1111,7 +1098,7 @@ void test_immcgen_signed_division_expr(void) {
         SRT_DIV_EXPR, new_integer_dtype(DTYPE_INT), 2,                 // non-terminal
         new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                        new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("amount"))),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)));
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 2)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("amount"), new_integer_dtype(DTYPE_CHAR));
@@ -1139,14 +1126,13 @@ void test_immcgen_signed_division_expr(void) {
 }
 
 void test_immcgen_unsigned_division_expr(void) {
-    Srt* input = new_dtyped_srt(SRT_SUB_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 2, // non-terminal
-                                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT),
-                                                 new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 34u)),
-                                new_dtyped_srt(SRT_DIV_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 2, // non-terminal
-                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT),
-                                                                new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 18u)),
-                                               new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT),
-                                                                new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 4u))));
+    Srt* input = new_dtyped_srt(
+        SRT_SUB_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 2, // non-terminal
+        new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_INT), new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 34u)),
+        new_dtyped_srt(
+            SRT_DIV_EXPR, new_integer_dtype(DTYPE_UNSIGNED_INT), 2, // non-terminal
+            new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_INT), new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 18u)),
+            new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_INT), new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 4u))));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -1181,8 +1167,8 @@ void test_immcgen_signed_modulo_expr(void) {
             SRT_MUL_EXPR, new_integer_dtype(DTYPE_INT), 2,                 // non-terminal
             new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("value"))),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 9))),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 5)));
+            new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 9))),
+        new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 5)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("value"), new_integer_dtype(DTYPE_CHAR));
@@ -1221,10 +1207,9 @@ void test_immcgen_unsigned_modulo_expr(void) {
             SRT_MUL_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), 2,                 // non-terminal
             new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG), 1, // non-terminal
                            new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("value"))),
-            new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG),
+            new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_LONG),
                              new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 10ul))),
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG),
-                         new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 4ul)));
+        new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_LONG), new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 4ul)));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("value"), new_integer_dtype(DTYPE_CHAR));
@@ -1618,12 +1603,12 @@ void test_immcgen_address_expr_indir(void) {
     Srt* input = new_dtyped_srt(
         SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
         new_dtyped_srt(
-            SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
-            new_dtyped_srt(
-                SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2,                // non-terminal
-                new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 1, // non-terminal
-                               new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("a"))),
-                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1)))));
+            SRT_INDIR_EXPR, new_integer_dtype(DTYPE_INT), 1,                                  // non-terminal
+            new_dtyped_srt(SRT_PADD_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)), 2, // non-terminal
+                           new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_INT)),
+                                          1, // non-terminal
+                                          new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(array_dtype), new_string("a"))),
+                           new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 1)))));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("a"), array_dtype);
@@ -1841,7 +1826,7 @@ void test_immcgen_call_expr_returning_non_void(void) {
         new_srt(SRT_ARG_LIST, 2,                                               // non-terminal
                 new_dtyped_srt(SRT_CAST_EXPR, new_integer_dtype(DTYPE_INT), 1, // non-terminal
                                new_identifier_srt(SRT_IDENT_EXPR, new_integer_dtype(DTYPE_CHAR), new_string("a"))),
-                new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3))));
+                new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3))));
 
     SymbolTable* local_table = new_symboltable();
     symboltable_define_label(local_table, new_string("function"), func_dtype);
@@ -2370,10 +2355,9 @@ void test_immcgen_ident_expr_global(void) {
     delete_vector(expected);
 }
 
-void test_immcgen_strident_expr(void) {
-    Srt* input = new_dtyped_srt(
-        SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 1, // non-terminal
-        new_sliteral_identifier_srt(SRT_STRIDENT_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), 0));
+void test_immcgen_string_expr(void) {
+    Srt* input = new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)), 1, // non-terminal
+                                new_string_srt(SRT_STR_EXPR, new_array_dtype(new_integer_dtype(DTYPE_CHAR), 6), 0));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -2388,7 +2372,7 @@ void test_immcgen_strident_expr(void) {
 }
 
 void test_immcgen_iliteral_expr_char(void) {
-    Srt* input = new_iliteral_srt(SRT_CHAR_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 89));
+    Srt* input = new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 89));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -2403,7 +2387,7 @@ void test_immcgen_iliteral_expr_char(void) {
 }
 
 void test_immcgen_iliteral_expr_int(void) {
-    Srt* input = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3));
+    Srt* input = new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_signed_iliteral(INTEGER_INT, 3));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -2418,8 +2402,7 @@ void test_immcgen_iliteral_expr_int(void) {
 }
 
 void test_immcgen_iliteral_expr_unsigned_int(void) {
-    Srt* input =
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_INT), new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 5u));
+    Srt* input = new_iliteral_srt(new_integer_dtype(DTYPE_INT), new_unsigned_iliteral(INTEGER_UNSIGNED_INT, 5u));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -2434,7 +2417,7 @@ void test_immcgen_iliteral_expr_unsigned_int(void) {
 }
 
 void test_immcgen_iliteral_expr_long(void) {
-    Srt* input = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_LONG), new_signed_iliteral(INTEGER_LONG, 7l));
+    Srt* input = new_iliteral_srt(new_integer_dtype(DTYPE_LONG), new_signed_iliteral(INTEGER_LONG, 7l));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -2449,8 +2432,8 @@ void test_immcgen_iliteral_expr_long(void) {
 }
 
 void test_immcgen_iliteral_expr_unsigned_long(void) {
-    Srt* input = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONG),
-                                  new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 11ul));
+    Srt* input =
+        new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_LONG), new_unsigned_iliteral(INTEGER_UNSIGNED_LONG, 11ul));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -2465,8 +2448,7 @@ void test_immcgen_iliteral_expr_unsigned_long(void) {
 }
 
 void test_immcgen_iliteral_expr_long_long(void) {
-    Srt* input =
-        new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_LONGLONG), new_signed_iliteral(INTEGER_LONGLONG, 13ll));
+    Srt* input = new_iliteral_srt(new_integer_dtype(DTYPE_LONGLONG), new_signed_iliteral(INTEGER_LONGLONG, 13ll));
 
     Vector* expected = new_vector(&t_immc);
     vector_push(expected,
@@ -2481,7 +2463,7 @@ void test_immcgen_iliteral_expr_long_long(void) {
 }
 
 void test_immcgen_iliteral_expr_unsigned_long_long(void) {
-    Srt* input = new_iliteral_srt(SRT_INT_EXPR, new_integer_dtype(DTYPE_UNSIGNED_LONGLONG),
+    Srt* input = new_iliteral_srt(new_integer_dtype(DTYPE_UNSIGNED_LONGLONG),
                                   new_unsigned_iliteral(INTEGER_UNSIGNED_LONGLONG, 17ull));
 
     Vector* expected = new_vector(&t_immc);

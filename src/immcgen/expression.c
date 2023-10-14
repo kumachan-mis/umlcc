@@ -379,7 +379,7 @@ Vector* gen_address_expr_immcode(Immcgen* immcgen) {
             update_non_void_expr_register(immcgen, dst);
             break;
         }
-        case SRT_STRIDENT_EXPR: {
+        case SRT_STR_EXPR: {
             char* sliteral_label = create_sliteral_label(child_srt->sliteral_id);
             src = new_label_immcope(sliteral_label);
             dst = create_dest_reg_immcope(immcgen);
@@ -678,13 +678,12 @@ Vector* gen_primary_expr_immcode(Immcgen* immcgen) {
             }
             break;
         }
-        case SRT_STRIDENT_EXPR: {
+        case SRT_STR_EXPR: {
             char* sliteral_label = create_sliteral_label(srt->sliteral_id);
             src = new_label_immcope(sliteral_label);
             break;
         }
-        case SRT_INT_EXPR:
-        case SRT_CHAR_EXPR: {
+        case SRT_ILITERAL_EXPR: {
             ImmcSuffix suffix = immcsuffix_get(dtype_nbytes(srt->dtype));
             src = new_int_immcope(suffix, iliteral_copy(srt->iliteral));
             break;

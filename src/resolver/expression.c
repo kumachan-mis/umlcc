@@ -1134,7 +1134,7 @@ ResolverReturn* resolve_sizeof_expr(Resolver* resolver) {
     IntegerLiteral* iliteral = new_signed_iliteral(INTEGER_INT, dtype_nbytes(child_dtype));
     delete_dtype(child_dtype);
 
-    srt = new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
+    srt = new_iliteral_srt(dtype, iliteral);
     return new_resolverret(srt);
 }
 
@@ -1535,7 +1535,7 @@ ResolverReturn* resolve_identifier_expr(Resolver* resolver) {
     if (symbol->type == SYMBOL_INT) {
         DType* dtype = new_integer_dtype(DTYPE_INT);
         IntegerLiteral* iliteral = iliteral_copy(symbol->iliteral);
-        srt = new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
+        srt = new_iliteral_srt(dtype, iliteral);
         return new_resolverret(srt);
     }
 
@@ -1572,7 +1572,7 @@ ResolverReturn* resolve_integer_expr(Resolver* resolver) {
     }
 
     IntegerLiteral* iliteral = iliteral_copy(ast->iliteral);
-    srt = new_iliteral_srt(SRT_INT_EXPR, dtype, iliteral);
+    srt = new_iliteral_srt(dtype, iliteral);
     return new_resolverret(srt);
 }
 
@@ -1582,7 +1582,7 @@ ResolverReturn* resolve_character_expr(Resolver* resolver) {
 
     DType* dtype = new_integer_dtype(DTYPE_INT);
     IntegerLiteral* iliteral = iliteral_copy(ast->iliteral);
-    srt = new_iliteral_srt(SRT_CHAR_EXPR, dtype, iliteral);
+    srt = new_iliteral_srt(dtype, iliteral);
     return new_resolverret(srt);
 }
 
@@ -1593,18 +1593,18 @@ ResolverReturn* resolve_string_expr(Resolver* resolver) {
     resolver->sliteral_id++;
     DType* decl_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->sliteral->size);
     int sliteral_id = resolver->sliteral_id;
-    Srt* decl_srt = new_sliteral_identifier_srt(SRT_STRDECL, decl_dtype, sliteral_id);
+    Srt* decl_srt = new_string_srt(SRT_STR_DECL, decl_dtype, sliteral_id);
 
     DType* init_dtype = new_array_dtype(new_integer_dtype(DTYPE_CHAR), ast->sliteral->size);
     StringLiteral* sliteral = sliteral_copy(ast->sliteral);
-    Srt* literal_srt = new_sliteral_srt(SRT_STRING_EXPR, init_dtype, sliteral);
+    Srt* literal_srt = new_sliteral_srt(init_dtype, sliteral);
     Srt* init_srt = new_srt(SRT_INIT, 1, literal_srt);
 
     Srt* decl_list_srt = new_srt(SRT_DECL_LIST, 1, new_srt(SRT_INIT_DECL, 2, decl_srt, init_srt));
     vector_push(resolver->trans_unit_srt->children, decl_list_srt);
 
     DType* ident_dtype = dtype_copy(decl_dtype);
-    srt = new_sliteral_identifier_srt(SRT_STRIDENT_EXPR, ident_dtype, sliteral_id);
+    srt = new_string_srt(SRT_STR_EXPR, ident_dtype, sliteral_id);
 
     return new_resolverret(srt);
 }
