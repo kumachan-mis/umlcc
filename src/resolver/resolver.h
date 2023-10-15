@@ -12,8 +12,7 @@ typedef struct Resolver {
     Srt* scope_srt;
     SymbolTable* symbol_table;
     TagTable* tag_table;
-    int continueable;
-    int breakable;
+    int inside_loop;
     DType* return_dtype;
     DType* specifier_dtype;
     int default_enum_value;

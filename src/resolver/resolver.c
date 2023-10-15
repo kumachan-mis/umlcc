@@ -10,8 +10,7 @@ Resolver* new_resolver(Ast* ast) {
     resolver->scope_srt = NULL;
     resolver->symbol_table = new_symboltable();
     resolver->tag_table = new_tagtable();
-    resolver->continueable = 0;
-    resolver->breakable = 0;
+    resolver->inside_loop = 0;
     resolver->return_dtype = NULL;
     resolver->specifier_dtype = NULL;
     resolver->default_enum_value = 0;

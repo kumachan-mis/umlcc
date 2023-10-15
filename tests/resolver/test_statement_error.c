@@ -98,7 +98,7 @@ void test_resolve_continue_stmt_error(void) {
                 new_ast(AST_CONTINUE_STMT, 0));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("continue statement is not allowed here"));
+    vector_push(expected, new_error("continue statement is not allowed outside of loop"));
 
     run_stmt_resolver_error_test(input, NULL, NULL, expected);
 
@@ -113,7 +113,7 @@ void test_resolve_break_stmt_error(void) {
                          new_ast(AST_BREAK_STMT, 0));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("break statement is not allowed here"));
+    vector_push(expected, new_error("break statement is not allowed outside of loop or switch"));
 
     run_stmt_resolver_error_test(input, NULL, NULL, expected);
 
