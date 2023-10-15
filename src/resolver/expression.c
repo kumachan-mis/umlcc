@@ -1457,30 +1457,22 @@ ResolverReturn* resolve_argument_expr_list(Resolver* resolver) {
 
 ResolverReturn* resolve_member_name_expr(Resolver* resolver) {
     Srt* srt = NULL;
-    Vector* errs = NULL;
-    Error* err = NULL;
     Ast* ast = resolver->ast;
     DType* member_dtype = resolver->expr_dtype;
 
     int num_members = vector_size(member_dtype->dstruct->members);
     for (int i = 0; i < num_members; i++) {
         DStructMember* member = vector_at(member_dtype->dstruct->members, i);
-        if (strcmp(member->name, ast->ident_name) != 0) {
-            continue;
+        if (strcmp(member->name, ast->ident_name) == 0) {
+            srt = new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(member->dtype), new_string(member->name));
+            return new_resolverret(srt);
         }
-
-        srt = new_identifier_srt(SRT_IDENT_EXPR, dtype_copy(member->dtype), new_string(member->name));
-        break;
     }
 
-    if (srt == NULL) {
-        errs = new_vector(&t_error);
-        err = new_error("member '%s' does not exist in struct", ast->ident_name);
-        vector_push(errs, err);
-        return new_resolverret_errors(errs);
-    }
-
-    return new_resolverret(srt);
+    Vector* errs = new_vector(&t_error);
+    Error* err = new_error("member '%s' does not exist in struct", ast->ident_name);
+    vector_push(errs, err);
+    return new_resolverret_errors(errs);
 }
 
 ResolverReturn* resolve_primary_expr(Resolver* resolver) {
