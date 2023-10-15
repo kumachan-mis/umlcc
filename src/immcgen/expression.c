@@ -520,22 +520,11 @@ Vector* gen_not_expr_immcode(Immcgen* immcgen) {
 
 Vector* gen_logical_not_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
-    Srt* srt = immcgen->srt;
 
     ImmcOpe* src = gen_child_reg_immcope(immcgen, codes, 0);
     ImmcOpe* dst = create_dest_reg_immcope(immcgen);
-
-    switch (srt->type) {
-        case SRT_LNOT_EXPR: {
-            ImmcOpe* zero = new_signed_int_immcope(src->suffix, INTEGER_INT, 0);
-            vector_push(codes, new_inst_immc(IMMC_INST_SETEQ, dst, src, zero));
-            break;
-        }
-        default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
-                            "unreachable statement (in gen_not_expr_immcode)\n");
-            exit(1);
-    }
+    ImmcOpe* zero = new_signed_int_immcope(src->suffix, INTEGER_INT, 0);
+    vector_push(codes, new_inst_immc(IMMC_INST_SETEQ, dst, src, zero));
 
     update_non_void_expr_register(immcgen, dst);
     return codes;

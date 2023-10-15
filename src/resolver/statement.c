@@ -154,9 +154,9 @@ ResolverReturn* resolve_return_stmt(Resolver* resolver) {
 }
 
 ResolverReturn* resolve_continue_stmt(Resolver* resolver) {
-    if (!resolver->continueable) {
+    if (!resolver->inside_loop) {
         Vector* errs = new_vector(&t_error);
-        Error* err = new_error("continue statement is not allowed here");
+        Error* err = new_error("continue statement is not allowed outside of loop");
         vector_push(errs, err);
         return new_resolverret_errors(errs);
     }
@@ -166,9 +166,9 @@ ResolverReturn* resolve_continue_stmt(Resolver* resolver) {
 }
 
 ResolverReturn* resolve_break_stmt(Resolver* resolver) {
-    if (!resolver->breakable) {
+    if (!resolver->inside_loop) {
         Vector* errs = new_vector(&t_error);
-        Error* err = new_error("break statement is not allowed here");
+        Error* err = new_error("break statement is not allowed outside of loop or switch");
         vector_push(errs, err);
         return new_resolverret_errors(errs);
     }
@@ -280,16 +280,13 @@ ResolverReturn* resolve_while_stmt(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    int original_continueable = resolver->continueable;
-    int original_breakable = resolver->breakable;
+    int original_inside_loop = resolver->inside_loop;
 
-    resolver->continueable = 1;
-    resolver->breakable = 1;
+    resolver->inside_loop = 1;
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
     resolver->ast = ast;
-    resolver->continueable = original_continueable;
-    resolver->breakable = original_breakable;
+    resolver->inside_loop = original_inside_loop;
 
     if (errs != NULL) {
         delete_srt(srt);
@@ -370,16 +367,13 @@ ResolverReturn* resolve_for_stmt(Resolver* resolver) {
 
     vector_push(srt->children, child_srt);
 
-    int original_continueable = resolver->continueable;
-    int original_breakable = resolver->breakable;
+    int original_inside_loop = resolver->inside_loop;
 
-    resolver->continueable = 1;
-    resolver->breakable = 1;
+    resolver->inside_loop = 1;
     resolver->ast = vector_at(ast->children, 3);
     resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
     resolver->ast = ast;
-    resolver->continueable = original_continueable;
-    resolver->breakable = original_breakable;
+    resolver->inside_loop = original_inside_loop;
 
     if (errs != NULL) {
         delete_srt(srt);
