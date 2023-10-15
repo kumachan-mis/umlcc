@@ -359,73 +359,114 @@ Vector* gen_unary_expr_immcode(Immcgen* immcgen) {
 }
 
 Vector* gen_address_expr_immcode(Immcgen* immcgen) {
+    Vector* gen_identifier_address_expr_immcode(Immcgen * immcgen);
+    Vector* gen_string_address_expr_immcode(Immcgen * immcgen);
+    Vector* gen_tomember_address_expr_immcode(Immcgen * immcgen);
+    Vector* gen_indirection_address_expr_immcode(Immcgen * immcgen);
+
+    Srt* srt = immcgen->srt;
+    Srt* child_srt = vector_at(srt->children, 0);
+    switch (child_srt->type) {
+        case SRT_IDENT_EXPR:
+            return gen_identifier_address_expr_immcode(immcgen);
+        case SRT_STR_EXPR:
+            return gen_string_address_expr_immcode(immcgen);
+        case SRT_TOMEMBER_EXPR:
+            return gen_tomember_address_expr_immcode(immcgen);
+        case SRT_INDIR_EXPR:
+            return gen_indirection_address_expr_immcode(immcgen);
+        default:
+            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
+                            "unreachable statement (in gen_address_expr_immcode)\n");
+            exit(1);
+    }
+}
+
+Vector* gen_identifier_address_expr_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
+
     Srt* srt = immcgen->srt;
     Srt* child_srt = vector_at(srt->children, 0);
 
     ImmcOpe* dst = NULL;
     ImmcOpe* src = NULL;
 
-    switch (child_srt->type) {
-        case SRT_IDENT_EXPR: {
-            Symbol* symbol = symboltable_search(immcgen->symbol_table, child_srt->ident_name);
-            if (symbol->type == SYMBOL_LABEL) {
-                src = new_label_immcope(new_string(symbol->name));
-            } else {
-                src = new_mem_immcope(symbol->memory_offset);
-            }
-            dst = create_dest_reg_immcope(immcgen);
-            vector_push(codes, new_inst_immc(IMMC_INST_ADDR, dst, src, NULL));
-            update_non_void_expr_register(immcgen, dst);
-            break;
-        }
-        case SRT_STR_EXPR: {
-            char* sliteral_label = create_sliteral_label(child_srt->sliteral_id);
-            src = new_label_immcope(sliteral_label);
-            dst = create_dest_reg_immcope(immcgen);
-            vector_push(codes, new_inst_immc(IMMC_INST_ADDR, dst, src, NULL));
-            update_non_void_expr_register(immcgen, dst);
-            break;
-        }
-        case SRT_TOMEMBER_EXPR: {
-            immcgen->srt = child_srt;
-            src = gen_child_reg_immcope(immcgen, codes, 0);
-            immcgen->srt = srt;
-
-            Srt* struct_srt = vector_at(child_srt->children, 0);
-            Srt* member_srt = vector_at(child_srt->children, 1);
-
-            DType* struct_dtype = struct_srt->dtype->dpointer->to_dtype;
-            if (struct_dtype->dstruct->members == NULL) {
-                struct_dtype = tagtable_search(immcgen->tag_table, struct_dtype->dstruct->name);
-            }
-
-            DStructMember* accessed_member = NULL;
-            int num_members = vector_size(struct_dtype->dstruct->members);
-            for (int i = 0; i < num_members; i++) {
-                DStructMember* member = vector_at(struct_dtype->dstruct->members, i);
-                if (strcmp(member->name, member_srt->ident_name) == 0) {
-                    accessed_member = member;
-                    break;
-                }
-            }
-
-            ImmcOpe* snd_src = new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, accessed_member->memory_offset);
-            dst = create_dest_reg_immcope(immcgen);
-            vector_push(codes, new_inst_immc(IMMC_INST_ADD, dst, src, snd_src));
-            update_non_void_expr_register(immcgen, dst);
-            break;
-        }
-        case SRT_INDIR_EXPR:
-            immcgen->srt = child_srt;
-            append_child_immcode(immcgen, codes, 0);
-            immcgen->srt = srt;
-            break;
-        default:
-            fprintf(stderr, "\x1b[1;31mfatal error\x1b[0m: "
-                            "unreachable statement (in gen_address_expr_immcode)\n");
-            exit(1);
+    Symbol* symbol = symboltable_search(immcgen->symbol_table, child_srt->ident_name);
+    if (symbol->type == SYMBOL_LABEL) {
+        src = new_label_immcope(new_string(symbol->name));
+    } else {
+        src = new_mem_immcope(symbol->memory_offset);
     }
+
+    dst = create_dest_reg_immcope(immcgen);
+
+    vector_push(codes, new_inst_immc(IMMC_INST_ADDR, dst, src, NULL));
+
+    update_non_void_expr_register(immcgen, dst);
+    return codes;
+}
+
+Vector* gen_string_address_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    Srt* srt = immcgen->srt;
+    Srt* child_srt = vector_at(srt->children, 0);
+
+    char* sliteral_label = create_sliteral_label(child_srt->sliteral_id);
+    ImmcOpe* src = new_label_immcope(sliteral_label);
+    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
+    vector_push(codes, new_inst_immc(IMMC_INST_ADDR, dst, src, NULL));
+
+    update_non_void_expr_register(immcgen, dst);
+    return codes;
+}
+
+Vector* gen_tomember_address_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    Srt* srt = immcgen->srt;
+    Srt* child_srt = vector_at(srt->children, 0);
+
+    immcgen->srt = child_srt;
+    ImmcOpe* fst_src = gen_child_reg_immcope(immcgen, codes, 0);
+    immcgen->srt = srt;
+
+    Srt* struct_srt = vector_at(child_srt->children, 0);
+    DType* struct_dtype = struct_srt->dtype->dpointer->to_dtype;
+    if (struct_dtype->dstruct->members == NULL) {
+        struct_dtype = tagtable_search(immcgen->tag_table, struct_dtype->dstruct->name);
+    }
+
+    DStructMember* accessed_member = NULL;
+    Srt* member_srt = vector_at(child_srt->children, 1);
+    int num_members = vector_size(struct_dtype->dstruct->members);
+    for (int i = 0; i < num_members; i++) {
+        DStructMember* member = vector_at(struct_dtype->dstruct->members, i);
+        if (strcmp(member->name, member_srt->ident_name) == 0) {
+            accessed_member = member;
+            break;
+        }
+    }
+
+    ImmcOpe* snd_src = new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, accessed_member->memory_offset);
+
+    ImmcOpe* dst = create_dest_reg_immcope(immcgen);
+
+    vector_push(codes, new_inst_immc(IMMC_INST_ADD, dst, fst_src, snd_src));
+
+    update_non_void_expr_register(immcgen, dst);
+    return codes;
+}
+
+Vector* gen_indirection_address_expr_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    Srt* srt = immcgen->srt;
+    Srt* child_srt = vector_at(srt->children, 0);
+
+    immcgen->srt = child_srt;
+    append_child_immcode(immcgen, codes, 0);
+    immcgen->srt = srt;
 
     return codes;
 }
@@ -568,35 +609,15 @@ Vector* gen_call_expr_immcode(Immcgen* immcgen) {
 }
 
 Vector* gen_tomember_expr_immcode(Immcgen* immcgen) {
-    Vector* codes = new_vector(&t_immc);
+    Vector* codes = NULL;
     Srt* srt = immcgen->srt;
 
-    ImmcOpe* add_fst_src = gen_child_reg_immcope(immcgen, codes, 0);
+    immcgen->srt = new_dtyped_srt(SRT_ADDR_EXPR, new_pointer_dtype(dtype_copy(srt->dtype)), 1, srt_copy(srt));
+    codes = gen_tomember_address_expr_immcode(immcgen);
+    delete_srt(immcgen->srt);
+    immcgen->srt = srt;
 
-    Srt* struct_srt = vector_at(srt->children, 0);
-    Srt* member_srt = vector_at(srt->children, 1);
-
-    DType* struct_dtype = struct_srt->dtype->dpointer->to_dtype;
-    if (struct_dtype->dstruct->members == NULL) {
-        struct_dtype = tagtable_search(immcgen->tag_table, struct_dtype->dstruct->name);
-    }
-
-    DStructMember* accessed_member = NULL;
-    int num_members = vector_size(struct_dtype->dstruct->members);
-    for (int i = 0; i < num_members; i++) {
-        DStructMember* member = vector_at(struct_dtype->dstruct->members, i);
-        if (strcmp(member->name, member_srt->ident_name) == 0) {
-            accessed_member = member;
-            break;
-        }
-    }
-
-    ImmcOpe* add_snd_src = new_signed_int_immcope(IMMC_SUFFIX_QUAD, INTEGER_INT, accessed_member->memory_offset);
-    immcgen->next_reg_id++;
-    ImmcOpe* add_dst = new_signed_reg_immcope(IMMC_SUFFIX_QUAD, immcgen->next_reg_id);
-    vector_push(codes, new_inst_immc(IMMC_INST_ADD, add_dst, add_fst_src, add_snd_src));
-
-    ImmcOpe* src = new_ptr_immcope(add_dst->reg->reg_id);
+    ImmcOpe* src = new_ptr_immcope(immcgen->expr_reg->reg_id);
     ImmcOpe* dst = create_dest_reg_immcope(immcgen);
     vector_push(codes, new_inst_immc(IMMC_INST_LOAD, dst, src, NULL));
 
