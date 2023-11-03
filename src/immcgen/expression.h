@@ -10,6 +10,7 @@ Vector* gen_logical_and_expr_immcode(Immcgen* immcgen);
 Vector* gen_bitwise_expr_immcode(Immcgen* immcgen);
 Vector* gen_equality_expr_immcode(Immcgen* immcgen);
 Vector* gen_relational_expr_immcode(Immcgen* immcgen);
+Vector* gen_shift_expr_immcode(Immcgen* immcgen);
 Vector* gen_additive_expr_immcode(Immcgen* immcgen);
 Vector* gen_pointer_additive_expr_immcode(Immcgen* immcgen);
 Vector* gen_pointer_diff_expr_immcode(Immcgen* immcgen);
