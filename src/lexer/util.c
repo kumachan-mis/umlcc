@@ -146,6 +146,8 @@ Map* new_punctuator_map(void) {
     ctoken_map_add(punctuator_map, "%", CTOKEN_PERCENT);
     ctoken_map_add(punctuator_map, "<", CTOKEN_LESS);
     ctoken_map_add(punctuator_map, ">", CTOKEN_GREATER);
+    ctoken_map_add(punctuator_map, "<<", CTOKEN_LESS_LESS);
+    ctoken_map_add(punctuator_map, ">>", CTOKEN_GREATER_GREATER);
     ctoken_map_add(punctuator_map, "<=", CTOKEN_LESS_EQUAL);
     ctoken_map_add(punctuator_map, ">=", CTOKEN_GREATER_EQUAL);
     ctoken_map_add(punctuator_map, "==", CTOKEN_EQUAL_EQUAL);
@@ -163,6 +165,8 @@ Map* new_punctuator_map(void) {
     ctoken_map_add(punctuator_map, "%=", CTOKEN_PERCENT_EQUAL);
     ctoken_map_add(punctuator_map, "+=", CTOKEN_PLUS_EQUAL);
     ctoken_map_add(punctuator_map, "-=", CTOKEN_MINUS_EQUAL);
+    ctoken_map_add(punctuator_map, "<<=", CTOKEN_LESS_LESS_EQUAL);
+    ctoken_map_add(punctuator_map, ">>=", CTOKEN_GREATER_GREATER_EQUAL);
     ctoken_map_add(punctuator_map, "&=", CTOKEN_AND_EQUAL);
     ctoken_map_add(punctuator_map, "^=", CTOKEN_CARET_EQUAL);
     ctoken_map_add(punctuator_map, "|=", CTOKEN_VBAR_EQUAL);
