@@ -390,8 +390,6 @@ ParserReturn* parse_relational_expr(Parser* parser) {
 }
 
 ParserReturn* parse_shift_expr(Parser* parser) {
-    ParserReturn* parse_additive_expr(Parser * parser);
-
     Ast* ast = NULL;
     Ast* child_ast = NULL;
     Error* err = NULL;
