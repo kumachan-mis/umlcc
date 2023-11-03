@@ -56,6 +56,9 @@ typedef enum SrtType {
     SRT_GREATER_EXPR,
     SRT_LESSEQ_EXPR,
     SRT_GREATEREQ_EXPR,
+    //   shift-expression
+    SRT_LSHIFT_EXPR,
+    SRT_RSHIFT_EXPR,
     //   additive-expression
     SRT_ADD_EXPR,
     SRT_SUB_EXPR,

@@ -14,9 +14,11 @@ void test_resolve_add_assignment_expr_error_operand_dtype(void);
 void test_resolve_add_assignment_expr_error_int_and_pointer(void);
 void test_resolve_subtract_assignment_expr_error_operand_dtype(void);
 void test_resolve_subtract_assignment_expr_error_pointer_diff(void);
+void test_resolve_bitwise_lshift_assignment_expr_error_non_integer(void);
+void test_resolve_bitwise_rshift_assignment_expr_error_non_integer(void);
 void test_resolve_bitwise_inclusive_or_assignment_expr_error_non_integer(void);
 void test_resolve_bitwise_exclusive_or_assignment_expr_error_non_integer(void);
-void test_resolve_bitwise_add_assignment_expr_error_non_integer(void);
+void test_resolve_bitwise_and_assignment_expr_error_non_integer(void);
 void test_resolve_conditional_expr_error_condition_child(void);
 void test_resolve_conditional_expr_error_condition_non_scalar(void);
 void test_resolve_conditional_expr_error_lhs(void);
@@ -65,6 +67,12 @@ void test_resolve_greater_equal_expr_error_operand_dtype(void);
 void test_resolve_greater_equal_expr_error_incompatible_pointer(void);
 void test_resolve_greater_equal_expr_error_lhs(void);
 void test_resolve_greater_equal_expr_error_rhs(void);
+void test_resolve_lshift_expr_error_non_integer(void);
+void test_resolve_lshift_expr_error_lhs(void);
+void test_resolve_lshift_expr_error_rhs(void);
+void test_resolve_rshift_expr_error_non_integer(void);
+void test_resolve_rshift_expr_error_lhs(void);
+void test_resolve_rshift_expr_error_rhs(void);
 void test_resolve_add_expr_error_operand_dtype(void);
 void test_resolve_add_expr_error_lhs(void);
 void test_resolve_add_expr_error_rhs(void);
@@ -148,9 +156,11 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_add_assignment_expr_error_int_and_pointer);
     CU_ADD_TEST(suite, test_resolve_subtract_assignment_expr_error_operand_dtype);
     CU_ADD_TEST(suite, test_resolve_subtract_assignment_expr_error_pointer_diff);
+    CU_ADD_TEST(suite, test_resolve_bitwise_lshift_assignment_expr_error_non_integer);
+    CU_ADD_TEST(suite, test_resolve_bitwise_rshift_assignment_expr_error_non_integer);
     CU_ADD_TEST(suite, test_resolve_bitwise_inclusive_or_assignment_expr_error_non_integer);
     CU_ADD_TEST(suite, test_resolve_bitwise_exclusive_or_assignment_expr_error_non_integer);
-    CU_ADD_TEST(suite, test_resolve_bitwise_add_assignment_expr_error_non_integer);
+    CU_ADD_TEST(suite, test_resolve_bitwise_and_assignment_expr_error_non_integer);
     CU_ADD_TEST(suite, test_resolve_conditional_expr_error_condition_child);
     CU_ADD_TEST(suite, test_resolve_conditional_expr_error_condition_non_scalar);
     CU_ADD_TEST(suite, test_resolve_conditional_expr_error_lhs);
@@ -199,6 +209,12 @@ CU_Suite* add_test_suite_expr_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_greater_equal_expr_error_incompatible_pointer);
     CU_ADD_TEST(suite, test_resolve_greater_equal_expr_error_lhs);
     CU_ADD_TEST(suite, test_resolve_greater_equal_expr_error_rhs);
+    CU_ADD_TEST(suite, test_resolve_lshift_expr_error_non_integer);
+    CU_ADD_TEST(suite, test_resolve_lshift_expr_error_lhs);
+    CU_ADD_TEST(suite, test_resolve_lshift_expr_error_rhs);
+    CU_ADD_TEST(suite, test_resolve_rshift_expr_error_non_integer);
+    CU_ADD_TEST(suite, test_resolve_rshift_expr_error_lhs);
+    CU_ADD_TEST(suite, test_resolve_rshift_expr_error_rhs);
     CU_ADD_TEST(suite, test_resolve_add_expr_error_operand_dtype);
     CU_ADD_TEST(suite, test_resolve_add_expr_error_lhs);
     CU_ADD_TEST(suite, test_resolve_add_expr_error_rhs);
@@ -473,6 +489,39 @@ void test_resolve_subtract_assignment_expr_error_pointer_diff(void) {
     delete_vector(expected);
 }
 
+void test_resolve_bitwise_lshift_assignment_expr_error_non_integer(void) {
+    Ast* input = new_ast(AST_LSHIFT_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 2)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("binary << expression should be integer << integer"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_bitwise_rshift_assignment_expr_error_non_integer(void) {
+    Ast* input = new_ast(AST_RSHIFT_ASSIGN_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("n")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("n"), new_integer_dtype(DTYPE_INT));
+    symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("binary >> expression should be integer >> integer"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
 void test_resolve_bitwise_inclusive_or_assignment_expr_error_non_integer(void) {
     Ast* input = new_ast(AST_OR_ASSIGN_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
@@ -507,7 +556,7 @@ void test_resolve_bitwise_exclusive_or_assignment_expr_error_non_integer(void) {
     delete_vector(expected);
 }
 
-void test_resolve_bitwise_add_assignment_expr_error_non_integer(void) {
+void test_resolve_bitwise_and_assignment_expr_error_non_integer(void) {
     Ast* input = new_ast(AST_AND_ASSIGN_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")));
@@ -1177,6 +1226,7 @@ void test_resolve_greater_expr_error_rhs(void) {
     Ast* input = new_ast(AST_GREATER_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_UNSIGNED_INT));
 
@@ -1192,6 +1242,7 @@ void test_resolve_less_equal_expr_error_operand_dtype(void) {
     Ast* input = new_ast(AST_LESSEQ_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
+
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
     symboltable_define_memory(local_table, new_string("q"), new_integer_dtype(DTYPE_UNSIGNED_INT));
@@ -1209,6 +1260,7 @@ void test_resolve_less_equal_expr_error_incompatible_pointer(void) {
     Ast* input = new_ast(AST_LESSEQ_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
+
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_UNSIGNED_INT)));
     symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
@@ -1225,6 +1277,7 @@ void test_resolve_less_equal_expr_error_lhs(void) {
     Ast* input = new_ast(AST_LESSEQ_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("identifier 'x' is used before declared"));
 
@@ -1237,6 +1290,7 @@ void test_resolve_less_equal_expr_error_rhs(void) {
     Ast* input = new_ast(AST_LESSEQ_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_UNSIGNED_INT));
 
@@ -1252,6 +1306,7 @@ void test_resolve_greater_equal_expr_error_operand_dtype(void) {
     Ast* input = new_ast(AST_GREATEREQ_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
+
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
     symboltable_define_memory(local_table, new_string("q"), new_integer_dtype(DTYPE_UNSIGNED_INT));
@@ -1269,6 +1324,7 @@ void test_resolve_greater_equal_expr_error_incompatible_pointer(void) {
     Ast* input = new_ast(AST_GREATEREQ_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
+
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_UNSIGNED_INT)));
     symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
@@ -1285,6 +1341,7 @@ void test_resolve_greater_equal_expr_error_lhs(void) {
     Ast* input = new_ast(AST_GREATEREQ_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("identifier 'x' is used before declared"));
 
@@ -1297,8 +1354,106 @@ void test_resolve_greater_equal_expr_error_rhs(void) {
     Ast* input = new_ast(AST_GREATEREQ_EXPR, 2, // non-terminal
                          new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                          new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
     SymbolTable* local_table = new_symboltable();
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_UNSIGNED_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'y' is used before declared"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_lshift_expr_error_non_integer(void) {
+    Ast* input = new_ast(AST_LSHIFT_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("p")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("p"), new_pointer_dtype(new_integer_dtype(DTYPE_CHAR)));
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("binary << expression should be integer << integer"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_lshift_expr_error_lhs(void) {
+    Ast* input = new_ast(AST_LSHIFT_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'x' is used before declared"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_lshift_expr_error_rhs(void) {
+    Ast* input = new_ast(AST_LSHIFT_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'y' is used before declared"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_rshift_expr_error_non_integer(void) {
+    Ast* input = new_ast(AST_RSHIFT_EXPR, 2, // non-terminal
+                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1024)),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("q")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("q"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("binary >> expression should be integer >> integer"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_rshift_expr_error_lhs(void) {
+    Ast* input = new_ast(AST_RSHIFT_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'x' is used before declared"));
+
+    run_expr_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
+}
+
+void test_resolve_rshift_expr_error_rhs(void) {
+    Ast* input = new_ast(AST_RSHIFT_EXPR, 2, // non-terminal
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("identifier 'y' is used before declared"));

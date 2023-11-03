@@ -26,5 +26,13 @@ int main(void) {
     put_int(~0x3);
     put_blank_line();
 
+    put_int(1 << 5);
+    put_int(3 << 4);
+    put_blank_line();
+
+    put_int(64 >> 5);
+    put_int(128 >> 4);
+    put_blank_line();
+
     return 0;
 }
