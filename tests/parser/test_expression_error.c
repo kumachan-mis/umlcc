@@ -9,6 +9,8 @@ void test_parse_division_assignment_expr_error(void);
 void test_parse_modulo_assignment_expr_error(void);
 void test_parse_add_assignment_expr_error(void);
 void test_parse_subtract_assignment_expr_error(void);
+void test_parse_lshift_assignment_expr_error(void);
+void test_parse_rshift_assignment_expr_error(void);
 void test_parse_bitwise_inclusive_or_assignment_expr_error(void);
 void test_parse_bitwise_exclusive_or_assignment_expr_error(void);
 void test_parse_bitwise_and_assignment_expr_error(void);
@@ -27,6 +29,8 @@ void test_parse_less_expr_error(void);
 void test_parse_greater_expr_error(void);
 void test_parse_less_equal_expr_error(void);
 void test_parse_greater_equal_expr_error(void);
+void test_parse_lshift_expr_error(void);
+void test_parse_rshift_expr_error(void);
 void test_parse_add_expr_error(void);
 void test_parse_subtract_expr_error(void);
 void test_parse_multiply_expr_error(void);
@@ -64,6 +68,8 @@ CU_Suite* add_test_suite_expr_parser_error(void) {
     CU_ADD_TEST(suite, test_parse_modulo_assignment_expr_error);
     CU_ADD_TEST(suite, test_parse_add_assignment_expr_error);
     CU_ADD_TEST(suite, test_parse_subtract_assignment_expr_error);
+    CU_ADD_TEST(suite, test_parse_lshift_assignment_expr_error);
+    CU_ADD_TEST(suite, test_parse_rshift_assignment_expr_error);
     CU_ADD_TEST(suite, test_parse_bitwise_inclusive_or_assignment_expr_error);
     CU_ADD_TEST(suite, test_parse_bitwise_exclusive_or_assignment_expr_error);
     CU_ADD_TEST(suite, test_parse_bitwise_and_assignment_expr_error);
@@ -82,6 +88,8 @@ CU_Suite* add_test_suite_expr_parser_error(void) {
     CU_ADD_TEST(suite, test_parse_greater_expr_error);
     CU_ADD_TEST(suite, test_parse_less_equal_expr_error);
     CU_ADD_TEST(suite, test_parse_greater_equal_expr_error);
+    CU_ADD_TEST(suite, test_parse_lshift_expr_error);
+    CU_ADD_TEST(suite, test_parse_rshift_expr_error);
     CU_ADD_TEST(suite, test_parse_add_expr_error);
     CU_ADD_TEST(suite, test_parse_subtract_expr_error);
     CU_ADD_TEST(suite, test_parse_multiply_expr_error);
@@ -189,6 +197,34 @@ void test_parse_subtract_assignment_expr_error(void) {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("unexpected token -=");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_lshift_assignment_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_LESS_LESS_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_LESS_LESS_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token <<=");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_rshift_assignment_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_GREATER_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_GREATER_EQUAL));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token >>=");
 
     run_expr_parser_error_test(input, NULL, expected);
 
@@ -455,6 +491,34 @@ void test_parse_greater_equal_expr_error(void) {
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("unexpected token <=");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_lshift_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_LESS_LESS));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_GREATER));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token >>");
+
+    run_expr_parser_error_test(input, NULL, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_rshift_expr_error(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_GREATER));
+    vector_push(input, new_ctoken(CTOKEN_LESS_LESS));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token <<");
 
     run_expr_parser_error_test(input, NULL, expected);
 

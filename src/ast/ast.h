@@ -71,6 +71,8 @@ typedef enum AstType {
     AST_MOD_ASSIGN_EXPR,
     AST_ADD_ASSIGN_EXPR,
     AST_SUB_ASSIGN_EXPR,
+    AST_LSHIFT_ASSIGN_EXPR,
+    AST_RSHIFT_ASSIGN_EXPR,
     AST_AND_ASSIGN_EXPR,
     AST_XOR_ASSIGN_EXPR,
     AST_OR_ASSIGN_EXPR,
@@ -94,6 +96,9 @@ typedef enum AstType {
     AST_GREATER_EXPR,
     AST_LESSEQ_EXPR,
     AST_GREATEREQ_EXPR,
+    //   shift-expression
+    AST_LSHIFT_EXPR,
+    AST_RSHIFT_EXPR,
     //   additive-expression
     AST_ADD_EXPR,
     AST_SUB_EXPR,

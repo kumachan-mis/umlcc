@@ -9,6 +9,8 @@ void test_parse_division_assignment_expr(void);
 void test_parse_modulo_assignment_expr(void);
 void test_parse_add_assignment_expr(void);
 void test_parse_subtract_assignment_expr(void);
+void test_parse_lshift_assignment_expr(void);
+void test_parse_rshift_assignment_expr(void);
 void test_parse_bitwise_inclusive_or_assignment_expr(void);
 void test_parse_bitwise_exclusive_or_assignment_expr(void);
 void test_parse_bitwise_and_assignment_expr(void);
@@ -24,6 +26,8 @@ void test_parse_less_expr(void);
 void test_parse_greater_expr(void);
 void test_parse_less_equal_expr(void);
 void test_parse_greater_equal_expr(void);
+void test_parse_lshift_expr(void);
+void test_parse_rshift_expr(void);
 void test_parse_add_expr(void);
 void test_parse_subtract_expr(void);
 void test_parse_multiply_expr(void);
@@ -62,6 +66,8 @@ CU_Suite* add_test_suite_expr_parser(void) {
     CU_ADD_TEST(suite, test_parse_modulo_assignment_expr);
     CU_ADD_TEST(suite, test_parse_add_assignment_expr);
     CU_ADD_TEST(suite, test_parse_subtract_assignment_expr);
+    CU_ADD_TEST(suite, test_parse_lshift_assignment_expr);
+    CU_ADD_TEST(suite, test_parse_rshift_assignment_expr);
     CU_ADD_TEST(suite, test_parse_bitwise_inclusive_or_assignment_expr);
     CU_ADD_TEST(suite, test_parse_bitwise_exclusive_or_assignment_expr);
     CU_ADD_TEST(suite, test_parse_bitwise_and_assignment_expr);
@@ -77,6 +83,8 @@ CU_Suite* add_test_suite_expr_parser(void) {
     CU_ADD_TEST(suite, test_parse_greater_expr);
     CU_ADD_TEST(suite, test_parse_less_equal_expr);
     CU_ADD_TEST(suite, test_parse_greater_equal_expr);
+    CU_ADD_TEST(suite, test_parse_lshift_expr);
+    CU_ADD_TEST(suite, test_parse_rshift_expr);
     CU_ADD_TEST(suite, test_parse_add_expr);
     CU_ADD_TEST(suite, test_parse_subtract_expr);
     CU_ADD_TEST(suite, test_parse_multiply_expr);
@@ -229,6 +237,46 @@ void test_parse_subtract_assignment_expr(void) {
     Ast* expected = new_ast(AST_SUB_ASSIGN_EXPR, 2, // non-terminal
                             new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
                             new_ast(AST_SUB_ASSIGN_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_lshift_assignment_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_LESS_LESS_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_LESS_LESS_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_LSHIFT_ASSIGN_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_LSHIFT_ASSIGN_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_rshift_assignment_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_GREATER_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_GREATER_EQUAL));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("z")));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_RSHIFT_ASSIGN_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_RSHIFT_ASSIGN_EXPR, 2, // non-terminal
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("z"))));
 
@@ -516,14 +564,14 @@ void test_parse_not_equal_expr(void) {
 void test_parse_less_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("i")));
-    vector_push(input, new_ctoken(CTOKEN_PLUS));
+    vector_push(input, new_ctoken(CTOKEN_LESS_LESS));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
     vector_push(input, new_ctoken(CTOKEN_LESS));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("m")));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected = new_ast(AST_LESS_EXPR, 2,        // non-terminal
-                            new_ast(AST_ADD_EXPR, 2, // non-terminal
+    Ast* expected = new_ast(AST_LESS_EXPR, 2,           // non-terminal
+                            new_ast(AST_LSHIFT_EXPR, 2, // non-terminal
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("i")),
                                     new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))),
                             new_identifier_ast(AST_IDENT_EXPR, new_string("m")));
@@ -536,14 +584,14 @@ void test_parse_less_expr(void) {
 void test_parse_greater_expr(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("j")));
-    vector_push(input, new_ctoken(CTOKEN_MINUS));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_GREATER));
     vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
     vector_push(input, new_ctoken(CTOKEN_GREATER));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("n")));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
-    Ast* expected = new_ast(AST_GREATER_EXPR, 2,     // non-terminal
-                            new_ast(AST_SUB_EXPR, 2, // non-terminal
+    Ast* expected = new_ast(AST_GREATER_EXPR, 2,        // non-terminal
+                            new_ast(AST_RSHIFT_EXPR, 2, // non-terminal
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("j")),
                                     new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))),
                             new_identifier_ast(AST_IDENT_EXPR, new_string("n")));
@@ -587,6 +635,46 @@ void test_parse_greater_equal_expr(void) {
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("j")),
                                     new_identifier_ast(AST_IDENT_EXPR, new_string("i"))),
                             new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_lshift_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_LESS_LESS));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("n")));
+    vector_push(input, new_ctoken(CTOKEN_PLUS));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_LSHIFT_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                            new_ast(AST_ADD_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("n")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))));
+
+    run_expr_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_rshift_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_GREATER_GREATER));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("m")));
+    vector_push(input, new_ctoken(CTOKEN_MINUS));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_RSHIFT_EXPR, 2, // non-terminal
+                            new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                            new_ast(AST_SUB_EXPR, 2, // non-terminal
+                                    new_identifier_ast(AST_IDENT_EXPR, new_string("m")),
+                                    new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))));
 
     run_expr_parser_test(input, expected);
 

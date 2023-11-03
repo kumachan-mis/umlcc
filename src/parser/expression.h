@@ -14,6 +14,7 @@ ParserReturn* parse_bitwise_exclusive_or_expr(Parser* parser);
 ParserReturn* parse_bitwise_and_expr(Parser* parser);
 ParserReturn* parse_equality_expr(Parser* parser);
 ParserReturn* parse_relational_expr(Parser* parser);
+ParserReturn* parse_shift_expr(Parser* parser);
 ParserReturn* parse_additive_expr(Parser* parser);
 ParserReturn* parse_multiplicative_expr(Parser* parser);
 ParserReturn* parse_cast_expr(Parser* parser);
