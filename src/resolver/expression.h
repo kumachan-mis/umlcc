@@ -11,6 +11,7 @@ ResolverReturn* resolve_logical_expr(Resolver* resolver);
 ResolverReturn* resolve_bitwise_expr(Resolver* resolver);
 ResolverReturn* resolve_equality_expr(Resolver* resolver);
 ResolverReturn* resolve_relational_expr(Resolver* resolver);
+ResolverReturn* resolve_shift_expr(Resolver* resolver);
 ResolverReturn* resolve_additive_expr(Resolver* resolver);
 ResolverReturn* resolve_multiplicative_expr(Resolver* resolver);
 ResolverReturn* resolve_cast_expr(Resolver* resolver);
