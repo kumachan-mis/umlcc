@@ -121,8 +121,10 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
             break;
         case SRT_PADD_EXPR:
         case SRT_PSUB_EXPR:
-        case SRT_PDIFF_EXPR:
             codes = gen_pointer_additive_expr_immcode(immcgen);
+            break;
+        case SRT_PDIFF_EXPR:
+            codes = gen_pointer_diff_expr_immcode(immcgen);
             break;
         case SRT_MUL_EXPR:
         case SRT_DIV_EXPR:
