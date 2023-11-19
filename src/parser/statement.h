@@ -4,12 +4,15 @@
 #include "./parser.h"
 
 ParserReturn* parse_stmt(Parser* parser);
+ParserReturn* parse_case_stmt(Parser* parser);
+ParserReturn* parse_default_stmt(Parser* parser);
 ParserReturn* parse_compound_stmt(Parser* parser);
 ParserReturn* parse_continue_stmt(Parser* parser);
 ParserReturn* parse_break_stmt(Parser* parser);
 ParserReturn* parse_return_stmt(Parser* parser);
 ParserReturn* parse_expression_stmt(Parser* parser);
 ParserReturn* parse_if_else_stmt(Parser* parser);
+ParserReturn* parse_switch_stmt(Parser* parser);
 ParserReturn* parse_while_stmt(Parser* parser);
 ParserReturn* parse_for_stmt(Parser* parser);
 

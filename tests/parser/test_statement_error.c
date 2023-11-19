@@ -3,17 +3,27 @@
 #include "../../src/parser/statement.h"
 #include "../testlib/testlib.h"
 
+void test_parse_case_stmt_error_expr(void);
+void test_parse_case_stmt_error_colon(void);
+void test_parse_case_stmt_error_statement(void);
+void test_parse_default_stmt_error_colon(void);
+void test_parse_default_stmt_error_statement(void);
 void test_parse_compound_stmt_error_child(void);
 void test_parse_compound_stmt_error_braces(void);
 void test_parse_continue_stmt_error(void);
 void test_parse_break_stmt_error(void);
-void test_parse_return_stmt_error(void);
+void test_parse_return_stmt_error_semicolon(void);
+void test_parse_return_stmt_error_expr(void);
 void test_parse_expression_stmt_error(void);
 void test_parse_if_else_stmt_error_controlling_lparen(void);
 void test_parse_if_else_stmt_error_controlling_expr(void);
 void test_parse_if_else_stmt_error_controlling_rparen(void);
 void test_parse_if_else_stmt_error_then_stmt(void);
 void test_parse_if_else_stmt_error_else_stmt(void);
+void test_parse_switch_stmt_error_controlling_lparen(void);
+void test_parse_switch_stmt_error_controlling_expr(void);
+void test_parse_switch_stmt_error_controlling_rparen(void);
+void test_parse_switch_stmt_error_body(void);
 void test_parse_while_stmt_error_controlling_lparen(void);
 void test_parse_while_stmt_error_controlling_expr(void);
 void test_parse_while_stmt_error_controlling_rparen(void);
@@ -32,17 +42,27 @@ void run_stmt_parser_error_test(Vector* input, Error* expected);
 
 CU_Suite* add_test_suite_stmt_parser_error(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_parser_error", NULL, NULL);
+    CU_ADD_TEST(suite, test_parse_case_stmt_error_expr);
+    CU_ADD_TEST(suite, test_parse_case_stmt_error_colon);
+    CU_ADD_TEST(suite, test_parse_case_stmt_error_statement);
+    CU_ADD_TEST(suite, test_parse_default_stmt_error_colon);
+    CU_ADD_TEST(suite, test_parse_default_stmt_error_statement);
     CU_ADD_TEST(suite, test_parse_compound_stmt_error_child);
     CU_ADD_TEST(suite, test_parse_compound_stmt_error_braces);
     CU_ADD_TEST(suite, test_parse_continue_stmt_error);
     CU_ADD_TEST(suite, test_parse_break_stmt_error);
-    CU_ADD_TEST(suite, test_parse_return_stmt_error);
+    CU_ADD_TEST(suite, test_parse_return_stmt_error_expr);
+    CU_ADD_TEST(suite, test_parse_return_stmt_error_semicolon);
     CU_ADD_TEST(suite, test_parse_expression_stmt_error);
     CU_ADD_TEST(suite, test_parse_if_else_stmt_error_controlling_lparen);
     CU_ADD_TEST(suite, test_parse_if_else_stmt_error_controlling_expr);
     CU_ADD_TEST(suite, test_parse_if_else_stmt_error_controlling_rparen);
     CU_ADD_TEST(suite, test_parse_if_else_stmt_error_then_stmt);
     CU_ADD_TEST(suite, test_parse_if_else_stmt_error_else_stmt);
+    CU_ADD_TEST(suite, test_parse_switch_stmt_error_controlling_lparen);
+    CU_ADD_TEST(suite, test_parse_switch_stmt_error_controlling_expr);
+    CU_ADD_TEST(suite, test_parse_switch_stmt_error_controlling_rparen);
+    CU_ADD_TEST(suite, test_parse_switch_stmt_error_body);
     CU_ADD_TEST(suite, test_parse_while_stmt_error_controlling_lparen);
     CU_ADD_TEST(suite, test_parse_while_stmt_error_controlling_expr);
     CU_ADD_TEST(suite, test_parse_while_stmt_error_controlling_rparen);
@@ -57,6 +77,75 @@ CU_Suite* add_test_suite_stmt_parser_error(void) {
     CU_ADD_TEST(suite, test_parse_for_stmt_error_expr_rparen);
     CU_ADD_TEST(suite, test_parse_for_stmt_error_body);
     return suite;
+}
+
+void test_parse_case_stmt_error_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CASE));
+    vector_push(input, new_ctoken(CTOKEN_COLON));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_BREAK));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token :");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_case_stmt_error_colon(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CASE));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token : expected, but got ;");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_case_stmt_error_statement(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CASE));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input, new_ctoken(CTOKEN_COLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token EOF");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_default_stmt_error_colon(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_DEFAULT));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token : expected, but got ;");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_default_stmt_error_statement(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_DEFAULT));
+    vector_push(input, new_ctoken(CTOKEN_COLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token EOF");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
 }
 
 void test_parse_compound_stmt_error_child(void) {
@@ -98,7 +187,22 @@ void test_parse_compound_stmt_error_braces(void) {
     delete_error(expected);
 }
 
-void test_parse_return_stmt_error(void) {
+void test_parse_return_stmt_error_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_RETURN));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token )");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_return_stmt_error_semicolon(void) {
     Vector* input = new_vector(&t_ctoken);
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_RETURN));
     vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("ret")));
@@ -238,6 +342,80 @@ void test_parse_if_else_stmt_error_else_stmt(void) {
     vector_push(input, new_ctoken(CTOKEN_LBRACE));
     vector_push(input, new_ctoken(CTOKEN_RBRACE));
     vector_push(input, new_ctoken(CTOKEN_KEYWORD_ELSE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token EOF");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_switch_stmt_error_controlling_lparen(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_SWITCH));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CASE));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_COLON));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token ( expected, but got identifier");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_switch_stmt_error_controlling_expr(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_SWITCH));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CASE));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_COLON));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("unexpected token )");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_switch_stmt_error_controlling_rparen(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_SWITCH));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CASE));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_COLON));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Error* expected = new_error("token ) expected, but got {");
+
+    run_stmt_parser_error_test(input, expected);
+
+    delete_error(expected);
+}
+
+void test_parse_switch_stmt_error_body(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_SWITCH));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
     vector_push(input, new_ctoken(CTOKEN_EOF));
 
     Error* expected = new_error("unexpected token EOF");
