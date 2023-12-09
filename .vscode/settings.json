@@ -1,6 +1,6 @@
 {
     "[c]": {
-        "editor.wordBasedSuggestions": true,
+        "editor.wordBasedSuggestions": "matchingDocuments",
         "editor.suggest.insertMode": "insert",
         "editor.rulers": [120]
     },
