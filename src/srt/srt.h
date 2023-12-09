@@ -24,12 +24,15 @@ typedef enum SrtType {
 
     // statement
     SRT_CMPD_STMT,
+    SRT_CASE_STMT,
+    SRT_DEFAULT_STMT,
     SRT_CONTINUE_STMT,
     SRT_BREAK_STMT,
     SRT_RET_STMT,
     SRT_EXPR_STMT,
     SRT_NULL_STMT,
     SRT_IF_STMT,
+    SRT_SWITCH_STMT,
     SRT_WHILE_STMT,
     SRT_FOR_STMT,
 

@@ -11,7 +11,7 @@ void test_resolve_declarator_error_incomplete(void);
 void test_resolve_array_error_functions(void);
 void test_resolve_array_error_incomplete(void);
 void test_resolve_array_error_size_non_positive(void);
-void test_resolve_array_error_size_limit(void);
+void test_resolve_array_error_size_limitation(void);
 void test_resolve_struct_error_duplicated(void);
 void test_resolve_struct_member_error_duplicated(void);
 void test_resolve_struct_member_error_invalid(void);
@@ -55,7 +55,7 @@ CU_Suite* add_test_suite_decl_resolver_error(void) {
     CU_ADD_TEST(suite, test_resolve_array_error_functions);
     CU_ADD_TEST(suite, test_resolve_array_error_incomplete);
     CU_ADD_TEST(suite, test_resolve_array_error_size_non_positive);
-    CU_ADD_TEST(suite, test_resolve_array_error_size_limit);
+    CU_ADD_TEST(suite, test_resolve_array_error_size_limitation);
     CU_ADD_TEST(suite, test_resolve_struct_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_struct_member_error_duplicated);
     CU_ADD_TEST(suite, test_resolve_struct_member_error_invalid);
@@ -235,7 +235,7 @@ void test_resolve_array_error_size_non_positive(void) {
     delete_vector(expected);
 }
 
-void test_resolve_array_error_size_limit(void) {
+void test_resolve_array_error_size_limitation(void) {
     Ast* local_input = new_ast(
         AST_DECL, 2,               // non-terminal
         new_ast(AST_DECL_SPECS, 1, // non-terminal
@@ -250,7 +250,7 @@ void test_resolve_array_error_size_limit(void) {
     Ast* global_input = ast_copy(local_input);
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("only integer constant is supported as array size"));
+    vector_push(expected, new_error("only signed integer constant is supported as array size"));
 
     run_local_decl_resolver_error_test(local_input, NULL, NULL, expected);
     run_global_decl_resolver_error_test(global_input, NULL, NULL, expected);

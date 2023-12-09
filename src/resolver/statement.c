@@ -19,6 +19,12 @@ ResolverReturn* resolve_stmt(Resolver* resolver) {
             resolver->tag_table = tagtable_exit_scope(resolver->tag_table);
             resolver->symbol_table = symboltable_exit_scope(resolver->symbol_table);
             break;
+        case AST_CASE_STMT:
+            resolverret_assign(&srt, &errs, resolve_case_stmt(resolver));
+            break;
+        case AST_DEFAULT_STMT:
+            resolverret_assign(&srt, &errs, resolve_default_stmt(resolver));
+            break;
         case AST_CONTINUE_STMT:
             resolverret_assign(&srt, &errs, resolve_continue_stmt(resolver));
             break;
@@ -36,6 +42,9 @@ ResolverReturn* resolve_stmt(Resolver* resolver) {
             break;
         case AST_IF_STMT:
             resolverret_assign(&srt, &errs, resolve_if_else_stmt(resolver));
+            break;
+        case AST_SWITCH_STMT:
+            resolverret_assign(&srt, &errs, resolve_switch_stmt(resolver));
             break;
         case AST_WHILE_STMT:
             resolverret_assign(&srt, &errs, resolve_while_stmt(resolver));
@@ -56,6 +65,104 @@ ResolverReturn* resolve_stmt(Resolver* resolver) {
     if (errs != NULL) {
         return new_resolverret_errors(errs);
     }
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_case_stmt(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_CASE_STMT, 0);
+    Srt* child_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    if (resolver->switch_cases == NULL) {
+        errs = new_vector(&t_error);
+        err = new_error("case statement is not allowed outside of switch");
+        vector_push(errs, err);
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    vector_push(srt->children, child_srt);
+
+    if (child_srt->type != SRT_ILITERAL_EXPR || iliteral_isunsigned(child_srt->iliteral)) {
+        errs = new_vector(&t_error);
+        err = new_error("only signed integer constant is supported as case label");
+        vector_push(errs, err);
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    int* case_value_integer = new_integer(child_srt->iliteral->signed_value);
+    if (set_contains(resolver->switch_cases, case_value_integer)) {
+        errs = new_vector(&t_error);
+        err = new_error("value of case label is already used in switch");
+        vector_push(errs, err);
+        delete_srt(srt);
+        free(case_value_integer);
+        return new_resolverret_errors(errs);
+    }
+
+    set_add(resolver->switch_cases, case_value_integer);
+
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
+    resolver->ast = ast;
+
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    vector_push(srt->children, child_srt);
+
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_default_stmt(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_DEFAULT_STMT, 0);
+    Srt* child_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    if (resolver->switch_cases == NULL) {
+        errs = new_vector(&t_error);
+        err = new_error("default statement is not allowed outside of switch");
+        vector_push(errs, err);
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    if (resolver->switch_default_exists) {
+        errs = new_vector(&t_error);
+        err = new_error("default statement is already used in switch");
+        vector_push(errs, err);
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    resolver->switch_default_exists = 1;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
+    resolver->ast = ast;
+
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    vector_push(srt->children, child_srt);
+
     return new_resolverret(srt);
 }
 
@@ -244,6 +351,54 @@ ResolverReturn* resolve_if_else_stmt(Resolver* resolver) {
     resolver->ast = vector_at(ast->children, 2);
     resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
     resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+    vector_push(srt->children, child_srt);
+
+    return new_resolverret(srt);
+}
+
+ResolverReturn* resolve_switch_stmt(Resolver* resolver) {
+    Srt* srt = new_srt(SRT_SWITCH_STMT, 0);
+    Srt* child_srt = NULL;
+    Vector* errs = NULL;
+    Error* err = NULL;
+    Ast* ast = resolver->ast;
+
+    resolver->ast = vector_at(ast->children, 0);
+    resolverret_assign(&child_srt, &errs, resolve_expr(resolver));
+    resolver->ast = ast;
+    if (errs != NULL) {
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    child_srt = convert_to_ptr_if_array(child_srt);
+    child_srt = convert_to_ptr_if_function(child_srt);
+    vector_push(srt->children, child_srt);
+
+    if (!dtype_isinteger(child_srt->dtype)) {
+        errs = new_vector(&t_error);
+        err = new_error("expression of switch statement should have integer type");
+        vector_push(errs, err);
+        delete_srt(srt);
+        return new_resolverret_errors(errs);
+    }
+
+    Set* original_switch_cases = resolver->switch_cases;
+    int original_switch_default_exists = resolver->switch_default_exists;
+    resolver->switch_cases = new_set(&t_hashable_integer);
+
+    resolver->ast = vector_at(ast->children, 1);
+    resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
+    resolver->ast = ast;
+
+    delete_set(resolver->switch_cases);
+    resolver->switch_cases = original_switch_cases;
+    resolver->switch_default_exists = original_switch_default_exists;
+
     if (errs != NULL) {
         delete_srt(srt);
         return new_resolverret_errors(errs);

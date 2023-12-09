@@ -752,7 +752,7 @@ ResolverReturn* resolve_declarator(Resolver* resolver) {
 
                 if (array_size_srt->type != SRT_ILITERAL_EXPR || iliteral_isunsigned(array_size_srt->iliteral)) {
                     errs = new_vector(&t_error);
-                    err = new_error("only integer constant is supported as array size");
+                    err = new_error("only signed integer constant is supported as array size");
                     vector_push(errs, err);
                     delete_srt(array_size_srt);
                     break;
