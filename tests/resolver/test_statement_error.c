@@ -527,12 +527,76 @@ void test_resolve_if_else_stmt_error_else_child(void) {
 }
 
 void test_resolve_switch_stmt_error_condition_child(void) {
+    Ast* input =
+        new_ast(AST_SWITCH_STMT, 2, // non-terminal
+                new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                new_ast(AST_CMPD_STMT, 2,         // non-terminal
+                        new_ast(AST_CASE_STMT, 2, // non-terminal
+                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
+                                new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                        new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))),
+                        new_ast(AST_BREAK_STMT, 0)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'x' is used before declared"));
+
+    run_stmt_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
 }
 
 void test_resolve_switch_stmt_error_condition_non_integer(void) {
+    Ast* input =
+        new_ast(AST_SWITCH_STMT, 2, // non-terminal
+                new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                new_ast(AST_CMPD_STMT, 2,         // non-terminal
+                        new_ast(AST_CASE_STMT, 2, // non-terminal
+                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
+                                new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                        new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))),
+                        new_ast(AST_BREAK_STMT, 0)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_pointer_dtype(new_integer_dtype(DTYPE_INT)));
+    symboltable_define_memory(local_table, new_string("y"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("condition of switch statement should have integer type"));
+
+    run_stmt_resolver_error_test(input, local_table, NULL, expected);
+
+    delete_vector(expected);
 }
 
 void test_resolve_switch_stmt_error_body_child(void) {
+    Ast* input =
+        new_ast(AST_SWITCH_STMT, 2, // non-terminal
+                new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+                new_ast(AST_CMPD_STMT, 2,         // non-terminal
+                        new_ast(AST_CASE_STMT, 2, // non-terminal
+                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
+                                new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                        new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                                new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1))))),
+                        new_ast(AST_BREAK_STMT, 0)));
+
+    SymbolTable* local_table = new_symboltable();
+    symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
+
+    Vector* expected = new_vector(&t_error);
+    vector_push(expected, new_error("identifier 'x' is used before declared"));
+
+    run_stmt_resolver_error_test(input, NULL, NULL, expected);
+
+    delete_vector(expected);
 }
 
 void test_resolve_while_stmt_error_condition_child(void) {

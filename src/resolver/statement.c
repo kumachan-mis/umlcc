@@ -273,7 +273,7 @@ ResolverReturn* resolve_continue_stmt(Resolver* resolver) {
 }
 
 ResolverReturn* resolve_break_stmt(Resolver* resolver) {
-    if (!resolver->inside_loop) {
+    if (!resolver->inside_loop && resolver->switch_cases == NULL) {
         Vector* errs = new_vector(&t_error);
         Error* err = new_error("break statement is not allowed outside of loop or switch");
         vector_push(errs, err);
@@ -381,7 +381,7 @@ ResolverReturn* resolve_switch_stmt(Resolver* resolver) {
 
     if (!dtype_isinteger(child_srt->dtype)) {
         errs = new_vector(&t_error);
-        err = new_error("expression of switch statement should have integer type");
+        err = new_error("condition of switch statement should have integer type");
         vector_push(errs, err);
         delete_srt(srt);
         return new_resolverret_errors(errs);
