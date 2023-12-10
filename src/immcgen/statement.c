@@ -169,6 +169,9 @@ Vector* gen_switch_stmt_immcode(Immcgen* immcgen) {
     Vector* body_codes = new_vector(&t_immc);
     immcgen->label_id++;
     int break_label_id = immcgen->label_id;
+
+    Vector* original_case_label_values = immcgen->case_label_values;
+    int original_default_label_id = immcgen->default_label_id;
     int original_break_label_id = immcgen->break_label_id;
 
     immcgen->case_label_values = new_vector(&t_pair);
@@ -195,8 +198,10 @@ Vector* gen_switch_stmt_immcode(Immcgen* immcgen) {
         vector_push(cases_codes, new_inst_immc(IMMC_INST_JMP, default_label, NULL, NULL));
     }
     delete_immcope(reg);
+
     delete_vector(immcgen->case_label_values);
-    immcgen->case_label_values = NULL;
+    immcgen->case_label_values = original_case_label_values;
+    immcgen->default_label_id = original_default_label_id;
 
     vector_push(body_codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, break_label_id));
 

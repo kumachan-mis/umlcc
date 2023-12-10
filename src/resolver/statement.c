@@ -396,7 +396,9 @@ ResolverReturn* resolve_switch_stmt(Resolver* resolver) {
 
     Vector* original_switch_cases = resolver->switch_cases;
     int original_switch_default_exists = resolver->switch_default_exists;
+
     resolver->switch_cases = new_vector(&t_iliteral);
+    resolver->switch_default_exists = 0;
 
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
