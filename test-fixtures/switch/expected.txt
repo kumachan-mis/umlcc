@@ -1,0 +1,26 @@
+0
+1
+0
+1
+0
+1
+
+4
+4
+8
+8
+8
+8
+
+int
+unsigned int
+long
+unsigned long
+long long
+unsigned long long
+
+-1
+10
+200
+3
+
