@@ -20,7 +20,7 @@ Vector* gen_case_stmt_immcode(Immcgen* immcgen) {
     immcgen->label_id++;
     int case_label_id = immcgen->label_id;
 
-    Pair* label_value_pair = new_pair(&t_int, &t_iliteral);
+    Pair* label_value_pair = new_pair(&t_integer, &t_iliteral);
     pair_set(label_value_pair, new_integer(case_label_id), iliteral_copy(case_value_srt->iliteral));
     vector_push(immcgen->case_label_values, label_value_pair);
 

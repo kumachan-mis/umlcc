@@ -39,7 +39,7 @@ void delete_resolver(Resolver* resolver) {
     delete_symboltable(resolver->symbol_table);
     delete_tagtable(resolver->tag_table);
     if (resolver->switch_cases != NULL) {
-        delete_set(resolver->switch_cases);
+        delete_vector(resolver->switch_cases);
     }
     if (resolver->return_dtype != NULL) {
         delete_dtype(resolver->return_dtype);

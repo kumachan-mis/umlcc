@@ -545,7 +545,7 @@ void test_resolve_switch_stmt_error_condition_child(void) {
     Vector* expected = new_vector(&t_error);
     vector_push(expected, new_error("identifier 'x' is used before declared"));
 
-    run_stmt_resolver_error_test(input, NULL, NULL, expected);
+    run_stmt_resolver_error_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }
@@ -592,9 +592,9 @@ void test_resolve_switch_stmt_error_body_child(void) {
     symboltable_define_memory(local_table, new_string("x"), new_integer_dtype(DTYPE_INT));
 
     Vector* expected = new_vector(&t_error);
-    vector_push(expected, new_error("identifier 'x' is used before declared"));
+    vector_push(expected, new_error("identifier 'y' is used before declared"));
 
-    run_stmt_resolver_error_test(input, NULL, NULL, expected);
+    run_stmt_resolver_error_test(input, local_table, NULL, expected);
 
     delete_vector(expected);
 }

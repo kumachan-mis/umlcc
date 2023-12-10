@@ -14,7 +14,7 @@ typedef struct Resolver {
     SymbolTable* symbol_table;
     TagTable* tag_table;
     int inside_loop;
-    Set* switch_cases;
+    Vector* switch_cases;
     int switch_default_exists;
     DType* return_dtype;
     DType* specifier_dtype;

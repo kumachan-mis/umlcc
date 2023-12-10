@@ -91,27 +91,33 @@ ResolverReturn* resolve_case_stmt(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    vector_push(srt->children, child_srt);
-
     if (child_srt->type != SRT_ILITERAL_EXPR || iliteral_isunsigned(child_srt->iliteral)) {
         errs = new_vector(&t_error);
         err = new_error("only signed integer constant is supported as case label");
         vector_push(errs, err);
+        delete_srt(child_srt);
         delete_srt(srt);
         return new_resolverret_errors(errs);
     }
 
-    int* case_value_integer = new_integer(child_srt->iliteral->signed_value);
-    if (set_contains(resolver->switch_cases, case_value_integer)) {
+    child_srt = perform_integer_promotion(child_srt);
+    vector_push(srt->children, child_srt);
+
+    IntegerLiteral* case_value_iliteral = child_srt->iliteral;
+    int num_cases = vector_size(resolver->switch_cases);
+    for (int i = 0; i < num_cases; i++) {
+        IntegerLiteral* iliteral = vector_at(resolver->switch_cases, i);
+        if (iliteral->signed_value != case_value_iliteral->signed_value) {
+            continue;
+        }
         errs = new_vector(&t_error);
         err = new_error("value of case label is already used in switch");
         vector_push(errs, err);
         delete_srt(srt);
-        free(case_value_integer);
         return new_resolverret_errors(errs);
     }
 
-    set_add(resolver->switch_cases, case_value_integer);
+    vector_push(resolver->switch_cases, iliteral_copy(case_value_iliteral));
 
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
@@ -377,6 +383,7 @@ ResolverReturn* resolve_switch_stmt(Resolver* resolver) {
 
     child_srt = convert_to_ptr_if_array(child_srt);
     child_srt = convert_to_ptr_if_function(child_srt);
+    child_srt = perform_integer_promotion(child_srt);
     vector_push(srt->children, child_srt);
 
     if (!dtype_isinteger(child_srt->dtype)) {
@@ -387,15 +394,15 @@ ResolverReturn* resolve_switch_stmt(Resolver* resolver) {
         return new_resolverret_errors(errs);
     }
 
-    Set* original_switch_cases = resolver->switch_cases;
+    Vector* original_switch_cases = resolver->switch_cases;
     int original_switch_default_exists = resolver->switch_default_exists;
-    resolver->switch_cases = new_set(&t_hashable_integer);
+    resolver->switch_cases = new_vector(&t_iliteral);
 
     resolver->ast = vector_at(ast->children, 1);
     resolverret_assign(&child_srt, &errs, resolve_stmt(resolver));
     resolver->ast = ast;
 
-    delete_set(resolver->switch_cases);
+    delete_vector(resolver->switch_cases);
     resolver->switch_cases = original_switch_cases;
     resolver->switch_default_exists = original_switch_default_exists;
 
