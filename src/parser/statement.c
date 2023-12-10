@@ -8,6 +8,10 @@
 ParserReturn* parse_stmt(Parser* parser) {
     CToken* ctoken = vector_at(parser->ctokens, parser->index);
     switch (ctoken->type) {
+        case CTOKEN_KEYWORD_CASE:
+            return parse_case_stmt(parser);
+        case CTOKEN_KEYWORD_DEFAULT:
+            return parse_default_stmt(parser);
         case CTOKEN_LBRACE:
             return parse_compound_stmt(parser);
         case CTOKEN_KEYWORD_CONTINUE:
@@ -18,6 +22,8 @@ ParserReturn* parse_stmt(Parser* parser) {
             return parse_return_stmt(parser);
         case CTOKEN_KEYWORD_IF:
             return parse_if_else_stmt(parser);
+        case CTOKEN_KEYWORD_SWITCH:
+            return parse_switch_stmt(parser);
         case CTOKEN_KEYWORD_WHILE:
             return parse_while_stmt(parser);
         case CTOKEN_KEYWORD_FOR:
@@ -25,6 +31,67 @@ ParserReturn* parse_stmt(Parser* parser) {
         default:
             return parse_expression_stmt(parser);
     }
+}
+
+ParserReturn* parse_case_stmt(Parser* parser) {
+    Ast* ast = new_ast(AST_CASE_STMT, 0);
+    Ast* child_ast = NULL;
+    Error* err = NULL;
+
+    err = consume_ctoken(parser, CTOKEN_KEYWORD_CASE);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    parserret_assign(&child_ast, &err, parse_expr(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    vector_push(ast->children, child_ast);
+
+    err = consume_ctoken(parser, CTOKEN_COLON);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    parserret_assign(&child_ast, &err, parse_stmt(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    vector_push(ast->children, child_ast);
+
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_default_stmt(Parser* parser) {
+    Ast* ast = new_ast(AST_DEFAULT_STMT, 0);
+    Ast* child_ast = NULL;
+    Error* err = NULL;
+
+    err = consume_ctoken(parser, CTOKEN_KEYWORD_DEFAULT);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    err = consume_ctoken(parser, CTOKEN_COLON);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    parserret_assign(&child_ast, &err, parse_stmt(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    vector_push(ast->children, child_ast);
+
+    return new_parserret(ast);
 }
 
 ParserReturn* parse_compound_stmt(Parser* parser) {
@@ -203,6 +270,46 @@ ParserReturn* parse_if_else_stmt(Parser* parser) {
     }
 
     parser->index++;
+    parserret_assign(&child_ast, &err, parse_stmt(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    vector_push(ast->children, child_ast);
+
+    return new_parserret(ast);
+}
+
+ParserReturn* parse_switch_stmt(Parser* parser) {
+    Ast* ast = new_ast(AST_SWITCH_STMT, 0);
+    Ast* child_ast = NULL;
+    Error* err = NULL;
+
+    err = consume_ctoken(parser, CTOKEN_KEYWORD_SWITCH);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    err = consume_ctoken(parser, CTOKEN_LPAREN);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
+    parserret_assign(&child_ast, &err, parse_expr(parser));
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+    vector_push(ast->children, child_ast);
+
+    err = consume_ctoken(parser, CTOKEN_RPAREN);
+    if (err != NULL) {
+        delete_ast(ast);
+        return new_parserret_error(err);
+    }
+
     parserret_assign(&child_ast, &err, parse_stmt(parser));
     if (err != NULL) {
         delete_ast(ast);

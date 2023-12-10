@@ -1624,6 +1624,7 @@ ResolverReturn* resolve_integer_expr(Resolver* resolver) {
 
     DType* dtype = NULL;
     switch (ast->iliteral->type) {
+        // TODO: consider range of integer literal value
         case INTEGER_INT:
             dtype = new_integer_dtype(DTYPE_INT);
             break;

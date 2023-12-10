@@ -43,6 +43,11 @@ int iliteral_isunsigned(IntegerLiteral* iliteral) {
     return iliteral_type_isunsigned(iliteral->type);
 }
 
+int iliteral_nbytes(IntegerLiteral* iliteral) {
+    // TODO: consider range of integer literal value
+    return iliteral_type_nbytes(iliteral->type);
+}
+
 char* iliteral_display_string(IntegerLiteral* iliteral) {
     char* display_string = malloc(50 * sizeof(char));
     if (iliteral_isunsigned(iliteral)) {
@@ -61,6 +66,22 @@ void delete_iliteral(IntegerLiteral* iliteral) {
 
 int iliteral_type_isunsigned(IntegerLiteralType type) {
     return type == INTEGER_UNSIGNED_INT || type == INTEGER_UNSIGNED_LONG || type == INTEGER_UNSIGNED_LONGLONG;
+}
+
+int iliteral_type_nbytes(IntegerLiteralType type) {
+    switch (type) {
+        case INTEGER_INT:
+        case INTEGER_UNSIGNED_INT:
+            return 4;
+        case INTEGER_LONG:
+        case INTEGER_UNSIGNED_LONG:
+            return 8;
+        case INTEGER_LONGLONG:
+        case INTEGER_UNSIGNED_LONGLONG:
+            return 8;
+        default:
+            return 0;
+    }
 }
 
 IntegerLiteralType iliteral_type_get(int scalar_rank, int is_unsigned) {

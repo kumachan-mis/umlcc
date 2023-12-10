@@ -1,6 +1,7 @@
 #include "./statement.h"
 #include "../common/type.h"
 #include "../immc/immc.h"
+#include "../pair/pair.h"
 #include "./util.h"
 
 #include <stdlib.h>
@@ -8,6 +9,39 @@
 Vector* gen_compound_stmt_immcode(Immcgen* immcgen) {
     Vector* codes = new_vector(&t_immc);
     append_children_immcode(immcgen, codes);
+    return codes;
+}
+
+Vector* gen_case_stmt_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    Srt* case_value_srt = vector_at(immcgen->srt->children, 0);
+
+    immcgen->label_id++;
+    int case_label_id = immcgen->label_id;
+
+    Pair* label_value_pair = new_pair(&t_integer, &t_iliteral);
+    pair_set(label_value_pair, new_integer(case_label_id), iliteral_copy(case_value_srt->iliteral));
+    vector_push(immcgen->case_label_values, label_value_pair);
+
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, case_label_id));
+
+    append_child_immcode(immcgen, codes, 1);
+    return codes;
+}
+
+Vector* gen_default_stmt_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    immcgen->label_id++;
+    int default_label_id = immcgen->label_id;
+
+    immcgen->default_label_id = default_label_id;
+
+    vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, default_label_id));
+
+    append_child_immcode(immcgen, codes, 0);
+
     return codes;
 }
 
@@ -122,6 +156,63 @@ Vector* gen_if_with_else_stmt_immcode(Immcgen* immcgen) {
     }
 
     vector_push(codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, end_label_id));
+
+    return codes;
+}
+
+Vector* gen_switch_stmt_immcode(Immcgen* immcgen) {
+    Vector* codes = new_vector(&t_immc);
+
+    Vector* cases_codes = new_vector(&t_immc);
+    ImmcOpe* reg = gen_child_reg_immcope(immcgen, cases_codes, 0);
+
+    Vector* body_codes = new_vector(&t_immc);
+    immcgen->label_id++;
+    int break_label_id = immcgen->label_id;
+
+    Vector* original_case_label_values = immcgen->case_label_values;
+    int original_default_label_id = immcgen->default_label_id;
+    int original_break_label_id = immcgen->break_label_id;
+
+    immcgen->case_label_values = new_vector(&t_pair);
+    immcgen->default_label_id = -1;
+
+    immcgen->break_label_id = break_label_id;
+    append_child_immcode(immcgen, body_codes, 1);
+    immcgen->break_label_id = original_break_label_id;
+
+    int num_labels = vector_size(immcgen->case_label_values);
+    for (int i = 0; i < num_labels; i++) {
+        Pair* label_value_pair = vector_at(immcgen->case_label_values, i);
+        int* case_label_id_ref = pair_first(label_value_pair);
+        ImmcOpe* case_label = new_label_immcope_from_id(*case_label_id_ref);
+
+        IntegerLiteral* case_value_iliteral = pair_second(label_value_pair);
+        ImmcSuffix suffix = immcsuffix_get(iliteral_nbytes(case_value_iliteral));
+        ImmcOpe* case_value = new_int_immcope(suffix, iliteral_copy(case_value_iliteral));
+
+        vector_push(cases_codes, new_inst_immc(IMMC_INST_JEQ, case_label, immcope_copy(reg), case_value));
+    }
+    delete_immcope(reg);
+
+    if (immcgen->default_label_id > 0) {
+        ImmcOpe* default_label = new_label_immcope_from_id(immcgen->default_label_id);
+        vector_push(cases_codes, new_inst_immc(IMMC_INST_JMP, default_label, NULL, NULL));
+    } else {
+        ImmcOpe* break_label = new_label_immcope_from_id(break_label_id);
+        vector_push(cases_codes, new_inst_immc(IMMC_INST_JMP, break_label, NULL, NULL));
+    }
+
+    delete_vector(immcgen->case_label_values);
+    immcgen->case_label_values = original_case_label_values;
+    immcgen->default_label_id = original_default_label_id;
+
+    vector_push(body_codes, new_label_immc_from_id(IMMC_LABEL_NORMAL, IMMC_VIS_NONE, break_label_id));
+
+    vector_extend(codes, cases_codes);
+    delete_vector(cases_codes);
+    vector_extend(codes, body_codes);
+    delete_vector(body_codes);
 
     return codes;
 }

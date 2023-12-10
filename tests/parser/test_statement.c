@@ -3,6 +3,8 @@
 #include "../../src/parser/statement.h"
 #include "../testlib/testlib.h"
 
+void test_parse_case_stmt(void);
+void test_parse_default_stmt(void);
 void test_parse_compound_stmt_complete_typedef(void);
 void test_parse_compound_stmt_incomplete_typedef(void);
 void test_parse_compound_stmt_int(void);
@@ -22,6 +24,7 @@ void test_parse_null_stmt(void);
 void test_parse_if_stmt(void);
 void test_parse_if_else_stmt(void);
 void test_parse_if_else_stmt_chain(void);
+void test_parse_switch_stmt(void);
 void test_parse_while_stmt(void);
 void test_parse_for_stmt_init_declaration(void);
 void test_parse_for_stmt_init_expression(void);
@@ -34,6 +37,8 @@ void run_stmt_parser_test(Vector* input, Ast* expected);
 
 CU_Suite* add_test_suite_stmt_parser(void) {
     CU_Suite* suite = CU_add_suite("test_suite_stmt_parser", NULL, NULL);
+    CU_ADD_TEST(suite, test_parse_case_stmt);
+    CU_ADD_TEST(suite, test_parse_default_stmt);
     CU_ADD_TEST(suite, test_parse_compound_stmt_complete_typedef);
     CU_ADD_TEST(suite, test_parse_compound_stmt_incomplete_typedef);
     CU_ADD_TEST(suite, test_parse_compound_stmt_int);
@@ -53,6 +58,7 @@ CU_Suite* add_test_suite_stmt_parser(void) {
     CU_ADD_TEST(suite, test_parse_if_stmt);
     CU_ADD_TEST(suite, test_parse_if_else_stmt);
     CU_ADD_TEST(suite, test_parse_if_else_stmt_chain);
+    CU_ADD_TEST(suite, test_parse_switch_stmt);
     CU_ADD_TEST(suite, test_parse_while_stmt);
     CU_ADD_TEST(suite, test_parse_for_stmt_init_declaration);
     CU_ADD_TEST(suite, test_parse_for_stmt_init_expression);
@@ -61,6 +67,38 @@ CU_Suite* add_test_suite_stmt_parser(void) {
     CU_ADD_TEST(suite, test_parse_for_stmt_expression_null);
     CU_ADD_TEST(suite, test_parse_for_stmt_all_null);
     return suite;
+}
+
+void test_parse_case_stmt(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CASE));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input, new_ctoken(CTOKEN_COLON));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected =
+        new_ast(AST_CASE_STMT, 2, // non-terminal
+                new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)), new_ast(AST_NULL_STMT, 0));
+
+    run_stmt_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_default_stmt(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_DEFAULT));
+    vector_push(input, new_ctoken(CTOKEN_COLON));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(AST_DEFAULT_STMT, 1, // non-terminal
+                            new_ast(AST_NULL_STMT, 0));
+
+    run_stmt_parser_test(input, expected);
+
+    delete_ast(expected);
 }
 
 void test_parse_compound_stmt_complete_typedef(void) {
@@ -1025,6 +1063,72 @@ void test_parse_if_else_stmt_chain(void) {
                                 new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
                                         new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
                                         new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)))))));
+
+    run_stmt_parser_test(input, expected);
+
+    delete_ast(expected);
+}
+
+void test_parse_switch_stmt(void) {
+    Vector* input = new_vector(&t_ctoken);
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_SWITCH));
+    vector_push(input, new_ctoken(CTOKEN_LPAREN));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(input, new_ctoken(CTOKEN_RPAREN));
+    vector_push(input, new_ctoken(CTOKEN_LBRACE));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CASE));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(input, new_ctoken(CTOKEN_COLON));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, '+')));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_BREAK));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_CASE));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(input, new_ctoken(CTOKEN_COLON));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, '-')));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_BREAK));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_DEFAULT));
+    vector_push(input, new_ctoken(CTOKEN_COLON));
+    vector_push(input, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(input, new_ctoken(CTOKEN_EQUAL));
+    vector_push(input, new_iliteral_ctoken(CTOKEN_CHAR, new_signed_iliteral(INTEGER_INT, '*')));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_KEYWORD_BREAK));
+    vector_push(input, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(input, new_ctoken(CTOKEN_RBRACE));
+    vector_push(input, new_ctoken(CTOKEN_EOF));
+
+    Ast* expected = new_ast(
+        AST_SWITCH_STMT, 2, // non-terminal
+        new_identifier_ast(AST_IDENT_EXPR, new_string("x")),
+        new_ast(AST_CMPD_STMT, 6,         // non-terminal
+                new_ast(AST_CASE_STMT, 2, // non-terminal
+                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 0)),
+                        new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                        new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, '+'))))),
+                new_ast(AST_BREAK_STMT, 0),
+                new_ast(AST_CASE_STMT, 2, // non-terminal
+                        new_iliteral_ast(AST_INT_EXPR, new_signed_iliteral(INTEGER_INT, 1)),
+                        new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                        new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, '-'))))),
+                new_ast(AST_BREAK_STMT, 0),
+                new_ast(AST_DEFAULT_STMT, 1,                // non-terminal
+                        new_ast(AST_EXPR_STMT, 1,           // non-terminal
+                                new_ast(AST_ASSIGN_EXPR, 2, // non-terminal
+                                        new_identifier_ast(AST_IDENT_EXPR, new_string("y")),
+                                        new_iliteral_ast(AST_CHAR_EXPR, new_signed_iliteral(INTEGER_INT, '*'))))),
+                new_ast(AST_BREAK_STMT, 0)));
 
     run_stmt_parser_test(input, expected);
 

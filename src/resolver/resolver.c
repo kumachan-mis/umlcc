@@ -11,6 +11,8 @@ Resolver* new_resolver(Ast* ast) {
     resolver->symbol_table = new_symboltable();
     resolver->tag_table = new_tagtable();
     resolver->inside_loop = 0;
+    resolver->switch_cases = NULL;
+    resolver->switch_default_exists = 0;
     resolver->return_dtype = NULL;
     resolver->specifier_dtype = NULL;
     resolver->default_enum_value = 0;
@@ -36,6 +38,9 @@ void delete_resolver(Resolver* resolver) {
     }
     delete_symboltable(resolver->symbol_table);
     delete_tagtable(resolver->tag_table);
+    if (resolver->switch_cases != NULL) {
+        delete_vector(resolver->switch_cases);
+    }
     if (resolver->return_dtype != NULL) {
         delete_dtype(resolver->return_dtype);
     }

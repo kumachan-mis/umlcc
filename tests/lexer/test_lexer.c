@@ -13,6 +13,7 @@ void test_read_declaration_long_long_with_init(void);
 void test_read_declaration_pointer_with_init(void);
 void test_read_declaration_aggregate_with_init(void);
 void test_read_if_else_statement(void);
+void test_read_switch_case_statement(void);
 void test_read_while_statement(void);
 void test_read_for_statement(void);
 void test_read_continue_stmt(void);
@@ -52,6 +53,7 @@ CU_Suite* add_test_suite_lexer(void) {
     CU_ADD_TEST(suite, test_read_declaration_pointer_with_init);
     CU_ADD_TEST(suite, test_read_declaration_aggregate_with_init);
     CU_ADD_TEST(suite, test_read_if_else_statement);
+    CU_ADD_TEST(suite, test_read_switch_case_statement);
     CU_ADD_TEST(suite, test_read_while_statement);
     CU_ADD_TEST(suite, test_read_for_statement);
     CU_ADD_TEST(suite, test_read_continue_stmt);
@@ -386,6 +388,49 @@ void test_read_if_else_statement(void) {
     vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
     vector_push(expected, new_ctoken(CTOKEN_EQUAL));
     vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_RBRACE));
+    vector_push(expected, new_ctoken(CTOKEN_EOF));
+
+    run_lexer_test(input, expected);
+
+    delete_vector(expected);
+}
+
+void test_read_switch_case_statement(void) {
+    char* input = "switch (x) { case 0: y = 1; break; case 1: y = 2; break; default: y = 3; break; }";
+
+    Vector* expected = new_vector(&t_ctoken);
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_SWITCH));
+    vector_push(expected, new_ctoken(CTOKEN_LPAREN));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("x")));
+    vector_push(expected, new_ctoken(CTOKEN_RPAREN));
+    vector_push(expected, new_ctoken(CTOKEN_LBRACE));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_CASE));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 0)));
+    vector_push(expected, new_ctoken(CTOKEN_COLON));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(expected, new_ctoken(CTOKEN_EQUAL));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_BREAK));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_CASE));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 1)));
+    vector_push(expected, new_ctoken(CTOKEN_COLON));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(expected, new_ctoken(CTOKEN_EQUAL));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 2)));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_BREAK));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_DEFAULT));
+    vector_push(expected, new_ctoken(CTOKEN_COLON));
+    vector_push(expected, new_identifier_ctoken(CTOKEN_IDENT, new_string("y")));
+    vector_push(expected, new_ctoken(CTOKEN_EQUAL));
+    vector_push(expected, new_iliteral_ctoken(CTOKEN_INT, new_signed_iliteral(INTEGER_INT, 3)));
+    vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
+    vector_push(expected, new_ctoken(CTOKEN_KEYWORD_BREAK));
     vector_push(expected, new_ctoken(CTOKEN_SEMICOLON));
     vector_push(expected, new_ctoken(CTOKEN_RBRACE));
     vector_push(expected, new_ctoken(CTOKEN_EOF));

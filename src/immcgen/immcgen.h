@@ -19,6 +19,8 @@ typedef struct Immcgen {
     int continue_label_id;
     int break_label_id;
     int return_label_id;
+    Vector* case_label_values;
+    int default_label_id;
     int label_id;
 } Immcgen;
 

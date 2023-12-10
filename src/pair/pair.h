@@ -5,6 +5,8 @@
 
 typedef struct Pair Pair;
 
+extern BaseType t_pair;
+
 Pair* new_pair(BaseType* t_first, BaseType* t_second);
 Pair* pair_copy(Pair* pair);
 void* pair_first(Pair* pair);

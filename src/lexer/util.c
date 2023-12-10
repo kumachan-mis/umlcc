@@ -10,8 +10,10 @@ Map* new_keyword_map(void) {
     Map* keyword_map = new_map(&t_hashable_string, &t_integer);
 
     ctoken_map_add(keyword_map, "break", CTOKEN_KEYWORD_BREAK);
+    ctoken_map_add(keyword_map, "case", CTOKEN_KEYWORD_CASE);
     ctoken_map_add(keyword_map, "char", CTOKEN_KEYWORD_CHAR);
     ctoken_map_add(keyword_map, "continue", CTOKEN_KEYWORD_CONTINUE);
+    ctoken_map_add(keyword_map, "default", CTOKEN_KEYWORD_DEFAULT);
     ctoken_map_add(keyword_map, "else", CTOKEN_KEYWORD_ELSE);
     ctoken_map_add(keyword_map, "enum", CTOKEN_KEYWORD_ENUM);
     ctoken_map_add(keyword_map, "for", CTOKEN_KEYWORD_FOR);
@@ -21,6 +23,7 @@ Map* new_keyword_map(void) {
     ctoken_map_add(keyword_map, "return", CTOKEN_KEYWORD_RETURN);
     ctoken_map_add(keyword_map, "sizeof", CTOKEN_KEYWORD_SIZEOF);
     ctoken_map_add(keyword_map, "struct", CTOKEN_KEYWORD_STRUCT);
+    ctoken_map_add(keyword_map, "switch", CTOKEN_KEYWORD_SWITCH);
     ctoken_map_add(keyword_map, "typedef", CTOKEN_KEYWORD_TYPEDEF);
     ctoken_map_add(keyword_map, "unsigned", CTOKEN_KEYWORD_UNSIGNED);
     ctoken_map_add(keyword_map, "void", CTOKEN_KEYWORD_VOID);
