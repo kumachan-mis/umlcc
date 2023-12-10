@@ -193,11 +193,15 @@ Vector* gen_switch_stmt_immcode(Immcgen* immcgen) {
 
         vector_push(cases_codes, new_inst_immc(IMMC_INST_JEQ, case_label, immcope_copy(reg), case_value));
     }
+    delete_immcope(reg);
+
     if (immcgen->default_label_id > 0) {
         ImmcOpe* default_label = new_label_immcope_from_id(immcgen->default_label_id);
         vector_push(cases_codes, new_inst_immc(IMMC_INST_JMP, default_label, NULL, NULL));
+    } else {
+        ImmcOpe* break_label = new_label_immcope_from_id(break_label_id);
+        vector_push(cases_codes, new_inst_immc(IMMC_INST_JMP, break_label, NULL, NULL));
     }
-    delete_immcope(reg);
 
     delete_vector(immcgen->case_label_values);
     immcgen->case_label_values = original_case_label_values;
