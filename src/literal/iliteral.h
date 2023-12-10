@@ -24,10 +24,12 @@ IntegerLiteral* new_signed_iliteral(IntegerLiteralType type, long long value);
 IntegerLiteral* new_unsigned_iliteral(IntegerLiteralType type, unsigned long long value);
 IntegerLiteral* iliteral_copy(IntegerLiteral* iliteral);
 int iliteral_isunsigned(IntegerLiteral* iliteral);
+int iliteral_nbytes(IntegerLiteral* iliteral);
 char* iliteral_display_string(IntegerLiteral* iliteral);
 void delete_iliteral(IntegerLiteral* iliteral);
 
 int iliteral_type_isunsigned(IntegerLiteralType type);
+int iliteral_type_nbytes(IntegerLiteralType type);
 IntegerLiteralType iliteral_type_get(int rank, int is_unsigned);
 
 #endif

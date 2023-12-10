@@ -9,6 +9,11 @@ struct Pair {
     void* second;
 };
 
+BaseType t_pair = {
+    .copy_object = (void* (*)(void*))pair_copy,
+    .delete_object = (void (*)(void*))delete_pair,
+};
+
 Pair* new_pair(BaseType* t_first, BaseType* t_second) {
     Pair* pair = malloc(sizeof(Pair));
     pair->t_first = t_first;

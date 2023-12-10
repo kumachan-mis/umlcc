@@ -20,6 +20,7 @@ Immcgen* new_immcgen(Srt* srt) {
     immcgen->continue_label_id = -1;
     immcgen->break_label_id = -1;
     immcgen->return_label_id = -1;
+    immcgen->case_label_values = NULL;
     immcgen->label_id = -1;
     return immcgen;
 }
@@ -53,6 +54,12 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
         case SRT_INIT:
             codes = gen_initializer_immcode(immcgen);
             break;
+        case SRT_CASE_STMT:
+            codes = gen_case_stmt_immcode(immcgen);
+            break;
+        case SRT_DEFAULT_STMT:
+            codes = gen_default_stmt_immcode(immcgen);
+            break;
         case SRT_CMPD_STMT:
             immcgen->symbol_table = symboltable_enter_scope(immcgen->symbol_table);
             immcgen->tag_table = tagtable_enter_scope(immcgen->tag_table);
@@ -77,6 +84,9 @@ Vector* immcgen_generate_immcode(Immcgen* immcgen) {
             break;
         case SRT_IF_STMT:
             codes = gen_if_else_stmt_immcode(immcgen);
+            break;
+        case SRT_SWITCH_STMT:
+            codes = gen_switch_stmt_immcode(immcgen);
             break;
         case SRT_WHILE_STMT:
             codes = gen_while_stmt_immcode(immcgen);
@@ -174,6 +184,9 @@ void delete_immcgen(Immcgen* immcgen) {
     }
     if (immcgen->initialized_dtype != NULL) {
         delete_dtype(immcgen->initialized_dtype);
+    }
+    if (immcgen->case_label_values != NULL) {
+        delete_vector(immcgen->case_label_values);
     }
     free(immcgen);
 }
