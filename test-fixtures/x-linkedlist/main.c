@@ -12,7 +12,7 @@ typedef struct LinkedList {
 LinkedList* new_linkedlist(int value) {
     LinkedList* list = malloc(sizeof(LinkedList));
     list->value = value;
-    list->next = (LinkedList*)0;
+    list->next = (void*)0;
     return list;
 }
 
