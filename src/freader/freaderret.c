@@ -19,4 +19,5 @@ FileReaderReturn* new_freaderret_error(Error* err) {
 void freaderret_assign(char** file_content_ptr, Error** err_ptr, FileReaderReturn* freaderret) {
     *file_content_ptr = freaderret->file_content;
     *err_ptr = freaderret->err;
+    free(freaderret);
 }

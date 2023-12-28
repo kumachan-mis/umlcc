@@ -12,7 +12,7 @@
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
-        fprintf(stderr, "\x1b[1;31merror\x1b[0m: no input file\n");
+        fprintf(stderr, "\x1b[1;31merror\x1b[0m: invalid number of arguments\n");
         return 1;
     }
 
@@ -94,19 +94,6 @@ int main(int argc, char* argv[]) {
     Vector* liveseqs = NULL;
     regallocret_assign(&allocated_immcs, &liveseqs, regalloc_allocate_regs(regalloc));
     delete_regalloc(regalloc);
-
-    char* imm_filename = new_string(argv[1]);
-    imm_filename[src_filename_len - 1] = 'i';
-    FILE* imm = fopen(imm_filename, "w");
-    free(imm_filename);
-
-    int immcs_len = vector_size(allocated_immcs);
-    for (int i = 0; i < immcs_len; i++) {
-        char* immc_str = immc_tostring(vector_at(allocated_immcs, i));
-        fprintf(imm, "%s", immc_str);
-        free(immc_str);
-    }
-    fclose(imm);
 
     X64gen* x64gen = new_x64gen(allocated_immcs, liveseqs);
     Vector* x64codes = x64gen_generate_x64code(x64gen);
