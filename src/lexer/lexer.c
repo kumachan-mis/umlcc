@@ -31,7 +31,7 @@ LexerReturn* lexer_read_ctokens(Lexer* lexer) {
     while (1) {
         LexerReturnItem* item = NULL;
 
-        int c = content_top(lexer);
+        int c = get_content_top(lexer);
 
         if (set_contains(lexer->nondigit_set, &c)) {
             item = read_keyword_or_identifier(lexer);

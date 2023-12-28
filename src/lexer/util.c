@@ -193,14 +193,14 @@ Set* new_white_space_set(void) {
 }
 
 void skip_white_spaces(Lexer* lexer) {
-    int c = content_top(lexer);
+    int c = get_content_top(lexer);
     while (set_contains(lexer->white_space_set, &c)) {
         lexer->content_index++;
-        c = content_top(lexer);
+        c = get_content_top(lexer);
     }
 }
 
-int content_top(Lexer* lexer) {
+int get_content_top(Lexer* lexer) {
     if (lexer->content_index >= lexer->content_size) {
         return EOF;
     }
