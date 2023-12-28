@@ -2,6 +2,8 @@
 #include "./ctoken/test_ctoken.h"
 #include "./dtype/test_dtype.h"
 #include "./error/test_error.h"
+#include "./freader/test_freader.h"
+#include "./freader/test_freader_error.h"
 #include "./immc/test_immc.h"
 #include "./immc/test_ope.h"
 #include "./immc/test_suffix.h"
@@ -90,6 +92,10 @@ int main(void) {
     add_test_suite_x64suffix();
     add_test_suite_x64ope();
     add_test_suite_x64();
+
+    // freader tests
+    add_test_suite_freader();
+    add_test_suite_freader_error();
 
     // lexer tests
     add_test_suite_lexer();

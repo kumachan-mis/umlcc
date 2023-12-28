@@ -1,3 +1,4 @@
+#include "./freader/freader.h"
 #include "./immcgen/immcgen.h"
 #include "./lexer/lexer.h"
 #include "./parser/parser.h"
@@ -32,11 +33,22 @@ int main(int argc, char* argv[]) {
     Vector* errs = NULL;
     Error* err = NULL;
 
-    Lexer* lexer = new_lexer(src);
+    FileReader* freader = new_freader(src);
+    char* file_content = NULL;
+    freaderret_assign(&file_content, &err, freader_read(freader));
+    delete_freader(freader);
+
+    if (err != NULL) {
+        fprintf(stderr, "\x1b[0;36m@@@@@ Error occured in freader @@@@@\x1b[0m\n");
+        fprintf(stderr, "    \x1b[1;31merror\x1b[0m: %s\n", err->message);
+        delete_error(err);
+        return 1;
+    }
+
+    Lexer* lexer = new_lexer(file_content);
     Vector* ctokens = NULL;
     lexerret_assign(&ctokens, &err, lexer_read_ctokens(lexer));
     delete_lexer(lexer);
-    fclose(src);
 
     if (err != NULL) {
         fprintf(stderr, "\x1b[0;36m@@@@@ Error occured in lexer @@@@@\x1b[0m\n");
