@@ -6,10 +6,12 @@
 #include "../set/set.h"
 #include "./lexerret.h"
 
-#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct Lexer {
-    FILE* file_ptr;
+    char* content;
+    size_t content_index;
+    size_t content_size;
     Map* keyword_map;
     Set* nondigit_set;
     Map* octdigit_map;
@@ -20,7 +22,7 @@ typedef struct Lexer {
     Set* white_space_set;
 } Lexer;
 
-Lexer* new_lexer(FILE* file_ptr);
+Lexer* new_lexer(char* content);
 LexerReturn* lexer_read_ctokens(Lexer* lexer);
 void delete_lexer(Lexer* lexer);
 

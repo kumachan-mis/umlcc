@@ -3,10 +3,13 @@
 #include "./util.h"
 
 #include <stdlib.h>
+#include <string.h>
 
-Lexer* new_lexer(FILE* file_ptr) {
+Lexer* new_lexer(char* content) {
     Lexer* lexer = malloc(sizeof(Lexer));
-    lexer->file_ptr = file_ptr;
+    lexer->content = content;
+    lexer->content_index = 0L;
+    lexer->content_size = strlen(content);
     lexer->keyword_map = new_keyword_map();
     lexer->nondigit_set = new_nondigit_set();
     lexer->octdigit_map = new_octdigit_map();
@@ -28,8 +31,7 @@ LexerReturn* lexer_read_ctokens(Lexer* lexer) {
     while (1) {
         LexerReturnItem* item = NULL;
 
-        int c = fgetc(lexer->file_ptr);
-        ungetc(c, lexer->file_ptr);
+        int c = get_content_top(lexer);
 
         if (set_contains(lexer->nondigit_set, &c)) {
             item = read_keyword_or_identifier(lexer);
@@ -61,6 +63,7 @@ LexerReturn* lexer_read_ctokens(Lexer* lexer) {
 }
 
 void delete_lexer(Lexer* lexer) {
+    free(lexer->content);
     delete_map(lexer->keyword_map);
     delete_set(lexer->nondigit_set);
     delete_map(lexer->octdigit_map);

@@ -96,11 +96,8 @@ void test_read_string_literal_error_escape_sequence(void) {
 }
 
 void run_lexer_error_test(char* input, Error* expected) {
-    FILE* file_ptr = tmpfile();
-    fprintf(file_ptr, "%s", input);
-    rewind(file_ptr);
+    Lexer* lexer = new_lexer(new_string(input));
 
-    Lexer* lexer = new_lexer(file_ptr);
     Vector* ret = NULL;
     Error* actual = NULL;
     lexerret_assign(&ret, &actual, lexer_read_ctokens(lexer));
@@ -112,6 +109,4 @@ void run_lexer_error_test(char* input, Error* expected) {
         delete_error(actual);
     }
     delete_lexer(lexer);
-
-    fclose(file_ptr);
 }

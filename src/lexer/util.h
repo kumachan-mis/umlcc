@@ -12,7 +12,8 @@ Map* new_hexdigit_map(void);
 Map* new_integer_suffix_map(void);
 Map* new_punctuator_map(void);
 Set* new_white_space_set(void);
-IntegerLiteral* create_iliteral(char* value, int base, IntegerLiteralType type);
 void skip_white_spaces(Lexer* lexer);
+int get_content_top(Lexer* lexer);
+IntegerLiteral* create_iliteral(char* value, int base, IntegerLiteralType type);
 
 #endif

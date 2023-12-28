@@ -1,6 +1,7 @@
 #include "./util.h"
 #include "../common/type.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 void integer_suffix_map_add(Map* integer_suffix_map, char* suffix_str, IntegerLiteralType type);
@@ -191,6 +192,21 @@ Set* new_white_space_set(void) {
     return white_space_set;
 }
 
+void skip_white_spaces(Lexer* lexer) {
+    int c = get_content_top(lexer);
+    while (set_contains(lexer->white_space_set, &c)) {
+        lexer->content_index++;
+        c = get_content_top(lexer);
+    }
+}
+
+int get_content_top(Lexer* lexer) {
+    if (lexer->content_index >= lexer->content_size) {
+        return EOF;
+    }
+    return lexer->content[lexer->content_index];
+}
+
 IntegerLiteral* create_iliteral(char* value, int base, IntegerLiteralType type) {
     if (iliteral_type_isunsigned(type)) {
         unsigned long long unsigned_value = strtoull(value, NULL, base);
@@ -199,14 +215,6 @@ IntegerLiteral* create_iliteral(char* value, int base, IntegerLiteralType type) 
         long long signed_value = strtoll(value, NULL, base);
         return new_signed_iliteral(type, signed_value);
     }
-}
-
-void skip_white_spaces(Lexer* lexer) {
-    int c = fgetc(lexer->file_ptr);
-    while (set_contains(lexer->white_space_set, &c)) {
-        c = fgetc(lexer->file_ptr);
-    }
-    ungetc(c, lexer->file_ptr);
 }
 
 void integer_suffix_map_add(Map* integer_suffix_map, char* suffix_str, IntegerLiteralType type) {
