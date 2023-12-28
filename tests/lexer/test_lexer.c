@@ -1005,11 +1005,8 @@ void test_read_string_literal(void) {
 }
 
 void run_lexer_test(char* input, Vector* expected) {
-    FILE* file_ptr = tmpfile();
-    fprintf(file_ptr, "%s", input);
-    rewind(file_ptr);
+    Lexer* lexer = new_lexer(new_string(input));
 
-    Lexer* lexer = new_lexer(file_ptr);
     Vector* actual = NULL;
     Error* err = NULL;
     lexerret_assign(&actual, &err, lexer_read_ctokens(lexer));
@@ -1021,6 +1018,4 @@ void run_lexer_test(char* input, Vector* expected) {
         delete_vector(actual);
     }
     delete_lexer(lexer);
-
-    fclose(file_ptr);
 }
