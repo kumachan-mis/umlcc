@@ -118,6 +118,7 @@ sample-clean:
 .PHONY: setup format clean
 setup:
 	cp .pre-commit .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
 
 format:
 	@clang-format -i $(shell find . -name *.h -o -name *.c)
